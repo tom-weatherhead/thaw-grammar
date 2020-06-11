@@ -9,7 +9,7 @@ import { IGlobalInfo } from './iglobal-info';
 export interface IMacroDefinition<T> {
 	argumentCount: number; // This is a 'get' accessor.
 	invokeMacro(
-		unevaluatedArguments: Array<IExpression<T>>,
+		unevaluatedArguments: IExpression<T>[],
 		localEnvironment: EnvironmentFrame<T>,
 		globalInfo: IGlobalInfo<T>
 	): T;

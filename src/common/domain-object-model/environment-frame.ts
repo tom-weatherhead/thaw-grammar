@@ -76,7 +76,7 @@ export class EnvironmentFrame<T> {
 		}
 	}
 
-	public compose(keys: Array<Variable<T>>, values: T[]): void {
+	public compose(keys: Variable<T>[], values: T[]): void {
 		if (keys.length !== values.length) {
 			throw new ArgumentException(
 				'Environment.Compose() : The keys list and the values list have different lengths.',

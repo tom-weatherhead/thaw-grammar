@@ -6,10 +6,10 @@ import { Symbol } from './symbol';
 
 export class Production {
 	public lhs: number; // Symbol;
-	public rhs: Array<number | string>;
+	public rhs: (number | string)[];
 	private readonly num: number;
 
-	constructor(l: number, r: Array<number | string>, n = 0) {
+	constructor(l: number, r: (number | string)[], n = 0) {
 		this.lhs = l;
 		this.rhs = r;
 		this.num = n;

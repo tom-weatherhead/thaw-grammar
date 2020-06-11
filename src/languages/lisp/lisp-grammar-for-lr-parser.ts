@@ -1054,14 +1054,14 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		let sexpression: ISExpression;
 		let head: ISExpression;
 		let tail: ISExpression;
-		let varExprList: Array<[
+		let varExprList: [
 			Variable<ISExpression>,
 			IExpression<ISExpression>
-		]>;
-		let exprPairList: Array<[
+		][];
+		let exprPairList: [
 			IExpression<ISExpression>,
 			IExpression<ISExpression>
-		]>;
+		][];
 
 		switch (action) {
 			case '#functionDefinition':
@@ -1201,9 +1201,10 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				break;
 
 			case '#condUsage':
-				exprPairList = semanticStack.pop() as Array<
-					[IExpression<ISExpression>, IExpression<ISExpression>]
-				>;
+				exprPairList = semanticStack.pop() as [
+					IExpression<ISExpression>,
+					IExpression<ISExpression>
+				][];
 				expression2 = semanticStack.pop() as IExpression<
 					ISExpression
 				>;
@@ -1213,9 +1214,10 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				break;
 
 			case '#exprPairList':
-				exprPairList = semanticStack.pop() as Array<
-					[IExpression<ISExpression>, IExpression<ISExpression>]
-				>;
+				exprPairList = semanticStack.pop() as [
+					IExpression<ISExpression>,
+					IExpression<ISExpression>
+				][];
 				expression2 = semanticStack.pop() as IExpression<
 					ISExpression
 				>;
@@ -1234,9 +1236,10 @@ export class LISPGrammarForLRParser extends GrammarBase {
 
 			case '#letUsage':
 				expression = semanticStack.pop() as IExpression<ISExpression>;
-				varExprList = semanticStack.pop() as Array<
-					[Variable<ISExpression>, IExpression<ISExpression>]
-				>;
+				varExprList = semanticStack.pop() as [
+					Variable<ISExpression>,
+					IExpression<ISExpression>
+				][];
 				name = semanticStack.pop() as Name;
 				semanticStack.push(
 					this.createLetUsage(name, varExprList, expression)
@@ -1244,9 +1247,10 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				break;
 
 			case '#varExprList':
-				varExprList = semanticStack.pop() as Array<
-					[Variable<ISExpression>, IExpression<ISExpression>]
-				>;
+				varExprList = semanticStack.pop() as [
+					Variable<ISExpression>,
+					IExpression<ISExpression>
+				][];
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				variable = semanticStack.pop() as Variable<ISExpression>;
 				varExprList.unshift([variable, expression]);
@@ -1495,9 +1499,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 
 	protected createLetUsage(
 		letName: Name,
-		varExprList: Array<
-			[Variable<ISExpression>, IExpression<ISExpression>]
-		>,
+		varExprList: [Variable<ISExpression>, IExpression<ISExpression>][],
 		expression: IExpression<ISExpression>
 	): IExpression<ISExpression> {
 		switch (letName.value) {

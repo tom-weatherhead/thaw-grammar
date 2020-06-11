@@ -8,11 +8,11 @@ import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { Variable } from '../../../common/domain-object-model/variable';
 
 export class LetRecUsage<T> implements IExpression<T> {
-	public readonly bindings: Array<[Variable<T>, IExpression<T>]>;
+	public readonly bindings: [Variable<T>, IExpression<T>][];
 	public readonly expression: IExpression<T>;
 
 	constructor(
-		bindings: Array<[Variable<T>, IExpression<T>]>,
+		bindings: [Variable<T>, IExpression<T>][],
 		expression: IExpression<T>
 	) {
 		this.bindings = bindings;

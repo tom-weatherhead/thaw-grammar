@@ -7,9 +7,9 @@ import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
 export class CondUsage<T> implements IExpression<T> {
-	public readonly exprPairList: Array<[IExpression<T>, IExpression<T>]>;
+	public readonly exprPairList: [IExpression<T>, IExpression<T>][];
 
-	constructor(exprPairList: Array<[IExpression<T>, IExpression<T>]>) {
+	constructor(exprPairList: [IExpression<T>, IExpression<T>][]) {
 		this.exprPairList = exprPairList;
 	}
 

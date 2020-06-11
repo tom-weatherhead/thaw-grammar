@@ -8,11 +8,11 @@ import { IGlobalInfo } from './iglobal-info';
 import { Variable } from './variable';
 
 export class LetStarUsage<T> implements IExpression<T> {
-	public readonly bindings: Array<[Variable<T>, IExpression<T>]>;
+	public readonly bindings: [Variable<T>, IExpression<T>][];
 	public readonly expression: IExpression<T>;
 
 	constructor(
-		bindings: Array<[Variable<T>, IExpression<T>]>,
+		bindings: [Variable<T>, IExpression<T>][],
 		expression: IExpression<T>
 	) {
 		this.bindings = bindings;
