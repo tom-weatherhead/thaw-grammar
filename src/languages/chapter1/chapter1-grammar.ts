@@ -619,7 +619,6 @@ export class Chapter1Grammar extends GrammarBase {
 			case Symbol.terminalWhile:
 			case Symbol.terminalSet:
 			case Symbol.terminalBegin:
-			case Symbol.terminalPrint:
 			case Symbol.terminalEOF:
 				break;
 

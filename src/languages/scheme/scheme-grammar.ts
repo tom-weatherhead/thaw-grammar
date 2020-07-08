@@ -1556,7 +1556,6 @@ export class SchemeGrammar extends GrammarBase {
 			case Symbol.terminalWhile:
 			case Symbol.terminalSet:
 			case Symbol.terminalBegin:
-			case Symbol.terminalPrint:
 			case Symbol.terminalCond:
 			case Symbol.terminalLambdaKeyword: // Added for Scheme
 			case Symbol.terminalCallCC: // Added for Scheme

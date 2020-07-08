@@ -104,7 +104,7 @@ export abstract class GrammarBase implements IGrammar {
 	// 	this.productions = this.productions.filter((production: Production) => !production.ContainsSymbol(symbol));
 	// }
 
-	protected addProduction(lhs: number, rhs: any[], n: number = 0): void {
+	protected addProduction(lhs: number, rhs: any[], n = 0): void {
 		this.productions.push(new Production(lhs, rhs, n));
 	}
 }
