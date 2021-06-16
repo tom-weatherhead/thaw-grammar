@@ -50,7 +50,8 @@ export function createGrammar(ls: LanguageSelector): IGrammar {
 		case LanguageSelector.Smalltalk:
 			return new SmalltalkGrammar();
 
-		case LanguageSelector.Prolog:
+		// case LanguageSelector.Prolog:
+		case LanguageSelector.Prolog2:
 			return new PrologGrammar();
 
 		// LanguageSelector.Prolog2,    // "Real" Prolog.
