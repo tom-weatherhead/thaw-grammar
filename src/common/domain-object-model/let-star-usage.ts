@@ -20,13 +20,9 @@ export class LetStarUsage<T> implements IExpression<T> {
 	}
 
 	public toString(): string {
-		const fnBindingAsString = ([v, expr]: [
-			Variable<T>,
-			IExpression<T>
-		]) => `(${v} ${expr})`;
-		const bindingsAsString = this.bindings
-			.map(fnBindingAsString)
-			.join(' ');
+		const fnBindingAsString = ([v, expr]: [Variable<T>, IExpression<T>]) =>
+			`(${v} ${expr})`;
+		const bindingsAsString = this.bindings.map(fnBindingAsString).join(' ');
 
 		return `(let* (${bindingsAsString}) ${this.expression})`;
 	}
@@ -68,10 +64,7 @@ export class LetStarUsage<T> implements IExpression<T> {
 			) => {
 				const newEnvFrame = new EnvironmentFrame<T>(previousEnvFrame);
 
-				newEnvFrame.add(
-					v,
-					expr.evaluate(previousEnvFrame, globalInfo)
-				);
+				newEnvFrame.add(v, expr.evaluate(previousEnvFrame, globalInfo));
 
 				return newEnvFrame;
 			},

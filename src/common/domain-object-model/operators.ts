@@ -67,9 +67,7 @@ export class Operators {
 		// this.mapOperatorNameToDetails.set('', [OperatorType., 0, () => ]);
 	}
 
-	public getOperator(
-		name: string
-	): [OperatorType, number, any] | undefined {
+	public getOperator(name: string): [OperatorType, number, any] | undefined {
 		return this.mapOperatorNameToDetails.get(name);
 	}
 }

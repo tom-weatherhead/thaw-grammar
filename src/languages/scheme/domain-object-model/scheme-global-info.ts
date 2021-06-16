@@ -15,7 +15,8 @@ import { NullSExpression } from '../../lisp/domain-object-model/null-sexpression
 
 export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 	private readonly trueValueForAccessor: ISExpression = new LISPSymbol('T'); // Symbols are immutable
-	private readonly falseValueForAccessor: ISExpression = new NullSExpression(); // This is immutable too
+	private readonly falseValueForAccessor: ISExpression =
+		new NullSExpression(); // This is immutable too
 	// private readonly Dictionary<Name, IMacroDefinition<ISExpression>> MacroDefs = new Dictionary<Name, IMacroDefinition<ISExpression>>();
 	// public static readonly Variable<ISExpression> varStackTrace = new Variable<ISExpression>("__STACK_TRACE__", 0, 0);
 

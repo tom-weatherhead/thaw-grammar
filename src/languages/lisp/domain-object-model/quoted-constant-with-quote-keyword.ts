@@ -9,7 +9,8 @@ import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { ISExpression } from './isexpression';
 
 export class QuotedConstantWithQuoteKeyword
-	implements IExpression<ISExpression> {
+	implements IExpression<ISExpression>
+{
 	public readonly sexpression: ISExpression;
 
 	constructor(sexpression: ISExpression) {

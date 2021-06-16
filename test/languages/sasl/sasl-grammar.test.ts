@@ -2,7 +2,7 @@
 
 'use strict';
 
-import { createGrammar, LanguageSelector } from '../../../lib/main';
+import { createGrammar, LanguageSelector } from '../../..';
 
 test('SASLGrammar instance creation test', () => {
 	// Arrange

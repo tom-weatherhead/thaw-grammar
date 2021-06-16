@@ -591,11 +591,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		// Value-Op -> +
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Plus }, 21));
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalPlus],
-				23
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalPlus], 23)
 		);
 
 		// Value-Op -> -
@@ -671,11 +667,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		// Function -> Name
 		// Productions.Add(new Production(Symbol.N_Function, new List<object>() { Symbol.T_ID }, 29));
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalFunction,
-				[Symbol.terminalID],
-				31
-			)
+			new Production(Symbol.nonterminalFunction, [Symbol.terminalID], 31)
 		);
 
 		// Variable -> Name
@@ -704,31 +696,19 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		// Value-Op -> cons
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cons }, 40));
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalCons],
-				40
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCons], 40)
 		);
 
 		// Value-Op -> car
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Car }, 41));
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalCar],
-				41
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCar], 41)
 		);
 
 		// Value-Op -> cdr
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cdr }, 42));
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalCdr],
-				42
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCdr], 42)
 		);
 
 		// Value-Op -> number?
@@ -926,11 +906,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		// Value-Op -> list
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_List }, 55));
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalList],
-				55
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalList], 55)
 		);
 
 		// **** BEGIN : Probably deletia ****
@@ -1031,11 +1007,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 	}
 
 	public get selectorsOfCompatibleParsers(): number[] {
-		return [
-			ParserSelector.LR1,
-			ParserSelector.SLR1,
-			ParserSelector.LALR1
-		];
+		return [ParserSelector.LR1, ParserSelector.SLR1, ParserSelector.LALR1];
 	}
 
 	public executeSemanticAction(
@@ -1054,10 +1026,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		let sexpression: ISExpression;
 		let head: ISExpression;
 		let tail: ISExpression;
-		let varExprList: [
-			Variable<ISExpression>,
-			IExpression<ISExpression>
-		][];
+		let varExprList: [Variable<ISExpression>, IExpression<ISExpression>][];
 		let exprPairList: [
 			IExpression<ISExpression>,
 			IExpression<ISExpression>
@@ -1066,9 +1035,8 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		switch (action) {
 			case '#functionDefinition':
 				expression = semanticStack.pop() as IExpression<ISExpression>; // The function's body
-				variableList = semanticStack.pop() as VariableList<
-					ISExpression
-				>; // The function's formal argument list
+				variableList =
+					semanticStack.pop() as VariableList<ISExpression>; // The function's formal argument list
 				name = semanticStack.pop() as Name; // The function name
 				semanticStack.push(
 					new FunctionDefinition<ISExpression>(
@@ -1080,9 +1048,8 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				break;
 
 			case '#variableList':
-				variableList = semanticStack.pop() as VariableList<
-					ISExpression
-				>;
+				variableList =
+					semanticStack.pop() as VariableList<ISExpression>;
 				variable = semanticStack.pop() as Variable<ISExpression>;
 				variableList.value.unshift(variable);
 				semanticStack.push(variableList);
@@ -1093,12 +1060,8 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				break;
 
 			case '#if':
-				expression3 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
-				expression2 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
+				expression3 = semanticStack.pop() as IExpression<ISExpression>;
+				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(
 					new IfUsage<ISExpression>(
@@ -1110,9 +1073,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				break;
 
 			case '#while':
-				expression2 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
+				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(
 					new WhileUsage<ISExpression>(expression, expression2)
@@ -1128,9 +1089,8 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				break;
 
 			case '#begin':
-				expressionList = semanticStack.pop() as ExpressionList<
-					ISExpression
-				>;
+				expressionList =
+					semanticStack.pop() as ExpressionList<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(
 					new BeginUsage<ISExpression>(expression, expressionList)
@@ -1138,19 +1098,15 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				break;
 
 			case '#operatorUsage':
-				expressionList = semanticStack.pop() as ExpressionList<
-					ISExpression
-				>;
+				expressionList =
+					semanticStack.pop() as ExpressionList<ISExpression>;
 				name = semanticStack.pop() as Name;
-				semanticStack.push(
-					new LISPOperatorUsage(name, expressionList)
-				);
+				semanticStack.push(new LISPOperatorUsage(name, expressionList));
 				break;
 
 			case '#expressionList':
-				expressionList = semanticStack.pop() as ExpressionList<
-					ISExpression
-				>;
+				expressionList =
+					semanticStack.pop() as ExpressionList<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				expressionList.value.unshift(expression);
 				semanticStack.push(expressionList);
@@ -1205,9 +1161,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 					IExpression<ISExpression>,
 					IExpression<ISExpression>
 				][];
-				expression2 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
+				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				exprPairList.unshift([expression, expression2]);
 				semanticStack.push(new CondUsage<ISExpression>(exprPairList));
@@ -1218,9 +1172,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 					IExpression<ISExpression>,
 					IExpression<ISExpression>
 				][];
-				expression2 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
+				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				exprPairList.unshift([expression, expression2]);
 				semanticStack.push(exprPairList);
@@ -1506,10 +1458,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 				return new LetUsage<ISExpression>(varExprList, expression);
 
 			case 'let*':
-				return new LetStarUsage<ISExpression>(
-					varExprList,
-					expression
-				);
+				return new LetStarUsage<ISExpression>(varExprList, expression);
 
 			default:
 				throw new ArgumentException(

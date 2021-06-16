@@ -448,11 +448,7 @@ export class SchemeGrammar extends GrammarBase {
 
 		// Value-Op -> +
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalPlus],
-				25
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalPlus], 25)
 		);
 
 		// Value-Op -> -
@@ -520,11 +516,7 @@ export class SchemeGrammar extends GrammarBase {
 
 		// Function -> Name
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalFunction,
-				[Symbol.terminalID],
-				33
-			)
+			new Production(Symbol.nonterminalFunction, [Symbol.terminalID], 33)
 		);
 
 		// Variable -> Name
@@ -547,29 +539,17 @@ export class SchemeGrammar extends GrammarBase {
 
 		// Value-Op -> cons
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalCons],
-				36
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCons], 36)
 		);
 
 		// Value-Op -> car
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalCar],
-				37
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCar], 37)
 		);
 
 		// Value-Op -> cdr
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalCdr],
-				38
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCdr], 38)
 		);
 
 		// Value-Op -> number?
@@ -765,11 +745,7 @@ export class SchemeGrammar extends GrammarBase {
 
 		// Value-Op -> list
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalList],
-				55
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalList], 55)
 		);
 
 		this.productions.push(
@@ -1076,10 +1052,7 @@ export class SchemeGrammar extends GrammarBase {
 		let sexpression: ISExpression;
 		let head: ISExpression;
 		let tail: ISExpression;
-		let varExprList: [
-			Variable<ISExpression>,
-			IExpression<ISExpression>
-		][];
+		let varExprList: [Variable<ISExpression>, IExpression<ISExpression>][];
 		let exprPairList: [
 			IExpression<ISExpression>,
 			IExpression<ISExpression>
@@ -1094,9 +1067,8 @@ export class SchemeGrammar extends GrammarBase {
 			// 	break;
 
 			case '#variableList':
-				variableList = semanticStack.pop() as VariableList<
-					ISExpression
-				>;
+				variableList =
+					semanticStack.pop() as VariableList<ISExpression>;
 				variable = semanticStack.pop() as Variable<ISExpression>;
 				variableList.value.unshift(variable);
 				semanticStack.push(variableList);
@@ -1107,12 +1079,8 @@ export class SchemeGrammar extends GrammarBase {
 				break;
 
 			case '#if':
-				expression3 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
-				expression2 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
+				expression3 = semanticStack.pop() as IExpression<ISExpression>;
+				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(
 					new IfUsage<ISExpression>(
@@ -1124,9 +1092,7 @@ export class SchemeGrammar extends GrammarBase {
 				break;
 
 			case '#while':
-				expression2 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
+				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(
 					new WhileUsage<ISExpression>(expression, expression2)
@@ -1142,9 +1108,8 @@ export class SchemeGrammar extends GrammarBase {
 				break;
 
 			case '#begin':
-				expressionList = semanticStack.pop() as ExpressionList<
-					ISExpression
-				>;
+				expressionList =
+					semanticStack.pop() as ExpressionList<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(
 					new BeginUsage<ISExpression>(expression, expressionList)
@@ -1158,9 +1123,8 @@ export class SchemeGrammar extends GrammarBase {
 			// 	break;
 
 			case '#expressionList':
-				expressionList = semanticStack.pop() as ExpressionList<
-					ISExpression
-				>;
+				expressionList =
+					semanticStack.pop() as ExpressionList<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				expressionList.value.unshift(expression);
 				semanticStack.push(expressionList);
@@ -1215,9 +1179,7 @@ export class SchemeGrammar extends GrammarBase {
 					IExpression<ISExpression>,
 					IExpression<ISExpression>
 				][];
-				expression2 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
+				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				exprPairList.unshift([expression, expression2]);
 				semanticStack.push(new CondUsage<ISExpression>(exprPairList));
@@ -1228,9 +1190,7 @@ export class SchemeGrammar extends GrammarBase {
 					IExpression<ISExpression>,
 					IExpression<ISExpression>
 				][];
-				expression2 = semanticStack.pop() as IExpression<
-					ISExpression
-				>;
+				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				exprPairList.unshift([expression, expression2]);
 				semanticStack.push(exprPairList);
@@ -1284,17 +1244,15 @@ export class SchemeGrammar extends GrammarBase {
 
 			case '#lambdaExpression':
 				const body = semanticStack.pop() as IExpression<ISExpression>;
-				const argList = semanticStack.pop() as VariableList<
-					ISExpression
-				>;
+				const argList =
+					semanticStack.pop() as VariableList<ISExpression>;
 
 				semanticStack.push(new LambdaExpression(argList, body));
 				break;
 
 			case '#evaluableExpression':
-				expressionList = semanticStack.pop() as ExpressionList<
-					ISExpression
-				>;
+				expressionList =
+					semanticStack.pop() as ExpressionList<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(
 					new EvaluableExpression(expression, expressionList)
@@ -1581,10 +1539,7 @@ export class SchemeGrammar extends GrammarBase {
 				return new LetUsage<ISExpression>(varExprList, expression);
 
 			case 'let*':
-				return new LetStarUsage<ISExpression>(
-					varExprList,
-					expression
-				);
+				return new LetStarUsage<ISExpression>(varExprList, expression);
 
 			case 'letrec':
 				return new LetRecUsage<ISExpression>(varExprList, expression);

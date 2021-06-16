@@ -2,7 +2,7 @@
 
 'use strict';
 
-import { createGrammar, LanguageSelector } from '../../../lib/main';
+import { createGrammar, LanguageSelector } from '../../..';
 
 test('Chapter1Grammar instance creation test', () => {
 	// Arrange

@@ -116,17 +116,13 @@ export class MinimalLanguageGrammar extends GrammarBase {
 
 		switch (action) {
 			case '#operatorUsage':
-				expressionList = semanticStack.pop() as ExpressionList<
-					number
-				>;
+				expressionList = semanticStack.pop() as ExpressionList<number>;
 				name = semanticStack.pop() as Name;
 				semanticStack.push(new OperatorUsage(name, expressionList));
 				break;
 
 			case '#expressionList':
-				expressionList = semanticStack.pop() as ExpressionList<
-					number
-				>;
+				expressionList = semanticStack.pop() as ExpressionList<number>;
 				expression = semanticStack.pop() as IExpression<number>;
 				expressionList.value.unshift(expression);
 				semanticStack.push(expressionList);

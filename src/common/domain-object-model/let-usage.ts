@@ -20,13 +20,9 @@ export class LetUsage<T> implements IExpression<T> {
 	}
 
 	public toString(): string {
-		const fnBindingAsString = ([v, expr]: [
-			Variable<T>,
-			IExpression<T>
-		]) => `(${v} ${expr})`;
-		const bindingsAsString = this.bindings
-			.map(fnBindingAsString)
-			.join(' ');
+		const fnBindingAsString = ([v, expr]: [Variable<T>, IExpression<T>]) =>
+			`(${v} ${expr})`;
+		const bindingsAsString = this.bindings.map(fnBindingAsString).join(' ');
 
 		return `(let (${bindingsAsString}) ${this.expression})`;
 	}

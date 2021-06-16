@@ -313,11 +313,7 @@ export class Chapter1Grammar extends GrammarBase {
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalPlus],
-				23
-			)
+			new Production(Symbol.nonterminalValueOp, [Symbol.terminalPlus], 23)
 		);
 		this.productions.push(
 			new Production(
@@ -369,11 +365,7 @@ export class Chapter1Grammar extends GrammarBase {
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalFunction,
-				[Symbol.terminalID],
-				31
-			)
+			new Production(Symbol.nonterminalFunction, [Symbol.terminalID], 31)
 		);
 		this.productions.push(
 			new Production(
@@ -465,15 +457,11 @@ export class Chapter1Grammar extends GrammarBase {
 			case '#set':
 				expression = semanticStack.pop() as IExpression<number>;
 				variable = semanticStack.pop() as Variable<number>;
-				semanticStack.push(
-					new SetUsage<number>(variable, expression)
-				); // Add line and column?
+				semanticStack.push(new SetUsage<number>(variable, expression)); // Add line and column?
 				break;
 
 			case '#begin':
-				expressionList = semanticStack.pop() as ExpressionList<
-					number
-				>;
+				expressionList = semanticStack.pop() as ExpressionList<number>;
 				expression = semanticStack.pop() as IExpression<number>;
 				semanticStack.push(
 					new BeginUsage<number>(expression, expressionList)
@@ -481,9 +469,7 @@ export class Chapter1Grammar extends GrammarBase {
 				break;
 
 			case '#operatorUsage':
-				expressionList = semanticStack.pop() as ExpressionList<
-					number
-				>;
+				expressionList = semanticStack.pop() as ExpressionList<number>;
 				name = semanticStack.pop() as Name;
 				semanticStack.push(
 					new Chapter1OperatorUsage(name, expressionList)
@@ -491,9 +477,7 @@ export class Chapter1Grammar extends GrammarBase {
 				break;
 
 			case '#expressionList':
-				expressionList = semanticStack.pop() as ExpressionList<
-					number
-				>;
+				expressionList = semanticStack.pop() as ExpressionList<number>;
 				expression = semanticStack.pop() as IExpression<number>;
 				expressionList.value.unshift(expression);
 				semanticStack.push(expressionList);

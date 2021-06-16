@@ -15,8 +15,10 @@ import { ContinuationException } from '../exceptions/continuation-exception';
 
 import { ICallableSExpression } from './icallable-sexpression';
 
-export class Continuation extends SExpressionBase
-	implements ICallableSExpression {
+export class Continuation
+	extends SExpressionBase
+	implements ICallableSExpression
+{
 	public readonly ccGuid: number; // was Guid in C#
 	public readonly line: number;
 	public readonly column: number;

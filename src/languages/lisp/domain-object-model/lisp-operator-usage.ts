@@ -20,9 +20,7 @@ import { LISPString } from './lisp-string';
 import { SExpressionList } from './sexpression-list';
 
 export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
-	private readonly operatorsThatTakeEitherIntOrFloatArgs = new Set<
-		string
-	>();
+	private readonly operatorsThatTakeEitherIntOrFloatArgs = new Set<string>();
 
 	constructor(
 		operatorName: Name,
@@ -103,9 +101,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	// return IsListOfStrings(argAsList.Tail);
 	// }
 
-	protected checkArgTypes(
-		evaluatedArguments: ISExpression[]
-	): string | null {
+	protected checkArgTypes(evaluatedArguments: ISExpression[]): string | null {
 		switch (this.operatorName.value) {
 			case 'number?':
 			case 'symbol?':
@@ -367,9 +363,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				// Or: return globalInfo.valueAsInteger(evaluatedArguments[0]);
 
 				return new IntegerLiteral(
-					Math.floor(
-						(evaluatedArguments[0] as IntegerLiteral).value
-					)
+					Math.floor((evaluatedArguments[0] as IntegerLiteral).value)
 				);
 
 			case 'throw':

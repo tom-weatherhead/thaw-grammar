@@ -14,9 +14,7 @@ export abstract class ExceptionBase {
 		column = 0
 	) {
 		const lineAndColumnText =
-			line > 0 && column > 0
-				? ` at line ${line}, column ${column}`
-				: '';
+			line > 0 && column > 0 ? ` at line ${line}, column ${column}` : '';
 
 		this.message = `${typeName}${lineAndColumnText}: ${message}`;
 		this.line = line;

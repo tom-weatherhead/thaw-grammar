@@ -76,10 +76,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 				this.operatorName.line,
 				this.operatorName.column
 			);
-		} else if (
-			expectedNumArgs >= 0 &&
-			actualNumArgs !== expectedNumArgs
-		) {
+		} else if (expectedNumArgs >= 0 && actualNumArgs !== expectedNumArgs) {
 			throw new EvaluationException(
 				`OperatorUsage : Expected ${expectedNumArgs} argument(s) for operator '${this.operatorName.value}', instead of the actual ${actualNumArgs} argument(s)`,
 				this.operatorName.line,
@@ -118,8 +115,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 		globalInfo: IGlobalInfo<T>
 	): number | undefined {
 		if (
-			['<', '>', '+', '-', '*', '/'].indexOf(this.operatorName.value) >=
-			0
+			['<', '>', '+', '-', '*', '/'].indexOf(this.operatorName.value) >= 0
 		) {
 			return 2;
 		}
@@ -184,29 +180,31 @@ export class OperatorUsage<T> implements IExpression<T> {
 				? globalInfo.valueAsInteger(evaluatedArguments[1])
 				: 0;
 
-		const twoArgumentIntegerPredicateRaw = this.twoArgumentIntegerPredicates.get(
-			this.operatorName.value
-		);
-		const twoArgumentIntegerOperatorRaw = this.twoArgumentIntegerOperators.get(
-			this.operatorName.value
-		);
+		const twoArgumentIntegerPredicateRaw =
+			this.twoArgumentIntegerPredicates.get(this.operatorName.value);
+		const twoArgumentIntegerOperatorRaw =
+			this.twoArgumentIntegerOperators.get(this.operatorName.value);
 
 		// if (IntegerOperatorKeeper.TwoArgumentOperators.ContainsKey(this.operatorName.Value))
 		if (typeof twoArgumentIntegerOperatorRaw !== 'undefined') {
 			// return globalInfo.IntegerAsValue(IntegerOperatorKeeper.TwoArgumentOperators[operatorName.Value](firstArgAsInt, secondArgAsInt));
 			return globalInfo.integerAsValue(
-				(twoArgumentIntegerOperatorRaw as (
-					operand1: number,
-					operand2: number
-				) => number)(firstArgAsInt, secondArgAsInt)
+				(
+					twoArgumentIntegerOperatorRaw as (
+						operand1: number,
+						operand2: number
+					) => number
+				)(firstArgAsInt, secondArgAsInt)
 			);
 			// } else if (IntegerOperatorKeeper.TwoArgumentPredicates.ContainsKey(this.operatorName.Value))
 		} else if (typeof twoArgumentIntegerPredicateRaw !== 'undefined') {
 			// return IntegerOperatorKeeper.TwoArgumentPredicates[operatorName.Value](firstArgAsInt, secondArgAsInt) ? globalInfo.TrueValue : globalInfo.FalseValue;
-			return (twoArgumentIntegerPredicateRaw as (
-				operand1: number,
-				operand2: number
-			) => boolean)(firstArgAsInt, secondArgAsInt)
+			return (
+				twoArgumentIntegerPredicateRaw as (
+					operand1: number,
+					operand2: number
+				) => boolean
+			)(firstArgAsInt, secondArgAsInt)
 				? globalInfo.trueValue
 				: globalInfo.falseValue;
 		}

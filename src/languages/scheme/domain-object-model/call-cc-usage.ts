@@ -27,10 +27,7 @@ export class CallCCUsage implements IExpression<ISExpression> {
 		localEnvironment: EnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
-		const evaluatedBody = this.body.evaluate(
-			localEnvironment,
-			globalInfo
-		);
+		const evaluatedBody = this.body.evaluate(localEnvironment, globalInfo);
 
 		if (!(evaluatedBody instanceof Closure)) {
 			throw new EvaluationException(
