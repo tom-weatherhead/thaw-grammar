@@ -144,19 +144,32 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	}
 
 	public valueIsInteger(value: IPrologExpression): boolean {
-		const n = value.EvaluateToNumber();
+		const pn = value.EvaluateToNumber();
 
-		return typeof n !== 'undefined' && !Number.isNaN(n) && Math.floor(n) === n;
-	}
-
-	public valueAsInteger(value: IPrologExpression): number { // Should we return Number.NaN if value is not a (safe) integer?
-		const n = value.EvaluateToNumber();
-
-		if (typeof n !== 'undefined' && !Number.isNaN(n) && Math.floor(n) === n) {
-			throw new Error('PrologGlobalInfo.valueAsInteger() error');
+		if (typeof pn === 'undefined') {
+			return false;
 		}
 
-		return ;
+		const n = pn.ToDouble();
+
+		return !Number.isNaN(n) && Math.floor(n) === n;
+	}
+
+	public valueAsInteger(value: IPrologExpression): number {
+		// Should we return Number.NaN if value is not a (safe) integer?
+		const pn = value.EvaluateToNumber();
+
+		if (typeof pn === 'undefined') {
+			throw new Error('PrologGlobalInfo.valueAsInteger() error 1');
+		}
+
+		const n = pn.ToDouble();
+
+		if (Number.isNaN(n) || Math.floor(n) !== n) {
+			throw new Error('PrologGlobalInfo.valueAsInteger() error 2');
+		}
+
+		return n;
 	}
 
 	public integerAsValue(value: number): IPrologExpression {
