@@ -1,6 +1,11 @@
 // prolog-integer-literal.ts
 
+import { Set } from 'thaw-common-utilities.ts';
+
+import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
+import { PrologSubstitution } from './prolog-substitution';
+import { PrologVariable } from './prolog-variable';
 
 export class PrologIntegerLiteral implements IPrologNumber {
 	public readonly Value: number;

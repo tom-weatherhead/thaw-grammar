@@ -5,6 +5,7 @@ import { LanguageSelector } from 'thaw-lexical-analyzer';
 import { IPrologExpression } from './iprolog-expression';
 import { PrologNameExpression } from './prolog-name-expression';
 import { PrologPredicate } from './prolog-predicate';
+import { PrologSubstitution } from './prolog-substitution';
 
 export class PrologGoal extends PrologNameExpression<PrologPredicate> {
 	//public bool DCGDoNotAddExtraArguments = false; // Part of Definite Clause Grammar support.

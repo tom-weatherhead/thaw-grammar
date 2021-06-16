@@ -9,6 +9,8 @@ import { PrologClause } from './prolog-clause';
 import { PrologGoal } from './prolog-goal';
 import { PrologModule } from './prolog-module';
 import { PrologSubstitution } from './prolog-substitution';
+import { PrologVariable } from './prolog-variable';
+import { StringIntKey } from './string-int-key';
 
 export function setToArray<T>(s: Set<T>): T[] {
 	const result: T[] = [];

@@ -66,7 +66,15 @@ export class PrologVariable implements IPrologExpression {
 
 		// return [this];
 
-		return Set.createFromArray(this.IsNonBinding ? [] : [this]);
+		// return Set.createFromArray(this.IsNonBinding ? [] : [this]);
+
+		const result = new Set<PrologVariable>();
+
+		if (!this.IsNonBinding) {
+			result.add(this);
+		}
+
+		return result;
 	}
 
 	public GetListOfBindingVariables(): PrologVariable[] {
@@ -93,7 +101,13 @@ export class PrologVariable implements IPrologExpression {
 
 		// return this;
 
-		return sub.SubstitutionList.get(this.Name) || this;
+		const value = sub.SubstitutionList.get(this.Name);
+
+		if (typeof value !== 'undefined') {
+			return value;
+		}
+
+		return this;
 	}
 
 	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {

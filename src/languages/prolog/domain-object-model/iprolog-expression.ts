@@ -1,5 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/iprolog-expression.ts
 
+import { Set } from 'thaw-common-utilities.ts';
+
 import { IPrologNumber } from './iprolog-number';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';

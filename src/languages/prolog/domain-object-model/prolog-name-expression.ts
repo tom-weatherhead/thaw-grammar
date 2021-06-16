@@ -1,6 +1,10 @@
 // prolog-name-expression.ts
 
+import { Set } from 'thaw-common-utilities.ts';
+
 import { LanguageSelector } from 'thaw-lexical-analyzer';
+
+import { setToArray } from './prolog-global-info';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
