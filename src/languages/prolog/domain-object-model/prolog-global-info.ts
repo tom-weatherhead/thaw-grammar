@@ -7,6 +7,8 @@ import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-
 import { IPrologExpression } from './iprolog-expression';
 import { PrologClause } from './prolog-clause';
 import { PrologGoal } from './prolog-goal';
+import { PrologIntegerLiteral } from './prolog-integer-literal';
+
 import { PrologModule } from './prolog-module';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
@@ -131,6 +133,34 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	public toString(): string {
 		return 'PrologGlobalInfo.toString()';
+	}
+
+	public get falseValue(): IPrologExpression {
+		return new PrologIntegerLiteral(0);
+	}
+
+	public get trueValue(): IPrologExpression {
+		return new PrologIntegerLiteral(1);
+	}
+
+	public valueIsInteger(value: IPrologExpression): boolean {
+		const n = value.EvaluateToNumber();
+
+		return typeof n !== 'undefined' && !Number.isNaN(n) && Math.floor(n) === n;
+	}
+
+	public valueAsInteger(value: IPrologExpression): number { // Should we return Number.NaN if value is not a (safe) integer?
+		const n = value.EvaluateToNumber();
+
+		if (typeof n !== 'undefined' && !Number.isNaN(n) && Math.floor(n) === n) {
+			throw new Error('PrologGlobalInfo.valueAsInteger() error');
+		}
+
+		return ;
+	}
+
+	public integerAsValue(value: number): IPrologExpression {
+		return new PrologIntegerLiteral(value);
 	}
 
 	// 	// #if SUPPORT_USER_DEFINED_OPERATORS
