@@ -33,6 +33,7 @@ import { PrologClause } from './domain-object-model/prolog-clause';
 import { PrologFloatLiteral } from './domain-object-model/prolog-float-literal';
 import { PrologFunctor } from './domain-object-model/prolog-functor';
 import { PrologGlobalInfo } from './domain-object-model/prolog-global-info';
+import { PrologGoal } from './domain-object-model/prolog-goal';
 import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-literal';
 import { PrologNameExpression } from './domain-object-model/prolog-name-expression';
 
@@ -364,8 +365,37 @@ export class PrologGrammar extends GrammarBase {
 			)
 		);
 
+		// Symbol.T_From, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons", "#clauseAsFunctor" });
+		// this.productions.push(
+		// 	new Production(
+		// 		Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
+		// 		[Symbol.nonterminalGoalList, '#cons', '#clauseAsFunctor'],
+		// 		20
+		// 	)
+		// );
+
 		// // ThAW 2014/03/18 : This is where the fun begins.
+
 		// AddProduction(Symbol.N_Goal, new List<object>() { Symbol.N_Expression, "#convertExpressionToFunctorExpression" });
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalGoal,
+				[
+					Symbol.nonterminalExpression,
+					'#convertExpressionToFunctorExpression'
+				],
+				20
+			)
+		);
+
+		// **** TEMPORARY PRODUCTION 2021-06-17
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalExpression,
+				[Symbol.nonterminalFunctor],
+				21
+			)
+		);
 
 		// AddProduction(Symbol.N_Expression, new List<object>() {
 		// Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.N_IfThenElseTail, Symbol.T_RightBracket, Symbol.N_ArithmeticAndComparisonTail });
@@ -383,7 +413,6 @@ export class PrologGrammar extends GrammarBase {
 		// AddProduction(Symbol.N_IfThenElseTail, new List<object>() {
 		// Symbol.T_IfThen, Symbol.N_Goal, Symbol.T_Colon, Symbol.N_Goal, "#ifThenElse" });
 		// AddProduction(Symbol.N_IfThenElseTail, new List<object>() {
-		// Symbol.T_From, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons", "#clauseAsFunctor" });
 
 		// // Sequences.
 
@@ -405,9 +434,9 @@ export class PrologGrammar extends GrammarBase {
 		const gs = LanguageSelector.Prolog2;
 
 		let str: string;
-		// List<PrologGoal> goalList;
-		// IPrologExpression expr;
-		// IPrologExpression expr2;
+		let goalList: PrologGoal[];
+		let expr: IPrologExpression;
+		let expr2: IPrologExpression;
 		// List<IPrologExpression> exprList;
 		let functor: PrologFunctor;
 		// PrologVariable variable;
@@ -430,20 +459,25 @@ export class PrologGrammar extends GrammarBase {
 				semanticStack.push(clause);
 				break;
 
-			// case "#createCSharpGoalList":
-			// goalList = PrologGlobalInfo.PrologListToGoalList((IPrologExpression)semanticStack.Pop());
+			case '#createCSharpGoalList':
+				goalList = PrologGlobalInfo.PrologListToGoalList(
+					semanticStack.pop() as IPrologExpression
+				);
 
-			// if (goalList == null)
-			// {
-			// throw new Exception("Semantic action #createCSharpGoalList failed.");
-			// }
+				if (typeof goalList === 'undefined') {
+					throw new Error(
+						'Semantic action #createCSharpGoalList failed.'
+					);
+				}
 
-			// semanticStack.Push(goalList);
-			// break;
+				semanticStack.push(goalList);
+				break;
 
-			// case "#convertExpressionToFunctorExpression":
-			// semanticStack.Push(PopAndConvertToFunctorExpression(semanticStack, action));
-			// break;
+			case '#convertExpressionToFunctorExpression':
+				semanticStack.push(
+					this.PopAndConvertToFunctorExpression(semanticStack, action)
+				);
+				break;
 
 			case '#clauseAsFunctor':
 				functorExpr2 =
@@ -534,12 +568,17 @@ export class PrologGrammar extends GrammarBase {
 				);
 				break;
 
-			// case "#cons":
-			// expr2 = (IPrologExpression)semanticStack.Pop();
-			// expr = (IPrologExpression)semanticStack.Pop();
-			// functor = new PrologFunctor(".");
-			// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { expr, expr2 }));
-			// break;
+			case '#cons':
+				expr2 = semanticStack.pop() as IPrologExpression;
+				expr = semanticStack.pop() as IPrologExpression;
+				functor = new PrologFunctor('.');
+				semanticStack.push(
+					new PrologNameExpression<PrologFunctor>(gs, functor, [
+						expr,
+						expr2
+					])
+				);
+				break;
 
 			// case "#consSeq":
 			// expr2 = (IPrologExpression)semanticStack.Pop();
@@ -808,18 +847,22 @@ export class PrologGrammar extends GrammarBase {
 		}
 	}
 
-	// private PopAndConvertToFunctorExpression(semanticStack: Stack<any>, action: string): PrologNameExpression<PrologFunctor> {
-	// 	const obj = semanticStack.pop();
-	// 	const functorExpression = PrologGlobalInfo.ConvertToFunctorExpression(obj);
+	private PopAndConvertToFunctorExpression(
+		semanticStack: Stack<any>,
+		action: string
+	): PrologNameExpression<PrologFunctor> {
+		const obj = semanticStack.pop();
+		const functorExpression =
+			PrologGlobalInfo.ConvertToFunctorExpression(obj);
 
-	// 	if (functorExpression == null) {
-	// 		throw new Exception(string.Format(
-	// 		"PopAndConvertToFunctorExpression() : Semantic action {0} : Cannot convert object of type {1} to a functor expression",
-	// 		action, obj.GetType().Name));
-	// 	}
+		// if (functorExpression == null) {
+		// 	throw new Exception(string.Format(
+		// 	"PopAndConvertToFunctorExpression() : Semantic action {0} : Cannot convert object of type {1} to a functor expression",
+		// 	action, obj.GetType().Name));
+		// }
 
-	// 	return functorExpression;
-	// }
+		return functorExpression;
+	}
 }
 
 // using System;

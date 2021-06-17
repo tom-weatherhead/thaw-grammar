@@ -440,7 +440,13 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	}
 
 	public static ConvertToFunctorExpression(
-		obj: unknown
+		// obj: unknown
+		// obj:
+		// 	| string
+		// 	| PrologFunctor
+		// 	| PrologNameExpression<PrologFunctor>
+		// 	| PrologVariable
+		obj: IPrologExpression | PrologFunctor | string
 	): PrologNameExpression<PrologFunctor> {
 		let functorExpression: PrologNameExpression<PrologFunctor>;
 		const a = obj as PrologNameExpression<PrologFunctor>;
@@ -448,22 +454,42 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		const c = obj as PrologVariable;
 		const d = obj as string;
 
-		if (typeof a !== 'undefined') {
+		console.log(
+			'PrologGlobalInfo.ConvertToFunctorExpression() : obj is',
+			typeof obj,
+			obj.constructor.name,
+			obj
+		);
+
+		// if (typeof d !== 'undefined') {
+		if (typeof obj === 'string') {
+			console.log(
+				'PrologGlobalInfo.ConvertToFunctorExpression() : obj is a string'
+			);
+			functorExpression = new PrologNameExpression<PrologFunctor>(
+				LanguageSelector.Prolog2,
+				new PrologFunctor(d)
+			);
+		} else if (typeof a !== 'undefined') {
+			console.log(
+				'PrologGlobalInfo.ConvertToFunctorExpression() : obj is a PrologNameExpression<PrologFunctor>'
+			);
 			functorExpression = a;
 		} else if (typeof b !== 'undefined') {
+			console.log(
+				'PrologGlobalInfo.ConvertToFunctorExpression() : obj is a PrologFunctor'
+			);
 			functorExpression = new PrologNameExpression<PrologFunctor>(
 				LanguageSelector.Prolog2,
 				b
 			);
 		} else if (typeof c !== 'undefined') {
+			console.log(
+				'PrologGlobalInfo.ConvertToFunctorExpression() : obj is a PrologVariable'
+			);
 			functorExpression = new PrologNameExpression<PrologFunctor>(
 				LanguageSelector.Prolog2,
 				new PrologFunctor(c.Name)
-			);
-		} else if (typeof d !== 'undefined') {
-			functorExpression = new PrologNameExpression<PrologFunctor>(
-				LanguageSelector.Prolog2,
-				new PrologFunctor(d)
 			);
 		} else {
 			// functorExpression = undefined;
@@ -975,15 +1001,13 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         }
 	//     }
 
-	public static ExpressionToGoal(
-		expr: IPrologExpression
-	): PrologGoal | undefined {
+	public static ExpressionToGoal(expr: IPrologExpression): PrologGoal {
 		//var fe = expr as PrologNameExpression<PrologFunctor>;
 		const fe = this.ConvertToFunctorExpression(expr);
 
-		if (typeof fe === 'undefined') {
-			return undefined;
-		}
+		// if (typeof fe === 'undefined') {
+		// 	return undefined;
+		// }
 
 		// return fe.ToGoal();
 		return new PrologGoal(
@@ -995,7 +1019,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	public static CSharpListToGoalList(
 		exprList: IPrologExpression[]
-	): PrologGoal[] | undefined {
+	): PrologGoal[] {
 		const goalList: PrologGoal[] = [];
 
 		for (const e of exprList) {
@@ -1003,7 +1027,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			if (typeof goal === 'undefined') {
 				//throw new Exception(string.Format("CSharpListToGoalList() : '{0}' is not a functor expression.", e));
-				return undefined;
+				// return undefined;
+				throw new Error('CSharpListToGoalList()');
 			}
 
 			goalList.push(goal);
@@ -1012,10 +1037,11 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		return goalList;
 	}
 
-	//     public static List<PrologGoal> PrologListToGoalList(IPrologExpression expr)
-	//     {
-	//         return CSharpListToGoalList(PrologListToCSharpList(expr));
-	//     }
+	public static PrologListToGoalList(expr: IPrologExpression): PrologGoal[] {
+		return PrologGlobalInfo.CSharpListToGoalList(
+			PrologGlobalInfo.PrologListToCSharpList(expr)
+		);
+	}
 
 	//     public static PrologNameExpression<PrologFunctor> CreateClauseAsFunctorExpression(IPrologExpression lhs, IPrologExpression rhs)
 	//     {
