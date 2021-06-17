@@ -2,14 +2,19 @@
 
 import { Set } from 'thaw-common-utilities.ts';
 
+import { LanguageSelector } from 'thaw-lexical-analyzer';
+
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 import { IPrologExpression } from './iprolog-expression';
 import { PrologClause } from './prolog-clause';
+import { PrologFunctor } from './prolog-functor';
 import { PrologGoal } from './prolog-goal';
 import { PrologIntegerLiteral } from './prolog-integer-literal';
 
 import { PrologModule } from './prolog-module';
+import { PrologNameExpression } from './prolog-name-expression';
+import { PrologPredicate } from './prolog-predicate';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';
@@ -59,6 +64,10 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//     public IInterpreterFileLoader FileLoader = null;
 	private readonly DefaultModule = new PrologModule();
 	private readonly dictModules = new Map<string, PrologModule>(); // The keys are file paths.
+
+	constructor() {
+		super();
+	}
 
 	//     public PrologGlobalInfo(LanguageSelector gs, ITokenizer t, IParser p)
 	//     {
@@ -425,35 +434,41 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		return result;
 	}
 
-	//     public static PrologNameExpression<PrologFunctor> ConvertToFunctorExpression(object obj)
-	//     {
-	//         PrologNameExpression<PrologFunctor> functorExpression;
+	public static ConvertToFunctorExpression(
+		obj: unknown
+	): PrologNameExpression<PrologFunctor> {
+		let functorExpression: PrologNameExpression<PrologFunctor>;
+		const a = obj as PrologNameExpression<PrologFunctor>;
+		const b = obj as PrologFunctor;
+		const c = obj as PrologVariable;
+		const d = obj as string;
 
-	//         if (obj is PrologNameExpression<PrologFunctor>)
-	//         {
-	//             functorExpression = (PrologNameExpression<PrologFunctor>)obj;
-	//         }
-	//         else if (obj is PrologFunctor)
-	//         {
-	//             functorExpression = new PrologNameExpression<PrologFunctor>(LanguageSelector.Prolog2, (PrologFunctor)obj);
-	//         }
-	//         else if (obj is PrologVariable)
-	//         {
-	//             var v = (PrologVariable)obj;
+		if (typeof a !== 'undefined') {
+			functorExpression = a;
+		} else if (typeof b !== 'undefined') {
+			functorExpression = new PrologNameExpression<PrologFunctor>(
+				LanguageSelector.Prolog2,
+				b
+			);
+		} else if (typeof c !== 'undefined') {
+			functorExpression = new PrologNameExpression<PrologFunctor>(
+				LanguageSelector.Prolog2,
+				new PrologFunctor(c.Name)
+			);
+		} else if (typeof d !== 'undefined') {
+			functorExpression = new PrologNameExpression<PrologFunctor>(
+				LanguageSelector.Prolog2,
+				new PrologFunctor(d)
+			);
+		} else {
+			// functorExpression = undefined;
+			throw new Error(
+				'ConvertToFunctorExpression() : obj is an unsupported type'
+			);
+		}
 
-	//             functorExpression = new PrologNameExpression<PrologFunctor>(LanguageSelector.Prolog2, new PrologFunctor(v.Name));
-	//         }
-	//         else if (obj is string)
-	//         {
-	//             functorExpression = new PrologNameExpression<PrologFunctor>(LanguageSelector.Prolog2, new PrologFunctor((string)obj));
-	//         }
-	//         else
-	//         {
-	//             functorExpression = null;
-	//         }
-
-	//         return functorExpression;
-	//     }
+		return functorExpression;
+	}
 
 	//     private PrologSubstitution ApplyAssert1(PrologGoal goal, bool asserta)
 	//     {
@@ -902,35 +917,42 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         return functorSubstitution;
 	//     }
 
-	//     public static List<IPrologExpression> PrologListToCSharpList(IPrologExpression expr)
-	//     {
-	//         var functorExpression = expr as PrologNameExpression<PrologFunctor>;
+	public static PrologListToCSharpList(
+		expr: IPrologExpression
+	): IPrologExpression[] {
+		const functorExpression = expr as PrologNameExpression<PrologFunctor>;
 
-	//         if (functorExpression == null)
-	//         {
-	//             return null;
-	//         }
-	//         else if (functorExpression.Name.Name == "[]" && functorExpression.ExpressionList.Count == 0)
-	//         {
-	//             return new List<IPrologExpression>();
-	//         }
-	//         else if (functorExpression.Name.Name == "." && functorExpression.ExpressionList.Count == 2)
-	//         {
-	//             var result = PrologListToCSharpList(functorExpression.ExpressionList[1]);
+		if (typeof functorExpression === 'undefined') {
+			// return null;
+			throw new Error(
+				'PrologListToCSharpList() : functorExpression is undefined'
+			);
+		} else if (
+			functorExpression.Name.Name === '[]' &&
+			functorExpression.ExpressionList.length === 0
+		) {
+			return [];
+		} else if (
+			functorExpression.Name.Name === '.' &&
+			functorExpression.ExpressionList.length === 2
+		) {
+			const result = this.PrologListToCSharpList(
+				functorExpression.ExpressionList[1]
+			);
 
-	//             if (result == null)
-	//             {
-	//                 return null;
-	//             }
+			if (typeof result === 'undefined') {
+				// return null;
+				throw new Error('PrologListToCSharpList() : case 2');
+			}
 
-	//             result.Insert(0, functorExpression.ExpressionList[0]);
-	//             return result;
-	//         }
-	//         else
-	//         {
-	//             return null;
-	//         }
-	//     }
+			result.unshift(functorExpression.ExpressionList[0]);
+
+			return result;
+		} else {
+			// return null;
+			throw new Error('PrologListToCSharpList() : case 3');
+		}
+	}
 
 	//     // This is used only in Prolog2 (standard Prolog notation):
 
@@ -948,38 +970,42 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         }
 	//     }
 
-	//     public static PrologGoal ExpressionToGoal(IPrologExpression expr)
-	//     {
-	//         //var fe = expr as PrologNameExpression<PrologFunctor>;
-	//         var fe = ConvertToFunctorExpression(expr);
+	public static ExpressionToGoal(
+		expr: IPrologExpression
+	): PrologGoal | undefined {
+		//var fe = expr as PrologNameExpression<PrologFunctor>;
+		const fe = this.ConvertToFunctorExpression(expr);
 
-	//         if (fe == null)
-	//         {
-	//             return null;
-	//         }
+		if (typeof fe === 'undefined') {
+			return undefined;
+		}
 
-	//         return fe.ToGoal();
-	//     }
+		// return fe.ToGoal();
+		return new PrologGoal(
+			fe.gs,
+			new PrologPredicate(fe.Name.Name),
+			fe.ExpressionList
+		);
+	}
 
-	//     public static List<PrologGoal> CSharpListToGoalList(List<IPrologExpression> exprList)
-	//     {
-	//         var goalList = new List<PrologGoal>();
+	public static CSharpListToGoalList(
+		exprList: IPrologExpression[]
+	): PrologGoal[] | undefined {
+		const goalList: PrologGoal[] = [];
 
-	//         foreach (var e in exprList)
-	//         {
-	//             var goal = ExpressionToGoal(e);
+		for (const e of exprList) {
+			const goal = this.ExpressionToGoal(e);
 
-	//             if (goal == null)
-	//             {
-	//                 //throw new Exception(string.Format("CSharpListToGoalList() : '{0}' is not a functor expression.", e));
-	//                 return null;
-	//             }
+			if (typeof goal === 'undefined') {
+				//throw new Exception(string.Format("CSharpListToGoalList() : '{0}' is not a functor expression.", e));
+				return undefined;
+			}
 
-	//             goalList.Add(goal);
-	//         }
+			goalList.push(goal);
+		}
 
-	//         return goalList;
-	//     }
+		return goalList;
+	}
 
 	//     public static List<PrologGoal> PrologListToGoalList(IPrologExpression expr)
 	//     {
@@ -992,45 +1018,50 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//             new List<IPrologExpression>() { lhs, rhs });
 	//     }
 
-	//     public static PrologClause CreateClause(IPrologExpression expr)
-	//     {
-	//         var fe = expr as PrologNameExpression<PrologFunctor>;
+	public static CreateClause(expr: IPrologExpression): PrologClause {
+		const fe = expr as PrologNameExpression<PrologFunctor>;
 
-	//         if (fe == null || (fe.Name.Name != "clause" && fe.Name.Name != ":-") || fe.ExpressionList.Count != 2)
-	//         {
-	//             //Console.WriteLine("CreateClause 1: null");
-	//             return null;
-	//         }
+		if (
+			typeof fe === 'undefined' ||
+			(fe.Name.Name !== 'clause' && fe.Name.Name !== ':-') ||
+			fe.ExpressionList.length !== 2
+		) {
+			//Console.WriteLine("CreateClause 1: null");
+			// return undefined;
+			throw new Error('PrologGlobalInfo.CreateClause() : case 1');
+		}
 
-	//         var lhs = ExpressionToGoal(fe.ExpressionList[0]);
-	// 		// #if SUPPORT_USER_DEFINED_OPERATORS
-	//         var rhs = CSharpListToGoalList(ExpressionToCSharpList(fe.ExpressionList[1]));
-	// 		// #else
-	// 		// List<PrologGoal> rhs;
+		const lhs = this.ExpressionToGoal(fe.ExpressionList[0]);
+		// #if SUPPORT_USER_DEFINED_OPERATORS
+		const rhs = this.CSharpListToGoalList(
+			this.ExpressionToCSharpList(fe.ExpressionList[1])
+		);
+		// #else
+		// List<PrologGoal> rhs;
 
-	// 		// if (fe.Name.Name == "clause")
-	// 		// {
-	// 		//     rhs = PrologListToGoalList(fe.ExpressionList[1]);
-	// 		// }
-	// 		// else
-	// 		// {
-	// 		//     rhs = CSharpListToGoalList(CommaSeparatedListToCSharpList(fe.ExpressionList[1]));
+		// if (fe.Name.Name == "clause")
+		// {
+		//     rhs = PrologListToGoalList(fe.ExpressionList[1]);
+		// }
+		// else
+		// {
+		//     rhs = CSharpListToGoalList(CommaSeparatedListToCSharpList(fe.ExpressionList[1]));
 
-	// 		//     if (rhs == null)
-	// 		//     {
-	// 		//         Console.WriteLine("CreateClause 3: rhs is null");
-	// 		//     }
-	// 		// }
-	// 		// #endif
+		//     if (rhs == null)
+		//     {
+		//         Console.WriteLine("CreateClause 3: rhs is null");
+		//     }
+		// }
+		// #endif
 
-	//         if (lhs == null || rhs == null)
-	//         {
-	//             //Console.WriteLine("CreateClause 2: null");
-	//             return null;
-	//         }
+		if (typeof lhs === 'undefined' || typeof rhs === 'undefined') {
+			//Console.WriteLine("CreateClause 2: null");
+			// return undefined;
+			throw new Error('PrologGlobalInfo.CreateClause() : case 2');
+		}
 
-	//         return new PrologClause(lhs, rhs);
-	//     }
+		return new PrologClause(lhs, rhs);
+	}
 
 	//     private PrologClause CreateClause_General(IPrologExpression expr)
 	//     {
@@ -3003,17 +3034,17 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	}
 
 	// 	// #if SUPPORT_USER_DEFINED_OPERATORS
-	//     public static List<IPrologExpression> ExpressionToCSharpList(IPrologExpression expr)
-	//     {
-	//         var result = PrologListToCSharpList(expr);
+	public static ExpressionToCSharpList(
+		expr: IPrologExpression
+	): IPrologExpression[] {
+		const result = this.PrologListToCSharpList(expr);
 
-	//         if (result != null)
-	//         {
-	//             return result;
-	//         }
+		if (typeof result !== 'undefined') {
+			return result;
+		}
 
-	//         return CommaSeparatedListToCSharpList(expr);
-	//     }
+		return this.CommaSeparatedListToCSharpList(expr);
+	}
 
 	//     private IPrologExpression ParseList_Operators(List<Token> tokenList, int startIndex, TokenType openingDelimiter, TokenType closingDelimiter,
 	//         out int nextIndex)
@@ -3075,28 +3106,34 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         return new Stack<object>(list);
 	//     }
 
-	//     public static List<IPrologExpression> CommaSeparatedListToCSharpList(IPrologExpression expr)
-	//     {
-	//         var exprAsFunctorExpression = expr as PrologNameExpression<PrologFunctor>;
+	public static CommaSeparatedListToCSharpList(
+		expr: IPrologExpression
+	): IPrologExpression[] {
+		const exprAsFunctorExpression =
+			expr as PrologNameExpression<PrologFunctor>;
 
-	//         if (exprAsFunctorExpression == null || exprAsFunctorExpression.Name.Name != "," || exprAsFunctorExpression.ExpressionList.Count != 2)
-	//         {
-	//             return new List<IPrologExpression>() { expr };
-	//         }
-	//         else
-	//         {
-	// 			// #if !DEAD_CODE
-	//             var list = CommaSeparatedListToCSharpList(exprAsFunctorExpression.ExpressionList[1]);
+		if (
+			typeof exprAsFunctorExpression === 'undefined' ||
+			exprAsFunctorExpression.Name.Name !== ',' ||
+			exprAsFunctorExpression.ExpressionList.length !== 2
+		) {
+			return [expr];
+		} else {
+			// #if !DEAD_CODE
+			const list = this.CommaSeparatedListToCSharpList(
+				exprAsFunctorExpression.ExpressionList[1]
+			);
 
-	//             list.Insert(0, exprAsFunctorExpression.ExpressionList[0]);
-	// 			// #else
-	// 			// var list = CommaSeparatedListToCSharpList(exprAsFunctorExpression.ExpressionList[0]);
+			list.unshift(exprAsFunctorExpression.ExpressionList[0]);
+			// #else
+			// var list = CommaSeparatedListToCSharpList(exprAsFunctorExpression.ExpressionList[0]);
 
-	// 			// list.Add(exprAsFunctorExpression.ExpressionList[1]);
-	// 			// #endif
-	//             return list;
-	//         }
-	//     }
+			// list.Add(exprAsFunctorExpression.ExpressionList[1]);
+			// #endif
+
+			return list;
+		}
+	}
 
 	//     private IPrologExpression CSharpListToSequence(List<IPrologExpression> list, int index = 0)
 	//     {
@@ -3696,47 +3733,50 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         return ParserDriver(tokenList, true);
 	//     }
 
-	//     public string ProcessTokenList(List<Token> tokenList, ref string currentModuleName)
-	//     {
-	// 		// #if SUPPORT_USER_DEFINED_OPERATORS
+	// public ProcessTokenList(tokenList: Token[], ref string currentModuleName): string {
+	// public ProcessTokenList(tokenList: Token[], currentModuleName: string): string {
+	// 	// #if SUPPORT_USER_DEFINED_OPERATORS
 
-	//         if (gs == LanguageSelector.Prolog2)
-	//         {
-	// 			// #if DEAD_CODE
-	// 			// if (tokenList.Count < 3 ||
-	// 			//     tokenList[tokenList.Count - 2].TokenType != TokenType.T_Dot ||
-	// 			//     tokenList[tokenList.Count - 1].TokenType != TokenType.T_EOF)
-	// 			// {
-	// 			//     throw new Exception("The token list is too short, or it does not end with a dot and an EOF.");
-	// 			// }
+	// 	// if (gs == LanguageSelector.Prolog2)
+	// 	// {
+	// 	// #if DEAD_CODE
+	// 	// if (tokenList.Count < 3 ||
+	// 	//     tokenList[tokenList.Count - 2].TokenType != TokenType.T_Dot ||
+	// 	//     tokenList[tokenList.Count - 1].TokenType != TokenType.T_EOF)
+	// 	// {
+	// 	//     throw new Exception("The token list is too short, or it does not end with a dot and an EOF.");
+	// 	// }
 
-	// 			// var parseResult = Parse_Operators(tokenList.Take(tokenList.Count - 2).ToList());
+	// 	// var parseResult = Parse_Operators(tokenList.Take(tokenList.Count - 2).ToList());
 
-	// 			// if (parseResult == null)
-	// 			// {
-	// 			//     throw new Exception("Syntax error: Parse_Operators() returned null.");
-	// 			// }
+	// 	// if (parseResult == null)
+	// 	// {
+	// 	//     throw new Exception("Syntax error: Parse_Operators() returned null.");
+	// 	// }
 
-	// 			// return ProcessInput(parseResult, ref currentModuleName);
-	// 			// #else
-	//             return ProcessInput(Parse(tokenList), ref currentModuleName);
-	// 			// #endif
-	//         }
-	//         else
-	//         {
-	//             return ProcessInput(parser.Parse(tokenList), ref currentModuleName);
-	//         }
-	// 		// #else
-	// 		// return ProcessInput(parser.Parse(tokenList));
-	// 		// #endif
-	//     }
+	// 	// return ProcessInput(parseResult, ref currentModuleName);
+	// 	// #else
+	// 	// return ProcessInput(Parse(tokenList), ref currentModuleName);
+	// 	// #endif
+	// 	// }
+	// 	// else
+	// 	// {
+	// 	// return ProcessInput(parser.Parse(tokenList), ref currentModuleName);
+	// 	// }
+	// 	// #else
+	// 	// return ProcessInput(parser.Parse(tokenList));
+	// 	// #endif
 
-	//     public string ProcessInputString(string input)
-	//     {
-	//         string currentModuleName = string.Empty;
+	// 	return this.ProcessInput(this.parser.Parse(tokenList), currentModuleName);
+	// }
 
-	//         return ProcessTokenList(tokenizer.Tokenize(input), ref currentModuleName);
-	//     }
+	// public ProcessInputString(input: string):  string {
+	// 	// string currentModuleName = string.Empty;
+	// 	const currentModuleName = '';
+
+	// 	// return ProcessTokenList(tokenizer.Tokenize(input), ref currentModuleName);
+	// 	return this.ProcessTokenList(this.tokenizer.Tokenize(input), currentModuleName);
+	// }
 
 	//     public bool SetScoping(bool dynamicScoping)
 	//     {

@@ -10,7 +10,7 @@ import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
 import { PrologFloatLiteral } from './prolog-float-literal';
 import { PrologFunctor } from './prolog-functor';
-import { PrologGoal } from './prolog-goal';
+// import { PrologGoal } from './prolog-goal';
 import { PrologIntegerLiteral } from './prolog-integer-literal';
 import { PrologNameBase } from './prolog-name-base';
 import { PrologPredicate } from './prolog-predicate';
@@ -22,8 +22,8 @@ export class PrologNameExpression<T extends PrologNameBase>
 {
 	public readonly gs: LanguageSelector;
 	public readonly Name: T;
-	public readonly ExpressionList: IPrologExpression[] = [];
-	public DCGDoNotAddExtraArguments = false; // Part of Definite Clause Grammar support.
+	public readonly ExpressionList: IPrologExpression[];
+	// public DCGDoNotAddExtraArguments = false; // Part of Definite Clause Grammar support.
 
 	constructor(
 		gs: LanguageSelector,
@@ -35,6 +35,8 @@ export class PrologNameExpression<T extends PrologNameBase>
 
 		if (typeof expressionList !== 'undefined') {
 			this.ExpressionList = expressionList;
+		} else {
+			this.ExpressionList = [];
 		}
 	}
 
@@ -407,11 +409,15 @@ export class PrologNameExpression<T extends PrologNameBase>
 		}
 	}
 
-	public ToGoal(): PrologGoal {
-		return new PrologGoal(
-			this.gs,
-			new PrologPredicate(this.Name.Name),
-			this.ExpressionList
-		);
-	}
+	// The ToGoal() method was causing a circular dependency:
+	// ReferenceError: Cannot access 'PrologNameExpression' before initialization
+	// See e.g. https://github.com/webpack/webpack/issues/12724
+
+	// public ToGoal(): PrologGoal {
+	// 	return new PrologGoal(
+	// 		this.gs,
+	// 		new PrologPredicate(this.Name.Name),
+	// 		this.ExpressionList
+	// 	);
+	// }
 }

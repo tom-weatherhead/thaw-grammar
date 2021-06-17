@@ -7,6 +7,9 @@ import { PrologNameExpression } from './prolog-name-expression';
 import { PrologPredicate } from './prolog-predicate';
 import { PrologSubstitution } from './prolog-substitution';
 
+// ReferenceError: Cannot access 'PrologNameExpression' before initialization
+// -> Circular dependency? See e.g. https://github.com/webpack/webpack/issues/12724
+
 export class PrologGoal extends PrologNameExpression<PrologPredicate> {
 	//public bool DCGDoNotAddExtraArguments = false; // Part of Definite Clause Grammar support.
 

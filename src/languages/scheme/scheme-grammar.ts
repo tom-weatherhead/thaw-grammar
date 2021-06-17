@@ -15,8 +15,6 @@
 // VarExprList -> Lambda
 // BracketedExpression -> call/cc Expression
 
-'use strict';
-
 import { Stack } from 'thaw-common-utilities.ts';
 
 import { LexicalState, Token } from 'thaw-lexical-analyzer';

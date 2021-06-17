@@ -25,5 +25,8 @@ export { Chapter1GlobalInfo } from './languages/chapter1/domain-object-model/glo
 export { ISExpression } from './languages/lisp/domain-object-model/isexpression';
 export { LISPGlobalInfo } from './languages/lisp/domain-object-model/lisp-global-info';
 export { MinimalLanguageGlobalInfo } from './languages/minimal/domain-object-model/global-info';
+
+export { IPrologExpression } from './languages/prolog/domain-object-model/iprolog-expression';
 export { PrologGlobalInfo } from './languages/prolog/domain-object-model/prolog-global-info';
+
 export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';

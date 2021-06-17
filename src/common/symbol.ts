@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/symbols.ts
 
-'use strict';
-
 export enum Symbol {
 	UndefinedSymbol = 0,
 	Lambda,
@@ -76,6 +74,13 @@ export enum Symbol {
 	terminalLetRec,
 	terminalCallCC,
 
+	// Prolog terminals
+	terminalNameBeginningWithCapital,
+	terminalNameNotBeginningWithCapital,
+	terminalFrom,
+	terminalInferPred,
+	// terminal,
+
 	terminalEOF,
 
 	// Non-terminal symbols
@@ -119,5 +124,18 @@ export enum Symbol {
 
 	nonterminalBracketedInput,
 	nonterminalUnbracketedInput,
-	nonterminalSExpressionListTail
+	nonterminalSExpressionListTail,
+
+	// Prolog non-terminals
+	nonterminalClause,
+	nonterminalQuery,
+	nonterminalGoal,
+	nonterminalLHSGoal,
+	nonterminalClauseTail,
+	nonterminalLHSGoalTail,
+	nonterminalFunctor,
+	nonterminalGoalWithPossibleDisjunctiveTail,
+	nonterminalGoalList,
+	nonterminalPossibleDisjunctiveTail // ,
+	// nonterminal,
 }
