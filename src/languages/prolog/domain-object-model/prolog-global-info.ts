@@ -2,6 +2,7 @@
 
 import { Set } from 'thaw-common-utilities.ts';
 
+// ITokenizer,
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
@@ -42,8 +43,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	public static readonly Satisfied = 'Satisfied';
 	public static readonly NotSatisfied = 'Not satisfied';
 	//     //public readonly List<PrologClause> ClauseList = new List<PrologClause>();
-	//     public readonly LanguageSelector gs;
-	//     public readonly ITokenizer tokenizer;
+	// public readonly gs: LanguageSelector;
+	// public readonly tokenizer: ITokenizer;
 	//     public readonly IParser parser;
 	private variableRenameNum = 0;
 	//     private bool allMode = false;    // Determines how many solutions we will search for.  false means "first" mode; true means "all" mode.
@@ -65,8 +66,12 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	private readonly DefaultModule = new PrologModule();
 	private readonly dictModules = new Map<string, PrologModule>(); // The keys are file paths.
 
+	// constructor(gs: LanguageSelector, t: ITokenizer) {
 	constructor() {
 		super();
+
+		// this.gs = gs;
+		// this.tokenizer = t;
 	}
 
 	//     public PrologGlobalInfo(LanguageSelector gs, ITokenizer t, IParser p)
@@ -3770,12 +3775,15 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// 	return this.ProcessInput(this.parser.Parse(tokenList), currentModuleName);
 	// }
 
-	// public ProcessInputString(input: string):  string {
+	// public ProcessInputString(input: string): string {
 	// 	// string currentModuleName = string.Empty;
 	// 	const currentModuleName = '';
 
 	// 	// return ProcessTokenList(tokenizer.Tokenize(input), ref currentModuleName);
-	// 	return this.ProcessTokenList(this.tokenizer.Tokenize(input), currentModuleName);
+	// 	return this.ProcessTokenList(
+	// 		this.tokenizer.tokenize(input),
+	// 		currentModuleName
+	// 	);
 	// }
 
 	//     public bool SetScoping(bool dynamicScoping)
