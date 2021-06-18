@@ -2973,6 +2973,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		// if (parseResult is PrologClause) {
 		// if (inputTypeName === PrologClause.name) {
+		// if (clause instanceof PrologClause) {
 		if (typeof goalList.length === 'undefined') {
 			// var clause = (PrologClause)parseResult;
 			const currentModule = this.FindModule(currentModuleName);
@@ -3003,6 +3004,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			return PrologGlobalInfo.ClauseAdded;
 			// } else if (parseResult is List<PrologGoal>) {
+			// } else if (goalList instanceof PrologGoal[]) {
 		} else if (typeof goalList !== 'undefined') {
 			// var goalList = new List<PrologGoal>((List<PrologGoal>)parseResult);
 			// var cutDetectorList = new List<CutDetector>();
@@ -3046,15 +3048,21 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// return sbOutput.ToString();
 
 			if (typeof substitution !== 'undefined') {
-				console.log(
-					'Satisfying substitution is:',
-					substitution.toString()
-				);
+				// console.log(
+				// 	'Satisfying substitution is:',
+				// 	substitution.toString()
+				// );
+
+				return `Satisfying substitution is: ${substitution.toString()}\n${
+					PrologGlobalInfo.Satisfied
+				}`;
 			}
 
-			return typeof substitution !== 'undefined'
-				? PrologGlobalInfo.Satisfied
-				: PrologGlobalInfo.NotSatisfied;
+			// return typeof substitution !== 'undefined'
+			// 	? PrologGlobalInfo.Satisfied
+			// 	: PrologGlobalInfo.NotSatisfied;
+
+			return PrologGlobalInfo.NotSatisfied;
 		} else if (typeof parseResult === 'undefined') {
 			throw new Error(
 				'PrologGlobalInfo.ProcessInput() : parseResult is undefined'

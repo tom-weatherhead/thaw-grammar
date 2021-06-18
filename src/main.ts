@@ -27,6 +27,8 @@ export { LISPGlobalInfo } from './languages/lisp/domain-object-model/lisp-global
 export { MinimalLanguageGlobalInfo } from './languages/minimal/domain-object-model/global-info';
 
 export { IPrologExpression } from './languages/prolog/domain-object-model/iprolog-expression';
+export { PrologClause } from './languages/prolog/domain-object-model/prolog-clause';
 export { PrologGlobalInfo } from './languages/prolog/domain-object-model/prolog-global-info';
+export { PrologGoal } from './languages/prolog/domain-object-model/prolog-goal';
 
 export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';
