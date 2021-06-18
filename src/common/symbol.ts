@@ -134,6 +134,7 @@ export enum Symbol {
 	nonterminalClauseTail,
 	nonterminalLHSGoalTail,
 	nonterminalFunctor,
+	nonterminalFunctorParameters,
 	nonterminalGoalWithPossibleDisjunctiveTail,
 	nonterminalGoalList,
 	nonterminalPossibleDisjunctiveTail // ,

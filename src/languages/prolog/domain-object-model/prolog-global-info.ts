@@ -449,6 +449,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		obj: IPrologExpression | PrologFunctor | string
 	): PrologNameExpression<PrologFunctor> {
 		let functorExpression: PrologNameExpression<PrologFunctor>;
+		// TODO 2021-06-17: Use instanceof? I.e. if (obj instanceof PrologFunctor) {}
+		// See e.g. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof
 		const a = obj as PrologNameExpression<PrologFunctor>;
 		const b = obj as PrologFunctor;
 		const c = obj as PrologVariable;

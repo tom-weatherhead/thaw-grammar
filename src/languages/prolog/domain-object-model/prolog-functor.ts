@@ -4,6 +4,7 @@ import { PrologNameBase } from './prolog-name-base';
 
 export class PrologFunctor extends PrologNameBase {
 	constructor(name: string) {
+		// The name must not begin with a capital letter.
 		super(name);
 	}
 
