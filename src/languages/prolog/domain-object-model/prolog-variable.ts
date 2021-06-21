@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-variable.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { IEqualityComparable, Set } from 'thaw-common-utilities.ts';
 
 import { setToArray } from './prolog-global-info';
 
@@ -10,7 +10,7 @@ import { PrologClause } from './prolog-clause';
 import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';
 
-export class PrologVariable implements IPrologExpression {
+export class PrologVariable implements IEqualityComparable, IPrologExpression {
 	public readonly Name: string;
 
 	constructor(name: string) {
@@ -32,7 +32,8 @@ export class PrologVariable implements IPrologExpression {
 		return this.Name;
 	}
 
-	public Equals(obj: unknown): boolean {
+	// public Equals(obj: unknown): boolean {
+	public strictEquals(obj: unknown): boolean {
 		// if (object.ReferenceEquals(this, obj))
 		// {
 		//     return true;
@@ -42,6 +43,10 @@ export class PrologVariable implements IPrologExpression {
 
 		// We can compare the Name members with == because Name is a string.
 		return typeof otherVar !== 'undefined' && this.Name === otherVar.Name;
+	}
+
+	public Equals(obj: unknown): boolean {
+		return this.strictEquals(obj);
 	}
 
 	// public override int GetHashCode()

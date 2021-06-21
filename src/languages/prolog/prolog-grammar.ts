@@ -649,7 +649,7 @@ export class PrologGrammar extends GrammarBase {
 		let variableList: PrologVariable[];
 		let functorExpr: PrologNameExpression<PrologFunctor>;
 		let functorExpr2: PrologNameExpression<PrologFunctor>;
-		let functorExpr3: PrologNameExpression<PrologFunctor>;
+		// let functorExpr3: PrologNameExpression<PrologFunctor>;
 		let clause: PrologClause;
 
 		switch (action) {
@@ -681,7 +681,9 @@ export class PrologGrammar extends GrammarBase {
 
 			case '#convertExpressionToFunctorExpression':
 				semanticStack.push(
-					this.PopAndConvertToFunctorExpression(semanticStack, action)
+					this.PopAndConvertToFunctorExpression(
+						semanticStack /*, action */
+					)
 				);
 				break;
 
@@ -1092,8 +1094,8 @@ export class PrologGrammar extends GrammarBase {
 	}
 
 	private PopAndConvertToFunctorExpression(
-		semanticStack: Stack<any>,
-		action: string
+		semanticStack: Stack<any> // ,
+		// action: string
 	): PrologNameExpression<PrologFunctor> {
 		const obj = semanticStack.pop();
 		const functorExpression =

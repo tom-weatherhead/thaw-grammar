@@ -2633,7 +2633,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			`ProveGoalListUsingModule() : The variables to avoid for goal ${goal} are:`
 		);
 
-		for (const bv of variablesToAvoid.toArray()) {
+		// for (const bv of variablesToAvoid.toArray()) {
+		for (const bv of variablesToAvoid) {
 			console.log(`  ${bv}`);
 		}
 
@@ -3087,7 +3088,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		} else if (
 			goalList instanceof Array &&
 			goalList.length > 0 &&
-			goalList[0] instanceof PrologGoal
+			// goalList[0] instanceof PrologGoal
+			goalList.every((g: unknown) => g instanceof PrologGoal)
 		) {
 			// var goalList = new List<PrologGoal>((List<PrologGoal>)parseResult);
 			// var cutDetectorList = new List<CutDetector>();
@@ -3100,6 +3102,11 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// goalList.forEach((g: PrologGoal) =>
 			// 	listOfCurrentModules.push(this.DefaultModule)
 			// );
+
+			console.log(
+				`1) goalList of length ${goalList.length} is:`,
+				goalList.join(', ')
+			);
 
 			for (let i = 0; i < goalList.length; i++) {
 				listOfCurrentModules.push(this.DefaultModule);
@@ -3136,7 +3143,45 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				// 	substitution.toString()
 				// );
 
-				return `Satisfying substitution is: ${substitution.toString()}\n${
+				console.log(
+					`2) goalList of length ${goalList.length} is:`,
+					goalList.join(', ')
+				);
+
+				// Create a subset of 'substitution' that contains only the values for the binding variables in goalList.
+				const setOfBindingVariables = new Set<PrologVariable>();
+
+				for (const goal of goalList) {
+					setOfBindingVariables.unionInPlace(
+						goal.FindBindingVariables()
+					);
+				}
+
+				console.log(
+					'setOfBindingVariables:',
+					setOfBindingVariables.toArray().join(', ')
+				);
+
+				const substitutionsForBindingVariables =
+					new PrologSubstitution();
+
+				for (const v of setOfBindingVariables) {
+					const key = v.toString();
+					const value = substitution.SubstitutionList.get(key);
+
+					if (typeof value !== 'undefined') {
+						substitutionsForBindingVariables.SubstitutionList.set(
+							key,
+							value
+						);
+					}
+				}
+
+				// return `Satisfying substitution is: ${substitution.toString()}\n${
+				// 	PrologGlobalInfo.Satisfied
+				// }`;
+
+				return `Satisfying substitution is: ${substitutionsForBindingVariables.toString()}\n${
 					PrologGlobalInfo.Satisfied
 				}`;
 			}

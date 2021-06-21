@@ -13,7 +13,7 @@ import { PrologFunctor } from './prolog-functor';
 // import { PrologGoal } from './prolog-goal';
 import { PrologIntegerLiteral } from './prolog-integer-literal';
 import { PrologNameBase } from './prolog-name-base';
-import { PrologPredicate } from './prolog-predicate';
+// import { PrologPredicate } from './prolog-predicate';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 

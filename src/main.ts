@@ -30,5 +30,6 @@ export { IPrologExpression } from './languages/prolog/domain-object-model/iprolo
 export { PrologClause } from './languages/prolog/domain-object-model/prolog-clause';
 export { PrologGlobalInfo } from './languages/prolog/domain-object-model/prolog-global-info';
 export { PrologGoal } from './languages/prolog/domain-object-model/prolog-goal';
+export { PrologVariable } from './languages/prolog/domain-object-model/prolog-variable';
 
 export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';

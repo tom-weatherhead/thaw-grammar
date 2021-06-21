@@ -8,7 +8,7 @@ import { PrologGlobalInfo, setToArray } from './prolog-global-info';
 import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
-import { StringIntKey } from './string-int-key';
+// import { StringIntKey } from './string-int-key';
 
 export class PrologClause implements IPrologExpression {
 	public readonly Lhs: PrologGoal;
