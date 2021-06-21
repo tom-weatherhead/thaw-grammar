@@ -36,11 +36,14 @@ export class PrologGrammar extends GrammarBase {
 		this.terminals.push(Symbol.terminalSemicolon);
 		this.terminals.push(Symbol.terminalLeftBracket);
 		this.terminals.push(Symbol.terminalRightBracket);
+		this.terminals.push(Symbol.terminalLeftSquareBracket);
+		this.terminals.push(Symbol.terminalRightSquareBracket);
 		this.terminals.push(Symbol.terminalNameBeginningWithCapital);
 		this.terminals.push(Symbol.terminalNameNotBeginningWithCapital);
 		this.terminals.push(Symbol.terminalFrom);
 		this.terminals.push(Symbol.terminalInferPred);
 		this.terminals.push(Symbol.terminalIntegerLiteral);
+		this.terminals.push(Symbol.terminalOrBar);
 		// this.terminals.push(Symbol.terminal);
 
 		this.terminals.push(Symbol.terminalEOF);
@@ -84,6 +87,9 @@ export class PrologGrammar extends GrammarBase {
 		this.nonTerminals.push(Symbol.nonterminalGoalList);
 		// this.nonTerminals.push(Symbol.nonterminalPossibleDisjunctiveTail);
 		this.nonTerminals.push(Symbol.nonterminalVariable);
+		this.nonTerminals.push(Symbol.nonterminalList);
+		this.nonTerminals.push(Symbol.nonterminalListContents);
+		this.nonTerminals.push(Symbol.nonterminalListContentsTail);
 		// this.nonTerminals.push(Symbol.nonterminal);
 
 		// Non-Terminals:
@@ -526,6 +532,96 @@ export class PrologGrammar extends GrammarBase {
 		// // Sequences.
 
 		// ...
+
+		// // Lists.
+		// AddProduction(Symbol.N_Expression, new List<object>() { Symbol.N_List, Symbol.N_ListTail });
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalExpression,
+				[
+					Symbol.nonterminalList // , Symbol.nonterminalListTail
+				],
+				30
+			)
+		);
+
+		// AddProduction(Symbol.N_List, new List<object>() {
+		// Symbol.T_LeftSquareBracket, Symbol.N_ListContents, Symbol.T_RightSquareBracket });
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalList,
+				[
+					Symbol.terminalLeftSquareBracket,
+					Symbol.nonterminalListContents,
+					Symbol.terminalRightSquareBracket
+				],
+				31
+			)
+		);
+
+		// AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.Lambda, "#nil" });
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContents,
+				[Symbol.Lambda, '#nil'],
+				32
+			)
+		);
+
+		// AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContents,
+				[
+					Symbol.nonterminalExpression,
+					Symbol.nonterminalListContentsTail,
+					'#cons'
+				],
+				33
+			)
+		);
+
+		// AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.Lambda, "#nil" });
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContentsTail,
+				[Symbol.Lambda, '#nil'],
+				34
+			)
+		);
+
+		// AddProduction(Symbol.N_ListContentsTail, new List<object>() {
+		// Symbol.T_Comma, Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContentsTail,
+				[
+					Symbol.terminalComma,
+					Symbol.nonterminalExpression,
+					Symbol.nonterminalListContentsTail,
+					'#cons'
+				],
+				35
+			)
+		);
+
+		// AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.T_OrBar, Symbol.N_Expression });
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContentsTail,
+				[Symbol.terminalOrBar, Symbol.nonterminalExpression],
+				36
+			)
+		);
+
+		// AddProduction(Symbol.N_ListTail, new List<object>() { Symbol.Lambda });
+		// AddProduction(Symbol.N_ListTail, new List<object>() {
+		// Symbol.N_OpType_EqualOrUnifiable, Symbol.N_Expression, "#infix" });
+		// AddProduction(Symbol.N_Expression, new List<object>() {
+		// Symbol.T_Dot, Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.T_Comma, Symbol.N_Expression, Symbol.T_RightBracket, "#cons",
+		// Symbol.N_InfixNonArithmeticPredicateTail });
+
+		// ...
 	}
 
 	public get languageName(): string {
@@ -799,10 +895,10 @@ export class PrologGrammar extends GrammarBase {
 				);
 		}
 
-		console.log(
-			'PrologGrammar.executeSemanticAction() : action is:',
-			action
-		);
+		// console.log(
+		// 	'PrologGrammar.executeSemanticAction() : action is:',
+		// 	action
+		// );
 
 		// switch (action) {
 		// 	case '#':
@@ -889,17 +985,20 @@ export class PrologGrammar extends GrammarBase {
 				return Symbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
 				return Symbol.terminalRightBracket;
+			case LexicalState.tokenLeftSquareBracket:
+				return Symbol.terminalLeftSquareBracket;
+			case LexicalState.tokenRightSquareBracket:
+				return Symbol.terminalRightSquareBracket;
 			case LexicalState.tokenComma:
 				return Symbol.terminalComma;
 			case LexicalState.tokenDot:
 				return Symbol.terminalDot;
 			case LexicalState.tokenSemicolon:
 				return Symbol.terminalSemicolon;
+			case LexicalState.tokenOrBar:
+				return Symbol.terminalOrBar;
 
 			// case TokenType.T_StrLit2: return Symbol.T_NameNotBeginningWithCapital; // The contents of a single-quoted string.
-			// case TokenType.T_LeftSquareBracket: return Symbol.T_LeftSquareBracket;
-			// case TokenType.T_RightSquareBracket: return Symbol.T_RightSquareBracket;
-			// case TokenType.T_OrBar: return Symbol.T_OrBar;
 			// case TokenType.T_LeftCurlyBrace: return Symbol.T_LeftCurlyBrace;
 			// case TokenType.T_RightCurlyBrace: return Symbol.T_RightCurlyBrace;
 			// case TokenType.T_Colon: return Symbol.T_Colon;

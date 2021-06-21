@@ -20,7 +20,17 @@ export class PrologClause implements IPrologExpression {
 	}
 
 	public toString(): string {
-		return 'PrologClause.toString()';
+		// return 'PrologClause.toString()';
+
+		let tail = '';
+
+		if (this.Rhs.length > 0) {
+			tail =
+				' :- ' +
+				this.Rhs.map((goal: PrologGoal) => goal.toString()).join(', ');
+		}
+
+		return this.Lhs.toString() + tail;
 	}
 
 	// public override string ToString()
@@ -116,16 +126,34 @@ export class PrologClause implements IPrologExpression {
 		);
 	}
 
+	private isVariableInArrayOfVariables(
+		v: PrologVariable,
+		a: PrologVariable[]
+	): boolean {
+		return (
+			typeof a.find((vv: PrologVariable) => vv.Name === v.Name) !==
+			'undefined'
+		);
+	}
+
 	public RenameVariables(
 		variablesToAvoid: Set<PrologVariable>,
 		globalInfo: PrologGlobalInfo
 	): PrologClause {
 		const oldVariables = this.FindBindingVariables();
 		const substitution = new PrologSubstitution();
+		const arrayOfOldVariables = oldVariables.toArray();
+		const arrayOfVariablesToAvoid = variablesToAvoid.toArray();
 
 		// for (const oldVariable of oldVariables.getIterator()) {
-		for (const oldVariable of setToArray(oldVariables)) {
-			if (!variablesToAvoid.contains(oldVariable)) {
+		for (const oldVariable of oldVariables.toArray()) {
+			// if (!variablesToAvoid.contains(oldVariable)) {
+			if (
+				!this.isVariableInArrayOfVariables(
+					oldVariable,
+					arrayOfVariablesToAvoid
+				)
+			) {
 				continue;
 			}
 
@@ -133,9 +161,20 @@ export class PrologClause implements IPrologExpression {
 
 			do {
 				newVariable = globalInfo.GetNextUniqueVariable();
+				console.log(
+					`Clause.RenameVariables() : Name of new uniqueVariable: '${newVariable.Name}'`
+				);
 			} while (
-				oldVariables.contains(newVariable) ||
-				variablesToAvoid.contains(newVariable)
+				// oldVariables.contains(newVariable) ||
+				// variablesToAvoid.contains(newVariable)
+				this.isVariableInArrayOfVariables(
+					newVariable,
+					arrayOfOldVariables
+				) ||
+				this.isVariableInArrayOfVariables(
+					newVariable,
+					arrayOfVariablesToAvoid
+				)
 			);
 
 			substitution.SubstitutionList.set(oldVariable.Name, newVariable); // This is safe because all of the oldVariables and newVariables are unique.

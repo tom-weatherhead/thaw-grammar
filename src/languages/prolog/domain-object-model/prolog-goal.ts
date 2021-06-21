@@ -21,9 +21,9 @@ export class PrologGoal extends PrologNameExpression<PrologPredicate> {
 		super(gsParam, predicate, expressionList);
 	}
 
-	public toString(): string {
-		return 'PrologGoal.toString()';
-	}
+	// public toString(): string {
+	// 	return 'PrologGoal.toString()';
+	// }
 
 	public ApplySubstitution(
 		substitution: PrologSubstitution

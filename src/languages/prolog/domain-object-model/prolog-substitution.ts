@@ -26,24 +26,18 @@ export class PrologSubstitution {
 	}
 
 	public toString(): string {
-		// return 'PrologSubstitution.toString()';
-
 		const result: string[] = [];
 
 		for (const v of this.SubstitutionList.keys()) {
 			const expr = this.SubstitutionList.get(v);
 
 			if (typeof v !== 'undefined') {
-				result.push(`?${v} -> ${expr}`);
+				result.push(`${v} -> ${expr}`);
 			}
 		}
 
-		return '[' + result.join(';') + ']';
+		return '[' + result.join('; ') + ']';
 	}
-	// public string ToString()
-	// {
-	//     return string.Join("; ", SubstitutionList.Keys.Select(key => string.Format("{0} <= {1}", key, SubstitutionList[key])));
-	// }
 
 	public Compose(otherSub: PrologSubstitution): PrologSubstitution {
 		const newSub = new PrologSubstitution();

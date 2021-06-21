@@ -79,44 +79,41 @@ export class PrologNameExpression<T extends PrologNameBase>
 	}
 
 	public toString(): string {
-		// const nameAsString = this.Name.toString();
-		// const isProlog2FunctorExpression = this.gs === LanguageSelector.Prolog2 && this.Name.constructor.name === PrologFunctor.name;
+		const nameAsString = this.Name.toString();
+		const isProlog2FunctorExpression =
+			this.gs === LanguageSelector.Prolog2 &&
+			this.Name.constructor.name === PrologFunctor.name;
 
-		// if (ExpressionList.Count == 0)
-		// {
-		// // #if DEAD_CODE
-		// // if (isProlog2FunctorExpression && nameAsString == "nil")
-		// // {
-		// // 	return "[]";
-		// // }
-		// // #endif
-		// return nameAsString;
-		// }
-		// else if (gs == LanguageSelector.Prolog)
-		// {
-		// return string.Format("({0} {1})", Name, string.Join(" ", ExpressionList.Select(expr => expr.ToString())));
-		// }
-		// else
-		// {
-
-		// if (isProlog2FunctorExpression && ExpressionList.Count == 2)
-		// {
-
-		// if (nameAsString == ".")
-		// {
-		// return string.Format("[{0}{1}]", ExpressionList[0], ListToString(ExpressionList[1]));
-		// }
-		// else if (nameAsString == "consSeq")
-		// {
-		// // #if DEAD_CODE
-		// // return string.Format("{0}, {1}", ExpressionList[0], SequenceToString(ExpressionList[1]));
-		// // #else
-		// // ThAW 2014/03/28 : I added the brackets here because without them, ?- X = [(1, 2), (3, 4)], print(X). yielded [1, 2, 3, 4],
-		// // which was misleading.
-		// return string.Format("({0}, {1})", ExpressionList[0], SequenceToString(ExpressionList[1]));
-		// // #endif
-		// }
-		// }
+		if (this.ExpressionList.length === 0) {
+			// #if DEAD_CODE
+			// if (isProlog2FunctorExpression && nameAsString == "nil")
+			// {
+			// 	return "[]";
+			// }
+			// #endif
+			return nameAsString;
+			// } else if (gs === LanguageSelector.Prolog) {
+			// 	return string.Format("({0} {1})", Name, string.Join(" ", ExpressionList.Select(expr => expr.ToString())));
+		} else if (
+			isProlog2FunctorExpression &&
+			this.ExpressionList.length === 2
+		) {
+			if (nameAsString === '.') {
+				return `[${this.ExpressionList[0]}${this.ListToString(
+					this.ExpressionList[1]
+				)}]`;
+			} else if (nameAsString === 'consSeq') {
+				// #if DEAD_CODE
+				// return string.Format("{0}, {1}", ExpressionList[0], SequenceToString(ExpressionList[1]));
+				// #else
+				// ThAW 2014/03/28 : I added the brackets here because without them, ?- X = [(1, 2), (3, 4)], print(X). yielded [1, 2, 3, 4],
+				// which was misleading.
+				return `(${this.ExpressionList[0]}, ${this.SequenceToString(
+					this.ExpressionList[1]
+				)})`;
+				// #endif
+			}
+		}
 
 		// return string.Format("{0}({1})", Name, string.Join(", ", ExpressionList.Select(expr => expr.ToString())));
 		// }

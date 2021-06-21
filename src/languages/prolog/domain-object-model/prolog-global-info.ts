@@ -2220,8 +2220,17 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		variablesInQuery: PrologVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
 		listOfCurrentModules: PrologModule[]
 	): PrologSubstitution | undefined {
+		console.log(
+			`ProveGoalList() : Proving goal ${goalNum} of ${goalList.length}...`
+		);
+
 		if (goalNum >= goalList.length) {
 			// The goal list has been satisfied.
+
+			console.log(
+				`The goal list of length ${goalList.length} has been satisfied`
+			);
+			console.log('Substitution', oldSubstitution.toString());
 
 			// **** Begin automatic printing ****
 			// const lastGoal =
@@ -2298,6 +2307,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		const currentModule = listOfCurrentModules[goalNum];
 		const nextGoalNum = goalNum + 1;
 
+		console.log('unsubstitutedGoal is', unsubstitutedGoal.toString());
+		console.log('oldSubstitution is', oldSubstitution.toString());
+
 		// #if CONSOLE_WRITELINE
 		// console.log(
 		// 	`ProveGoal: unsubstitutedGoal = ${unsubstitutedGoal}; subst = ${oldSubstitution}`
@@ -2327,12 +2339,16 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			oldSubstitution
 		) as PrologGoal;
 
+		console.log('1) substituted goal is', goal.toString());
+
 		// #if CONSOLE_WRITELINE
 		// Console.WriteLine("ProveGoal: goal after substitution = {0}", goal);
 		// #endif
 
-		// const numArgsInGoal = goal.ExpressionList.length;
-		// const functionKey = new StringIntKey(goal.Name.Name, numArgsInGoal);
+		const numArgsInGoal = goal.ExpressionList.length;
+		const functionKey = new StringIntKey(goal.Name.Name, numArgsInGoal);
+
+		console.log('Goal signature is', functionKey.toString());
 
 		// if (dictBuiltInPredicates.ContainsKey(functionKey)) {
 		// 	var unifier = dictBuiltInPredicates[functionKey](goal);
@@ -2544,6 +2560,11 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		);
 
 		if (typeof resultSubstitution !== 'undefined') {
+			console.log(
+				'1) Returning resultSubstitution:',
+				resultSubstitution.toString()
+			);
+
 			return resultSubstitution;
 		}
 
@@ -2554,6 +2575,12 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		for (const key of currentModule.ImportList.keys()) {
 			const v = currentModule.ImportList.get(key);
+
+			console.log(
+				'currentModule.ImportList key and value are',
+				key,
+				typeof v !== 'undefined' ? v.toString() : '<undefined>'
+			);
 
 			if (key === goalSignature && typeof v !== 'undefined') {
 				resultSubstitution = this.ProveGoalListUsingModule(
@@ -2569,12 +2596,19 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				);
 
 				if (typeof resultSubstitution !== 'undefined') {
+					console.log(
+						'2) Returning resultSubstitution:',
+						resultSubstitution.toString()
+					);
+
 					return resultSubstitution;
 				}
 			}
-
-			return undefined;
 		}
+
+		console.log('No resultSubstitution; returning undefined');
+
+		return undefined;
 	}
 
 	private ProveGoalListUsingModule(
@@ -2588,10 +2622,20 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		currentModule: PrologModule,
 		listOfCurrentModules: PrologModule[]
 	): PrologSubstitution | undefined {
+		// console.log('ProveGoalListUsingModule() : currentModule name is', currentModule.Name);
+
 		const variablesToAvoid = goal.FindBindingVariables();
 
 		variablesToAvoid.unionInPlace(parentVariablesToAvoid);
 		variablesToAvoid.unionInPlace(oldSubstitution.FindBindingVariables());
+
+		console.log(
+			`ProveGoalListUsingModule() : The variables to avoid for goal ${goal} are:`
+		);
+
+		for (const bv of variablesToAvoid.toArray()) {
+			console.log(`  ${bv}`);
+		}
 
 		// #if CONSOLE_WRITELINE
 		// Console.WriteLine("ProveGoal: *** Trying to prove goal {0}", goal);
@@ -2599,7 +2643,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// #endif
 
 		// Iterate over a copy of the ClauseList to protect against InvalidOperationExceptions due to assert*/retract*.
-		const clauseListCopy = currentModule.ClauseList.slice();
+		const clauseListCopy = currentModule.ClauseList.slice(0);
 
 		// console.log(
 		// 	'typeof clauseListCopy is:',
@@ -2607,18 +2651,35 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// 	clauseListCopy.constructor.name
 		// );
 
+		console.log('ProveGoalListUsingModule() : goal is:', goal.toString());
+		console.log(
+			`ProveGoalListUsingModule() : Module contains ${currentModule.ClauseList.length} clause(s).`
+		);
+
 		for (const clause of clauseListCopy) {
 			// console.log(
 			// 	'typeof clause is:',
 			// 	typeof clause,
 			// 	clause.constructor.name
 			// );
+			console.log(
+				'ProveGoalListUsingModule() : clause is:',
+				clause.toString()
+			);
 
 			const newClause = clause.RenameVariables(variablesToAvoid, this);
+
+			console.log(
+				'ProveGoalListUsingModule() : clause with renamed variables is:',
+				newClause.toString()
+			);
 
 			// #if CONSOLE_WRITELINE
 			// Console.WriteLine("ProveGoal: Trying to unify goal {0} with Lhs of clause {1}", goal, newClause);
 			// #endif
+			console.log(
+				`ProveGoalListUsingModule() : Attempting to unify ${goal} with the clause LHS ${newClause.Lhs}...`
+			);
 
 			const unifier = newClause.Lhs.Unify(goal);
 
@@ -2626,17 +2687,29 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				// #if CONSOLE_WRITELINE
 				// Console.WriteLine("ProveGoal: Unification failed.");
 				// #endif
+				console.log('ProveGoalListUsingModule() : Unification failed.');
+
 				continue;
 			}
 
 			// #if CONSOLE_WRITELINE
 			// Console.WriteLine("ProveGoal: goal unifies with Lhs of clause: {0}", newClause);
+			console.log(
+				`ProveGoalListUsingModule() : goal ${goal} unifies with Lhs of clause ${newClause}`
+			);
+
 			// Console.WriteLine("ProveGoal: unifier is: {0}", unifier);
+			console.log(`ProveGoalListUsingModule() : unifier is: ${unifier}`);
+
 			// //Console.WriteLine("ProveGoal: Composing unifier with substitution: {0}", oldSubstitution);
 			// #endif
 
 			let localSubstitution: PrologSubstitution | undefined =
 				oldSubstitution.Compose(unifier);
+
+			console.log(
+				`ProveGoalListUsingModule() : The composition of substitutions ${oldSubstitution} and ${unifier} is ${localSubstitution}`
+			);
 
 			// #if CONSOLE_WRITELINE
 			// Console.WriteLine("ProveGoal: Composed substitution: {0}", localSubstitution);
@@ -2961,20 +3034,23 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		const clause = parseResult as PrologClause;
 		const goalList = parseResult as PrologGoal[];
 
-		// console.log('ProcessInput() : parseResult as PrologClause is:', clause);
-		// console.log(
-		// 	'ProcessInput() : parseResult as PrologGoal[] is:',
-		// 	goalList
-		// );
-		// console.log(
-		// 	'ProcessInput() : typeof parseResult.length is:',
-		// 	typeof goalList.length
-		// );
+		console.log(
+			'ProcessInput() : parseResult as PrologClause is:',
+			clause.toString()
+		);
+		console.log(
+			'ProcessInput() : parseResult as PrologGoal[] is:',
+			goalList
+		);
+		console.log(
+			'ProcessInput() : typeof parseResult.length is:',
+			typeof goalList.length
+		);
 
 		// if (parseResult is PrologClause) {
 		// if (inputTypeName === PrologClause.name) {
-		// if (clause instanceof PrologClause) {
-		if (typeof goalList.length === 'undefined') {
+		// if (typeof goalList.length === 'undefined') {
+		if (clause instanceof PrologClause) {
 			// var clause = (PrologClause)parseResult;
 			const currentModule = this.FindModule(currentModuleName);
 
@@ -3000,12 +3076,19 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// }
 
 			//Console.WriteLine("Adding clause '{0}' to module '{1}'.", clause, currentModuleName);
+			console.log(
+				`Adding clause '${clause}' to module '${currentModuleName}'.`
+			);
 			currentModule.ClauseList.push(clause);
 
 			return PrologGlobalInfo.ClauseAdded;
 			// } else if (parseResult is List<PrologGoal>) {
-			// } else if (goalList instanceof PrologGoal[]) {
-		} else if (typeof goalList !== 'undefined') {
+			// } else if (typeof goalList !== 'undefined') {
+		} else if (
+			goalList instanceof Array &&
+			goalList.length > 0 &&
+			goalList[0] instanceof PrologGoal
+		) {
 			// var goalList = new List<PrologGoal>((List<PrologGoal>)parseResult);
 			// var cutDetectorList = new List<CutDetector>();
 			const listOfCurrentModules: PrologModule[] = [];
