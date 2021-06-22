@@ -266,125 +266,132 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         allMode = true;
 	//     }
 
-	//     public string LoadPreset(string presetName)
-	//     {
+	// public LoadPreset(presetName: string): string {
+	// 	// if (LoadedPresets.Contains(presetName)) {
+	// 	if (presetName in this.LoadedPresets) {
+	// 		// return string.Format("The preset '{0}' has already been loaded.", presetName);
+	// 		return `The preset '${presetName}' has already been loaded.`;
+	// 	}
 
-	//         if (LoadedPresets.Contains(presetName))
-	//         {
-	//             return string.Format("The preset '{0}' has already been loaded.", presetName);
-	//         }
+	// 	switch (presetName) {
+	// 		// case "<=":
 
-	//         switch (presetName)
-	//         {
-	//             case "<=":
+	// 		// 	if (gs == LanguageSelector.Prolog)
+	// 		// 	{
+	// 		// 	ProcessInputString("(infer (<= X X))");
+	// 		// 	ProcessInputString("(infer (<= X Y) from (less X Y))");
+	// 		// 	}
+	// 		// 	else
+	// 		// 	{
+	// 		// 	ProcessInputString("'<='(X, Y) :- X =< Y.");
+	// 		// 	}
 
-	//                 if (gs == LanguageSelector.Prolog)
-	//                 {
-	//                     ProcessInputString("(infer (<= X X))");
-	//                     ProcessInputString("(infer (<= X Y) from (less X Y))");
-	//                 }
-	//                 else
-	//                 {
-	//                     ProcessInputString("'<='(X, Y) :- X =< Y.");
-	//                 }
+	// 		// 	break;
 
-	//                 break;
+	// 		// case "addtoend":
 
-	//             case "addtoend":
+	// 		// 	if (gs == LanguageSelector.Prolog)
+	// 		// 	{
+	// 		// 	// (addtoend L X M) means that M is the list obtained by adding X to the end of L.
+	// 		// 	ProcessInputString("(infer (addtoend nil X (cons X nil)))");
+	// 		// 	ProcessInputString("(infer (addtoend (cons Y L) X (cons Y M)) from (addtoend L X M))");
+	// 		// 	}
+	// 		// 	else
+	// 		// 	{
+	// 		// 	ProcessInputString("addtoend([], X, [X]).");
+	// 		// 	ProcessInputString("addtoend([Y | L], X, [Y | M]) :- addtoend(L, X, M).");
+	// 		// 	}
 
-	//                 if (gs == LanguageSelector.Prolog)
-	//                 {
-	//                     // (addtoend L X M) means that M is the list obtained by adding X to the end of L.
-	//                     ProcessInputString("(infer (addtoend nil X (cons X nil)))");
-	//                     ProcessInputString("(infer (addtoend (cons Y L) X (cons Y M)) from (addtoend L X M))");
-	//                 }
-	//                 else
-	//                 {
-	//                     ProcessInputString("addtoend([], X, [X]).");
-	//                     ProcessInputString("addtoend([Y | L], X, [Y | M]) :- addtoend(L, X, M).");
-	//                 }
+	// 		// 	break;
 
-	//                 break;
+	// 		case 'append':
+	// 			//case "append2": // The preset name "append2" is deprecated.
 
-	//             case "append":
-	//             //case "append2": // The preset name "append2" is deprecated.
+	// 			// if (gs == LanguageSelector.Prolog)
+	// 			// {
+	// 			// // (append L M N) means that N is the list obtained by appending M onto the end of L.
+	// 			// ProcessInputString("(infer (append nil L L))");
+	// 			// ProcessInputString("(infer (append (cons X L) M (cons X N)) from (append L M N))");
+	// 			// }
+	// 			// else
+	// 			// {
+	// 			this.ProcessInputString('append([], L, L).');
+	// 			this.ProcessInputString(
+	// 				'append([X | Y], L, [X | Z]) :- append(Y, L, Z).'
+	// 			);
+	// 			// }
 
-	//                 if (gs == LanguageSelector.Prolog)
-	//                 {
-	//                     // (append L M N) means that N is the list obtained by appending M onto the end of L.
-	//                     ProcessInputString("(infer (append nil L L))");
-	//                     ProcessInputString("(infer (append (cons X L) M (cons X N)) from (append L M N))");
-	//                 }
-	//                 else
-	//                 {
-	//                     ProcessInputString("append([], L, L).");
-	//                     ProcessInputString("append([X | Y], L, [X | Z]) :- append(Y, L, Z).");
-	//                 }
+	// 			break;
 
-	//                 break;
+	// 		case 'member':
+	// 			//case "member2": // The preset name "member2" is deprecated.
 
-	//             case "member":
-	//             //case "member2": // The preset name "member2" is deprecated.
+	// 			// if (gs == LanguageSelector.Prolog)
+	// 			// {
+	// 			// ProcessInputString("(infer (member X (cons X L)))");
+	// 			// ProcessInputString("(infer (member X (cons Y M)) from (member X M))");
+	// 			// }
+	// 			// else
+	// 			// {
+	// 			this.ProcessInputString('member(X, [X | _]).');
+	// 			this.ProcessInputString('member(X, [_ | T]) :- member(X, T).');
+	// 			// }
 
-	//                 if (gs == LanguageSelector.Prolog)
-	//                 {
-	//                     ProcessInputString("(infer (member X (cons X L)))");
-	//                     ProcessInputString("(infer (member X (cons Y M)) from (member X M))");
-	//                 }
-	//                 else
-	//                 {
-	//                     ProcessInputString("member(X, [X | _]).");
-	//                     ProcessInputString("member(X, [_ | T]) :- member(X, T).");
-	//                 }
+	// 			break;
 
-	//                 break;
+	// 		case 'permutation':
+	// 			this.LoadPreset('append');
+	// 			this.ProcessInputString('permutation([], []).');
+	// 			this.ProcessInputString(
+	// 				'permutation(L, [H | T]) :- append(V, [H | U], L), append(V, U, W), permutation(W, T).'
+	// 			);
+	// 			break;
 
-	//             case "permutation":
-	//                 LoadPreset("append");
-	//                 ProcessInputString("permutation([], []).");
-	//                 ProcessInputString("permutation(L, [H | T]) :- append(V, [H | U], L), append(V, U, W), permutation(W, T).");
-	//                 break;
+	// 		case 'rev': // Reverse a list.
+	// 			this.ProcessInputString(
+	// 				'accRev([H | T], A, R):-  accRev(T, [H | A], R).'
+	// 			);
+	// 			this.ProcessInputString('accRev([], A, A).');
+	// 			this.ProcessInputString('rev(L, R) :- accRev(L, [], R).');
+	// 			break;
 
-	//             case "rev": // Reverse a list.
-	//                 ProcessInputString("accRev([H | T], A, R):-  accRev(T, [H | A], R).");
-	//                 ProcessInputString("accRev([], A, A).");
-	//                 ProcessInputString("rev(L, R) :- accRev(L, [], R).");
-	//                 break;
+	// 		// case "succ":
+	// 		// 	ProcessInputString("intToSucc(0, 0).");
+	// 		// 	ProcessInputString("intToSucc(N, succ(L)) :- N > 0, M is N - 1, intToSucc(M, L).");
+	// 		// 	ProcessInputString("succToInt(0, 0).");
+	// 		// 	ProcessInputString("succToInt(succ(L), N) :- succToInt(L, M), N is M + 1.");
+	// 		// 	break;
 
-	//             case "succ":
-	//                 ProcessInputString("intToSucc(0, 0).");
-	//                 ProcessInputString("intToSucc(N, succ(L)) :- N > 0, M is N - 1, intToSucc(M, L).");
-	//                 ProcessInputString("succToInt(0, 0).");
-	//                 ProcessInputString("succToInt(succ(L), N) :- succToInt(L, M), N is M + 1.");
-	//                 break;
+	// 		// case "atom_concat":
+	// 		// 	LoadPreset("append");
+	// 		// 	// We want to use a cut in one of these clauses to avoid repeated results in the case where A1, A2, and A3 are all atomic.
+	// 		// 	// We can use a cut in this clause because it can produce at most one result, even in "all" mode:
+	// 		// 	ProcessInputString("atom_concat(A1, A2, A3) :- atomic(A1), atomic(A2), atom_chars(A1, L1), atom_chars(A2, L2), append(L1, L2, L3), atom_chars(A3, L3), !.");
+	// 		// 	// We don't use a cut in ths clause because it can produce multiple results in "all" mode:
+	// 		// 	ProcessInputString("atom_concat(A1, A2, A3) :- atomic(A3), atom_chars(A3, L3), append(L1, L2, L3), atom_chars(A1, L1), atom_chars(A2, L2).");
+	// 		// 	break;
 
-	//             case "atom_concat":
-	//                 LoadPreset("append");
-	//                 // We want to use a cut in one of these clauses to avoid repeated results in the case where A1, A2, and A3 are all atomic.
-	//                 // We can use a cut in this clause because it can produce at most one result, even in "all" mode:
-	//                 ProcessInputString("atom_concat(A1, A2, A3) :- atomic(A1), atomic(A2), atom_chars(A1, L1), atom_chars(A2, L2), append(L1, L2, L3), atom_chars(A3, L3), !.");
-	//                 // We don't use a cut in ths clause because it can produce multiple results in "all" mode:
-	//                 ProcessInputString("atom_concat(A1, A2, A3) :- atomic(A3), atom_chars(A3, L3), append(L1, L2, L3), atom_chars(A1, L1), atom_chars(A2, L2).");
-	//                 break;
+	// 		// case "concat_atom":
+	// 		// 	LoadPreset("atom_concat");
+	// 		// 	ProcessInputString("concat_atomAcc(Acc, [], Acc).");
+	// 		// 	ProcessInputString("concat_atomAcc(Acc, [H | T], Result) :- atom_concat(Acc, H, Acc2), concat_atomAcc(Acc2, T, Result).");
+	// 		// 	// We can use a cut in this clause to avoid reporting results using both this clause and the next clause when in "all" mode.
+	// 		// 	// This clause is not satisfied when there are variables in the first parameter.
+	// 		// 	ProcessInputString("concat_atom([H | T], Result) :- concat_atomAcc(H, T, Result), !.");
+	// 		// 	// We don't use a cut in ths clause because it can produce multiple results in "all" mode:
+	// 		// 	ProcessInputString("concat_atom([X, Y], Result) :- atom_concat(X, Y, Result).");
+	// 		// 	break;
 
-	//             case "concat_atom":
-	//                 LoadPreset("atom_concat");
-	//                 ProcessInputString("concat_atomAcc(Acc, [], Acc).");
-	//                 ProcessInputString("concat_atomAcc(Acc, [H | T], Result) :- atom_concat(Acc, H, Acc2), concat_atomAcc(Acc2, T, Result).");
-	//                 // We can use a cut in this clause to avoid reporting results using both this clause and the next clause when in "all" mode.
-	//                 // This clause is not satisfied when there are variables in the first parameter.
-	//                 ProcessInputString("concat_atom([H | T], Result) :- concat_atomAcc(H, T, Result), !.");
-	//                 // We don't use a cut in ths clause because it can produce multiple results in "all" mode:
-	//                 ProcessInputString("concat_atom([X, Y], Result) :- atom_concat(X, Y, Result).");
-	//                 break;
+	// 		default:
+	// 			throw new Error(
+	// 				`LoadPreset() : Unknown preset name '${presetName}'.`
+	// 			);
+	// 	}
 
-	//             default:
-	//                 throw new Exception(string.Format("LoadPreset() : Unknown preset name '{0}'.", presetName));
-	//         }
+	// 	this.LoadedPresets.push(presetName);
 
-	//         LoadedPresets.Add(presetName);
-	//         return string.Format("The preset '{0}' has been successfully loaded.", presetName);
-	//     }
+	// 	return `The preset '${presetName}' has been successfully loaded.`;
+	// }
 
 	//     public void LoadPresets()
 	//     {
@@ -472,12 +479,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				LanguageSelector.Prolog2,
 				new PrologFunctor(d)
 			);
-		} else if (typeof a !== 'undefined') {
-			console.log(
-				'PrologGlobalInfo.ConvertToFunctorExpression() : obj is a PrologNameExpression<PrologFunctor>'
-			);
-			functorExpression = a;
-		} else if (typeof b !== 'undefined') {
+			// } else if (typeof b !== 'undefined') {
+		} else if (b instanceof PrologFunctor) {
 			console.log(
 				'PrologGlobalInfo.ConvertToFunctorExpression() : obj is a PrologFunctor'
 			);
@@ -485,7 +488,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				LanguageSelector.Prolog2,
 				b
 			);
-		} else if (typeof c !== 'undefined') {
+			// } else if (typeof c !== 'undefined') {
+		} else if (c instanceof PrologVariable) {
 			console.log(
 				'PrologGlobalInfo.ConvertToFunctorExpression() : obj is a PrologVariable'
 			);
@@ -493,10 +497,23 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				LanguageSelector.Prolog2,
 				new PrologFunctor(c.Name)
 			);
+			// } else if (typeof a !== 'undefined') {
+		} else if (
+			a instanceof PrologNameExpression /* &&
+			a.Name instanceof PrologFunctor */
+		) {
+			console.log(
+				'PrologGlobalInfo.ConvertToFunctorExpression() : obj is a PrologNameExpression<PrologFunctor>'
+			);
+			console.log('typeof a.Name is', typeof a.Name);
+			console.log('a.Name.constructor.name is', a.Name.constructor.name);
+			functorExpression = a;
 		} else {
 			// functorExpression = undefined;
 			throw new Error(
-				'ConvertToFunctorExpression() : obj is an unsupported type'
+				`ConvertToFunctorExpression() : obj is an unsupported type ${typeof obj} ${
+					obj.constructor.name
+				} ${obj}`
 			);
 		}
 
@@ -2220,15 +2237,11 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		variablesInQuery: PrologVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
 		listOfCurrentModules: PrologModule[]
 	): PrologSubstitution | undefined {
-		console.log(
-			`ProveGoalList() : Proving goal ${goalNum} of ${goalList.length}...`
-		);
-
 		if (goalNum >= goalList.length) {
 			// The goal list has been satisfied.
 
 			console.log(
-				`The goal list of length ${goalList.length} has been satisfied`
+				`ProveGoalList() : The goal list of length ${goalList.length} has been satisfied`
 			);
 			console.log('Substitution', oldSubstitution.toString());
 
@@ -2295,13 +2308,27 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		// #if SUBSTITUTION_KEY_COUNT_LIMIT
 		if (oldSubstitution.SubstitutionList.size > 10) {
-			console.log(
-				'**** Aborting because the substitution is too long. ****'
+			console.error(
+				'ProveGoalList() : **** Aborting because the substitution is too long. ****'
 			);
 
 			return undefined;
 		}
 		// #endif
+
+		console.log('ProveGoalList() : The goal list is:');
+
+		for (let i = 0; i < goalList.length; i++) {
+			console.log(
+				`${i === goalNum ? '-> ' : ''}${i + 1} : ${goalList[i]}`
+			);
+		}
+
+		console.log(
+			`ProveGoalList() : Proving goal ${goalNum + 1} of ${
+				goalList.length
+			}...`
+		);
 
 		const unsubstitutedGoal = goalList[goalNum];
 		const currentModule = listOfCurrentModules[goalNum];
@@ -2309,12 +2336,6 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		console.log('unsubstitutedGoal is', unsubstitutedGoal.toString());
 		console.log('oldSubstitution is', oldSubstitution.toString());
-
-		// #if CONSOLE_WRITELINE
-		// console.log(
-		// 	`ProveGoal: unsubstitutedGoal = ${unsubstitutedGoal}; subst = ${oldSubstitution}`
-		// );
-		// #endif
 
 		// if (unsubstitutedGoal.IsCut) {
 		// 	// The "cut" goal always succeeds.
@@ -2339,7 +2360,10 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			oldSubstitution
 		) as PrologGoal;
 
-		console.log('1) substituted goal is', goal.toString());
+		console.log(
+			'ProveGoalList() : 1) substituted goal is',
+			goal.toString()
+		);
 
 		// #if CONSOLE_WRITELINE
 		// Console.WriteLine("ProveGoal: goal after substitution = {0}", goal);
@@ -2348,7 +2372,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		const numArgsInGoal = goal.ExpressionList.length;
 		const functionKey = new StringIntKey(goal.Name.Name, numArgsInGoal);
 
-		console.log('Goal signature is', functionKey.toString());
+		// console.log('Goal signature is', functionKey.toString());
 
 		// if (dictBuiltInPredicates.ContainsKey(functionKey)) {
 		// 	var unifier = dictBuiltInPredicates[functionKey](goal);
@@ -2561,7 +2585,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		if (typeof resultSubstitution !== 'undefined') {
 			console.log(
-				'1) Returning resultSubstitution:',
+				'ProveGoalList() : 1) Returning resultSubstitution:',
 				resultSubstitution.toString()
 			);
 
@@ -2576,11 +2600,11 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		for (const key of currentModule.ImportList.keys()) {
 			const v = currentModule.ImportList.get(key);
 
-			console.log(
-				'currentModule.ImportList key and value are',
-				key,
-				typeof v !== 'undefined' ? v.toString() : '<undefined>'
-			);
+			// console.log(
+			// 	'currentModule.ImportList key and value are',
+			// 	key,
+			// 	typeof v !== 'undefined' ? v.toString() : '<undefined>'
+			// );
 
 			if (key === goalSignature && typeof v !== 'undefined') {
 				resultSubstitution = this.ProveGoalListUsingModule(
@@ -2597,7 +2621,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 				if (typeof resultSubstitution !== 'undefined') {
 					console.log(
-						'2) Returning resultSubstitution:',
+						'ProveGoalList() : 2) Returning resultSubstitution:',
 						resultSubstitution.toString()
 					);
 
@@ -2606,7 +2630,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			}
 		}
 
-		console.log('No resultSubstitution; returning undefined');
+		console.log(
+			'ProveGoalList() : No resultSubstitution; returning undefined'
+		);
 
 		return undefined;
 	}
@@ -2629,14 +2655,13 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		variablesToAvoid.unionInPlace(parentVariablesToAvoid);
 		variablesToAvoid.unionInPlace(oldSubstitution.FindBindingVariables());
 
-		console.log(
-			`ProveGoalListUsingModule() : The variables to avoid for goal ${goal} are:`
-		);
+		// console.log(
+		// 	`ProveGoalListUsingModule() : The variables to avoid for goal ${goal} are:`
+		// );
 
-		// for (const bv of variablesToAvoid.toArray()) {
-		for (const bv of variablesToAvoid) {
-			console.log(`  ${bv}`);
-		}
+		// for (const bv of variablesToAvoid) {
+		// 	console.log(`  ${bv}`);
+		// }
 
 		// #if CONSOLE_WRITELINE
 		// Console.WriteLine("ProveGoal: *** Trying to prove goal {0}", goal);
@@ -2663,17 +2688,17 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// 	typeof clause,
 			// 	clause.constructor.name
 			// );
-			console.log(
-				'ProveGoalListUsingModule() : clause is:',
-				clause.toString()
-			);
+			// console.log(
+			// 	'ProveGoalListUsingModule() : clause is:',
+			// 	clause.toString()
+			// );
 
 			const newClause = clause.RenameVariables(variablesToAvoid, this);
 
-			console.log(
-				'ProveGoalListUsingModule() : clause with renamed variables is:',
-				newClause.toString()
-			);
+			// console.log(
+			// 	'ProveGoalListUsingModule() : clause with renamed variables is:',
+			// 	newClause.toString()
+			// );
 
 			// #if CONSOLE_WRITELINE
 			// Console.WriteLine("ProveGoal: Trying to unify goal {0} with Lhs of clause {1}", goal, newClause);
@@ -2685,10 +2710,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			const unifier = newClause.Lhs.Unify(goal);
 
 			if (typeof unifier === 'undefined') {
-				// #if CONSOLE_WRITELINE
-				// Console.WriteLine("ProveGoal: Unification failed.");
-				// #endif
-				console.log('ProveGoalListUsingModule() : Unification failed.');
+				// console.log('ProveGoalListUsingModule() : Unification failed.');
 
 				continue;
 			}
@@ -2708,13 +2730,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			let localSubstitution: PrologSubstitution | undefined =
 				oldSubstitution.Compose(unifier);
 
-			console.log(
-				`ProveGoalListUsingModule() : The composition of substitutions ${oldSubstitution} and ${unifier} is ${localSubstitution}`
-			);
-
-			// #if CONSOLE_WRITELINE
-			// Console.WriteLine("ProveGoal: Composed substitution: {0}", localSubstitution);
-			// #endif
+			// console.log(
+			// 	`ProveGoalListUsingModule() : The composition of substitutions ${oldSubstitution} and ${unifier} is ${localSubstitution}`
+			// );
 
 			// See the program F2.16.txt for a test of the cut.
 			const newVariablesToAvoid = this.GetVariablesFromGoalList(
@@ -2726,8 +2744,19 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// ThAW 2014/03/06 : We want to support cuts in goal disjunctions and if/then/else constructs.
 			// var cutDetector = new CutDetector();
 
+			const goalListLengthBeforeSplice = goalList.length;
+
+			console.log('goalList length before splice:', goalList.length);
 			// goalList.InsertRange(nextGoalNum, newClause.Rhs);
 			goalList.splice(nextGoalNum, 0, ...newClause.Rhs);
+			console.log('goalList length after splice:', goalList.length);
+
+			if (
+				goalList.length !==
+				goalListLengthBeforeSplice + newClause.Rhs.length
+			) {
+				throw new Error('BOOM: goalListLengthBeforeSplice');
+			}
 
 			// Insert as many copies of the cutDetector reference as we have subgoals in newClause.Rhs .
 			// cutDetectorList.InsertRange(nextGoalNum, newClause.Rhs.Select(g => cutDetector));
@@ -2767,8 +2796,16 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				// throw;
 				// }
 
+				console.log(
+					'goalList length before undo of splice:',
+					goalList.length
+				);
 				// goalList.RemoveRange(nextGoalNum, newClause.Rhs.Count);
 				goalList.splice(nextGoalNum, newClause.Rhs.length);
+				console.log(
+					'goalList length after undo of splice:',
+					goalList.length
+				);
 
 				// cutDetectorList.RemoveRange(nextGoalNum, newClause.Rhs.Count);
 				// cutDetectorList.splice(nextGoalNum, newClause.Rhs.length);
@@ -2778,6 +2815,10 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				// 	newClause.Rhs.Count
 				// );
 				listOfCurrentModules.splice(nextGoalNum, newClause.Rhs.length);
+			}
+
+			if (goalList.length !== goalListLengthBeforeSplice) {
+				throw new Error('BOOM: goalListLength after Splice');
 			}
 
 			if (typeof localSubstitution !== 'undefined') {
@@ -3157,10 +3198,10 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					);
 				}
 
-				console.log(
-					'setOfBindingVariables:',
-					setOfBindingVariables.toArray().join(', ')
-				);
+				// console.log(
+				// 	'setOfBindingVariables:',
+				// 	setOfBindingVariables.toArray().join(', ')
+				// );
 
 				const substitutionsForBindingVariables =
 					new PrologSubstitution();

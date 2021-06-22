@@ -146,7 +146,7 @@ export class PrologClause implements IPrologExpression {
 		const arrayOfVariablesToAvoid = variablesToAvoid.toArray();
 
 		// for (const oldVariable of oldVariables.getIterator()) {
-		for (const oldVariable of oldVariables.toArray()) {
+		for (const oldVariable of oldVariables) {
 			// if (!variablesToAvoid.contains(oldVariable)) {
 			if (
 				!this.isVariableInArrayOfVariables(
@@ -161,9 +161,9 @@ export class PrologClause implements IPrologExpression {
 
 			do {
 				newVariable = globalInfo.GetNextUniqueVariable();
-				console.log(
-					`Clause.RenameVariables() : Name of new uniqueVariable: '${newVariable.Name}'`
-				);
+				// console.log(
+				// 	`Clause.RenameVariables() : Name of new uniqueVariable: '${newVariable.Name}'`
+				// );
 			} while (
 				// oldVariables.contains(newVariable) ||
 				// variablesToAvoid.contains(newVariable)

@@ -1,5 +1,7 @@
 // prolog-predicate.ts
 
+// Note: The C# class PrologGrammar2_LL1 does not create or use predicates.
+
 import { PrologNameBase } from './prolog-name-base';
 
 export class PrologPredicate extends PrologNameBase {
