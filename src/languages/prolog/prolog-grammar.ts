@@ -33,17 +33,17 @@ export class PrologGrammar extends GrammarBase {
 
 		this.terminals.push(Symbol.terminalDot);
 		this.terminals.push(Symbol.terminalComma);
-		this.terminals.push(Symbol.terminalSemicolon);
+		// this.terminals.push(Symbol.terminalSemicolon);
 		this.terminals.push(Symbol.terminalLeftBracket);
 		this.terminals.push(Symbol.terminalRightBracket);
-		this.terminals.push(Symbol.terminalLeftSquareBracket);
-		this.terminals.push(Symbol.terminalRightSquareBracket);
+		// this.terminals.push(Symbol.terminalLeftSquareBracket);
+		// this.terminals.push(Symbol.terminalRightSquareBracket);
 		this.terminals.push(Symbol.terminalNameBeginningWithCapital);
 		this.terminals.push(Symbol.terminalNameNotBeginningWithCapital);
 		this.terminals.push(Symbol.terminalFrom);
 		this.terminals.push(Symbol.terminalInferPred);
 		this.terminals.push(Symbol.terminalIntegerLiteral);
-		this.terminals.push(Symbol.terminalOrBar);
+		// this.terminals.push(Symbol.terminalOrBar);
 		// this.terminals.push(Symbol.terminal);
 
 		this.terminals.push(Symbol.terminalEOF);
@@ -79,17 +79,21 @@ export class PrologGrammar extends GrammarBase {
 		// this.nonTerminals.push(Symbol.nonterminalLHSGoal);
 		this.nonTerminals.push(Symbol.nonterminalClauseTail);
 		// this.nonTerminals.push(Symbol.nonterminalLHSGoalTail);
-		this.nonTerminals.push(Symbol.nonterminalFunctor);
-		this.nonTerminals.push(Symbol.nonterminalFunctorParameters);
+		// this.nonTerminals.push(Symbol.nonterminalFunctor);
+		// this.nonTerminals.push(Symbol.nonterminalFunctorParameters);
 		// this.nonTerminals.push(
 		// 	Symbol.nonterminalGoalWithPossibleDisjunctiveTail
 		// );
 		this.nonTerminals.push(Symbol.nonterminalGoalList);
 		// this.nonTerminals.push(Symbol.nonterminalPossibleDisjunctiveTail);
 		this.nonTerminals.push(Symbol.nonterminalVariable);
-		this.nonTerminals.push(Symbol.nonterminalList);
-		this.nonTerminals.push(Symbol.nonterminalListContents);
-		this.nonTerminals.push(Symbol.nonterminalListContentsTail);
+		// this.nonTerminals.push(Symbol.nonterminalList);
+		// this.nonTerminals.push(Symbol.nonterminalListContents);
+		// this.nonTerminals.push(Symbol.nonterminalListContentsTail);
+		this.nonTerminals.push(Symbol.nonterminalGoalListTail);
+		this.nonTerminals.push(Symbol.nonterminalFunctorExpression);
+		this.nonTerminals.push(Symbol.nonterminalTailOfGoalOrFunctorExpression);
+		this.nonTerminals.push(Symbol.nonterminalExpressionListTail);
 		// this.nonTerminals.push(Symbol.nonterminal);
 
 		// Non-Terminals:
@@ -125,8 +129,7 @@ export class PrologGrammar extends GrammarBase {
 
 		// Productions:
 
-		// This initial production needed to be added: Start -> Input EOF
-		// AddProduction(Symbol.N_Start, new List<object>() { Symbol.N_Input, Symbol.T_Dot, Symbol.T_EOF });
+		// 1: Start -> Input Dot EOF
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalStart,
@@ -139,8 +142,7 @@ export class PrologGrammar extends GrammarBase {
 			)
 		);
 
-		// Input -> Clause
-		// AddProduction(Symbol.N_Input, new List<object>() { Symbol.N_Clause, "#createClause" });
+		// 2: Input -> Clause
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalInput,
@@ -149,8 +151,7 @@ export class PrologGrammar extends GrammarBase {
 			)
 		);
 
-		// Input -> Query
-		// AddProduction(Symbol.N_Input, new List<object>() { Symbol.N_Query, "#createCSharpGoalList" });
+		// 3: Input -> Query
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalInput,
@@ -159,146 +160,39 @@ export class PrologGrammar extends GrammarBase {
 			)
 		);
 
-		// AddProduction(Symbol.N_Clause, new List<object>() { Symbol.N_LHSGoal, Symbol.N_ClauseTail });
+		// 4: Clause -> LHSGoal ClauseTail
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalClause,
-				// 2021-06-17: Temporarily commented out:
-				// [Symbol.nonterminalLHSGoal, Symbol.nonterminalClauseTail],
 				[Symbol.nonterminalGoal, Symbol.nonterminalClauseTail],
 				4
 			)
 		);
 
-		// AddProduction(Symbol.N_LHSGoal, new List<object>() { Symbol.T_NameBeginningWithCapital, Symbol.N_LHSGoalTail });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalLHSGoal,
-		// 		[
-		// 			Symbol.terminalNameBeginningWithCapital,
-		// 			Symbol.nonterminalLHSGoalTail
-		// 		],
-		// 		5
-		// 	)
-		// );
-
-		// AddProduction(Symbol.N_LHSGoal, new List<object>() { Symbol.N_Functor, Symbol.N_LHSGoalTail });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalLHSGoal,
-		// 		[Symbol.nonterminalFunctor, Symbol.nonterminalLHSGoalTail],
-		// 		6
-		// 	)
-		// );
-
-		// AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_NameNotBeginningWithCapital });
 		this.productions.push(
 			new Production(
-				Symbol.nonterminalFunctor,
+				Symbol.nonterminalQuery,
 				[
-					Symbol.terminalNameNotBeginningWithCapital,
-					Symbol.nonterminalFunctorParameters
+					Symbol.terminalInferPred,
+					Symbol.nonterminalGoal,
+					// Symbol.nonterminalGoalListTail,
+					'#cons'
 				],
-				7
+				5
 			)
 		);
 
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalFunctorParameters,
-				[Symbol.Lambda, '#functorExpressionNoArgs'],
-				0
-			)
-		);
-
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalFunctorParameters,
-				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionList,
-					Symbol.terminalRightBracket,
-					'#functorExpression2'
-				],
-				0
-			)
-		);
-
-		// AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Is });
-		// //AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Not });
-		// AddProduction(Symbol.N_Functor, new List<object>() { Symbol.N_ComparisonOperator });
-		// AddProduction(Symbol.N_Functor, new List<object>() { Symbol.N_OpType_EqualOrUnifiable });
-
-		// #if DEAD_CODE
-		// // We cannot add a production that says N_Functor := T_Minus, because of the unary minus operator.
-		// AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Plus });
-		// AddProduction(Symbol.N_Functor, new List<object>() { Symbol.N_OpType_Multiply });
-		// //AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Mod });
-		// #endif
-
-		// AddProduction(Symbol.N_LHSGoalTail, new List<object>() { Symbol.Lambda, "#functorExpressionNoArgs" });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalLHSGoalTail,
-		// 		[Symbol.Lambda, '#functorExpressionNoArgs'],
-		// 		8
-		// 	)
-		// );
-
-		// AddProduction(Symbol.N_LHSGoalTail, new List<object>() {
-		// Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.N_ExpressionList, Symbol.T_RightBracket, "#functorExpression2" });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalLHSGoalTail,
-		// 		[
-		// 			Symbol.terminalLeftBracket,
-		// 			Symbol.nonterminalExpression,
-		// 			Symbol.nonterminalExpressionList,
-		// 			Symbol.terminalRightBracket,
-		// 			'#functorExpression2'
-		// 		],
-		// 		9
-		// 	)
-		// );
-
-		// AddProduction(Symbol.N_ExpressionList, new List<object>() { Symbol.Lambda, "#emptyExprList" });
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[Symbol.Lambda, '#emptyExprList'],
-				10
-			)
-		);
-
-		// AddProduction(Symbol.N_ExpressionList, new List<object>() {
-		// Symbol.T_Comma, Symbol.N_Expression, Symbol.N_ExpressionList, "#exprList" });
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[
-					Symbol.terminalComma,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionList,
-					'#exprList'
-				],
-				11
-			)
-		);
-
-		// AddProduction(Symbol.N_ClauseTail, new List<object>() {
-		// Symbol.T_From, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons", "#clauseAsFunctor" });
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalClauseTail,
 				[
 					Symbol.terminalFrom,
 					Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-					Symbol.nonterminalGoalList,
+					Symbol.nonterminalGoalListTail,
 					'#cons',
 					'#clauseAsFunctor'
 				],
-				12
+				6
 			)
 		);
 
@@ -307,7 +201,7 @@ export class PrologGrammar extends GrammarBase {
 			new Production(
 				Symbol.nonterminalClauseTail,
 				[Symbol.Lambda, '#nil', '#clauseAsFunctor'],
-				13
+				7
 			)
 		);
 
@@ -315,314 +209,654 @@ export class PrologGrammar extends GrammarBase {
 		// Symbol.T_Comma, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons" });
 		this.productions.push(
 			new Production(
-				Symbol.nonterminalGoalList,
+				Symbol.nonterminalGoalListTail,
 				[
 					Symbol.terminalComma,
 					Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-					Symbol.nonterminalGoalList,
+					Symbol.nonterminalGoalListTail,
 					'#cons'
 				],
-				14
+				8
 			)
 		);
 
 		// AddProduction(Symbol.N_GoalList, new List<object>() { Symbol.Lambda, "#nil" });
 		this.productions.push(
 			new Production(
-				Symbol.nonterminalGoalList,
+				Symbol.nonterminalGoalListTail,
 				[Symbol.Lambda, '#nil'],
+				9
+			)
+		);
+
+		// Goal -> NameNotBeginningWithCapital TailOfGoalOrFunctorExpr
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalGoal,
+				[
+					Symbol.terminalNameNotBeginningWithCapital,
+					Symbol.nonterminalTailOfGoalOrFunctorExpression,
+					'#goal'
+				],
+				10
+			)
+		);
+
+		// TailOfGoalOrFunctorExpr -> Lambda
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalTailOfGoalOrFunctorExpression,
+				[Symbol.Lambda],
+				11
+			)
+		);
+
+		// TailOfGoalOrFunctorExpr -> ( ExprList )
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalTailOfGoalOrFunctorExpression,
+				[
+					Symbol.terminalLeftBracket,
+					Symbol.nonterminalExpressionList,
+					Symbol.terminalRightBracket
+				],
+				12
+			)
+		);
+
+		// ExprList -> Lambda
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalExpressionList,
+				[Symbol.Lambda],
+				13
+			)
+		);
+
+		// ExprList -> Expr ExprListTail
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalExpressionList,
+				[
+					Symbol.nonterminalExpression,
+					Symbol.nonterminalExpressionListTail
+				],
+				14
+			)
+		);
+
+		// ExprListTail -> Lambda
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalExpressionListTail,
+				[Symbol.Lambda],
 				15
 			)
 		);
 
-		// AddProduction(Symbol.N_Query, new List<object>() {
-		// Symbol.T_InferPred, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons" });
+		// ExprListTail -> , Expr ExprListTail
 		this.productions.push(
 			new Production(
-				Symbol.nonterminalQuery,
+				Symbol.nonterminalExpressionListTail,
 				[
-					Symbol.terminalInferPred,
-					Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-					Symbol.nonterminalGoalList,
-					'#cons'
+					Symbol.terminalComma,
+					Symbol.nonterminalExpression,
+					Symbol.nonterminalExpressionListTail
 				],
 				16
 			)
 		);
 
-		// AddProduction(Symbol.N_GoalWithPossibleDisjunctiveTail, new List<object>() {
-		// Symbol.N_Goal, Symbol.N_PossibleDisjunctiveTail });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-		// 		[
-		// 			Symbol.nonterminalGoal,
-		// 			Symbol.nonterminalPossibleDisjunctiveTail
-		// 		],
-		// 		17
-		// 	)
-		// );
-
-		// AddProduction(Symbol.N_PossibleDisjunctiveTail, new List<object>() { Symbol.Lambda });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalPossibleDisjunctiveTail,
-		// 		[Symbol.Lambda],
-		// 		18
-		// 	)
-		// );
-
-		// AddProduction(Symbol.N_PossibleDisjunctiveTail, new List<object>() {
-		// Symbol.T_Semicolon, Symbol.N_Goal, Symbol.N_PossibleDisjunctiveTail, "#goalDisjunction" });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalPossibleDisjunctiveTail,
-		// 		[
-		// 			Symbol.terminalSemicolon,
-		// 			Symbol.nonterminalGoal,
-		// 			Symbol.nonterminalPossibleDisjunctiveTail,
-		// 			'#goalDisjunction'
-		// 		],
-		// 		19
-		// 	)
-		// );
-
-		// Symbol.T_From, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons", "#clauseAsFunctor" });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-		// 		[Symbol.nonterminalGoalList, '#cons', '#clauseAsFunctor'],
-		// 		20
-		// 	)
-		// );
-
-		// // ThAW 2014/03/18 : This is where the fun begins.
-
-		// AddProduction(Symbol.N_Goal, new List<object>() { Symbol.N_Expression, "#convertExpressionToFunctorExpression" });
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalGoal,
-		// 		[
-		// 			Symbol.nonterminalExpression,
-		// 			'#convertExpressionToFunctorExpression'
-		// 		],
-		// 		20
-		// 	)
-		// );
-
-		// **** BEGIN: TEMPORARY PRODUCTION 2021-06-17
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalExpression,
-		// 		[Symbol.nonterminalFunctor],
-		// 		21
-		// 	)
-		// );
-
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalExpression,
-		// 		[Symbol.nonterminalVariable],
-		// 		22
-		// 	)
-		// );
-
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalVariable,
-				[Symbol.terminalNameBeginningWithCapital, '#variable'],
-				23
-			)
-		);
-
-		// We want a production where Symbol.nonterminalExpression
-		// corresponds to a PrologNameExpression<PrologFunctor>
-		// on the semantic stack.
-
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalGoal,
-				[
-					Symbol.nonterminalFunctor,
-					// Symbol.nonterminalExpressionList,
-					'#functorToGoal' // '#functorExpression2b'
-				],
-				24
-			)
-		);
-
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalExpressionList,
-		// 		[
-		// 			Symbol.terminalLeftBracket,
-		// 			Symbol.nonterminalExpressionListTail,
-		// 			Symbol.terminalRightBracket
-		// 		],
-		// 		25
-		// 	)
-		// );
-
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalExpressionListTail,
-		// 		[
-		// 			Symbol.terminalComma,
-		// 			Symbol.nonterminalExpression,
-		// 			Symbol.nonterminalExpressionListTail,
-		// 			'#exprList'
-		// 		],
-		// 		26
-		// 	)
-		// );
-
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalExpressionListTail,
-		// 		[Symbol.Lambda, '#emptyExprList'],
-		// 		27
-		// 	)
-		// );
-
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
-				[Symbol.nonterminalVariable],
-				28
-			)
-		);
-
+		// Expr -> IntegerLiteral
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpression,
 				[Symbol.terminalIntegerLiteral],
-				29
+				17
 			)
 		);
 
-		// **** END: TEMPORARY PRODUCTION 2021-06-17
-
-		// AddProduction(Symbol.N_NumberOrVariableExpression, new List<object>() { Symbol.T_NameBeginningWithCapital, "#variable" });
-		// TODO 2021-06-17:
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalNumberOrVariableExpression,
-		// 		[Symbol.terminalNameBeginningWithCapital, '#variable'],
-		// 		22
-		// 	)
-		// );
-
-		// AddProduction(Symbol.N_Expression, new List<object>() {
-		// Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.N_IfThenElseTail, Symbol.T_RightBracket, Symbol.N_ArithmeticAndComparisonTail });
-		// AddProduction(Symbol.N_Expression, new List<object>() { Symbol.T_IntegerLiteral, Symbol.N_ExpressionPartFollowingAnInteger });
-		// AddProduction(Symbol.N_Expression, new List<object>() { Symbol.T_FloatLiteral, Symbol.N_ExpressionPartFollowingAnInteger });
-		// AddProduction(Symbol.N_Expression, new List<object>() {
-		// Symbol.T_NameBeginningWithCapital, Symbol.N_ExpressionPartFollowingAnUpperCaseID });
-		// AddProduction(Symbol.N_Expression, new List<object>() {
-		// Symbol.N_Functor, Symbol.N_ExpressionPartFollowingALowerCaseID });
-		// AddProduction(Symbol.N_Expression, new List<object>() { Symbol.T_Minus, Symbol.N_ExpressionPartFollowingAMinus });
-		// AddProduction(Symbol.N_ModExpression, new List<object>() {
-		// Symbol.T_Mod, Symbol.T_LeftBracket, Symbol.N_ArithmeticExpression1, Symbol.T_Comma, Symbol.N_ArithmeticExpression1, Symbol.T_RightBracket,
-		// "#arithExpr_Prefix" });
-		// AddProduction(Symbol.N_IfThenElseTail, new List<object>() { Symbol.N_Sequence }); // This can produce Lambda.
-		// AddProduction(Symbol.N_IfThenElseTail, new List<object>() {
-		// Symbol.T_IfThen, Symbol.N_Goal, Symbol.T_Colon, Symbol.N_Goal, "#ifThenElse" });
-		// AddProduction(Symbol.N_IfThenElseTail, new List<object>() {
-
-		// // Sequences.
-
-		// ...
-
-		// // Lists.
-		// AddProduction(Symbol.N_Expression, new List<object>() { Symbol.N_List, Symbol.N_ListTail });
+		// Expr -> Variable
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpression,
+				[Symbol.nonterminalVariable],
+				18
+			)
+		);
+
+		// Expr -> FunctorExpr
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalExpression,
+				[Symbol.nonterminalFunctorExpression],
+				19
+			)
+		);
+
+		// Variable -> NameBeginningWithCapital
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalVariable,
+				[Symbol.terminalNameBeginningWithCapital],
+				20
+			)
+		);
+
+		// FunctorExpr -> NameNotBeginningWithCapital TailOfGoalOrFunctorExpr
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalFunctorExpression,
 				[
-					Symbol.nonterminalList // , Symbol.nonterminalListTail
+					Symbol.terminalNameNotBeginningWithCapital,
+					Symbol.nonterminalTailOfGoalOrFunctorExpression
 				],
-				30
+				21
 			)
 		);
-
-		// AddProduction(Symbol.N_List, new List<object>() {
-		// Symbol.T_LeftSquareBracket, Symbol.N_ListContents, Symbol.T_RightSquareBracket });
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalList,
-				[
-					Symbol.terminalLeftSquareBracket,
-					Symbol.nonterminalListContents,
-					Symbol.terminalRightSquareBracket
-				],
-				31
-			)
-		);
-
-		// AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.Lambda, "#nil" });
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContents,
-				[Symbol.Lambda, '#nil'],
-				32
-			)
-		);
-
-		// AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContents,
-				[
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalListContentsTail,
-					'#cons'
-				],
-				33
-			)
-		);
-
-		// AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.Lambda, "#nil" });
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContentsTail,
-				[Symbol.Lambda, '#nil'],
-				34
-			)
-		);
-
-		// AddProduction(Symbol.N_ListContentsTail, new List<object>() {
-		// Symbol.T_Comma, Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContentsTail,
-				[
-					Symbol.terminalComma,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalListContentsTail,
-					'#cons'
-				],
-				35
-			)
-		);
-
-		// AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.T_OrBar, Symbol.N_Expression });
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContentsTail,
-				[Symbol.terminalOrBar, Symbol.nonterminalExpression],
-				36
-			)
-		);
-
-		// AddProduction(Symbol.N_ListTail, new List<object>() { Symbol.Lambda });
-		// AddProduction(Symbol.N_ListTail, new List<object>() {
-		// Symbol.N_OpType_EqualOrUnifiable, Symbol.N_Expression, "#infix" });
-		// AddProduction(Symbol.N_Expression, new List<object>() {
-		// Symbol.T_Dot, Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.T_Comma, Symbol.N_Expression, Symbol.T_RightBracket, "#cons",
-		// Symbol.N_InfixNonArithmeticPredicateTail });
-
-		// ...
 	}
+
+	// **** BEGINNING of pre-2021-06-22 Productions
+
+	// // This initial production needed to be added: Start -> Input EOF
+	// // AddProduction(Symbol.N_Start, new List<object>() { Symbol.N_Input, Symbol.T_Dot, Symbol.T_EOF });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalStart,
+	// 		[
+	// 			Symbol.nonterminalInput,
+	// 			Symbol.terminalDot,
+	// 			Symbol.terminalEOF
+	// 		],
+	// 		1
+	// 	)
+	// );
+
+	// // Input -> Clause
+	// // AddProduction(Symbol.N_Input, new List<object>() { Symbol.N_Clause, "#createClause" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalInput,
+	// 		[Symbol.nonterminalClause, '#createClause'],
+	// 		2
+	// 	)
+	// );
+
+	// // Input -> Query
+	// // AddProduction(Symbol.N_Input, new List<object>() { Symbol.N_Query, "#createCSharpGoalList" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalInput,
+	// 		[Symbol.nonterminalQuery, '#createCSharpGoalList'],
+	// 		3
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_Clause, new List<object>() { Symbol.N_LHSGoal, Symbol.N_ClauseTail });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalClause,
+	// 		// 2021-06-17: Temporarily commented out:
+	// 		// [Symbol.nonterminalLHSGoal, Symbol.nonterminalClauseTail],
+	// 		[Symbol.nonterminalGoal, Symbol.nonterminalClauseTail],
+	// 		4
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_LHSGoal, new List<object>() { Symbol.T_NameBeginningWithCapital, Symbol.N_LHSGoalTail });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalLHSGoal,
+	// // 		[
+	// // 			Symbol.terminalNameBeginningWithCapital,
+	// // 			Symbol.nonterminalLHSGoalTail
+	// // 		],
+	// // 		5
+	// // 	)
+	// // );
+
+	// // AddProduction(Symbol.N_LHSGoal, new List<object>() { Symbol.N_Functor, Symbol.N_LHSGoalTail });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalLHSGoal,
+	// // 		[Symbol.nonterminalFunctor, Symbol.nonterminalLHSGoalTail],
+	// // 		6
+	// // 	)
+	// // );
+
+	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_NameNotBeginningWithCapital });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalFunctor,
+	// 		[
+	// 			Symbol.terminalNameNotBeginningWithCapital,
+	// 			Symbol.nonterminalFunctorParameters
+	// 		],
+	// 		7
+	// 	)
+	// );
+
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalFunctorParameters,
+	// 		[Symbol.Lambda, '#functorExpressionNoArgs'],
+	// 		0
+	// 	)
+	// );
+
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalFunctorParameters,
+	// 		[
+	// 			Symbol.terminalLeftBracket,
+	// 			Symbol.nonterminalExpression,
+	// 			Symbol.nonterminalExpressionList,
+	// 			Symbol.terminalRightBracket,
+	// 			'#functorExpression2'
+	// 		],
+	// 		0
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Is });
+	// // //AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Not });
+	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.N_ComparisonOperator });
+	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.N_OpType_EqualOrUnifiable });
+
+	// // #if DEAD_CODE
+	// // // We cannot add a production that says N_Functor := T_Minus, because of the unary minus operator.
+	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Plus });
+	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.N_OpType_Multiply });
+	// // //AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Mod });
+	// // #endif
+
+	// // AddProduction(Symbol.N_LHSGoalTail, new List<object>() { Symbol.Lambda, "#functorExpressionNoArgs" });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalLHSGoalTail,
+	// // 		[Symbol.Lambda, '#functorExpressionNoArgs'],
+	// // 		8
+	// // 	)
+	// // );
+
+	// // AddProduction(Symbol.N_LHSGoalTail, new List<object>() {
+	// // Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.N_ExpressionList, Symbol.T_RightBracket, "#functorExpression2" });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalLHSGoalTail,
+	// // 		[
+	// // 			Symbol.terminalLeftBracket,
+	// // 			Symbol.nonterminalExpression,
+	// // 			Symbol.nonterminalExpressionList,
+	// // 			Symbol.terminalRightBracket,
+	// // 			'#functorExpression2'
+	// // 		],
+	// // 		9
+	// // 	)
+	// // );
+
+	// // AddProduction(Symbol.N_ExpressionList, new List<object>() { Symbol.Lambda, "#emptyExprList" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalExpressionList,
+	// 		[Symbol.Lambda, '#emptyExprList'],
+	// 		10
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_ExpressionList, new List<object>() {
+	// // Symbol.T_Comma, Symbol.N_Expression, Symbol.N_ExpressionList, "#exprList" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalExpressionList,
+	// 		[
+	// 			Symbol.terminalComma,
+	// 			Symbol.nonterminalExpression,
+	// 			Symbol.nonterminalExpressionList,
+	// 			'#exprList'
+	// 		],
+	// 		11
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_ClauseTail, new List<object>() {
+	// // Symbol.T_From, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons", "#clauseAsFunctor" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalClauseTail,
+	// 		[
+	// 			Symbol.terminalFrom,
+	// 			Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
+	// 			Symbol.nonterminalGoalList,
+	// 			'#cons',
+	// 			'#clauseAsFunctor'
+	// 		],
+	// 		12
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_ClauseTail, new List<object>() { Symbol.Lambda, "#nil", "#clauseAsFunctor" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalClauseTail,
+	// 		[Symbol.Lambda, '#nil', '#clauseAsFunctor'],
+	// 		13
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_GoalList, new List<object>() {
+	// // Symbol.T_Comma, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalGoalList,
+	// 		[
+	// 			Symbol.terminalComma,
+	// 			Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
+	// 			Symbol.nonterminalGoalList,
+	// 			'#cons'
+	// 		],
+	// 		14
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_GoalList, new List<object>() { Symbol.Lambda, "#nil" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalGoalList,
+	// 		[Symbol.Lambda, '#nil'],
+	// 		15
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_Query, new List<object>() {
+	// // Symbol.T_InferPred, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalQuery,
+	// 		[
+	// 			Symbol.terminalInferPred,
+	// 			Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
+	// 			Symbol.nonterminalGoalList,
+	// 			'#cons'
+	// 		],
+	// 		16
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_GoalWithPossibleDisjunctiveTail, new List<object>() {
+	// // Symbol.N_Goal, Symbol.N_PossibleDisjunctiveTail });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
+	// // 		[
+	// // 			Symbol.nonterminalGoal,
+	// // 			Symbol.nonterminalPossibleDisjunctiveTail
+	// // 		],
+	// // 		17
+	// // 	)
+	// // );
+
+	// // AddProduction(Symbol.N_PossibleDisjunctiveTail, new List<object>() { Symbol.Lambda });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalPossibleDisjunctiveTail,
+	// // 		[Symbol.Lambda],
+	// // 		18
+	// // 	)
+	// // );
+
+	// // AddProduction(Symbol.N_PossibleDisjunctiveTail, new List<object>() {
+	// // Symbol.T_Semicolon, Symbol.N_Goal, Symbol.N_PossibleDisjunctiveTail, "#goalDisjunction" });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalPossibleDisjunctiveTail,
+	// // 		[
+	// // 			Symbol.terminalSemicolon,
+	// // 			Symbol.nonterminalGoal,
+	// // 			Symbol.nonterminalPossibleDisjunctiveTail,
+	// // 			'#goalDisjunction'
+	// // 		],
+	// // 		19
+	// // 	)
+	// // );
+
+	// // Symbol.T_From, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons", "#clauseAsFunctor" });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
+	// // 		[Symbol.nonterminalGoalList, '#cons', '#clauseAsFunctor'],
+	// // 		20
+	// // 	)
+	// // );
+
+	// // // ThAW 2014/03/18 : This is where the fun begins.
+
+	// // AddProduction(Symbol.N_Goal, new List<object>() { Symbol.N_Expression, "#convertExpressionToFunctorExpression" });
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalGoal,
+	// // 		[
+	// // 			Symbol.nonterminalExpression,
+	// // 			'#convertExpressionToFunctorExpression'
+	// // 		],
+	// // 		20
+	// // 	)
+	// // );
+
+	// // **** BEGIN: TEMPORARY PRODUCTION 2021-06-17
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalExpression,
+	// // 		[Symbol.nonterminalFunctor],
+	// // 		21
+	// // 	)
+	// // );
+
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalExpression,
+	// // 		[Symbol.nonterminalVariable],
+	// // 		22
+	// // 	)
+	// // );
+
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalVariable,
+	// 		[Symbol.terminalNameBeginningWithCapital, '#variable'],
+	// 		23
+	// 	)
+	// );
+
+	// // We want a production where Symbol.nonterminalExpression
+	// // corresponds to a PrologNameExpression<PrologFunctor>
+	// // on the semantic stack.
+
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalGoal,
+	// 		[
+	// 			Symbol.nonterminalFunctor,
+	// 			// Symbol.nonterminalExpressionList,
+	// 			'#functorToGoal' // '#functorExpression2b'
+	// 		],
+	// 		24
+	// 	)
+	// );
+
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalExpressionList,
+	// // 		[
+	// // 			Symbol.terminalLeftBracket,
+	// // 			Symbol.nonterminalExpressionListTail,
+	// // 			Symbol.terminalRightBracket
+	// // 		],
+	// // 		25
+	// // 	)
+	// // );
+
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalExpressionListTail,
+	// // 		[
+	// // 			Symbol.terminalComma,
+	// // 			Symbol.nonterminalExpression,
+	// // 			Symbol.nonterminalExpressionListTail,
+	// // 			'#exprList'
+	// // 		],
+	// // 		26
+	// // 	)
+	// // );
+
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalExpressionListTail,
+	// // 		[Symbol.Lambda, '#emptyExprList'],
+	// // 		27
+	// // 	)
+	// // );
+
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalExpression,
+	// 		[Symbol.nonterminalVariable],
+	// 		28
+	// 	)
+	// );
+
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalExpression,
+	// 		[Symbol.terminalIntegerLiteral],
+	// 		29
+	// 	)
+	// );
+
+	// // **** END: TEMPORARY PRODUCTION 2021-06-17
+
+	// // AddProduction(Symbol.N_NumberOrVariableExpression, new List<object>() { Symbol.T_NameBeginningWithCapital, "#variable" });
+	// // TODO 2021-06-17:
+	// // this.productions.push(
+	// // 	new Production(
+	// // 		Symbol.nonterminalNumberOrVariableExpression,
+	// // 		[Symbol.terminalNameBeginningWithCapital, '#variable'],
+	// // 		22
+	// // 	)
+	// // );
+
+	// // AddProduction(Symbol.N_Expression, new List<object>() {
+	// // Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.N_IfThenElseTail, Symbol.T_RightBracket, Symbol.N_ArithmeticAndComparisonTail });
+	// // AddProduction(Symbol.N_Expression, new List<object>() { Symbol.T_IntegerLiteral, Symbol.N_ExpressionPartFollowingAnInteger });
+	// // AddProduction(Symbol.N_Expression, new List<object>() { Symbol.T_FloatLiteral, Symbol.N_ExpressionPartFollowingAnInteger });
+	// // AddProduction(Symbol.N_Expression, new List<object>() {
+	// // Symbol.T_NameBeginningWithCapital, Symbol.N_ExpressionPartFollowingAnUpperCaseID });
+	// // AddProduction(Symbol.N_Expression, new List<object>() {
+	// // Symbol.N_Functor, Symbol.N_ExpressionPartFollowingALowerCaseID });
+	// // AddProduction(Symbol.N_Expression, new List<object>() { Symbol.T_Minus, Symbol.N_ExpressionPartFollowingAMinus });
+	// // AddProduction(Symbol.N_ModExpression, new List<object>() {
+	// // Symbol.T_Mod, Symbol.T_LeftBracket, Symbol.N_ArithmeticExpression1, Symbol.T_Comma, Symbol.N_ArithmeticExpression1, Symbol.T_RightBracket,
+	// // "#arithExpr_Prefix" });
+	// // AddProduction(Symbol.N_IfThenElseTail, new List<object>() { Symbol.N_Sequence }); // This can produce Lambda.
+	// // AddProduction(Symbol.N_IfThenElseTail, new List<object>() {
+	// // Symbol.T_IfThen, Symbol.N_Goal, Symbol.T_Colon, Symbol.N_Goal, "#ifThenElse" });
+	// // AddProduction(Symbol.N_IfThenElseTail, new List<object>() {
+
+	// // // Sequences.
+
+	// // ...
+
+	// // // Lists.
+	// // AddProduction(Symbol.N_Expression, new List<object>() { Symbol.N_List, Symbol.N_ListTail });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalExpression,
+	// 		[
+	// 			Symbol.nonterminalList // , Symbol.nonterminalListTail
+	// 		],
+	// 		30
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_List, new List<object>() {
+	// // Symbol.T_LeftSquareBracket, Symbol.N_ListContents, Symbol.T_RightSquareBracket });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalList,
+	// 		[
+	// 			Symbol.terminalLeftSquareBracket,
+	// 			Symbol.nonterminalListContents,
+	// 			Symbol.terminalRightSquareBracket
+	// 		],
+	// 		31
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.Lambda, "#nil" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalListContents,
+	// 		[Symbol.Lambda, '#nil'],
+	// 		32
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalListContents,
+	// 		[
+	// 			Symbol.nonterminalExpression,
+	// 			Symbol.nonterminalListContentsTail,
+	// 			'#cons'
+	// 		],
+	// 		33
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.Lambda, "#nil" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalListContentsTail,
+	// 		[Symbol.Lambda, '#nil'],
+	// 		34
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_ListContentsTail, new List<object>() {
+	// // Symbol.T_Comma, Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalListContentsTail,
+	// 		[
+	// 			Symbol.terminalComma,
+	// 			Symbol.nonterminalExpression,
+	// 			Symbol.nonterminalListContentsTail,
+	// 			'#cons'
+	// 		],
+	// 		35
+	// 	)
+	// );
+
+	// // AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.T_OrBar, Symbol.N_Expression });
+	// this.productions.push(
+	// 	new Production(
+	// 		Symbol.nonterminalListContentsTail,
+	// 		[Symbol.terminalOrBar, Symbol.nonterminalExpression],
+	// 		36
+	// 	)
+	// );
+
+	// AddProduction(Symbol.N_ListTail, new List<object>() { Symbol.Lambda });
+	// AddProduction(Symbol.N_ListTail, new List<object>() {
+	// Symbol.N_OpType_EqualOrUnifiable, Symbol.N_Expression, "#infix" });
+	// AddProduction(Symbol.N_Expression, new List<object>() {
+	// Symbol.T_Dot, Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.T_Comma, Symbol.N_Expression, Symbol.T_RightBracket, "#cons",
+	// Symbol.N_InfixNonArithmeticPredicateTail });
+
+	// ...
+
+	// **** END of pre-2021-06-22 Productions
 
 	public get languageName(): string {
 		return 'Prolog';
@@ -636,114 +870,99 @@ export class PrologGrammar extends GrammarBase {
 		semanticStack: Stack<any>,
 		action: string
 	): void {
-		const gs = LanguageSelector.Prolog2;
+		// const gs = LanguageSelector.Prolog2;
 
-		let str: string;
-		// let goal: PrologGoal;
-		let goalList: PrologGoal[];
-		let expr: IPrologExpression;
-		let expr2: IPrologExpression;
-		let exprList: IPrologExpression[];
-		let functor: PrologFunctor;
-		let variable: PrologVariable;
-		let variableList: PrologVariable[];
-		let functorExpr: PrologNameExpression<PrologFunctor>;
-		let functorExpr2: PrologNameExpression<PrologFunctor>;
-		// let functorExpr3: PrologNameExpression<PrologFunctor>;
-		let clause: PrologClause;
+		// let str: string;
+		// // let goal: PrologGoal;
+		// let goalList: PrologGoal[];
+		// let expr: IPrologExpression;
+		// let expr2: IPrologExpression;
+		// let exprList: IPrologExpression[];
+		// let functor: PrologFunctor;
+		// let variable: PrologVariable;
+		// let variableList: PrologVariable[];
+		// let functorExpr: PrologNameExpression<PrologFunctor>;
+		// let functorExpr2: PrologNameExpression<PrologFunctor>;
+		// // let functorExpr3: PrologNameExpression<PrologFunctor>;
+		// let clause: PrologClause;
 
 		switch (action) {
-			case '#createClause':
-				clause = PrologGlobalInfo.CreateClause(
-					semanticStack.pop() as IPrologExpression
-				);
+			// case '#createClause':
+			// 	clause = PrologGlobalInfo.CreateClause(
+			// 		semanticStack.pop() as IPrologExpression
+			// 	);
 
-				if (typeof clause === 'undefined') {
-					throw new Error('Semantic action #createClause failed.');
-				}
+			// 	if (typeof clause === 'undefined') {
+			// 		throw new Error('Semantic action #createClause failed.');
+			// 	}
 
-				semanticStack.push(clause);
-				break;
+			// 	semanticStack.push(clause);
+			// 	break;
 
-			case '#createCSharpGoalList':
-				goalList = PrologGlobalInfo.PrologListToGoalList(
-					semanticStack.pop() as IPrologExpression
-				);
+			// case '#createCSharpGoalList':
+			// 	goalList = PrologGlobalInfo.PrologListToGoalList(
+			// 		semanticStack.pop() as IPrologExpression
+			// 	);
 
-				if (typeof goalList === 'undefined') {
-					throw new Error(
-						'Semantic action #createCSharpGoalList failed.'
-					);
-				}
+			// 	if (typeof goalList === 'undefined') {
+			// 		throw new Error(
+			// 			'Semantic action #createCSharpGoalList failed.'
+			// 		);
+			// 	}
 
-				semanticStack.push(goalList);
-				break;
+			// 	semanticStack.push(goalList);
+			// 	break;
 
-			case '#convertExpressionToFunctorExpression':
-				semanticStack.push(
-					this.PopAndConvertToFunctorExpression(
-						semanticStack /*, action */
-					)
-				);
-				break;
+			// case '#convertExpressionToFunctorExpression':
+			// 	semanticStack.push(
+			// 		this.PopAndConvertToFunctorExpression(
+			// 			semanticStack /*, action */
+			// 		)
+			// 	);
+			// 	break;
 
-			case '#clauseAsFunctor':
-				functorExpr2 =
-					semanticStack.pop() as PrologNameExpression<PrologFunctor>;
-				functorExpr =
-					semanticStack.pop() as PrologNameExpression<PrologFunctor>;
-				// functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
-				functor = new PrologFunctor('clause');
-				semanticStack.push(
-					new PrologNameExpression<PrologFunctor>(gs, functor, [
-						functorExpr,
-						functorExpr2
-					])
-				);
-				// semanticStack.push(PrologGlobalInfo.CreateClauseAsFunctorExpression(functorExpr, functorExpr2));
-				break;
+			// case '#clauseAsFunctor':
+			// 	functorExpr2 =
+			// 		semanticStack.pop() as PrologNameExpression<PrologFunctor>;
+			// 	functorExpr =
+			// 		semanticStack.pop() as PrologNameExpression<PrologFunctor>;
+			// 	// functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
+			// 	functor = new PrologFunctor('clause');
+			// 	semanticStack.push(
+			// 		new PrologNameExpression<PrologFunctor>(gs, functor, [
+			// 			functorExpr,
+			// 			functorExpr2
+			// 		])
+			// 	);
+			// 	// semanticStack.push(PrologGlobalInfo.CreateClauseAsFunctorExpression(functorExpr, functorExpr2));
+			// 	break;
 
-			case '#exprList':
-				exprList = semanticStack.pop() as IPrologExpression[];
-				expr = semanticStack.pop() as IPrologExpression;
-				exprList.unshift(expr);
-				semanticStack.push(exprList);
-				break;
-
-			case '#emptyExprList':
-				exprList = [];
-				semanticStack.push(exprList);
-				break;
-
-			case '#functorExpressionNoArgs':
-				str = semanticStack.pop() as string;
-				functor = new PrologFunctor(str);
-				semanticStack.push(
-					new PrologNameExpression<PrologFunctor>(gs, functor, [])
-				);
-				break;
-
-			case '#functorExpression2':
-				exprList = semanticStack.pop() as IPrologExpression[];
-				expr = semanticStack.pop() as IPrologExpression;
-				str = semanticStack.pop() as string;
-				functor = new PrologFunctor(str);
-				exprList.unshift(expr);
-				semanticStack.push(
-					new PrologNameExpression<PrologFunctor>(
-						gs,
-						functor,
-						exprList
-					)
-				);
-				break;
-
-			// case '#functorExpression2b':
+			// case '#exprList':
 			// 	exprList = semanticStack.pop() as IPrologExpression[];
-			// 	// expr = semanticStack.pop() as IPrologExpression;
+			// 	expr = semanticStack.pop() as IPrologExpression;
+			// 	exprList.unshift(expr);
+			// 	semanticStack.push(exprList);
+			// 	break;
+
+			// case '#emptyExprList':
+			// 	exprList = [];
+			// 	semanticStack.push(exprList);
+			// 	break;
+
+			// case '#functorExpressionNoArgs':
 			// 	str = semanticStack.pop() as string;
 			// 	functor = new PrologFunctor(str);
-			// 	// exprList.unshift(expr);
+			// 	semanticStack.push(
+			// 		new PrologNameExpression<PrologFunctor>(gs, functor, [])
+			// 	);
+			// 	break;
+
+			// case '#functorExpression2':
+			// 	exprList = semanticStack.pop() as IPrologExpression[];
+			// 	expr = semanticStack.pop() as IPrologExpression;
+			// 	str = semanticStack.pop() as string;
+			// 	functor = new PrologFunctor(str);
+			// 	exprList.unshift(expr);
 			// 	semanticStack.push(
 			// 		new PrologNameExpression<PrologFunctor>(
 			// 			gs,
@@ -753,142 +972,157 @@ export class PrologGrammar extends GrammarBase {
 			// 	);
 			// 	break;
 
-			case '#functorToGoal':
-				functorExpr =
-					semanticStack.pop() as PrologNameExpression<PrologFunctor>;
-				semanticStack.push(
-					new PrologGoal(
-						functorExpr.gs,
-						new PrologPredicate(functorExpr.Name.Name),
-						functorExpr.ExpressionList
-					)
-				);
-				break;
+			// // case '#functorExpression2b':
+			// // 	exprList = semanticStack.pop() as IPrologExpression[];
+			// // 	// expr = semanticStack.pop() as IPrologExpression;
+			// // 	str = semanticStack.pop() as string;
+			// // 	functor = new PrologFunctor(str);
+			// // 	// exprList.unshift(expr);
+			// // 	semanticStack.push(
+			// // 		new PrologNameExpression<PrologFunctor>(
+			// // 			gs,
+			// // 			functor,
+			// // 			exprList
+			// // 		)
+			// // 	);
+			// // 	break;
 
-			case '#variable':
-				str = semanticStack.pop() as string;
-				semanticStack.push(new PrologVariable(str));
-				break;
+			// case '#functorToGoal':
+			// 	functorExpr =
+			// 		semanticStack.pop() as PrologNameExpression<PrologFunctor>;
+			// 	semanticStack.push(
+			// 		new PrologGoal(
+			// 			functorExpr.gs,
+			// 			new PrologPredicate(functorExpr.Name.Name),
+			// 			functorExpr.ExpressionList
+			// 		)
+			// 	);
+			// 	break;
 
-			// case "#infix": // Infix binary (dyadic) operator.
-			// expr2 = (IPrologExpression)semanticStack.Pop();
-			// str = (string)semanticStack.Pop();
-			// expr = (IPrologExpression)semanticStack.Pop();
-			// functor = new PrologFunctor(str);
-			// exprList = new List<IPrologExpression>() { expr, expr2 };
-			// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
-			// break;
+			// case '#variable':
+			// 	str = semanticStack.pop() as string;
+			// 	semanticStack.push(new PrologVariable(str));
+			// 	break;
 
-			// case "#arithExpr_Prefix":   // The same as #infix, except for the order of the items on the stack.
-			// expr2 = (IPrologExpression)semanticStack.Pop();
-			// expr = (IPrologExpression)semanticStack.Pop();
-			// str = (string)semanticStack.Pop();
-			// functor = new PrologFunctor(str);
-			// exprList = new List<IPrologExpression>() { expr, expr2 };
-			// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
-			// break;
+			// // case "#infix": // Infix binary (dyadic) operator.
+			// // expr2 = (IPrologExpression)semanticStack.Pop();
+			// // str = (string)semanticStack.Pop();
+			// // expr = (IPrologExpression)semanticStack.Pop();
+			// // functor = new PrologFunctor(str);
+			// // exprList = new List<IPrologExpression>() { expr, expr2 };
+			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
+			// // break;
 
-			// case "#unaryMinus":
-			// expr2 = (IPrologExpression)semanticStack.Pop();
-			// str = (string)semanticStack.Pop(); // Remove the - from the stack.
-			// expr = new PrologIntegerLiteral(0);
-			// exprList = new List<IPrologExpression>() { expr, expr2 };
-			// functor = new PrologFunctor(str);
-			// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
-			// break;
+			// // case "#arithExpr_Prefix":   // The same as #infix, except for the order of the items on the stack.
+			// // expr2 = (IPrologExpression)semanticStack.Pop();
+			// // expr = (IPrologExpression)semanticStack.Pop();
+			// // str = (string)semanticStack.Pop();
+			// // functor = new PrologFunctor(str);
+			// // exprList = new List<IPrologExpression>() { expr, expr2 };
+			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
+			// // break;
 
-			// case "#not":    // #metaPredicateWithGoal
-			// functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
-			// functor = new PrologFunctor("not");
-			// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr }));
-			// break;
+			// // case "#unaryMinus":
+			// // expr2 = (IPrologExpression)semanticStack.Pop();
+			// // str = (string)semanticStack.Pop(); // Remove the - from the stack.
+			// // expr = new PrologIntegerLiteral(0);
+			// // exprList = new List<IPrologExpression>() { expr, expr2 };
+			// // functor = new PrologFunctor(str);
+			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
+			// // break;
 
-			case '#nil':
-				functor = new PrologFunctor('[]');
-				semanticStack.push(
-					new PrologNameExpression<PrologFunctor>(gs, functor, [])
-				);
-				break;
+			// // case "#not":    // #metaPredicateWithGoal
+			// // functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
+			// // functor = new PrologFunctor("not");
+			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr }));
+			// // break;
 
-			case '#cons':
-				expr2 = semanticStack.pop() as IPrologExpression;
-				expr = semanticStack.pop() as IPrologExpression;
-				functor = new PrologFunctor('.');
-				semanticStack.push(
-					new PrologNameExpression<PrologFunctor>(gs, functor, [
-						expr,
-						expr2
-					])
-				);
-				break;
+			// case '#nil':
+			// 	functor = new PrologFunctor('[]');
+			// 	semanticStack.push(
+			// 		new PrologNameExpression<PrologFunctor>(gs, functor, [])
+			// 	);
+			// 	break;
 
-			// case "#consSeq":
-			// expr2 = (IPrologExpression)semanticStack.Pop();
-			// expr = (IPrologExpression)semanticStack.Pop();
-			// functor = new PrologFunctor("consSeq");
-			// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { expr, expr2 }));
-			// break;
+			// case '#cons':
+			// 	expr2 = semanticStack.pop() as IPrologExpression;
+			// 	expr = semanticStack.pop() as IPrologExpression;
+			// 	functor = new PrologFunctor('.');
+			// 	semanticStack.push(
+			// 		new PrologNameExpression<PrologFunctor>(gs, functor, [
+			// 			expr,
+			// 			expr2
+			// 		])
+			// 	);
+			// 	break;
 
-			// case "#goalDisjunction":
-			// functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-			// functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-			// functor = new PrologFunctor("goal_disjunction");
-			// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr, functorExpr2 }));
-			// break;
+			// // case "#consSeq":
+			// // expr2 = (IPrologExpression)semanticStack.Pop();
+			// // expr = (IPrologExpression)semanticStack.Pop();
+			// // functor = new PrologFunctor("consSeq");
+			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { expr, expr2 }));
+			// // break;
 
-			// case "#ifThenElse":
-			// functorExpr3 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-			// functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-			// functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
-			// functor = new PrologFunctor("if_then_else");
-			// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor,
-			// new List<IPrologExpression>() { functorExpr, functorExpr2, functorExpr3 }));
-			// break;
+			// // case "#goalDisjunction":
+			// // functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+			// // functor = new PrologFunctor("goal_disjunction");
+			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr, functorExpr2 }));
+			// // break;
 
-			// case "#DCGClause":
-			// // The #DCGClause semantic action will add the extra arguments to the goals in order to support the difference list mechanism.
-			// // It also converts lists into "unifiable" predicates.
-			// exprList = (List<IPrologExpression>)semanticStack.Pop();
-			// functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop(); // The LHS of the clause.
-			// semanticStack.Push(GenerateDCGClause(functorExpr, exprList));
-			// break;
+			// // case "#ifThenElse":
+			// // functorExpr3 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+			// // functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+			// // functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
+			// // functor = new PrologFunctor("if_then_else");
+			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor,
+			// // new List<IPrologExpression>() { functorExpr, functorExpr2, functorExpr3 }));
+			// // break;
 
-			// case "#DCGEmptyObjectList":
-			// semanticStack.Push(new List<IPrologExpression>());
-			// break;
+			// // case "#DCGClause":
+			// // // The #DCGClause semantic action will add the extra arguments to the goals in order to support the difference list mechanism.
+			// // // It also converts lists into "unifiable" predicates.
+			// // exprList = (List<IPrologExpression>)semanticStack.Pop();
+			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop(); // The LHS of the clause.
+			// // semanticStack.Push(GenerateDCGClause(functorExpr, exprList));
+			// // break;
 
-			// case "#DCGObjectList":
-			// exprList = (List<IPrologExpression>)semanticStack.Pop();
-			// expr = (IPrologExpression)semanticStack.Pop();
-			// exprList.Insert(0, expr);
-			// semanticStack.Push(exprList);
-			// break;
+			// // case "#DCGEmptyObjectList":
+			// // semanticStack.Push(new List<IPrologExpression>());
+			// // break;
 
-			// case "#markGoalAsNonDCG":
-			// functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Peek();
-			// functorExpr.DCGDoNotAddExtraArguments = true;
-			// break;
+			// // case "#DCGObjectList":
+			// // exprList = (List<IPrologExpression>)semanticStack.Pop();
+			// // expr = (IPrologExpression)semanticStack.Pop();
+			// // exprList.Insert(0, expr);
+			// // semanticStack.Push(exprList);
+			// // break;
 
-			case '#createVariableList':
-				str = semanticStack.pop() as string;
-				variable = new PrologVariable(str);
-				variableList = [variable];
-				semanticStack.push(variableList);
-				break;
+			// // case "#markGoalAsNonDCG":
+			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Peek();
+			// // functorExpr.DCGDoNotAddExtraArguments = true;
+			// // break;
 
-			case '#appendToVariableList':
-				str = semanticStack.pop() as string;
-				variableList = semanticStack.pop() as PrologVariable[];
-				variable = new PrologVariable(str);
-				variableList.push(variable);
-				semanticStack.push(variableList);
-				break;
+			// case '#createVariableList':
+			// 	str = semanticStack.pop() as string;
+			// 	variable = new PrologVariable(str);
+			// 	variableList = [variable];
+			// 	semanticStack.push(variableList);
+			// 	break;
 
-			// case "#createCaretList":
-			// functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-			// variableList = (List<PrologVariable>)semanticStack.Pop();
-			// semanticStack.Push(new CaretList(variableList, functorExpr));
-			// break;
+			// case '#appendToVariableList':
+			// 	str = semanticStack.pop() as string;
+			// 	variableList = semanticStack.pop() as PrologVariable[];
+			// 	variable = new PrologVariable(str);
+			// 	variableList.push(variable);
+			// 	semanticStack.push(variableList);
+			// 	break;
+
+			// // case "#createCaretList":
+			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+			// // variableList = (List<PrologVariable>)semanticStack.Pop();
+			// // semanticStack.Push(new CaretList(variableList, functorExpr));
+			// // break;
 
 			default:
 				throw new ArgumentException(
@@ -896,21 +1130,6 @@ export class PrologGrammar extends GrammarBase {
 					'action'
 				);
 		}
-
-		// console.log(
-		// 	'PrologGrammar.executeSemanticAction() : action is:',
-		// 	action
-		// );
-
-		// switch (action) {
-		// 	case '#':
-		// 		break;
-
-		// 	default:
-		// 		throw new GrammarException(
-		// 			`Unrecognized semantic action: ${action}`
-		// 		);
-		// }
 	}
 
 	public tokenToSymbol(token: Token): number {
