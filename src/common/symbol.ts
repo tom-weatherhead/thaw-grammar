@@ -82,6 +82,7 @@ export enum Symbol {
 	terminalNameNotBeginningWithCapital,
 	terminalFrom,
 	terminalInferPred,
+	terminalNotSymbol,
 	// terminal,
 
 	terminalEOF,

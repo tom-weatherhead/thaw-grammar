@@ -55,6 +55,7 @@ export class PrologGrammar extends GrammarBase {
 		this.terminals.push(Symbol.terminalInferPred);
 		this.terminals.push(Symbol.terminalIntegerLiteral);
 		this.terminals.push(Symbol.terminalOrBar);
+		this.terminals.push(Symbol.terminalNotSymbol);
 		// this.terminals.push(Symbol.terminal);
 
 		this.terminals.push(Symbol.terminalEOF);
@@ -443,6 +444,18 @@ export class PrologGrammar extends GrammarBase {
 				Symbol.nonterminalListContentsTail,
 				[Symbol.terminalOrBar, Symbol.nonterminalExpression],
 				28
+			)
+		);
+
+		// // Not symbol: \+
+		// AddProduction(Symbol.N_Expression, new List<object>() {
+		// Symbol.T_NotSymbol, Symbol.N_Goal, "#not" });   // #metaPredicateWithGoal
+		this.productions.push(
+			new Production(
+				// Symbol.nonterminalExpression,
+				Symbol.nonterminalGoal,
+				[Symbol.terminalNotSymbol, Symbol.nonterminalGoal, '#not'],
+				29
 			)
 		);
 	}
@@ -972,7 +985,7 @@ export class PrologGrammar extends GrammarBase {
 		let functor: PrologFunctor;
 		// let variable: PrologVariable;
 		// let variableList: PrologVariable[];
-		// let functorExpr: PrologNameExpression<PrologFunctor>;
+		let functorExpr: PrologNameExpression<PrologFunctor>;
 		// let functorExpr2: PrologNameExpression<PrologFunctor>;
 		// // let functorExpr3: PrologNameExpression<PrologFunctor>;
 		// let clause: PrologClause;
@@ -1052,7 +1065,7 @@ export class PrologGrammar extends GrammarBase {
 				);
 				break;
 
-			// **** BEGIN TODO after 2021-06-22 - for lists
+			// **** BEGIN - For lists
 
 			case '#createNilFunctor':
 				functor = new PrologFunctor('[]');
@@ -1073,7 +1086,19 @@ export class PrologGrammar extends GrammarBase {
 				);
 				break;
 
-			// **** END TODO after 2021-06-22
+			// **** END - For lists
+
+			case '#not': // #metaPredicateWithGoal
+				functorExpr = this.PopAndConvertToFunctorExpression(
+					semanticStack /*, action */
+				);
+				functor = new PrologFunctor('not');
+				semanticStack.push(
+					new PrologNameExpression<PrologFunctor>(gs, functor, [
+						functorExpr
+					])
+				);
+				break;
 
 			// ****
 
@@ -1348,7 +1373,8 @@ export class PrologGrammar extends GrammarBase {
 					// case ">": return Symbol.T_GreaterThan;
 					// case "=<": return Symbol.T_LessEqual; // Not <=.  See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
 					// case ">=": return Symbol.T_GreaterEqual;
-					// case @"\+": return Symbol.T_NotSymbol;
+					case '\\+':
+						return Symbol.terminalNotSymbol;
 					// case "->": return Symbol.T_IfThen;
 					// case ":": return Symbol.T_Colon;
 					// case "=": return Symbol.T_Assign;   // Unifiable
@@ -1408,18 +1434,17 @@ export class PrologGrammar extends GrammarBase {
 				return Symbol.terminalSemicolon;
 			case LexicalState.tokenOrBar:
 				return Symbol.terminalOrBar;
+			case LexicalState.tokenBackslashPlus:
+				return Symbol.terminalNotSymbol;
 
 			// case TokenType.T_StrLit2: return Symbol.T_NameNotBeginningWithCapital; // The contents of a single-quoted string.
 			// case TokenType.T_LeftCurlyBrace: return Symbol.T_LeftCurlyBrace;
 			// case TokenType.T_RightCurlyBrace: return Symbol.T_RightCurlyBrace;
 			// case TokenType.T_Colon: return Symbol.T_Colon;
-			// case TokenType.T_QuestionMinus: return Symbol.T_InferPred;
-			// case TokenType.T_ColonMinus: return Symbol.T_From;
 			// case TokenType.T_Less: return Symbol.T_LessThan;
 			// case TokenType.T_EqualLessThan: return Symbol.T_LessEqual;
 			// case TokenType.T_Greater: return Symbol.T_GreaterThan;
 			// case TokenType.T_GreaterEqual: return Symbol.T_GreaterEqual;
-			// case TokenType.T_BackslashPlus: return Symbol.T_NotSymbol;
 			// case TokenType.T_BackslashEqual: return Symbol.T_NotUnifiable;
 			// case TokenType.T_EqualEqual: return Symbol.T_Equals;
 			// case TokenType.T_BackslashEqualEqual: return Symbol.T_NotEqual;

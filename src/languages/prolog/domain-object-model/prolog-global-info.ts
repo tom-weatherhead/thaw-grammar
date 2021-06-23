@@ -20,6 +20,12 @@ import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';
 
+enum SolutionCollectionMode {
+	None,
+	FindAll,
+	BagOfOrSetOf
+}
+
 // export function setToArray<T>(s: Set<T>): T[] {
 // 	const result: T[] = [];
 
@@ -47,11 +53,11 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// public readonly tokenizer: ITokenizer;
 	//     public readonly IParser parser;
 	private variableRenameNum = 0;
-	//     private bool allMode = false;    // Determines how many solutions we will search for.  false means "first" mode; true means "all" mode.
+	private allMode = false; // Determines how many solutions we will search for.  false means "first" mode; true means "all" mode.
 	//     private readonly StringBuilder sbOutput = new StringBuilder();
 	//     private readonly Random random = new Random();
 	//     private readonly HashSet<string> LoadedPresets = new HashSet<string>();
-	//     private SolutionCollectionMode solutionCollectionMode = SolutionCollectionMode.None;
+	private solutionCollectionMode = SolutionCollectionMode.None;
 	//     private IPrologExpression findAll_Expression = null;
 	//     private List<IPrologExpression> findAll_ResultList = null;
 	//     private List<PrologVariable> caretListVariables = null;
@@ -2230,7 +2236,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	private ProveGoalList(
 		goalList: PrologGoal[],
-		// List<CutDetector> cutDetectorList,
+		// cutDetectorList: CutDetector[],
 		goalNum: number,
 		oldSubstitution: PrologSubstitution,
 		parentVariablesToAvoid: Set<PrologVariable>,
@@ -2404,176 +2410,196 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// }
 		// }
 
-		// switch (goal.Name.Name) {
-		// case 'not':
-		// case '\\+':
+		switch (goal.Name.Name) {
+			case 'not':
+			case '\\+':
+				if (numArgsInGoal === 1) {
+					//var fe = goal.ExpressionList[0] as PrologNameExpression<PrologFunctor>;
+					const fe = PrologGlobalInfo.ConvertToFunctorExpression(
+						goal.ExpressionList[0]
+					);
 
-		// if (numArgsInGoal == 1)
-		// {
-		// //var fe = goal.ExpressionList[0] as PrologNameExpression<PrologFunctor>;
-		// var fe = ConvertToFunctorExpression(goal.ExpressionList[0]);
+					// if (fe == null) {
+					// 	return null;
+					// }
 
-		// if (fe == null)
-		// {
-		// return null;
-		// }
+					// var innerGoal = fe.ToGoal();
 
-		// var innerGoal = fe.ToGoal();
-		// var tempGoalList = new List<PrologGoal>() { innerGoal };
-		// // This next line prevents us from adding "not" to the built-in predicates dictionary:
-		// var tempCutDetectorList = new List<CutDetector>() { cutDetectorList[goalNum] };
-		// var tempListOfCurrentModules = new List<PrologModule>() { listOfCurrentModules[goalNum] };
-		// var cachedAllMode = allMode;
-		// var cachedSolutionCollectionMode = solutionCollectionMode;
-		// PrologSubstitution localSubstitution = null;
+					// public ToGoal(): PrologGoal {
+					const innerGoal = new PrologGoal(
+						fe.gs,
+						new PrologPredicate(fe.Name.Name),
+						fe.ExpressionList
+					);
+					// }
 
-		// allMode = false;
-		// solutionCollectionMode = SolutionCollectionMode.None;
+					const tempGoalList = [innerGoal];
+					// This next line prevents us from adding "not" to the built-in predicates dictionary:
+					// const tempCutDetectorList = [cutDetectorList[goalNum]];
+					const tempListOfCurrentModules = [
+						listOfCurrentModules[goalNum]
+					];
+					const cachedAllMode = this.allMode;
+					const cachedSolutionCollectionMode =
+						this.solutionCollectionMode;
+					let localSubstitution: PrologSubstitution | undefined;
 
-		// try
-		// {
-		// // We don't need to use parentVariablesToAvoid here, since we don't propagate localSubstitution.
-		// localSubstitution = ProveGoalList(tempGoalList, tempCutDetectorList, 0, new PrologSubstitution(),
-		// innerGoal.FindBindingVariables(), null, tempListOfCurrentModules);
-		// }
-		// finally
-		// {
-		// allMode = cachedAllMode;
-		// solutionCollectionMode = cachedSolutionCollectionMode;
-		// }
+					this.allMode = false;
+					this.solutionCollectionMode = SolutionCollectionMode.None;
 
-		// if (localSubstitution != null)
-		// {
-		// return null;
-		// }
-		// else
-		// {
-		// return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution, parentVariablesToAvoid,
-		// variablesInQuery, listOfCurrentModules);
-		// }
-		// }
+					try {
+						// We don't need to use parentVariablesToAvoid here, since we don't propagate localSubstitution.
+						localSubstitution = this.ProveGoalList(
+							tempGoalList,
+							// tempCutDetectorList,
+							0,
+							new PrologSubstitution(),
+							innerGoal.FindBindingVariables(),
+							[],
+							tempListOfCurrentModules
+						);
+					} finally {
+						this.allMode = cachedAllMode;
+						this.solutionCollectionMode =
+							cachedSolutionCollectionMode;
+					}
 
-		// break;
+					if (typeof localSubstitution !== 'undefined') {
+						return undefined;
+					}
 
-		// case "functor":
-		// // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse39
+					return this.ProveGoalList(
+						goalList,
+						// cutDetectorList,
+						nextGoalNum,
+						oldSubstitution,
+						parentVariablesToAvoid,
+						variablesInQuery,
+						listOfCurrentModules
+					);
+				}
 
-		// if (numArgsInGoal == 3) // functor/3
-		// {
-		// var functorSubstitution = Functor3(goal, parentVariablesToAvoid);
+				break;
 
-		// if (functorSubstitution == null)
-		// {
-		// return null;
-		// }
+			// case "functor":
+			// 	// See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse39
 
-		// return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution.Compose(functorSubstitution),
-		// parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
-		// }
+			// 	if (numArgsInGoal == 3) // functor/3
+			// 	{
+			// 	var functorSubstitution = Functor3(goal, parentVariablesToAvoid);
 
-		// break;
+			// 	if (functorSubstitution == null)
+			// 	{
+			// 	return null;
+			// 	}
 
-		// case "findall": // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse49
+			// 	return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution.Compose(functorSubstitution),
+			// 	parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
+			// 	}
 
-		// if (numArgsInGoal == 3) // findall/3
-		// {
-		// var unifier = FindAll3(goal, parentVariablesToAvoid, currentModule);
+			// 	break;
 
-		// if (unifier == null)
-		// {
-		// return null;
-		// }
+			// case "findall": // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse49
 
-		// return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution.Compose(unifier),
-		// parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
-		// }
+			// 	if (numArgsInGoal == 3) // findall/3
+			// 	{
+			// 	var unifier = FindAll3(goal, parentVariablesToAvoid, currentModule);
 
-		// break;
+			// 	if (unifier == null)
+			// 	{
+			// 	return null;
+			// 	}
 
-		// case "bagof": // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse49
-		// case "setof":
+			// 	return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution.Compose(unifier),
+			// 	parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
+			// 	}
 
-		// if (numArgsInGoal == 3) // bagof/3 or setof/3
-		// {
-		// return BagOfSetOf3(goal, goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery,
-		// listOfCurrentModules);
-		// }
+			// 	break;
 
-		// break;
+			// case "bagof": // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse49
+			// case "setof":
 
-		// case "goal_disjunction":
-		// case ";":
+			// 	if (numArgsInGoal == 3) // bagof/3 or setof/3
+			// 	{
+			// 	return BagOfSetOf3(goal, goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery,
+			// 	listOfCurrentModules);
+			// 	}
 
-		// if (numArgsInGoal == 2)
-		// {
-		// return GoalDisjunction2(goal, goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery,
-		// listOfCurrentModules);
-		// }
+			// 	break;
 
-		// break;
+			// case "goal_disjunction":
+			// case ";":
 
-		// case "if_then_else":
+			// 	if (numArgsInGoal == 2)
+			// 	{
+			// 	return GoalDisjunction2(goal, goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery,
+			// 	listOfCurrentModules);
+			// 	}
 
-		// if (numArgsInGoal == 3)
-		// {
-		// return IfThenElse3(goal.ExpressionList[0], goal.ExpressionList[1], goal.ExpressionList[2],
-		// goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
-		// }
+			// 	break;
 
-		// break;
+			// case "if_then_else":
 
-		// case "->":
+			// 	if (numArgsInGoal == 3)
+			// 	{
+			// 	return IfThenElse3(goal.ExpressionList[0], goal.ExpressionList[1], goal.ExpressionList[2],
+			// 	goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
+			// 	}
 
-		// if (numArgsInGoal == 2)
-		// {
-		// var thenElseGoal = ExpressionToGoal(goal.ExpressionList[1]);
+			// 	break;
 
-		// if (thenElseGoal != null && thenElseGoal.Name.Name == ":" && thenElseGoal.ExpressionList.length == 2)
-		// {
-		// return IfThenElse3(goal.ExpressionList[0], thenElseGoal.ExpressionList[0], thenElseGoal.ExpressionList[1],
-		// goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
-		// }
-		// }
+			// case "->":
 
-		// break;
+			// 	if (numArgsInGoal == 2)
+			// 	{
+			// 	var thenElseGoal = ExpressionToGoal(goal.ExpressionList[1]);
 
-		// case "retract":
+			// 	if (thenElseGoal != null && thenElseGoal.Name.Name == ":" && thenElseGoal.ExpressionList.length == 2)
+			// 	{
+			// 	return IfThenElse3(goal.ExpressionList[0], thenElseGoal.ExpressionList[0], thenElseGoal.ExpressionList[1],
+			// 	goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
+			// 	}
+			// 	}
 
-		// if (numArgsInGoal == 1)
-		// {
-		// var unifier = Retract1(goal, oldSubstitution, parentVariablesToAvoid);
+			// 	break;
 
-		// if (unifier == null)
-		// {
-		// return null;
-		// }
+			// case "retract":
 
-		// return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution.Compose(unifier),
-		// parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
-		// }
+			// 	if (numArgsInGoal == 1)
+			// 	{
+			// 	var unifier = Retract1(goal, oldSubstitution, parentVariablesToAvoid);
 
-		// break;
+			// 	if (unifier == null)
+			// 	{
+			// 	return null;
+			// 	}
 
-		// case "retractall":
+			// 	return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution.Compose(unifier),
+			// 	parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
+			// 	}
 
-		// if (numArgsInGoal == 1)
-		// {
-		// var unifier = RetractAll1(goal, oldSubstitution, parentVariablesToAvoid);
+			// 	break;
 
-		// if (unifier == null)
-		// {
-		// return null;
-		// }
+			// case "retractall":
 
-		// return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution.Compose(unifier),
-		// parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
-		// }
+			// 	if (numArgsInGoal == 1)
+			// 	{
+			// 	var unifier = RetractAll1(goal, oldSubstitution, parentVariablesToAvoid);
 
-		// break;
+			// 	if (unifier == null)
+			// 	{
+			// 	return null;
+			// 	}
 
-		// default:
-		// 	break;
-		// }
+			// 	return ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution.Compose(unifier),
+			// 	parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
+			// 	}
+
+			// 	break;
+
+			default:
+				break;
+		}
 
 		let resultSubstitution = this.ProveGoalListUsingModule(
 			goal,
