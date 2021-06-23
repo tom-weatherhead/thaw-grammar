@@ -2307,12 +2307,16 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		}
 
 		// #if SUBSTITUTION_KEY_COUNT_LIMIT
-		if (oldSubstitution.SubstitutionList.size > 10) {
-			console.error(
+		if (oldSubstitution.SubstitutionList.size > 100) {
+			// console.error(
+			// 	'ProveGoalList() : **** Aborting because the substitution is too long. ****'
+			// );
+
+			// return undefined;
+
+			throw new Error(
 				'ProveGoalList() : **** Aborting because the substitution is too long. ****'
 			);
-
-			return undefined;
 		}
 		// #endif
 

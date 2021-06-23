@@ -23,6 +23,17 @@ import { PrologNameExpression } from './domain-object-model/prolog-name-expressi
 import { PrologPredicate } from './domain-object-model/prolog-predicate';
 import { PrologVariable } from './domain-object-model/prolog-variable';
 
+// function explodingCast<T>(value: unknown): T {
+// 	const castValue = value as T;
+
+// 	// if (castValue.constructor.name !== T.name) {
+// 	if (!(castValue instanceof T)) {
+// 		throw new Error(`explodingCast() : ${value} -> ${castValue}`);
+// 	}
+
+// 	return castValue;
+// }
+
 export class PrologGrammar extends GrammarBase {
 	// The Scheme grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
 
@@ -36,14 +47,14 @@ export class PrologGrammar extends GrammarBase {
 		// this.terminals.push(Symbol.terminalSemicolon);
 		this.terminals.push(Symbol.terminalLeftBracket);
 		this.terminals.push(Symbol.terminalRightBracket);
-		// this.terminals.push(Symbol.terminalLeftSquareBracket);
-		// this.terminals.push(Symbol.terminalRightSquareBracket);
+		this.terminals.push(Symbol.terminalLeftSquareBracket);
+		this.terminals.push(Symbol.terminalRightSquareBracket);
 		this.terminals.push(Symbol.terminalNameBeginningWithCapital);
 		this.terminals.push(Symbol.terminalNameNotBeginningWithCapital);
 		this.terminals.push(Symbol.terminalFrom);
 		this.terminals.push(Symbol.terminalInferPred);
 		this.terminals.push(Symbol.terminalIntegerLiteral);
-		// this.terminals.push(Symbol.terminalOrBar);
+		this.terminals.push(Symbol.terminalOrBar);
 		// this.terminals.push(Symbol.terminal);
 
 		this.terminals.push(Symbol.terminalEOF);
@@ -87,9 +98,9 @@ export class PrologGrammar extends GrammarBase {
 		this.nonTerminals.push(Symbol.nonterminalGoalList);
 		// this.nonTerminals.push(Symbol.nonterminalPossibleDisjunctiveTail);
 		this.nonTerminals.push(Symbol.nonterminalVariable);
-		// this.nonTerminals.push(Symbol.nonterminalList);
-		// this.nonTerminals.push(Symbol.nonterminalListContents);
-		// this.nonTerminals.push(Symbol.nonterminalListContentsTail);
+		this.nonTerminals.push(Symbol.nonterminalList);
+		this.nonTerminals.push(Symbol.nonterminalListContents);
+		this.nonTerminals.push(Symbol.nonterminalListContentsTail);
 		this.nonTerminals.push(Symbol.nonterminalGoalListTail);
 		this.nonTerminals.push(Symbol.nonterminalFunctorExpression);
 		this.nonTerminals.push(Symbol.nonterminalTailOfGoalOrFunctorExpression);
@@ -155,7 +166,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalInput,
-				[Symbol.nonterminalQuery, '#createCSharpGoalList'],
+				[Symbol.nonterminalQuery /*, '#createCSharpGoalList' */],
 				3
 			)
 		);
@@ -174,9 +185,9 @@ export class PrologGrammar extends GrammarBase {
 				Symbol.nonterminalQuery,
 				[
 					Symbol.terminalInferPred,
-					Symbol.nonterminalGoal // ,
-					// Symbol.nonterminalGoalListTail,
-					// '#cons'
+					Symbol.nonterminalGoal,
+					Symbol.nonterminalGoalListTail,
+					'#consGoalList'
 				],
 				5
 			)
@@ -318,7 +329,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpression,
-				[Symbol.terminalIntegerLiteral, '#createIntegerLiteral'],
+				[Symbol.terminalIntegerLiteral /*, '#createIntegerLiteral' */],
 				17
 			)
 		);
@@ -360,6 +371,78 @@ export class PrologGrammar extends GrammarBase {
 					'#createFunctorExpression'
 				],
 				21
+			)
+		);
+
+		// Lists.
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalExpression,
+				[
+					Symbol.nonterminalList // , Symbol.nonterminalListTail
+				],
+				22
+			)
+		);
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalList,
+				[
+					Symbol.terminalLeftSquareBracket,
+					Symbol.nonterminalListContents,
+					Symbol.terminalRightSquareBracket
+				],
+				23
+			)
+		);
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContents,
+				[Symbol.Lambda, '#createEmptyExpressionList'],
+				24
+			)
+		);
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContents,
+				[
+					Symbol.nonterminalExpression,
+					Symbol.nonterminalListContentsTail,
+					'#consExpressionList'
+				],
+				25
+			)
+		);
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContentsTail,
+				[Symbol.Lambda, '#createEmptyExpressionList'],
+				26
+			)
+		);
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContentsTail,
+				[
+					Symbol.terminalComma,
+					Symbol.nonterminalExpression,
+					Symbol.nonterminalListContentsTail,
+					'#consExpressionList'
+				],
+				27
+			)
+		);
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalListContentsTail,
+				[Symbol.terminalOrBar, Symbol.nonterminalExpression],
+				28
 			)
 		);
 	}
@@ -878,15 +961,15 @@ export class PrologGrammar extends GrammarBase {
 		semanticStack: Stack<any>,
 		action: string
 	): void {
-		// const gs = LanguageSelector.Prolog2;
+		const gs = LanguageSelector.Prolog2;
 
-		// let str: string;
-		// // let goal: PrologGoal;
-		// let goalList: PrologGoal[];
-		// let expr: IPrologExpression;
+		let str: string;
+		let goal: PrologGoal;
+		let goalList: PrologGoal[];
+		let expr: IPrologExpression;
 		// let expr2: IPrologExpression;
-		// let exprList: IPrologExpression[];
-		// let functor: PrologFunctor;
+		let exprList: IPrologExpression[];
+		let functor: PrologFunctor;
 		// let variable: PrologVariable;
 		// let variableList: PrologVariable[];
 		// let functorExpr: PrologNameExpression<PrologFunctor>;
@@ -896,15 +979,70 @@ export class PrologGrammar extends GrammarBase {
 
 		switch (action) {
 			case '#createClause':
-			case '#createCSharpGoalList':
+				goalList = semanticStack.pop() as PrologGoal[];
+				goal = semanticStack.pop() as PrologGoal;
+				semanticStack.push(new PrologClause(goal, goalList));
+				break;
+
+			// case '#createCSharpGoalList':
+			// 	break;
+
 			case '#consGoalList':
+				goalList = semanticStack.pop() as PrologGoal[];
+				goal = semanticStack.pop() as PrologGoal;
+				goalList.unshift(goal);
+				semanticStack.push(goalList);
+				break;
+
 			case '#createEmptyGoalList':
+				goalList = [];
+				semanticStack.push(goalList);
+				break;
+
 			case '#createGoal':
+				exprList = semanticStack.pop() as IPrologExpression[];
+				str = semanticStack.pop() as string;
+				semanticStack.push(
+					new PrologGoal(gs, new PrologPredicate(str), exprList)
+				);
+				break;
+
 			case '#createEmptyExpressionList':
+				exprList = [];
+				semanticStack.push(exprList);
+				break;
+
 			case '#consExpressionList':
-			case '#createIntegerLiteral':
+				exprList = semanticStack.pop() as IPrologExpression[];
+				expr = semanticStack.pop() as IPrologExpression;
+				exprList.unshift(expr);
+				semanticStack.push(exprList);
+				break;
+
+			// case '#createIntegerLiteral':
+			// 	semanticStack.push(new PrologIntegerLiteral());
+			// 	break;
+
 			case '#createVariable':
+				str = semanticStack.pop() as string;
+				semanticStack.push(new PrologVariable(str));
+				break;
+
 			case '#createFunctorExpression':
+				// semanticStack.push(new PrologFunctorExpression());
+				exprList = semanticStack.pop() as IPrologExpression[];
+				// expr = semanticStack.pop() as IPrologExpression;
+				str = semanticStack.pop() as string;
+				functor = new PrologFunctor(str);
+				// exprList.unshift(expr);
+				semanticStack.push(
+					new PrologNameExpression<PrologFunctor>(
+						gs,
+						functor,
+						exprList
+					)
+				);
+				break;
 
 			// ****
 

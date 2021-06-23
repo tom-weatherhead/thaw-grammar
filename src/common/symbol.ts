@@ -142,9 +142,9 @@ export enum Symbol {
 	nonterminalGoalList,
 	nonterminalGoalListTail,
 	// nonterminalPossibleDisjunctiveTail,
-	// nonterminalList,
-	// nonterminalListContents,
-	// nonterminalListContentsTail,
+	nonterminalList,
+	nonterminalListContents,
+	nonterminalListContentsTail,
 	nonterminalFunctorExpression,
 	nonterminalTailOfGoalOrFunctorExpression,
 	nonterminalExpressionListTail
