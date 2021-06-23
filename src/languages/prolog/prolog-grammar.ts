@@ -400,7 +400,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalListContents,
-				[Symbol.Lambda, '#createEmptyExpressionList'],
+				[Symbol.Lambda, '#createNilFunctor'],
 				24
 			)
 		);
@@ -411,7 +411,7 @@ export class PrologGrammar extends GrammarBase {
 				[
 					Symbol.nonterminalExpression,
 					Symbol.nonterminalListContentsTail,
-					'#consExpressionList'
+					'#createConsFunctor'
 				],
 				25
 			)
@@ -420,7 +420,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalListContentsTail,
-				[Symbol.Lambda, '#createEmptyExpressionList'],
+				[Symbol.Lambda, '#createNilFunctor'],
 				26
 			)
 		);
@@ -432,7 +432,7 @@ export class PrologGrammar extends GrammarBase {
 					Symbol.terminalComma,
 					Symbol.nonterminalExpression,
 					Symbol.nonterminalListContentsTail,
-					'#consExpressionList'
+					'#createConsFunctor'
 				],
 				27
 			)
@@ -967,7 +967,7 @@ export class PrologGrammar extends GrammarBase {
 		let goal: PrologGoal;
 		let goalList: PrologGoal[];
 		let expr: IPrologExpression;
-		// let expr2: IPrologExpression;
+		let expr2: IPrologExpression;
 		let exprList: IPrologExpression[];
 		let functor: PrologFunctor;
 		// let variable: PrologVariable;
@@ -1014,7 +1014,15 @@ export class PrologGrammar extends GrammarBase {
 
 			case '#consExpressionList':
 				exprList = semanticStack.pop() as IPrologExpression[];
+				console.log(
+					'#consExpressionList : exprList is',
+					exprList.constructor.name
+				);
 				expr = semanticStack.pop() as IPrologExpression;
+				console.log(
+					'#consExpressionList : expr is',
+					expr.constructor.name
+				);
 				exprList.unshift(expr);
 				semanticStack.push(exprList);
 				break;
@@ -1043,6 +1051,29 @@ export class PrologGrammar extends GrammarBase {
 					)
 				);
 				break;
+
+			// **** BEGIN TODO after 2021-06-22 - for lists
+
+			case '#createNilFunctor':
+				functor = new PrologFunctor('[]');
+				semanticStack.push(
+					new PrologNameExpression<PrologFunctor>(gs, functor, [])
+				);
+				break;
+
+			case '#createConsFunctor':
+				expr2 = semanticStack.pop() as IPrologExpression;
+				expr = semanticStack.pop() as IPrologExpression;
+				functor = new PrologFunctor('.');
+				semanticStack.push(
+					new PrologNameExpression<PrologFunctor>(gs, functor, [
+						expr,
+						expr2
+					])
+				);
+				break;
+
+			// **** END TODO after 2021-06-22
 
 			// ****
 
