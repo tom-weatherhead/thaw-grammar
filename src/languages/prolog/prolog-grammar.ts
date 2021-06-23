@@ -174,9 +174,9 @@ export class PrologGrammar extends GrammarBase {
 				Symbol.nonterminalQuery,
 				[
 					Symbol.terminalInferPred,
-					Symbol.nonterminalGoal,
+					Symbol.nonterminalGoal // ,
 					// Symbol.nonterminalGoalListTail,
-					'#cons'
+					// '#cons'
 				],
 				5
 			)
@@ -189,8 +189,8 @@ export class PrologGrammar extends GrammarBase {
 					Symbol.terminalFrom,
 					Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
 					Symbol.nonterminalGoalListTail,
-					'#cons',
-					'#clauseAsFunctor'
+					'#consGoalList' // ,
+					// '#clauseAsFunctor'
 				],
 				6
 			)
@@ -200,7 +200,11 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalClauseTail,
-				[Symbol.Lambda, '#nil', '#clauseAsFunctor'],
+				[
+					Symbol.Lambda,
+					'#createEmptyGoalList'
+					// , '#clauseAsFunctor'
+				],
 				7
 			)
 		);
@@ -214,7 +218,7 @@ export class PrologGrammar extends GrammarBase {
 					Symbol.terminalComma,
 					Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
 					Symbol.nonterminalGoalListTail,
-					'#cons'
+					'#consGoalList'
 				],
 				8
 			)
@@ -224,7 +228,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalGoalListTail,
-				[Symbol.Lambda, '#nil'],
+				[Symbol.Lambda, '#createEmptyGoalList'],
 				9
 			)
 		);
@@ -236,7 +240,7 @@ export class PrologGrammar extends GrammarBase {
 				[
 					Symbol.terminalNameNotBeginningWithCapital,
 					Symbol.nonterminalTailOfGoalOrFunctorExpression,
-					'#goal'
+					'#createGoal'
 				],
 				10
 			)
@@ -246,7 +250,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalTailOfGoalOrFunctorExpression,
-				[Symbol.Lambda],
+				[Symbol.Lambda, '#createEmptyExpressionList'],
 				11
 			)
 		);
@@ -257,39 +261,41 @@ export class PrologGrammar extends GrammarBase {
 				Symbol.nonterminalTailOfGoalOrFunctorExpression,
 				[
 					Symbol.terminalLeftBracket,
-					Symbol.nonterminalExpressionList,
-					Symbol.terminalRightBracket
+					Symbol.nonterminalExpression,
+					Symbol.nonterminalExpressionListTail,
+					Symbol.terminalRightBracket,
+					'#consExpressionList'
 				],
 				12
 			)
 		);
 
 		// ExprList -> Lambda
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[Symbol.Lambda],
-				13
-			)
-		);
+		// this.productions.push(
+		// 	new Production(
+		// 		Symbol.nonterminalExpressionList,
+		// 		[Symbol.Lambda],
+		// 		13
+		// 	)
+		// );
 
 		// ExprList -> Expr ExprListTail
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionListTail
-				],
-				14
-			)
-		);
+		// this.productions.push(
+		// 	new Production(
+		// 		Symbol.nonterminalExpressionList,
+		// 		[
+		// 			Symbol.nonterminalExpression,
+		// 			Symbol.nonterminalExpressionListTail
+		// 		],
+		// 		14
+		// 	)
+		// );
 
 		// ExprListTail -> Lambda
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpressionListTail,
-				[Symbol.Lambda],
+				[Symbol.Lambda, '#createEmptyExpressionList'],
 				15
 			)
 		);
@@ -301,7 +307,8 @@ export class PrologGrammar extends GrammarBase {
 				[
 					Symbol.terminalComma,
 					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionListTail
+					Symbol.nonterminalExpressionListTail,
+					'#consExpressionList'
 				],
 				16
 			)
@@ -311,7 +318,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpression,
-				[Symbol.terminalIntegerLiteral],
+				[Symbol.terminalIntegerLiteral, '#createIntegerLiteral'],
 				17
 			)
 		);
@@ -338,7 +345,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalVariable,
-				[Symbol.terminalNameBeginningWithCapital],
+				[Symbol.terminalNameBeginningWithCapital, '#createVariable'],
 				20
 			)
 		);
@@ -349,7 +356,8 @@ export class PrologGrammar extends GrammarBase {
 				Symbol.nonterminalFunctorExpression,
 				[
 					Symbol.terminalNameNotBeginningWithCapital,
-					Symbol.nonterminalTailOfGoalOrFunctorExpression
+					Symbol.nonterminalTailOfGoalOrFunctorExpression,
+					'#createFunctorExpression'
 				],
 				21
 			)
@@ -887,6 +895,19 @@ export class PrologGrammar extends GrammarBase {
 		// let clause: PrologClause;
 
 		switch (action) {
+			case '#createClause':
+			case '#createCSharpGoalList':
+			case '#consGoalList':
+			case '#createEmptyGoalList':
+			case '#createGoal':
+			case '#createEmptyExpressionList':
+			case '#consExpressionList':
+			case '#createIntegerLiteral':
+			case '#createVariable':
+			case '#createFunctorExpression':
+
+			// ****
+
 			// case '#createClause':
 			// 	clause = PrologGlobalInfo.CreateClause(
 			// 		semanticStack.pop() as IPrologExpression
