@@ -20,15 +20,15 @@ import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';
 
-export function setToArray<T>(s: Set<T>): T[] {
-	const result: T[] = [];
+// export function setToArray<T>(s: Set<T>): T[] {
+// 	const result: T[] = [];
 
-	s.getIterator().forEach((t: T) => {
-		result.push(t);
-	});
+// 	s.getIterator().forEach((t: T) => {
+// 		result.push(t);
+// 	});
 
-	return result;
-}
+// 	return result;
+// }
 
 export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* implements IGlobalInfoOps, IParser */ {
 	public static readonly ClauseAdded = 'Clause added.';

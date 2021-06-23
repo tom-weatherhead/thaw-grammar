@@ -4,7 +4,7 @@ import { Set } from 'thaw-common-utilities.ts';
 
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
-import { setToArray } from './prolog-global-info';
+// import { setToArray } from './prolog-global-info';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
@@ -194,7 +194,8 @@ export class PrologNameExpression<T extends PrologNameBase>
 
 		// return result;
 
-		return setToArray(this.FindBindingVariables());
+		// return setToArray(this.FindBindingVariables());
+		return this.FindBindingVariables().toArray();
 	}
 
 	public ContainsVariable(v: PrologVariable): boolean {

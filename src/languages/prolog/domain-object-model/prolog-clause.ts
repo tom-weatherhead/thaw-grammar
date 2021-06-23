@@ -4,7 +4,7 @@ import { Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
-import { PrologGlobalInfo, setToArray } from './prolog-global-info';
+import { PrologGlobalInfo } from './prolog-global-info';
 import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
@@ -104,7 +104,8 @@ export class PrologClause implements IPrologExpression {
 		// return result;
 
 		// return this.FindBindingVariables();
-		return setToArray(this.FindBindingVariables());
+		// return setToArray(this.FindBindingVariables());
+		return this.FindBindingVariables().toArray();
 	}
 
 	public ContainsVariable(v: PrologVariable): boolean {

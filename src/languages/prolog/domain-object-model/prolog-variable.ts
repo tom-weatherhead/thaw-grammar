@@ -2,7 +2,7 @@
 
 import { IEqualityComparable, Set } from 'thaw-common-utilities.ts';
 
-import { setToArray } from './prolog-global-info';
+// import { setToArray } from './prolog-global-info';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
@@ -91,7 +91,8 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 
 		//    return result;
 
-		return setToArray(this.FindBindingVariables());
+		// return setToArray(this.FindBindingVariables());
+		return this.FindBindingVariables().toArray();
 	}
 
 	public ContainsVariable(v: PrologVariable): boolean {
