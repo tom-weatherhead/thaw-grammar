@@ -12,6 +12,8 @@ import { ParserSelector } from '../../common/parser-selectors';
 import { Production } from '../../common/production';
 import { Symbol } from '../../common/symbol';
 
+import { createFunctorExpressionFromGoal } from './utilities';
+
 import { IPrologExpression } from './domain-object-model/iprolog-expression';
 import { PrologClause } from './domain-object-model/prolog-clause';
 import { PrologFloatLiteral } from './domain-object-model/prolog-float-literal';
@@ -60,20 +62,11 @@ export class PrologGrammar extends GrammarBase {
 
 		this.terminals.push(Symbol.terminalEOF);
 
-		// Terminals.UnionWith(new HashSet<Symbol>() { // From PrologGrammarBase
-
-		// Added:
-		// Symbol.T_Dot,
-
 		// Not yet added:
-		// Symbol.T_LeftBracket, Symbol.T_RightBracket, Symbol.T_From,
-		// Symbol.T_InferPred, Symbol.T_IntegerLiteral, Symbol.T_NameBeginningWithCapital, Symbol.T_NameNotBeginningWithCapital,
-		// Symbol.T_EOF,
 		// // From PrologGrammar2
-		// Symbol.T_Comma, Symbol.T_Is, Symbol.T_Plus,
+		// Symbol.T_Is, Symbol.T_Plus,
 		// Symbol.T_Minus, Symbol.T_Multiply, Symbol.T_Divide, Symbol.T_LessThan,
 		// Symbol.T_GreaterThan, Symbol.T_LessEqual, Symbol.T_GreaterEqual, Symbol.T_StringLiteral,
-		// Symbol.T_LeftSquareBracket, Symbol.T_RightSquareBracket, Symbol.T_OrBar,
 		// Symbol.T_NotSymbol, Symbol.T_IfThen, Symbol.T_Colon, Symbol.T_Assign,
 		// Symbol.T_Equals, Symbol.T_NotEqual, Symbol.T_NotUnifiable,
 		// Symbol.T_Semicolon, Symbol.T_Mod, Symbol.T_ArithmeticEquals, Symbol.T_ArithmeticNotEquals,
@@ -86,7 +79,7 @@ export class PrologGrammar extends GrammarBase {
 		this.nonTerminals.push(Symbol.nonterminalClause);
 		this.nonTerminals.push(Symbol.nonterminalQuery);
 		this.nonTerminals.push(Symbol.nonterminalExpression);
-		this.nonTerminals.push(Symbol.nonterminalExpressionList);
+		// this.nonTerminals.push(Symbol.nonterminalExpressionList);
 		this.nonTerminals.push(Symbol.nonterminalGoal);
 		// this.nonTerminals.push(Symbol.nonterminalLHSGoal);
 		this.nonTerminals.push(Symbol.nonterminalClauseTail);
@@ -111,11 +104,9 @@ export class PrologGrammar extends GrammarBase {
 		// Non-Terminals:
 
 		// NonTerminals.UnionWith(new HashSet<Symbol>() {
-		// Symbol.N_Start,
-		// Symbol.N_Input, Symbol.N_Clause, Symbol.N_Query, Symbol.N_Goal,
-		// Symbol.N_ClauseTail, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_PossibleDisjunctiveTail,
-		// Symbol.N_GoalList, Symbol.N_Expression, Symbol.N_ExpressionList, Symbol.N_NumberOrVariableExpression,
-		// Symbol.N_Functor, //Symbol.N_Variable, Symbol.N_Name, Symbol.N_Predicate, Symbol.N_ExpressionListTail, Symbol.N_ExpressionTail,
+		// Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_PossibleDisjunctiveTail,
+		// Symbol.N_NumberOrVariableExpression,
+		// Symbol.N_Functor, Symbol.N_Name, Symbol.N_Predicate, Symbol.N_ExpressionTail,
 		// Symbol.N_IfThenElseTail, Symbol.N_InfixNonArithmeticPredicateTail, Symbol.N_InfixPredicateTail,
 		// Symbol.N_ListContentsTail, Symbol.N_ExpressionPartFollowingAnInteger, Symbol.N_ExpressionPartFollowingAnUpperCaseID,
 		// Symbol.N_ExpressionPartFollowingALowerCaseID, Symbol.N_ExpressionPartFollowingALowerCaseIDWithParams,
@@ -167,7 +158,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalInput,
-				[Symbol.nonterminalQuery /*, '#createCSharpGoalList' */],
+				[Symbol.nonterminalQuery],
 				3
 			)
 		);
@@ -199,36 +190,28 @@ export class PrologGrammar extends GrammarBase {
 				Symbol.nonterminalClauseTail,
 				[
 					Symbol.terminalFrom,
-					Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
+					Symbol.nonterminalGoal,
 					Symbol.nonterminalGoalListTail,
-					'#consGoalList' // ,
-					// '#clauseAsFunctor'
+					'#consGoalList'
 				],
 				6
 			)
 		);
 
-		// AddProduction(Symbol.N_ClauseTail, new List<object>() { Symbol.Lambda, "#nil", "#clauseAsFunctor" });
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalClauseTail,
-				[
-					Symbol.Lambda,
-					'#createEmptyGoalList'
-					// , '#clauseAsFunctor'
-				],
+				[Symbol.Lambda, '#createEmptyGoalList'],
 				7
 			)
 		);
 
-		// AddProduction(Symbol.N_GoalList, new List<object>() {
-		// Symbol.T_Comma, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons" });
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalGoalListTail,
 				[
 					Symbol.terminalComma,
-					Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
+					Symbol.nonterminalGoal,
 					Symbol.nonterminalGoalListTail,
 					'#consGoalList'
 				],
@@ -236,7 +219,6 @@ export class PrologGrammar extends GrammarBase {
 			)
 		);
 
-		// AddProduction(Symbol.N_GoalList, new List<object>() { Symbol.Lambda, "#nil" });
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalGoalListTail,
@@ -281,27 +263,6 @@ export class PrologGrammar extends GrammarBase {
 				12
 			)
 		);
-
-		// ExprList -> Lambda
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalExpressionList,
-		// 		[Symbol.Lambda],
-		// 		13
-		// 	)
-		// );
-
-		// ExprList -> Expr ExprListTail
-		// this.productions.push(
-		// 	new Production(
-		// 		Symbol.nonterminalExpressionList,
-		// 		[
-		// 			Symbol.nonterminalExpression,
-		// 			Symbol.nonterminalExpressionListTail
-		// 		],
-		// 		14
-		// 	)
-		// );
 
 		// ExprListTail -> Lambda
 		this.productions.push(
@@ -448,119 +409,14 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		// // Not symbol: \+
-		// AddProduction(Symbol.N_Expression, new List<object>() {
-		// Symbol.T_NotSymbol, Symbol.N_Goal, "#not" });   // #metaPredicateWithGoal
 		this.productions.push(
 			new Production(
-				// Symbol.nonterminalExpression,
 				Symbol.nonterminalGoal,
 				[Symbol.terminalNotSymbol, Symbol.nonterminalGoal, '#not'],
 				29
 			)
 		);
 	}
-
-	// **** BEGINNING of pre-2021-06-22 Productions
-
-	// // This initial production needed to be added: Start -> Input EOF
-	// // AddProduction(Symbol.N_Start, new List<object>() { Symbol.N_Input, Symbol.T_Dot, Symbol.T_EOF });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalStart,
-	// 		[
-	// 			Symbol.nonterminalInput,
-	// 			Symbol.terminalDot,
-	// 			Symbol.terminalEOF
-	// 		],
-	// 		1
-	// 	)
-	// );
-
-	// // Input -> Clause
-	// // AddProduction(Symbol.N_Input, new List<object>() { Symbol.N_Clause, "#createClause" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalInput,
-	// 		[Symbol.nonterminalClause, '#createClause'],
-	// 		2
-	// 	)
-	// );
-
-	// // Input -> Query
-	// // AddProduction(Symbol.N_Input, new List<object>() { Symbol.N_Query, "#createCSharpGoalList" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalInput,
-	// 		[Symbol.nonterminalQuery, '#createCSharpGoalList'],
-	// 		3
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_Clause, new List<object>() { Symbol.N_LHSGoal, Symbol.N_ClauseTail });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalClause,
-	// 		// 2021-06-17: Temporarily commented out:
-	// 		// [Symbol.nonterminalLHSGoal, Symbol.nonterminalClauseTail],
-	// 		[Symbol.nonterminalGoal, Symbol.nonterminalClauseTail],
-	// 		4
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_LHSGoal, new List<object>() { Symbol.T_NameBeginningWithCapital, Symbol.N_LHSGoalTail });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalLHSGoal,
-	// // 		[
-	// // 			Symbol.terminalNameBeginningWithCapital,
-	// // 			Symbol.nonterminalLHSGoalTail
-	// // 		],
-	// // 		5
-	// // 	)
-	// // );
-
-	// // AddProduction(Symbol.N_LHSGoal, new List<object>() { Symbol.N_Functor, Symbol.N_LHSGoalTail });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalLHSGoal,
-	// // 		[Symbol.nonterminalFunctor, Symbol.nonterminalLHSGoalTail],
-	// // 		6
-	// // 	)
-	// // );
-
-	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_NameNotBeginningWithCapital });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalFunctor,
-	// 		[
-	// 			Symbol.terminalNameNotBeginningWithCapital,
-	// 			Symbol.nonterminalFunctorParameters
-	// 		],
-	// 		7
-	// 	)
-	// );
-
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalFunctorParameters,
-	// 		[Symbol.Lambda, '#functorExpressionNoArgs'],
-	// 		0
-	// 	)
-	// );
-
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalFunctorParameters,
-	// 		[
-	// 			Symbol.terminalLeftBracket,
-	// 			Symbol.nonterminalExpression,
-	// 			Symbol.nonterminalExpressionList,
-	// 			Symbol.terminalRightBracket,
-	// 			'#functorExpression2'
-	// 		],
-	// 		0
-	// 	)
-	// );
 
 	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Is });
 	// // //AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Not });
@@ -573,281 +429,6 @@ export class PrologGrammar extends GrammarBase {
 	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.N_OpType_Multiply });
 	// // //AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Mod });
 	// // #endif
-
-	// // AddProduction(Symbol.N_LHSGoalTail, new List<object>() { Symbol.Lambda, "#functorExpressionNoArgs" });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalLHSGoalTail,
-	// // 		[Symbol.Lambda, '#functorExpressionNoArgs'],
-	// // 		8
-	// // 	)
-	// // );
-
-	// // AddProduction(Symbol.N_LHSGoalTail, new List<object>() {
-	// // Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.N_ExpressionList, Symbol.T_RightBracket, "#functorExpression2" });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalLHSGoalTail,
-	// // 		[
-	// // 			Symbol.terminalLeftBracket,
-	// // 			Symbol.nonterminalExpression,
-	// // 			Symbol.nonterminalExpressionList,
-	// // 			Symbol.terminalRightBracket,
-	// // 			'#functorExpression2'
-	// // 		],
-	// // 		9
-	// // 	)
-	// // );
-
-	// // AddProduction(Symbol.N_ExpressionList, new List<object>() { Symbol.Lambda, "#emptyExprList" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalExpressionList,
-	// 		[Symbol.Lambda, '#emptyExprList'],
-	// 		10
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_ExpressionList, new List<object>() {
-	// // Symbol.T_Comma, Symbol.N_Expression, Symbol.N_ExpressionList, "#exprList" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalExpressionList,
-	// 		[
-	// 			Symbol.terminalComma,
-	// 			Symbol.nonterminalExpression,
-	// 			Symbol.nonterminalExpressionList,
-	// 			'#exprList'
-	// 		],
-	// 		11
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_ClauseTail, new List<object>() {
-	// // Symbol.T_From, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons", "#clauseAsFunctor" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalClauseTail,
-	// 		[
-	// 			Symbol.terminalFrom,
-	// 			Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-	// 			Symbol.nonterminalGoalList,
-	// 			'#cons',
-	// 			'#clauseAsFunctor'
-	// 		],
-	// 		12
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_ClauseTail, new List<object>() { Symbol.Lambda, "#nil", "#clauseAsFunctor" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalClauseTail,
-	// 		[Symbol.Lambda, '#nil', '#clauseAsFunctor'],
-	// 		13
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_GoalList, new List<object>() {
-	// // Symbol.T_Comma, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalGoalList,
-	// 		[
-	// 			Symbol.terminalComma,
-	// 			Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-	// 			Symbol.nonterminalGoalList,
-	// 			'#cons'
-	// 		],
-	// 		14
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_GoalList, new List<object>() { Symbol.Lambda, "#nil" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalGoalList,
-	// 		[Symbol.Lambda, '#nil'],
-	// 		15
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_Query, new List<object>() {
-	// // Symbol.T_InferPred, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalQuery,
-	// 		[
-	// 			Symbol.terminalInferPred,
-	// 			Symbol.nonterminalGoal, // Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-	// 			Symbol.nonterminalGoalList,
-	// 			'#cons'
-	// 		],
-	// 		16
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_GoalWithPossibleDisjunctiveTail, new List<object>() {
-	// // Symbol.N_Goal, Symbol.N_PossibleDisjunctiveTail });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-	// // 		[
-	// // 			Symbol.nonterminalGoal,
-	// // 			Symbol.nonterminalPossibleDisjunctiveTail
-	// // 		],
-	// // 		17
-	// // 	)
-	// // );
-
-	// // AddProduction(Symbol.N_PossibleDisjunctiveTail, new List<object>() { Symbol.Lambda });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalPossibleDisjunctiveTail,
-	// // 		[Symbol.Lambda],
-	// // 		18
-	// // 	)
-	// // );
-
-	// // AddProduction(Symbol.N_PossibleDisjunctiveTail, new List<object>() {
-	// // Symbol.T_Semicolon, Symbol.N_Goal, Symbol.N_PossibleDisjunctiveTail, "#goalDisjunction" });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalPossibleDisjunctiveTail,
-	// // 		[
-	// // 			Symbol.terminalSemicolon,
-	// // 			Symbol.nonterminalGoal,
-	// // 			Symbol.nonterminalPossibleDisjunctiveTail,
-	// // 			'#goalDisjunction'
-	// // 		],
-	// // 		19
-	// // 	)
-	// // );
-
-	// // Symbol.T_From, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_GoalList, "#cons", "#clauseAsFunctor" });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalGoalWithPossibleDisjunctiveTail,
-	// // 		[Symbol.nonterminalGoalList, '#cons', '#clauseAsFunctor'],
-	// // 		20
-	// // 	)
-	// // );
-
-	// // // ThAW 2014/03/18 : This is where the fun begins.
-
-	// // AddProduction(Symbol.N_Goal, new List<object>() { Symbol.N_Expression, "#convertExpressionToFunctorExpression" });
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalGoal,
-	// // 		[
-	// // 			Symbol.nonterminalExpression,
-	// // 			'#convertExpressionToFunctorExpression'
-	// // 		],
-	// // 		20
-	// // 	)
-	// // );
-
-	// // **** BEGIN: TEMPORARY PRODUCTION 2021-06-17
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalExpression,
-	// // 		[Symbol.nonterminalFunctor],
-	// // 		21
-	// // 	)
-	// // );
-
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalExpression,
-	// // 		[Symbol.nonterminalVariable],
-	// // 		22
-	// // 	)
-	// // );
-
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalVariable,
-	// 		[Symbol.terminalNameBeginningWithCapital, '#variable'],
-	// 		23
-	// 	)
-	// );
-
-	// // We want a production where Symbol.nonterminalExpression
-	// // corresponds to a PrologNameExpression<PrologFunctor>
-	// // on the semantic stack.
-
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalGoal,
-	// 		[
-	// 			Symbol.nonterminalFunctor,
-	// 			// Symbol.nonterminalExpressionList,
-	// 			'#functorToGoal' // '#functorExpression2b'
-	// 		],
-	// 		24
-	// 	)
-	// );
-
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalExpressionList,
-	// // 		[
-	// // 			Symbol.terminalLeftBracket,
-	// // 			Symbol.nonterminalExpressionListTail,
-	// // 			Symbol.terminalRightBracket
-	// // 		],
-	// // 		25
-	// // 	)
-	// // );
-
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalExpressionListTail,
-	// // 		[
-	// // 			Symbol.terminalComma,
-	// // 			Symbol.nonterminalExpression,
-	// // 			Symbol.nonterminalExpressionListTail,
-	// // 			'#exprList'
-	// // 		],
-	// // 		26
-	// // 	)
-	// // );
-
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalExpressionListTail,
-	// // 		[Symbol.Lambda, '#emptyExprList'],
-	// // 		27
-	// // 	)
-	// // );
-
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalExpression,
-	// 		[Symbol.nonterminalVariable],
-	// 		28
-	// 	)
-	// );
-
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalExpression,
-	// 		[Symbol.terminalIntegerLiteral],
-	// 		29
-	// 	)
-	// );
-
-	// // **** END: TEMPORARY PRODUCTION 2021-06-17
-
-	// // AddProduction(Symbol.N_NumberOrVariableExpression, new List<object>() { Symbol.T_NameBeginningWithCapital, "#variable" });
-	// // TODO 2021-06-17:
-	// // this.productions.push(
-	// // 	new Production(
-	// // 		Symbol.nonterminalNumberOrVariableExpression,
-	// // 		[Symbol.terminalNameBeginningWithCapital, '#variable'],
-	// // 		22
-	// // 	)
-	// // );
 
 	// // AddProduction(Symbol.N_Expression, new List<object>() {
 	// // Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.N_IfThenElseTail, Symbol.T_RightBracket, Symbol.N_ArithmeticAndComparisonTail });
@@ -869,98 +450,6 @@ export class PrologGrammar extends GrammarBase {
 	// // // Sequences.
 
 	// // ...
-
-	// // // Lists.
-	// // AddProduction(Symbol.N_Expression, new List<object>() { Symbol.N_List, Symbol.N_ListTail });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalExpression,
-	// 		[
-	// 			Symbol.nonterminalList // , Symbol.nonterminalListTail
-	// 		],
-	// 		30
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_List, new List<object>() {
-	// // Symbol.T_LeftSquareBracket, Symbol.N_ListContents, Symbol.T_RightSquareBracket });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalList,
-	// 		[
-	// 			Symbol.terminalLeftSquareBracket,
-	// 			Symbol.nonterminalListContents,
-	// 			Symbol.terminalRightSquareBracket
-	// 		],
-	// 		31
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.Lambda, "#nil" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalListContents,
-	// 		[Symbol.Lambda, '#nil'],
-	// 		32
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalListContents,
-	// 		[
-	// 			Symbol.nonterminalExpression,
-	// 			Symbol.nonterminalListContentsTail,
-	// 			'#cons'
-	// 		],
-	// 		33
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.Lambda, "#nil" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalListContentsTail,
-	// 		[Symbol.Lambda, '#nil'],
-	// 		34
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_ListContentsTail, new List<object>() {
-	// // Symbol.T_Comma, Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalListContentsTail,
-	// 		[
-	// 			Symbol.terminalComma,
-	// 			Symbol.nonterminalExpression,
-	// 			Symbol.nonterminalListContentsTail,
-	// 			'#cons'
-	// 		],
-	// 		35
-	// 	)
-	// );
-
-	// // AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.T_OrBar, Symbol.N_Expression });
-	// this.productions.push(
-	// 	new Production(
-	// 		Symbol.nonterminalListContentsTail,
-	// 		[Symbol.terminalOrBar, Symbol.nonterminalExpression],
-	// 		36
-	// 	)
-	// );
-
-	// AddProduction(Symbol.N_ListTail, new List<object>() { Symbol.Lambda });
-	// AddProduction(Symbol.N_ListTail, new List<object>() {
-	// Symbol.N_OpType_EqualOrUnifiable, Symbol.N_Expression, "#infix" });
-	// AddProduction(Symbol.N_Expression, new List<object>() {
-	// Symbol.T_Dot, Symbol.T_LeftBracket, Symbol.N_Expression, Symbol.T_Comma, Symbol.N_Expression, Symbol.T_RightBracket, "#cons",
-	// Symbol.N_InfixNonArithmeticPredicateTail });
-
-	// ...
-
-	// **** END of pre-2021-06-22 Productions
 
 	public get languageName(): string {
 		return 'Prolog';
@@ -996,9 +485,6 @@ export class PrologGrammar extends GrammarBase {
 				goal = semanticStack.pop() as PrologGoal;
 				semanticStack.push(new PrologClause(goal, goalList));
 				break;
-
-			// case '#createCSharpGoalList':
-			// 	break;
 
 			case '#consGoalList':
 				goalList = semanticStack.pop() as PrologGoal[];
@@ -1038,12 +524,9 @@ export class PrologGrammar extends GrammarBase {
 				break;
 
 			case '#createFunctorExpression':
-				// semanticStack.push(new PrologFunctorExpression());
 				exprList = semanticStack.pop() as IPrologExpression[];
-				// expr = semanticStack.pop() as IPrologExpression;
 				str = semanticStack.pop() as string;
 				functor = new PrologFunctor(str);
-				// exprList.unshift(expr);
 				semanticStack.push(
 					// TODO: new PrologFunctorExpression(
 					new PrologNameExpression<PrologFunctor>(
@@ -1078,15 +561,13 @@ export class PrologGrammar extends GrammarBase {
 			// **** END - For lists
 
 			case '#not': // #metaPredicateWithGoal
-				// functorExpr = this.PopAndConvertToFunctorExpression(
-				// 	semanticStack /*, action */
-				// );
 				goal = semanticStack.pop() as PrologGoal;
-				functorExpr = new PrologNameExpression<PrologFunctor>(
-					gs,
-					new PrologFunctor(goal.Name.Name),
-					goal.ExpressionList
-				);
+				// functorExpr = new PrologNameExpression<PrologFunctor>(
+				// 	gs,
+				// 	new PrologFunctor(goal.Name.Name),
+				// 	goal.ExpressionList
+				// );
+				functorExpr = createFunctorExpressionFromGoal(goal);
 				functor = new PrologFunctor('not');
 				semanticStack.push(
 					new PrologNameExpression<PrologFunctor>(gs, functor, [
@@ -1094,134 +575,6 @@ export class PrologGrammar extends GrammarBase {
 					])
 				);
 				break;
-
-			// ****
-
-			// case '#createClause':
-			// 	clause = PrologGlobalInfo.CreateClause(
-			// 		semanticStack.pop() as IPrologExpression
-			// 	);
-
-			// 	if (typeof clause === 'undefined') {
-			// 		throw new Error('Semantic action #createClause failed.');
-			// 	}
-
-			// 	semanticStack.push(clause);
-			// 	break;
-
-			// case '#createCSharpGoalList':
-			// 	goalList = PrologGlobalInfo.PrologListToGoalList(
-			// 		semanticStack.pop() as IPrologExpression
-			// 	);
-
-			// 	if (typeof goalList === 'undefined') {
-			// 		throw new Error(
-			// 			'Semantic action #createCSharpGoalList failed.'
-			// 		);
-			// 	}
-
-			// 	semanticStack.push(goalList);
-			// 	break;
-
-			// case '#convertExpressionToFunctorExpression':
-			// 	semanticStack.push(
-			// 		this.PopAndConvertToFunctorExpression(
-			// 			semanticStack /*, action */
-			// 		)
-			// 	);
-			// 	break;
-
-			// case '#clauseAsFunctor':
-			// 	functorExpr2 =
-			// 		semanticStack.pop() as PrologNameExpression<PrologFunctor>;
-			// 	functorExpr =
-			// 		semanticStack.pop() as PrologNameExpression<PrologFunctor>;
-			// 	// functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
-			// 	functor = new PrologFunctor('clause');
-			// 	semanticStack.push(
-			// 		new PrologNameExpression<PrologFunctor>(gs, functor, [
-			// 			functorExpr,
-			// 			functorExpr2
-			// 		])
-			// 	);
-			// 	// semanticStack.push(PrologGlobalInfo.CreateClauseAsFunctorExpression(functorExpr, functorExpr2));
-			// 	break;
-
-			// case '#exprList':
-			// 	exprList = semanticStack.pop() as IPrologExpression[];
-			// 	expr = semanticStack.pop() as IPrologExpression;
-			// 	exprList.unshift(expr);
-			// 	semanticStack.push(exprList);
-			// 	break;
-
-			// case '#emptyExprList':
-			// 	exprList = [];
-			// 	semanticStack.push(exprList);
-			// 	break;
-
-			// case '#functorExpressionNoArgs':
-			// 	str = semanticStack.pop() as string;
-			// 	functor = new PrologFunctor(str);
-			// 	semanticStack.push(
-			// 		new PrologNameExpression<PrologFunctor>(gs, functor, [])
-			// 	);
-			// 	break;
-
-			// case '#functorExpression2':
-			// 	exprList = semanticStack.pop() as IPrologExpression[];
-			// 	expr = semanticStack.pop() as IPrologExpression;
-			// 	str = semanticStack.pop() as string;
-			// 	functor = new PrologFunctor(str);
-			// 	exprList.unshift(expr);
-			// 	semanticStack.push(
-			// 		new PrologNameExpression<PrologFunctor>(
-			// 			gs,
-			// 			functor,
-			// 			exprList
-			// 		)
-			// 	);
-			// 	break;
-
-			// // case '#functorExpression2b':
-			// // 	exprList = semanticStack.pop() as IPrologExpression[];
-			// // 	// expr = semanticStack.pop() as IPrologExpression;
-			// // 	str = semanticStack.pop() as string;
-			// // 	functor = new PrologFunctor(str);
-			// // 	// exprList.unshift(expr);
-			// // 	semanticStack.push(
-			// // 		new PrologNameExpression<PrologFunctor>(
-			// // 			gs,
-			// // 			functor,
-			// // 			exprList
-			// // 		)
-			// // 	);
-			// // 	break;
-
-			// case '#functorToGoal':
-			// 	functorExpr =
-			// 		semanticStack.pop() as PrologNameExpression<PrologFunctor>;
-			// 	semanticStack.push(
-			// 		new PrologGoal(
-			// 			functorExpr.gs,
-			// 			new PrologPredicate(functorExpr.Name.Name),
-			// 			functorExpr.ExpressionList
-			// 		)
-			// 	);
-			// 	break;
-
-			// case '#variable':
-			// 	str = semanticStack.pop() as string;
-			// 	semanticStack.push(new PrologVariable(str));
-			// 	break;
-
-			// // case "#infix": // Infix binary (dyadic) operator.
-			// // expr2 = (IPrologExpression)semanticStack.Pop();
-			// // str = (string)semanticStack.Pop();
-			// // expr = (IPrologExpression)semanticStack.Pop();
-			// // functor = new PrologFunctor(str);
-			// // exprList = new List<IPrologExpression>() { expr, expr2 };
-			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
-			// // break;
 
 			// // case "#arithExpr_Prefix":   // The same as #infix, except for the order of the items on the stack.
 			// // expr2 = (IPrologExpression)semanticStack.Pop();
@@ -1240,31 +593,6 @@ export class PrologGrammar extends GrammarBase {
 			// // functor = new PrologFunctor(str);
 			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
 			// // break;
-
-			// // case "#not":    // #metaPredicateWithGoal
-			// // functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
-			// // functor = new PrologFunctor("not");
-			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr }));
-			// // break;
-
-			// case '#nil':
-			// 	functor = new PrologFunctor('[]');
-			// 	semanticStack.push(
-			// 		new PrologNameExpression<PrologFunctor>(gs, functor, [])
-			// 	);
-			// 	break;
-
-			// case '#cons':
-			// 	expr2 = semanticStack.pop() as IPrologExpression;
-			// 	expr = semanticStack.pop() as IPrologExpression;
-			// 	functor = new PrologFunctor('.');
-			// 	semanticStack.push(
-			// 		new PrologNameExpression<PrologFunctor>(gs, functor, [
-			// 			expr,
-			// 			expr2
-			// 		])
-			// 	);
-			// 	break;
 
 			// // case "#consSeq":
 			// // expr2 = (IPrologExpression)semanticStack.Pop();
@@ -1313,21 +641,6 @@ export class PrologGrammar extends GrammarBase {
 			// // functorExpr.DCGDoNotAddExtraArguments = true;
 			// // break;
 
-			// case '#createVariableList':
-			// 	str = semanticStack.pop() as string;
-			// 	variable = new PrologVariable(str);
-			// 	variableList = [variable];
-			// 	semanticStack.push(variableList);
-			// 	break;
-
-			// case '#appendToVariableList':
-			// 	str = semanticStack.pop() as string;
-			// 	variableList = semanticStack.pop() as PrologVariable[];
-			// 	variable = new PrologVariable(str);
-			// 	variableList.push(variable);
-			// 	semanticStack.push(variableList);
-			// 	break;
-
 			// // case "#createCaretList":
 			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
 			// // variableList = (List<PrologVariable>)semanticStack.Pop();
@@ -1345,7 +658,6 @@ export class PrologGrammar extends GrammarBase {
 	public tokenToSymbol(token: Token): number {
 		// Returns Symbol
 
-		// string tokenValueAsString = token.TokenValue.ToString();
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
@@ -1387,7 +699,6 @@ export class PrologGrammar extends GrammarBase {
 
 				const firstChar = tokenValueAsString.substring(0, 1);
 
-				// if (char.IsUpper(tokenValueAsString, 0)
 				if (
 					firstChar.toUpperCase() === firstChar ||
 					// The following supports non-binding variables such as _ and _Foo .
@@ -1465,10 +776,6 @@ export class PrologGrammar extends GrammarBase {
 			token.line,
 			token.column
 		);
-
-		// return super.TokenToSymbol(token);
-
-		// return Symbol.UndefinedSymbol;
 	}
 
 	public pushTokenOntoSemanticStack(
@@ -1521,31 +828,7 @@ export class PrologGrammar extends GrammarBase {
 				break;
 		}
 	}
-
-	// private PopAndConvertToFunctorExpression(
-	// 	semanticStack: Stack<any> // ,
-	// 	// action: string
-	// ): PrologNameExpression<PrologFunctor> {
-	// 	const obj = semanticStack.pop();
-	// 	const functorExpression =
-	// 		PrologGlobalInfo.ConvertToFunctorExpression(obj);
-
-	// 	// if (functorExpression == null) {
-	// 	// 	throw new Exception(string.Format(
-	// 	// 	"PopAndConvertToFunctorExpression() : Semantic action {0} : Cannot convert object of type {1} to a functor expression",
-	// 	// 	action, obj.GetType().Name));
-	// 	// }
-
-	// 	return functorExpression;
-	// }
 }
-
-// using System;
-// using System.Collections.Generic;
-// //using System.Linq;
-// //using System.Text;
-// //using System.Threading.Tasks;
-// using Inference.Parser;
 
 // namespace Inference.Interpreter.Prolog
 // {
@@ -1556,52 +839,9 @@ export class PrologGrammar extends GrammarBase {
 // public PrologGrammar2_LL1()
 // : base(Symbol.N_Start)
 // {
-// Terminals.UnionWith(new HashSet<Symbol>() { // From PrologGrammarBase
-// Symbol.T_LeftBracket, Symbol.T_RightBracket, Symbol.T_From,
-// Symbol.T_InferPred, Symbol.T_IntegerLiteral, Symbol.T_NameBeginningWithCapital, Symbol.T_NameNotBeginningWithCapital,
-// Symbol.T_EOF,
-// // From PrologGrammar2
-// Symbol.T_Comma, Symbol.T_Dot, Symbol.T_Is, Symbol.T_Plus,
-// Symbol.T_Minus, Symbol.T_Multiply, Symbol.T_Divide, Symbol.T_LessThan,
-// Symbol.T_GreaterThan, Symbol.T_LessEqual, Symbol.T_GreaterEqual, Symbol.T_StringLiteral,
-// Symbol.T_LeftSquareBracket, Symbol.T_RightSquareBracket, Symbol.T_OrBar,
-// Symbol.T_NotSymbol, Symbol.T_IfThen, Symbol.T_Colon, Symbol.T_Assign,
-// Symbol.T_Equals, Symbol.T_NotEqual, Symbol.T_NotUnifiable,
-// Symbol.T_Semicolon, Symbol.T_Mod, Symbol.T_ArithmeticEquals, Symbol.T_ArithmeticNotEquals,
-// Symbol.T_DCGArrow, Symbol.T_LeftCurlyBrace, Symbol.T_RightCurlyBrace, Symbol.T_Univ,
-// Symbol.T_FloatLiteral, Symbol.T_Caret });
+// Terminals.UnionWith(new HashSet<Symbol>() { ... });
 
-// NonTerminals.UnionWith(new HashSet<Symbol>() { Symbol.N_Start,
-// Symbol.N_Input, Symbol.N_Clause, Symbol.N_Query, Symbol.N_Goal,
-// Symbol.N_ClauseTail, Symbol.N_GoalWithPossibleDisjunctiveTail, Symbol.N_PossibleDisjunctiveTail,
-// Symbol.N_GoalList, Symbol.N_Expression, Symbol.N_ExpressionList, Symbol.N_NumberOrVariableExpression,
-// Symbol.N_Functor, //Symbol.N_Variable, Symbol.N_Name, Symbol.N_Predicate, Symbol.N_ExpressionListTail, Symbol.N_ExpressionTail,
-// Symbol.N_IfThenElseTail, Symbol.N_InfixNonArithmeticPredicateTail, Symbol.N_InfixPredicateTail,
-// Symbol.N_ListContentsTail, Symbol.N_ExpressionPartFollowingAnInteger, Symbol.N_ExpressionPartFollowingAnUpperCaseID,
-// Symbol.N_ExpressionPartFollowingALowerCaseID, Symbol.N_ExpressionPartFollowingALowerCaseIDWithParams,
-// Symbol.N_ExpressionPartFollowingAMinus, Symbol.N_ExpressionPartFollowingMinusLBracketExpr,
-// Symbol.N_OpType_EqualOrUnifiable, Symbol.N_LHSGoal, Symbol.N_LHSGoalTail, //Symbol.N_ComparisonTail,
-// Symbol.N_PrefixArithmeticExpression, Symbol.N_ArithmeticExpression3Minus, Symbol.N_ArithmeticExpression3MinusLBrackArithExpr,
-// // Arithmetic
-// Symbol.N_ArithmeticExpression1, Symbol.N_ArithmeticExpression2, Symbol.N_ArithmeticExpression3, Symbol.N_ArithmeticExpression4,
-// Symbol.N_ArithmeticExpression1Foo, Symbol.N_ArithmeticExpression2Foo, Symbol.N_OpType_Add, Symbol.N_OpType_Multiply,
-// Symbol.N_ModExpression, Symbol.N_PrefixMinusExpression,
-// // Arithmetic comparisons
-// Symbol.N_ComparisonOperator, Symbol.N_ArithmeticAndComparisonTail,
-// //, Symbol.N_GoalBeginningWithArithmeticExpression, Symbol.N_ArithmeticExpressionTail1, Symbol.N_ArithmeticExpressionTail2
-// // Lists
-// Symbol.N_List, Symbol.N_ListContents, Symbol.N_ListTail, Symbol.N_ListContentsTail,
-// // Sequences
-// Symbol.N_Sequence,
-// // Definite Clause Grammar support
-// Symbol.N_DCGRHSGoal, Symbol.N_DCGRHSGoalList,
-// // Caret List (Var1 ^ Var2 ^ ... ^ functorExpression) support
-// Symbol.N_CaretTail, Symbol.N_CaretTail2
-// });
-
-// AddProduction(Symbol.N_Start, new List<object>() { Symbol.N_Input, Symbol.T_Dot, Symbol.T_EOF });
-// AddProduction(Symbol.N_Input, new List<object>() { Symbol.N_Clause, "#createClause" });
-// AddProduction(Symbol.N_Input, new List<object>() { Symbol.N_Query, "#createCSharpGoalList" });
+// NonTerminals.UnionWith(new HashSet<Symbol>() { ... });
 
 // AddProduction(Symbol.N_Clause, new List<object>() { Symbol.N_LHSGoal, Symbol.N_ClauseTail });
 // AddProduction(Symbol.N_LHSGoal, new List<object>() { Symbol.T_NameBeginningWithCapital, Symbol.N_LHSGoalTail });
@@ -1681,16 +921,7 @@ export class PrologGrammar extends GrammarBase {
 // Symbol.N_InfixPredicateTail });
 
 // // Lists.
-// AddProduction(Symbol.N_Expression, new List<object>() { Symbol.N_List, Symbol.N_ListTail });
-// AddProduction(Symbol.N_List, new List<object>() {
-// Symbol.T_LeftSquareBracket, Symbol.N_ListContents, Symbol.T_RightSquareBracket });
-// AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.Lambda, "#nil" });
-// AddProduction(Symbol.N_ListContents, new List<object>() { Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
-// AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.Lambda, "#nil" });
-// AddProduction(Symbol.N_ListContentsTail, new List<object>() {
-// Symbol.T_Comma, Symbol.N_Expression, Symbol.N_ListContentsTail, "#cons" });
-// AddProduction(Symbol.N_ListContentsTail, new List<object>() { Symbol.T_OrBar, Symbol.N_Expression });
-// AddProduction(Symbol.N_ListTail, new List<object>() { Symbol.Lambda });
+// ...
 // AddProduction(Symbol.N_ListTail, new List<object>() {
 // Symbol.N_OpType_EqualOrUnifiable, Symbol.N_Expression, "#infix" });
 // AddProduction(Symbol.N_Expression, new List<object>() {
@@ -1807,10 +1038,6 @@ export class PrologGrammar extends GrammarBase {
 
 // // String literals.
 // AddProduction(Symbol.N_Expression, new List<object>() { Symbol.T_StringLiteral });
-
-// // Not symbol: \+
-// AddProduction(Symbol.N_Expression, new List<object>() {
-// Symbol.T_NotSymbol, Symbol.N_Goal, "#not" });   // #metaPredicateWithGoal
 
 // // Definite Clause Grammar support.
 // // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlch7
@@ -1974,37 +1201,6 @@ export class PrologGrammar extends GrammarBase {
 // semanticStack.Push(PrologGlobalInfo.CreateClauseAsFunctorExpression(functorExpr, functorExpr2));
 // break;
 
-// case "#exprList":
-// exprList = (List<IPrologExpression>)semanticStack.Pop();
-// expr = (IPrologExpression)semanticStack.Pop();
-// exprList.Insert(0, expr);
-// semanticStack.Push(exprList);
-// break;
-
-// case "#emptyExprList":
-// semanticStack.Push(new List<IPrologExpression>());
-// break;
-
-// case "#functorExpressionNoArgs":
-// str = (string)semanticStack.Pop();
-// functor = new PrologFunctor(str);
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>()));
-// break;
-
-// case "#functorExpression2":
-// exprList = (List<IPrologExpression>)semanticStack.Pop();
-// expr = (IPrologExpression)semanticStack.Pop();
-// str = (string)semanticStack.Pop();
-// functor = new PrologFunctor(str);
-// exprList.Insert(0, expr);
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
-// break;
-
-// case "#variable":
-// str = (string)semanticStack.Pop();
-// semanticStack.Push(new PrologVariable(str));
-// break;
-
 // case "#infix": // Infix binary (dyadic) operator.
 // expr2 = (IPrologExpression)semanticStack.Pop();
 // str = (string)semanticStack.Pop();
@@ -2030,24 +1226,6 @@ export class PrologGrammar extends GrammarBase {
 // exprList = new List<IPrologExpression>() { expr, expr2 };
 // functor = new PrologFunctor(str);
 // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
-// break;
-
-// case "#not":    // #metaPredicateWithGoal
-// functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
-// functor = new PrologFunctor("not");
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr }));
-// break;
-
-// case "#nil":
-// functor = new PrologFunctor("[]");
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>()));
-// break;
-
-// case "#cons":
-// expr2 = (IPrologExpression)semanticStack.Pop();
-// expr = (IPrologExpression)semanticStack.Pop();
-// functor = new PrologFunctor(".");
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { expr, expr2 }));
 // break;
 
 // case "#consSeq":
