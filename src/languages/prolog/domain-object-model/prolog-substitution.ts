@@ -27,8 +27,11 @@ export class PrologSubstitution {
 
 	public toString(): string {
 		const result: string[] = [];
+		const keys = [...this.SubstitutionList.keys()];
 
-		for (const v of this.SubstitutionList.keys()) {
+		keys.sort();
+
+		for (const v of keys) {
 			const expr = this.SubstitutionList.get(v);
 
 			if (typeof v !== 'undefined') {
