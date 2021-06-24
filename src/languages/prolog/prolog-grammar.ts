@@ -1027,22 +1027,10 @@ export class PrologGrammar extends GrammarBase {
 
 			case '#consExpressionList':
 				exprList = semanticStack.pop() as IPrologExpression[];
-				console.log(
-					'#consExpressionList : exprList is',
-					exprList.constructor.name
-				);
 				expr = semanticStack.pop() as IPrologExpression;
-				console.log(
-					'#consExpressionList : expr is',
-					expr.constructor.name
-				);
 				exprList.unshift(expr);
 				semanticStack.push(exprList);
 				break;
-
-			// case '#createIntegerLiteral':
-			// 	semanticStack.push(new PrologIntegerLiteral());
-			// 	break;
 
 			case '#createVariable':
 				str = semanticStack.pop() as string;
@@ -1057,6 +1045,7 @@ export class PrologGrammar extends GrammarBase {
 				functor = new PrologFunctor(str);
 				// exprList.unshift(expr);
 				semanticStack.push(
+					// TODO: new PrologFunctorExpression(
 					new PrologNameExpression<PrologFunctor>(
 						gs,
 						functor,
@@ -1089,8 +1078,14 @@ export class PrologGrammar extends GrammarBase {
 			// **** END - For lists
 
 			case '#not': // #metaPredicateWithGoal
-				functorExpr = this.PopAndConvertToFunctorExpression(
-					semanticStack /*, action */
+				// functorExpr = this.PopAndConvertToFunctorExpression(
+				// 	semanticStack /*, action */
+				// );
+				goal = semanticStack.pop() as PrologGoal;
+				functorExpr = new PrologNameExpression<PrologFunctor>(
+					gs,
+					new PrologFunctor(goal.Name.Name),
+					goal.ExpressionList
 				);
 				functor = new PrologFunctor('not');
 				semanticStack.push(
@@ -1527,22 +1522,22 @@ export class PrologGrammar extends GrammarBase {
 		}
 	}
 
-	private PopAndConvertToFunctorExpression(
-		semanticStack: Stack<any> // ,
-		// action: string
-	): PrologNameExpression<PrologFunctor> {
-		const obj = semanticStack.pop();
-		const functorExpression =
-			PrologGlobalInfo.ConvertToFunctorExpression(obj);
+	// private PopAndConvertToFunctorExpression(
+	// 	semanticStack: Stack<any> // ,
+	// 	// action: string
+	// ): PrologNameExpression<PrologFunctor> {
+	// 	const obj = semanticStack.pop();
+	// 	const functorExpression =
+	// 		PrologGlobalInfo.ConvertToFunctorExpression(obj);
 
-		// if (functorExpression == null) {
-		// 	throw new Exception(string.Format(
-		// 	"PopAndConvertToFunctorExpression() : Semantic action {0} : Cannot convert object of type {1} to a functor expression",
-		// 	action, obj.GetType().Name));
-		// }
+	// 	// if (functorExpression == null) {
+	// 	// 	throw new Exception(string.Format(
+	// 	// 	"PopAndConvertToFunctorExpression() : Semantic action {0} : Cannot convert object of type {1} to a functor expression",
+	// 	// 	action, obj.GetType().Name));
+	// 	// }
 
-		return functorExpression;
-	}
+	// 	return functorExpression;
+	// }
 }
 
 // using System;

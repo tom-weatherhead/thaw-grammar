@@ -5,8 +5,8 @@ import { StringIntKey } from './string-int-key';
 
 export class PrologModule {
 	public readonly ExportList: StringIntKey[] = [];
-	public readonly ImportList = new Map<string, PrologModule>();
-	public readonly ClauseList: PrologClause[] = [];
+	public /* readonly */ ImportList = new Map<string, PrologModule>();
+	public /* readonly */ ClauseList: PrologClause[] = [];
 
 	constructor(exportList: StringIntKey[] | undefined = undefined) {
 		if (typeof exportList !== 'undefined') {
@@ -18,8 +18,8 @@ export class PrologModule {
 		return 'PrologModule.toString()';
 	}
 
-	// public void Clear() {
-	//     ImportList.Clear();
-	//     ClauseList.Clear();
-	// }
+	public clear(): void {
+		this.ImportList = new Map<string, PrologModule>(); // .Clear();
+		this.ClauseList = []; // .Clear();
+	}
 }
