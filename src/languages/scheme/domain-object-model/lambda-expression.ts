@@ -3,7 +3,7 @@
 'use strict';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { VariableList } from '../../../common/domain-object-model/variable-list';
@@ -42,6 +42,7 @@ export class LambdaExpression implements IExpression<ISExpression> {
 
 	public evaluate(
 		localEnvironment: EnvironmentFrame<ISExpression>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
 		// console.log('Evaluating an instance of LambdaExpression...');

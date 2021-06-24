@@ -79,8 +79,10 @@ export class Closure extends SExpressionBase implements ICallableSExpression {
 	}
 
 	public evaluate(
+		/* eslint-disable @typescript-eslint/no-unused-vars */
 		localEnvironment: EnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
+		/* eslint-enable @typescript-eslint/no-unused-vars */
 	): ISExpression {
 		// console.log('Evaluating an instance of Closure...');
 

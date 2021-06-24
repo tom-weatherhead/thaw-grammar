@@ -51,6 +51,7 @@ export class LetRecUsage<T> implements IExpression<T> {
 	): T {
 		const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		this.bindings.forEach(([v, expr]: [Variable<T>, IExpression<T>]) => {
 			// Add all variables that are bound in this.bindings to newEnvFrame before any closures are created in the next loop.
 			newEnvFrame.add(v, globalInfo.falseValue);

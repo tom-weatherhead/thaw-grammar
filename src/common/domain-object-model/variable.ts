@@ -4,7 +4,7 @@
 
 import { ArgumentNullException } from '../exceptions/argument-null-exception';
 import { EvaluationException } from '../exceptions/evaluation-exception';
-import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
+// import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
 
 import { EnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';

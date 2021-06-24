@@ -7,12 +7,12 @@ import { ExpressionList } from '../../../common/domain-object-model/expression-l
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { Name } from '../../../common/domain-object-model/name';
-import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';
+// import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+// import { ArgumentException } from '../../../common/exceptions/argument-exception';
 import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
-import { IntegerLiteral } from '../../lisp/domain-object-model/integer-literal';
+// import { IntegerLiteral } from '../../lisp/domain-object-model/integer-literal';
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 import { LISPOperatorUsage } from '../../lisp/domain-object-model/lisp-operator-usage';
 import { SExpressionBase } from '../../lisp/domain-object-model/sexpression-base';
@@ -140,8 +140,10 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 	}
 
 	public evaluate(
+		/* eslint-disable @typescript-eslint/no-unused-vars */
 		localEnvironment: EnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
+		/* eslint-enable @typescript-eslint/no-unused-vars */
 	): ISExpression {
 		return this;
 	}

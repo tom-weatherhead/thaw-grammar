@@ -1,9 +1,9 @@
 // import { ITokenizer } from 'thaw-lexical-analyzer';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+// import { ArgumentException } from '../../../common/exceptions/argument-exception';
 // import { IParser } from '../../common/parser/iparser';
-import { IntegerLiteral } from './integer-literal';
+// import { IntegerLiteral } from './integer-literal';
 
 export class MinimalLanguageGlobalInfo extends GlobalInfoBase<number> {
 	private readonly trueValueForAccessor = 1;
@@ -29,6 +29,7 @@ export class MinimalLanguageGlobalInfo extends GlobalInfoBase<number> {
 		return value === this.falseValue;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public valueIsInteger(value: number): boolean {
 		return true;
 	}

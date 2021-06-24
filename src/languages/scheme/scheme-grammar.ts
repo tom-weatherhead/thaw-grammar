@@ -41,7 +41,7 @@ import { ParserSelector } from '../../common/parser-selectors';
 import { Production } from '../../common/production';
 import { Symbol } from '../../common/symbol';
 
-import { FloatLiteral } from '../lisp/domain-object-model/float-literal';
+// import { FloatLiteral } from '../lisp/domain-object-model/float-literal';
 import { IntegerLiteral } from '../lisp/domain-object-model/integer-literal';
 import { ISExpression } from '../lisp/domain-object-model/isexpression';
 import { LISPString } from '../lisp/domain-object-model/lisp-string';
@@ -52,8 +52,8 @@ import { QuotedConstantWithQuoteKeyword } from '../lisp/domain-object-model/quot
 import { SExpressionList } from '../lisp/domain-object-model/sexpression-list';
 
 import { CallCCUsage } from './domain-object-model/call-cc-usage';
-import { Closure } from './domain-object-model/closure';
-import { Continuation } from './domain-object-model/continuation';
+// import { Closure } from './domain-object-model/closure';
+// import { Continuation } from './domain-object-model/continuation';
 import { EvaluableExpression } from './domain-object-model/evaluable-expression';
 import { LambdaExpression } from './domain-object-model/lambda-expression';
 import { LetRecUsage } from './domain-object-model/let-rec-usage';

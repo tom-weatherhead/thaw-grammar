@@ -7,7 +7,7 @@ import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
 import { IntegerLiteral } from './integer-literal';
-import { INumber } from './inumber';
+// import { INumber } from './inumber';
 import { ISExpression } from './isexpression';
 import { LISPSymbol } from './lisp-symbol';
 import { NullSExpression } from './null-sexpression';

@@ -15,7 +15,7 @@ import { VariableList } from '../../common/domain-object-model/variable-list';
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
 import { IfUsage } from '../../common/domain-object-model/if-usage';
-import { OperatorUsage } from '../../common/domain-object-model/operator-usage';
+// import { OperatorUsage } from '../../common/domain-object-model/operator-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 

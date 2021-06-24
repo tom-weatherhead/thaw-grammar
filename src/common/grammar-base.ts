@@ -4,7 +4,7 @@
 
 import { Stack } from 'thaw-common-utilities.ts';
 
-import { LexicalState, Token } from 'thaw-lexical-analyzer';
+import { Token } from 'thaw-lexical-analyzer';
 
 import { GrammarException } from './exceptions/grammar-exception';
 

@@ -8,7 +8,7 @@ import { ArgumentException } from '../../../common/exceptions/argument-exception
 
 import { FloatLiteral } from '../../lisp/domain-object-model/float-literal';
 import { IntegerLiteral } from '../../lisp/domain-object-model/integer-literal';
-import { INumber } from '../../lisp/domain-object-model/inumber';
+// import { INumber } from '../../lisp/domain-object-model/inumber';
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 import { LISPSymbol } from '../../lisp/domain-object-model/lisp-symbol';
 import { NullSExpression } from '../../lisp/domain-object-model/null-sexpression';

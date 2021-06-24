@@ -156,7 +156,7 @@ import { FunctionDefinition } from '../../common/domain-object-model/function-de
 import { IfUsage } from '../../common/domain-object-model/if-usage';
 import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
 import { LetUsage } from '../../common/domain-object-model/let-usage';
-import { OperatorUsage } from '../../common/domain-object-model/operator-usage';
+// import { OperatorUsage } from '../../common/domain-object-model/operator-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 

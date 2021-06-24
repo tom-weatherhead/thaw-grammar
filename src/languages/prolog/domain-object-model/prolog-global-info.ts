@@ -2221,6 +2221,42 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         return null;
 	//     }
 
+	private doIntegerArithmetic(op: string, n1: number, n2: number): number {
+		switch (op) {
+			case 'add':
+				return n1 + n2;
+			case 'subtract':
+				return n1 - n2;
+			case 'multiply':
+				return n1 * n2;
+			default:
+				throw new Error(
+					`doIntegerArithmetic() : Unsupported operator '${op}'`
+				);
+		}
+	}
+
+	private doIntegerComparison(op: string, n1: number, n2: number): boolean {
+		switch (op) {
+			case 'lt': // '<':
+				return n1 < n2;
+			case 'le': // '<=':
+				return n1 <= n2;
+			case 'gt': // '>':
+				return n1 > n2;
+			case 'ge': // '>=':
+				return n1 >= n2;
+			case 'eq': // '=':
+				return n1 === n2;
+			case 'ne': // '!=':
+				return n1 !== n2;
+			default:
+				throw new Error(
+					`doIntegerComparison() : Unsupported operator '${op}'`
+				);
+		}
+	}
+
 	private ProveGoalList(
 		goalList: PrologGoal[],
 		// cutDetectorList: CutDetector[],
@@ -2363,7 +2399,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// );
 
 		const numArgsInGoal = goal.ExpressionList.length;
-		const functionKey = new StringIntKey(goal.Name.Name, numArgsInGoal);
+		// const functionKey = new StringIntKey(goal.Name.Name, numArgsInGoal);
 
 		// console.log('Goal signature is', functionKey.toString());
 
@@ -2395,6 +2431,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		switch (goal.Name.Name) {
 			case 'add':
+			case 'subtract':
+			case 'multiply':
 				if (
 					numArgsInGoal === 3 &&
 					goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
@@ -2406,13 +2444,54 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					const v = goal.ExpressionList[2] as PrologVariable;
 					const addSubstitution = new PrologSubstitution(
 						v,
-						new PrologIntegerLiteral(n1.Value + n2.Value)
+						new PrologIntegerLiteral(
+							this.doIntegerArithmetic(
+								goal.Name.Name,
+								n1.Value,
+								n2.Value
+							)
+						)
 					);
 
 					return this.ProveGoalList(
 						goalList, // cutDetectorList,
 						nextGoalNum,
 						oldSubstitution.Compose(addSubstitution),
+						parentVariablesToAvoid,
+						variablesInQuery,
+						listOfCurrentModules
+					);
+				}
+				break;
+
+			case 'lt': // '<':
+			case 'le': // '<=':
+			case 'gt': // '>':
+			case 'ge': // '>=':
+			case 'eq': // '=':
+			case 'ne': // '!=':
+				if (
+					numArgsInGoal === 2 &&
+					goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
+					goal.ExpressionList[1] instanceof PrologIntegerLiteral
+				) {
+					const n1 = goal.ExpressionList[0] as PrologIntegerLiteral;
+					const n2 = goal.ExpressionList[1] as PrologIntegerLiteral;
+
+					if (
+						!this.doIntegerComparison(
+							goal.Name.Name,
+							n1.Value,
+							n2.Value
+						)
+					) {
+						return undefined;
+					}
+
+					return this.ProveGoalList(
+						goalList, // cutDetectorList,
+						nextGoalNum,
+						oldSubstitution,
 						parentVariablesToAvoid,
 						variablesInQuery,
 						listOfCurrentModules

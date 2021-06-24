@@ -14,10 +14,10 @@ export class CondUsage<T> implements IExpression<T> {
 	}
 
 	public toString(): string {
-		const fnExprPairAsString = ([expr1, expr2]: [
-			IExpression<T>,
-			IExpression<T>
-		]) => `(${expr1} ${expr2})`;
+		// const fnExprPairAsString = ([expr1, expr2]: [
+		// 	IExpression<T>,
+		// 	IExpression<T>
+		// ]) => `(${expr1} ${expr2})`;
 
 		return `(cond ${this.exprPairList
 			.map(
