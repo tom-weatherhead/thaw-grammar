@@ -88,6 +88,11 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 			'\n';
 	}
 
+	protected printDirect(str: string): void {
+		// ThAW 2021-06-24 : Temporary
+		this.printedText = this.printedText + str + '\n';
+	}
+
 	public getPrintedText(): string {
 		return this.printedText;
 	}

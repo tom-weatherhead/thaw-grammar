@@ -917,43 +917,40 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// #endif
 	//     }
 
-	//     private void AutomaticPrint(List<PrologVariable> variablesInQuery, PrologSubstitution substitution)
-	//     {
+	private AutomaticPrint(
+		variablesInQuery: PrologVariable[],
+		substitution: PrologSubstitution
+	): void {
+		if (variablesInQuery.length === 0) {
+			return;
+		}
 
-	//         if (variablesInQuery == null)
-	//         {
-	//             return;
-	//         }
+		const resultList: string[] = [];
 
-	//         var resultList = new List<string>();
+		for (const v of variablesInQuery) {
+			const value = v.ApplySubstitution(substitution);
 
-	//         foreach (var v in variablesInQuery)
-	//         {
-	//             var value = v.ApplySubstitution(substitution);
+			// if (!value.Equals(v)) // Avoid printing identity results such as "X = X".
+			// {
+			resultList.push(`${v} = ${value}`);
+			// }
+		}
 
-	//             if (!value.Equals(v)) // Avoid printing identity results such as "X = X".
-	//             {
-	//                 resultList.Add(string.Format("{0} = {1}", v, value));
-	//             }
-	//         }
+		// if (resultList.Count == 0) {
+		// 	return;
+		// }
 
-	//         if (resultList.Count == 0)
-	//         {
-	//             return;
-	//         }
+		// if (sbOutput.Length > 0) {
+		// 	sbOutput.AppendLine();
+		// }
 
-	//         if (sbOutput.Length > 0)
-	//         {
-	//             sbOutput.AppendLine();
-	//         }
+		// sbOutput.Append(string.Join(", ", resultList));
+		this.printDirect(resultList.join('; ') + (this.allMode ? '; ...' : ''));
 
-	//         sbOutput.Append(string.Join(", ", resultList));
-
-	//         if (allMode)
-	//         {
-	//             sbOutput.Append(";");
-	//         }
-	//     }
+		// if (allMode) {
+		// 	sbOutput.Append(";");
+		// }
+	}
 
 	//     private PrologSubstitution Is2(PrologGoal goal)
 	//     {
@@ -1417,7 +1414,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// 	lastGoal.Name.Name !== 'print'
 			// ) {
 			// 	// Don't do automatic printing if the last goal was a print() goal.
-			// 	AutomaticPrint(variablesInQuery, oldSubstitution);
+			this.AutomaticPrint(variablesInQuery, oldSubstitution);
 			// }
 
 			// **** End automatic printing ****
