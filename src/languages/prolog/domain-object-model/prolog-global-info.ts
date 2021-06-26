@@ -51,6 +51,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// private readonly Random random = new Random();
 	// private readonly HashSet<string> LoadedPresets = new HashSet<string>();
 	private solutionCollectionMode = SolutionCollectionMode.None;
+	private numSolutionsFound = 0;
 	// private IPrologExpression findAll_Expression = null;
 	// private List<IPrologExpression> findAll_ResultList = null;
 	// private List<PrologVariable> caretListVariables = null;
@@ -917,7 +918,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// #endif
 	//     }
 
-	private AutomaticPrint(
+	private AutomaticPrintOld(
 		variablesInQuery: PrologVariable[],
 		substitution: PrologSubstitution
 	): void {
@@ -950,6 +951,34 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// if (allMode) {
 		// 	sbOutput.Append(";");
 		// }
+	}
+
+	private AutomaticPrint(
+		// variablesInQuery: Iterable<PrologVariable>,
+		variablesInQuery: PrologVariable[],
+		substitution: PrologSubstitution
+	): void {
+		if (variablesInQuery.length === 0) {
+			return;
+		}
+
+		const substitutionsForBindingVariables = new PrologSubstitution();
+
+		for (const v of variablesInQuery) {
+			const key = v.toString();
+			const value = substitution.SubstitutionList.get(key);
+
+			if (typeof value !== 'undefined') {
+				substitutionsForBindingVariables.SubstitutionList.set(
+					key,
+					value
+				);
+			}
+		}
+
+		this.printDirect(
+			`Satisfying substitution is: ${substitutionsForBindingVariables}`
+		);
 	}
 
 	//     private PrologSubstitution Is2(PrologGoal goal)
@@ -1407,9 +1436,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// 	'ProveGoalList() : Found solution:',
 			// 	oldSubstitution.toString()
 			// );
-			this.printDirect(
-				`ProveGoalList() : Found solution: ${oldSubstitution}`
-			);
+			// this.printDirect(
+			// 	`ProveGoalList() : Found solution: ${oldSubstitution}`
+			// );
 
 			// **** Begin automatic printing ****
 			// const lastGoal =
@@ -1421,6 +1450,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// ) {
 			// 	// Don't do automatic printing if the last goal was a print() goal.
 			this.AutomaticPrint(variablesInQuery, oldSubstitution);
+			this.numSolutionsFound++;
 			// }
 
 			// **** End automatic printing ****
@@ -2111,6 +2141,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// goalList[0] instanceof PrologGoal
 			goalList.every((g: unknown) => g instanceof PrologGoal)
 		) {
+			// We are performing a query.
+			this.numSolutionsFound = 0;
+
 			// var goalList = new List<PrologGoal>((List<PrologGoal>)parseResult);
 			// var cutDetectorList = new List<CutDetector>();
 			const listOfCurrentModules: PrologModule[] = [];
@@ -2157,61 +2190,77 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			// return sbOutput.ToString();
 
-			if (typeof substitution !== 'undefined') {
-				// console.log(
-				// 	'Satisfying substitution is:',
-				// 	substitution.toString()
-				// );
+			// if (typeof substitution !== 'undefined') {
+			// 	// console.log(
+			// 	// 	'Satisfying substitution is:',
+			// 	// 	substitution.toString()
+			// 	// );
 
-				// console.log(
-				// 	`2) goalList of length ${goalList.length} is:`,
-				// 	goalList.join(', ')
-				// );
+			// 	// console.log(
+			// 	// 	`2) goalList of length ${goalList.length} is:`,
+			// 	// 	goalList.join(', ')
+			// 	// );
 
-				// Create a subset of 'substitution' that contains only the values for the binding variables in goalList.
-				const setOfBindingVariables = new Set<PrologVariable>();
+			// 	// Create a subset of 'substitution' that contains only the values for the binding variables in goalList.
+			// 	const setOfBindingVariables = new Set<PrologVariable>();
 
-				for (const goal of goalList) {
-					setOfBindingVariables.unionInPlace(
-						goal.FindBindingVariables()
-					);
-				}
+			// 	for (const goal of goalList) {
+			// 		setOfBindingVariables.unionInPlace(
+			// 			goal.FindBindingVariables()
+			// 		);
+			// 	}
 
-				// console.log(
-				// 	'setOfBindingVariables:',
-				// 	setOfBindingVariables.toArray().join(', ')
-				// );
+			// 	// console.log(
+			// 	// 	'setOfBindingVariables:',
+			// 	// 	setOfBindingVariables.toArray().join(', ')
+			// 	// );
 
-				const substitutionsForBindingVariables =
-					new PrologSubstitution();
+			// 	// const substitutionsForBindingVariables =
+			// 	// 	new PrologSubstitution();
 
-				for (const v of setOfBindingVariables) {
-					const key = v.toString();
-					const value = substitution.SubstitutionList.get(key);
+			// 	// for (const v of setOfBindingVariables) {
+			// 	// 	const key = v.toString();
+			// 	// 	const value = substitution.SubstitutionList.get(key);
 
-					if (typeof value !== 'undefined') {
-						substitutionsForBindingVariables.SubstitutionList.set(
-							key,
-							value
-						);
-					}
-				}
+			// 	// 	if (typeof value !== 'undefined') {
+			// 	// 		substitutionsForBindingVariables.SubstitutionList.set(
+			// 	// 			key,
+			// 	// 			value
+			// 	// 		);
+			// 	// 	}
+			// 	// }
 
-				return (
-					this.getPrintedText() +
-					`Satisfying substitution is: ${substitutionsForBindingVariables.toString()}\n${
-						PrologGlobalInfo.Satisfied
-					}`
-				);
-			}
+			// 	// return (
+			// 	// 	this.getPrintedText() +
+			// 	// 	`Satisfying substitution is: ${substitutionsForBindingVariables.toString()}\n${
+			// 	// 		PrologGlobalInfo.Satisfied
+			// 	// 	}`
+			// 	// );
+
+			// 	this.AutomaticPrint(setOfBindingVariables, substitution);
+			// }
+
+			let satisfied: boolean;
 
 			if (this.allMode) {
-				return (
-					this.getPrintedText() + `\n${PrologGlobalInfo.NotSatisfied}`
+				this.printDirect(
+					`Number of solutions found: ${this.numSolutionsFound}`
 				);
+				satisfied = this.numSolutionsFound > 0;
+				// return (
+				// 	this.getPrintedText() + `\n${PrologGlobalInfo.NotSatisfied}`
+				// );
+			} else {
+				satisfied = typeof substitution !== 'undefined';
 			}
 
-			return PrologGlobalInfo.NotSatisfied;
+			this.printDirect(
+				satisfied
+					? PrologGlobalInfo.Satisfied
+					: PrologGlobalInfo.NotSatisfied
+			);
+
+			return this.getPrintedText();
 		} else if (typeof parseResult === 'undefined') {
 			throw new Error(
 				'PrologGlobalInfo.ProcessInput() : parseResult is undefined'
