@@ -1,4 +1,4 @@
-// prolog-functor-expression.ts
+// tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-functor-expression.ts
 
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
@@ -29,6 +29,30 @@ export class PrologFunctorExpression extends PrologNameExpression<PrologFunctor>
 
 	// public toString(): string {
 	// 	return 'PrologFunctorExpression.toString()';
+	// }
+
+	// TODO:
+
+	// public equals(otherExpr: IPrologExpression): boolean {
+	// 	const otherFunctorExpression = otherExpr as PrologFunctorExpression;
+
+	// 	if (
+	// 		typeof otherFunctorExpression === 'undefined' ||
+	// 		this.gs !== otherFunctorExpression.gs ||
+	// 		this.Name.Name !== otherFunctorExpression.Name.Name ||
+	// 		this.ExpressionList.length !== otherFunctorExpression.ExpressionList.length
+	// 	) {
+	// 		return false;
+	// 	}
+
+	// 	for (let i = 0; i < this.ExpressionList.length; i++) {
+
+	// 		if (!this.ExpressionList[i].equals(otherFunctorExpression.ExpressionList[i])) {
+	// 			return false;
+	// 		}
+	// 	}
+
+	// 	return true;
 	// }
 
 	public ApplySubstitution(

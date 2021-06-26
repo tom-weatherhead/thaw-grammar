@@ -9,6 +9,10 @@ export class PrologPredicate extends PrologNameBase {
 		super(name);
 	}
 
+	public equals(obj: unknown): boolean {
+		return obj instanceof PrologPredicate && super.equals(obj);
+	}
+
 	// public override bool Equals(object obj)
 	// {
 

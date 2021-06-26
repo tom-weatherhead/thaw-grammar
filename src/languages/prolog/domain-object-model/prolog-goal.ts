@@ -44,6 +44,30 @@ export class PrologGoal extends PrologNameExpression<PrologPredicate> {
 	// 	return 'PrologGoal.toString()';
 	// }
 
+	// TODO:
+
+	// public equals(otherExpr: IPrologExpression): boolean {
+	// 	const otherGoal = otherExpr as PrologGoal;
+
+	// 	if (
+	// 		typeof otherGoal === 'undefined' ||
+	// 		this.gs !== otherGoal.gs ||
+	// 		this.Name.Name !== otherGoal.Name.Name ||
+	// 		this.ExpressionList.length !== otherGoal.ExpressionList.length
+	// 	) {
+	// 		return false;
+	// 	}
+
+	// 	for (let i = 0; i < this.ExpressionList.length; i++) {
+
+	// 		if (!this.ExpressionList[i].equals(otherGoal.ExpressionList[i])) {
+	// 			return false;
+	// 		}
+	// 	}
+
+	// 	return true;
+	// }
+
 	public ApplySubstitution(
 		substitution: PrologSubstitution
 	): IPrologExpression {

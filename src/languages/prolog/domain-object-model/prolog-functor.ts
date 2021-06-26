@@ -8,6 +8,10 @@ export class PrologFunctor extends PrologNameBase {
 		super(name);
 	}
 
+	public equals(obj: unknown): boolean {
+		return obj instanceof PrologFunctor && super.equals(obj);
+	}
+
 	// public override bool Equals(object obj)
 	// {
 

@@ -7,6 +7,9 @@ import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 
 export interface IPrologExpression {
+	// TODO:
+	// equals(otherExpr: IPrologExpression): boolean;
+
 	// /* HashSet<PrologVariable> */ FindBindingVariables(): PrologVariable[];     // Finds only binding variables; ignores non-binding variables such as _
 	FindBindingVariables(): Set<PrologVariable>; // Finds only binding variables; ignores non-binding variables such as _
 	/* List<PrologVariable> */ GetListOfBindingVariables(): PrologVariable[]; // As above, but this returns a list, which is ordered, and contains no duplicates

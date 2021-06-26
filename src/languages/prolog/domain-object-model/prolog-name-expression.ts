@@ -1,4 +1,4 @@
-// prolog-name-expression.ts
+// tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-name-expression.ts
 
 import { Set } from 'thaw-common-utilities.ts';
 
@@ -159,25 +159,10 @@ export class PrologNameExpression<T extends PrologNameBase>
 	//         return true;
 	//     }
 
-	//     public override int GetHashCode()
-	//     {
-	//         return ExpressionList
-	//             .Select(expr => expr.GetHashCode())
-	//             .Aggregate(Name.GetHashCode(), (accumulator, hashCode) => accumulator * 101 + hashCode);
-	//     }
-
 	public FindBindingVariables(): Set<PrologVariable> {
 		const result = new Set<PrologVariable>();
 
-		// foreach (var expr in ExpressionList)
 		for (const expr of this.ExpressionList) {
-			// for (const v of expr.FindBindingVariables()) {
-
-			// 	if (!result.find(v2 => v2.Name === v.Name)) {
-			// 		result.add(v);
-			// 	}
-			// }
-
 			result.unionInPlace(expr.FindBindingVariables());
 		}
 
@@ -185,16 +170,6 @@ export class PrologNameExpression<T extends PrologNameBase>
 	}
 
 	public GetListOfBindingVariables(): PrologVariable[] {
-		// var result = new List<PrologVariable>();
-
-		// foreach (var expr in ExpressionList)
-		// {
-		//     result.AddRangeUnique(expr.GetListOfBindingVariables());
-		// }
-
-		// return result;
-
-		// return setToArray(this.FindBindingVariables());
 		return this.FindBindingVariables().toArray();
 	}
 
@@ -232,7 +207,7 @@ export class PrologNameExpression<T extends PrologNameBase>
 		const otherNameExpression = otherExpr as PrologNameExpression<T>;
 
 		if (
-			!this.Name.Equals(otherNameExpression.Name) ||
+			!this.Name.equals(otherNameExpression.Name) ||
 			this.ExpressionList.length !=
 				otherNameExpression.ExpressionList.length
 		) {

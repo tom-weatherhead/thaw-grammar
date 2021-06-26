@@ -29,13 +29,13 @@ export class PrologFloatLiteral implements IPrologNumber {
 		return `${this.Value}`;
 	}
 
-	public Equals(obj: unknown): boolean {
+	public equals(otherExpr: IPrologExpression): boolean {
 		// if (object.ReferenceEquals(this, obj))
 		// {
 		//     return true;
 		// }
 
-		const otherFloatLit = obj as PrologFloatLiteral;
+		const otherFloatLit = otherExpr as PrologFloatLiteral;
 
 		return (
 			typeof otherFloatLit !== 'undefined' &&
@@ -69,14 +69,15 @@ export class PrologFloatLiteral implements IPrologNumber {
 	}
 
 	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
-		if (this.Equals(otherExpr)) {
+		if (this.equals(otherExpr)) {
 			// Do not use "if (this == otherExpr)", which just compares references.
 			return new PrologSubstitution();
-		} else if (otherExpr.constructor.name === PrologVariable.name) {
+			// } else if (otherExpr.constructor.name === PrologVariable.name) {
+		} else if (otherExpr instanceof PrologVariable) {
 			return otherExpr.Unify(this);
 		}
 
-		return undefined; // The PrologIntegerLiteral and the IPrologExpression are not unifiable.
+		return undefined; // The PrologFloatLiteral and the IPrologExpression are not unifiable.
 	}
 
 	public get IsGround(): boolean {

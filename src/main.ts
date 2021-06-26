@@ -28,8 +28,19 @@ export { MinimalLanguageGlobalInfo } from './languages/minimal/domain-object-mod
 
 export { IPrologExpression } from './languages/prolog/domain-object-model/iprolog-expression';
 export { PrologClause } from './languages/prolog/domain-object-model/prolog-clause';
+export { PrologFloatLiteral } from './languages/prolog/domain-object-model/prolog-float-literal';
+export { PrologFunctor } from './languages/prolog/domain-object-model/prolog-functor';
+export {
+	isPrologFunctorExpression,
+	PrologFunctorExpression
+} from './languages/prolog/domain-object-model/prolog-functor-expression';
 export { PrologGlobalInfo } from './languages/prolog/domain-object-model/prolog-global-info';
-export { PrologGoal } from './languages/prolog/domain-object-model/prolog-goal';
+export {
+	isPrologGoal,
+	PrologGoal
+} from './languages/prolog/domain-object-model/prolog-goal';
+export { PrologIntegerLiteral } from './languages/prolog/domain-object-model/prolog-integer-literal';
+export { PrologPredicate } from './languages/prolog/domain-object-model/prolog-predicate';
 export { PrologVariable } from './languages/prolog/domain-object-model/prolog-variable';
 
 export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';

@@ -8,6 +8,7 @@ import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-
 
 import { IPrologExpression } from './iprolog-expression';
 import { PrologClause } from './prolog-clause';
+import { PrologFloatLiteral } from './prolog-float-literal';
 import { PrologFunctor } from './prolog-functor';
 import {
 	isPrologFunctorExpression,
@@ -918,43 +919,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// #endif
 	//     }
 
-	private AutomaticPrintOld(
-		variablesInQuery: PrologVariable[],
-		substitution: PrologSubstitution
-	): void {
-		if (variablesInQuery.length === 0) {
-			return;
-		}
-
-		const resultList: string[] = [];
-
-		for (const v of variablesInQuery) {
-			const value = v.ApplySubstitution(substitution);
-
-			// if (!value.Equals(v)) // Avoid printing identity results such as "X = X".
-			// {
-			resultList.push(`${v} = ${value}`);
-			// }
-		}
-
-		// if (resultList.Count == 0) {
-		// 	return;
-		// }
-
-		// if (sbOutput.Length > 0) {
-		// 	sbOutput.AppendLine();
-		// }
-
-		// sbOutput.Append(string.Join(", ", resultList));
-		this.printDirect(resultList.join('; ') + (this.allMode ? '; ...' : ''));
-
-		// if (allMode) {
-		// 	sbOutput.Append(";");
-		// }
-	}
-
 	private AutomaticPrint(
-		// variablesInQuery: Iterable<PrologVariable>,
 		variablesInQuery: PrologVariable[],
 		substitution: PrologSubstitution
 	): void {
@@ -981,48 +946,45 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		);
 	}
 
-	//     private PrologSubstitution Is2(PrologGoal goal)
-	//     {
-	//         var rhsEvaluated = goal.ExpressionList[1].EvaluateToNumber();
+	private Is2(goal: PrologGoal): PrologSubstitution | undefined {
+		const rhsEvaluated = goal.ExpressionList[1].EvaluateToNumber();
 
-	//         if (rhsEvaluated == null)
-	//         {
-	//             return null;
-	//         }
+		if (typeof rhsEvaluated === 'undefined') {
+			return undefined;
+		}
 
-	//         if (goal.ExpressionList[0] is IPrologNumber)
-	//         {
+		// if (goal.ExpressionList[0] is IPrologNumber) {
+		if (
+			goal.ExpressionList[0] instanceof PrologIntegerLiteral ||
+			goal.ExpressionList[0] instanceof PrologFloatLiteral
+		) {
+			// if (goal.ExpressionList[0].Equals(rhsEvaluated)) { // Remember that the int 1 does not equal the double 1.0 according to this code.
+			if (goal.ExpressionList[0].EvaluateToNumber() === rhsEvaluated) {
+				return new PrologSubstitution();
+			}
+		} else if (goal.ExpressionList[0] instanceof PrologVariable) {
+			//var newSubstitution = new PrologSubstitution((PrologVariable)goal.ExpressionList[0], rhsEvaluated);
+			// Use Unify() because goal.ExpressionList[0] could be a non-binding variable.
 
-	//             if (goal.ExpressionList[0].Equals(rhsEvaluated)) // Remember that the int 1 does not equal the double 1.0 according to this code.
-	//             {
-	//                 return new PrologSubstitution();
-	//             }
-	//         }
-	//         else if (goal.ExpressionList[0] is PrologVariable)
-	//         {
-	//             //var newSubstitution = new PrologSubstitution((PrologVariable)goal.ExpressionList[0], rhsEvaluated);
-	//             // Use Unify() because goal.ExpressionList[0] could be a non-binding variable.
-	//             return goal.ExpressionList[0].Unify(rhsEvaluated);
-	//         }
+			return goal.ExpressionList[0].Unify(rhsEvaluated);
+		}
 
-	//         return null;
-	//     }
+		return undefined;
+	}
 
-	//     private PrologSubstitution Unifiable2(PrologGoal goal)
-	//     {
-	//         return goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
-	//     }
+	private Unifiable2(goal: PrologGoal): PrologSubstitution | undefined {
+		return goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
+	}
 
-	//     private PrologSubstitution NotUnifiable2(PrologGoal goal)
-	//     {
+	private NotUnifiable2(goal: PrologGoal): PrologSubstitution | undefined {
+		const s = goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
 
-	//         if (goal.ExpressionList[0].Unify(goal.ExpressionList[1]) != null)
-	//         {
-	//             return null;
-	//         }
+		if (typeof s !== 'undefined') {
+			return undefined;
+		}
 
-	//         return new PrologSubstitution();
-	//     }
+		return new PrologSubstitution();
+	}
 
 	//     private PrologSubstitution Equals2(PrologGoal goal)
 	//     {

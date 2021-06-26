@@ -8,10 +8,18 @@ import {
 	Set
 } from 'thaw-common-utilities.ts';
 
+// import { LanguageSelector } from 'thaw-lexical-analyzer';
+
 import {
 	createGrammar,
+	IPrologExpression,
 	LanguageSelector,
+	PrologFunctor,
+	PrologFunctorExpression,
 	PrologGlobalInfo,
+	PrologGoal,
+	PrologIntegerLiteral,
+	PrologPredicate,
 	PrologVariable
 } from '../../..';
 
@@ -91,4 +99,42 @@ test('Find PrologVariable in Set test', () => {
 
 	expect(setWith.contains(variable)).toBeTruthy();
 	expect(setWithout.contains(variable)).toBeFalsy();
+});
+
+test('PrologGlobalInfo instanceof test', () => {
+	// Arrange
+	const ls = LanguageSelector.Prolog2;
+	const intlit = new PrologIntegerLiteral(13);
+	const variable = new PrologVariable('A');
+	const exprList: IPrologExpression[] = [];
+	const predicate = new PrologPredicate('pred');
+	const goal = new PrologGoal(ls, predicate, exprList);
+	const functor = new PrologFunctor('functor');
+	const functorExpression = new PrologFunctorExpression(
+		ls,
+		functor,
+		exprList
+	);
+
+	// Act
+	// Assert
+	expect(functorExpression instanceof PrologFunctorExpression).toBeTruthy();
+	expect(functorExpression instanceof PrologGoal).toBeFalsy();
+	expect(functorExpression instanceof PrologIntegerLiteral).toBeFalsy();
+	expect(functorExpression instanceof PrologVariable).toBeFalsy();
+
+	expect(goal instanceof PrologFunctorExpression).toBeFalsy();
+	expect(goal instanceof PrologGoal).toBeTruthy();
+	expect(goal instanceof PrologIntegerLiteral).toBeFalsy();
+	expect(goal instanceof PrologVariable).toBeFalsy();
+
+	expect(intlit instanceof PrologFunctorExpression).toBeFalsy();
+	expect(intlit instanceof PrologGoal).toBeFalsy();
+	expect(intlit instanceof PrologIntegerLiteral).toBeTruthy();
+	expect(intlit instanceof PrologVariable).toBeFalsy();
+
+	expect(variable instanceof PrologFunctorExpression).toBeFalsy();
+	expect(variable instanceof PrologGoal).toBeFalsy();
+	expect(variable instanceof PrologIntegerLiteral).toBeFalsy();
+	expect(variable instanceof PrologVariable).toBeTruthy();
 });

@@ -18,13 +18,15 @@ export class PrologIntegerLiteral implements IPrologNumber {
 		return `${this.Value}`;
 	}
 
-	public Equals(obj: unknown): boolean {
+	public equals(otherExpr: IPrologExpression): boolean {
+		// public Equals(obj: unknown): boolean {
 		// if (object.ReferenceEquals(this, obj))
 		// {
 		//     return true;
 		// }
 
-		const otherIntLit = obj as PrologIntegerLiteral;
+		const otherIntLit = otherExpr as PrologIntegerLiteral;
+		// const otherIntLit = obj as PrologIntegerLiteral;
 
 		return (
 			typeof otherIntLit !== 'undefined' &&
@@ -58,14 +60,14 @@ export class PrologIntegerLiteral implements IPrologNumber {
 	}
 
 	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
-		if (this.Equals(otherExpr)) {
+		if (this.equals(otherExpr)) {
 			// Do not use "if (this == otherExpr)", which just compares references.
 			return new PrologSubstitution();
-		} else if (otherExpr.constructor.name === PrologVariable.name) {
+			// } else if (otherExpr.constructor.name === PrologVariable.name) {
+		} else if (otherExpr instanceof PrologVariable) {
 			return otherExpr.Unify(this);
 		}
 
-		// return null;    // The PrologIntegerLiteral and the IPrologExpression are not unifiable.
 		return undefined; // The PrologIntegerLiteral and the IPrologExpression are not unifiable.
 	}
 

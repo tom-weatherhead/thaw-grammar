@@ -14,11 +14,6 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 	public readonly Name: string;
 
 	constructor(name: string) {
-		// if (string.IsNullOrEmpty(name))
-		// {
-		//     throw new ArgumentNullException("name", "A PrologVariable cannot have a null or empty name");
-		// }
-
 		if (!name) {
 			throw new Error(
 				'A PrologVariable cannot have a null or empty name'
@@ -32,6 +27,7 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 		return this.Name;
 	}
 
+	// TODO: public equals(otherExpr: IPrologExpression): boolean {
 	// public Equals(obj: unknown): boolean {
 	public strictEquals(obj: unknown): boolean {
 		// if (object.ReferenceEquals(this, obj))
@@ -48,11 +44,6 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 	public Equals(obj: unknown): boolean {
 		return this.strictEquals(obj);
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return Name.GetHashCode();
-	// }
 
 	public get IsNonBinding(): boolean {
 		// The following supports non-binding variables such as _ and _Foo .
@@ -100,13 +91,6 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 	}
 
 	public ApplySubstitution(sub: PrologSubstitution): IPrologExpression {
-		// if (sub.SubstitutionList.ContainsKey(this))
-		// {
-		//     return sub.SubstitutionList[this.Name];
-		// }
-
-		// return this;
-
 		const value = sub.SubstitutionList.get(this.Name);
 
 		if (typeof value !== 'undefined') {

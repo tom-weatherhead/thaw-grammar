@@ -20,8 +20,6 @@ export class PrologClause implements IPrologExpression {
 	}
 
 	public toString(): string {
-		// return 'PrologClause.toString()';
-
 		let tail = '';
 
 		if (this.Rhs.length > 0) {
@@ -32,22 +30,6 @@ export class PrologClause implements IPrologExpression {
 
 		return this.Lhs.toString() + tail;
 	}
-
-	// public override string ToString()
-	// {
-	//     //return string.Format("{0} <= {1}", Lhs, string.Join(" ", Rhs));
-
-	//     // Prolog2 clause format:
-
-	//     if (Rhs.Count == 0)
-	//     {
-	//         return string.Format("{0}.", Lhs);
-	//     }
-	//     else
-	//     {
-	//         return string.Format("{0} :- {1}.", Lhs, string.Join(", ", Rhs));
-	//     }
-	// }
 
 	// public override bool Equals(object obj)
 	// {

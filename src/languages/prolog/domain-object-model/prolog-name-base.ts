@@ -1,14 +1,9 @@
-// prolog-name-base.ts
+// tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-name-base.ts
 
 export class PrologNameBase {
 	public readonly Name: string;
 
 	constructor(name: string) {
-		// if (string.IsNullOrEmpty(name))
-		// {
-		//     throw new ArgumentNullException("name", "A PrologNameBase cannot have a null or empty name");
-		// }
-
 		if (!name) {
 			throw new Error(
 				'A PrologNameBase cannot have a null or empty name'
@@ -22,12 +17,7 @@ export class PrologNameBase {
 		return this.Name;
 	}
 
-	public Equals(obj: unknown): boolean {
-		// if (obj == null || !GetType().Equals(obj.GetType()))
-		// {
-		//     return false;
-		// }
-
+	public equals(obj: unknown): boolean {
 		const otherNameBase = obj as PrologNameBase;
 
 		return (
@@ -35,9 +25,4 @@ export class PrologNameBase {
 			this.Name === otherNameBase.Name
 		);
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return Name.GetHashCode();
-	// }
 }
