@@ -1403,7 +1403,13 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// console.log(
 			// 	`ProveGoalList() : The goal list of length ${goalList.length} has been satisfied`
 			// );
-			// console.log('Substitution', oldSubstitution.toString());
+			// console.log(
+			// 	'ProveGoalList() : Found solution:',
+			// 	oldSubstitution.toString()
+			// );
+			this.printDirect(
+				`ProveGoalList() : Found solution: ${oldSubstitution}`
+			);
 
 			// **** Begin automatic printing ****
 			// const lastGoal =
@@ -2062,6 +2068,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// 	typeof goalList.length
 		// );
 
+		this.clearPrintedText();
+
 		// if (parseResult is PrologClause) {
 		// if (inputTypeName === PrologClause.name) {
 		// if (typeof goalList.length === 'undefined') {
@@ -2189,9 +2197,18 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					}
 				}
 
-				return `Satisfying substitution is: ${substitutionsForBindingVariables.toString()}\n${
-					PrologGlobalInfo.Satisfied
-				}`;
+				return (
+					this.getPrintedText() +
+					`Satisfying substitution is: ${substitutionsForBindingVariables.toString()}\n${
+						PrologGlobalInfo.Satisfied
+					}`
+				);
+			}
+
+			if (this.allMode) {
+				return (
+					this.getPrintedText() + `\n${PrologGlobalInfo.NotSatisfied}`
+				);
 			}
 
 			return PrologGlobalInfo.NotSatisfied;
