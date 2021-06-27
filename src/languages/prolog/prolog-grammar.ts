@@ -17,12 +17,16 @@ import { createFunctorExpressionFromGoal } from './utilities';
 import { IPrologExpression } from './domain-object-model/iprolog-expression';
 import { PrologClause } from './domain-object-model/prolog-clause';
 import { PrologFloatLiteral } from './domain-object-model/prolog-float-literal';
-import { PrologFunctor } from './domain-object-model/prolog-functor';
+// import { PrologFunctor } from './domain-object-model/prolog-functor';
+import {
+	// isPrologFunctorExpression,
+	PrologFunctorExpression
+} from './domain-object-model/prolog-functor-expression';
 import { PrologGlobalInfo } from './domain-object-model/prolog-global-info';
 import { PrologGoal } from './domain-object-model/prolog-goal';
 import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-literal';
 import { PrologNameExpression } from './domain-object-model/prolog-name-expression';
-import { PrologPredicate } from './domain-object-model/prolog-predicate';
+// import { PrologPredicate } from './domain-object-model/prolog-predicate';
 import { PrologVariable } from './domain-object-model/prolog-variable';
 
 // function explodingCast<T>(value: unknown): T {
@@ -471,12 +475,12 @@ export class PrologGrammar extends GrammarBase {
 		let expr: IPrologExpression;
 		let expr2: IPrologExpression;
 		let exprList: IPrologExpression[];
-		let functor: PrologFunctor;
+		// let functor: PrologFunctor;
 		// let variable: PrologVariable;
 		// let variableList: PrologVariable[];
-		let functorExpr: PrologNameExpression<PrologFunctor>;
-		// let functorExpr2: PrologNameExpression<PrologFunctor>;
-		// // let functorExpr3: PrologNameExpression<PrologFunctor>;
+		let functorExpr: PrologFunctorExpression;
+		// let functorExpr2: PrologFunctorExpression;
+		// // let functorExpr3: PrologFunctorExpression;
 		// let clause: PrologClause;
 
 		switch (action) {
@@ -501,9 +505,7 @@ export class PrologGrammar extends GrammarBase {
 			case '#createGoal':
 				exprList = semanticStack.pop() as IPrologExpression[];
 				str = semanticStack.pop() as string;
-				semanticStack.push(
-					new PrologGoal(gs, new PrologPredicate(str), exprList)
-				);
+				semanticStack.push(new PrologGoal(gs, str, exprList));
 				break;
 
 			case '#createEmptyExpressionList':
@@ -526,35 +528,26 @@ export class PrologGrammar extends GrammarBase {
 			case '#createFunctorExpression':
 				exprList = semanticStack.pop() as IPrologExpression[];
 				str = semanticStack.pop() as string;
-				functor = new PrologFunctor(str);
+				// functor = new PrologFunctor(str);
 				semanticStack.push(
 					// TODO: new PrologFunctorExpression(
-					new PrologNameExpression<PrologFunctor>(
-						gs,
-						functor,
-						exprList
-					)
+					new PrologFunctorExpression(gs, str, exprList)
 				);
 				break;
 
 			// **** BEGIN - For lists
 
 			case '#createNilFunctor':
-				functor = new PrologFunctor('[]');
-				semanticStack.push(
-					new PrologNameExpression<PrologFunctor>(gs, functor, [])
-				);
+				// functor = new PrologFunctor('[]');
+				semanticStack.push(new PrologFunctorExpression(gs, '[]', []));
 				break;
 
 			case '#createConsFunctor':
 				expr2 = semanticStack.pop() as IPrologExpression;
 				expr = semanticStack.pop() as IPrologExpression;
-				functor = new PrologFunctor('.');
+				// functor = new PrologFunctor('.');
 				semanticStack.push(
-					new PrologNameExpression<PrologFunctor>(gs, functor, [
-						expr,
-						expr2
-					])
+					new PrologFunctorExpression(gs, '.', [expr, expr2])
 				);
 				break;
 
@@ -562,17 +555,15 @@ export class PrologGrammar extends GrammarBase {
 
 			case '#not': // #metaPredicateWithGoal
 				goal = semanticStack.pop() as PrologGoal;
-				// functorExpr = new PrologNameExpression<PrologFunctor>(
+				// functorExpr = new PrologFunctorExpression(
 				// 	gs,
-				// 	new PrologFunctor(goal.Name.Name),
+				// 	new PrologFunctor(goal.Name),
 				// 	goal.ExpressionList
 				// );
 				functorExpr = createFunctorExpressionFromGoal(goal);
-				functor = new PrologFunctor('not');
+				// functor = new PrologFunctor('not');
 				semanticStack.push(
-					new PrologNameExpression<PrologFunctor>(gs, functor, [
-						functorExpr
-					])
+					new PrologFunctorExpression(gs, 'not', [functorExpr])
 				);
 				break;
 
@@ -582,7 +573,7 @@ export class PrologGrammar extends GrammarBase {
 			// // str = (string)semanticStack.Pop();
 			// // functor = new PrologFunctor(str);
 			// // exprList = new List<IPrologExpression>() { expr, expr2 };
-			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
+			// // semanticStack.Push(new PrologFunctorExpression(gs, functor, exprList));
 			// // break;
 
 			// // case "#unaryMinus":
@@ -591,29 +582,29 @@ export class PrologGrammar extends GrammarBase {
 			// // expr = new PrologIntegerLiteral(0);
 			// // exprList = new List<IPrologExpression>() { expr, expr2 };
 			// // functor = new PrologFunctor(str);
-			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
+			// // semanticStack.Push(new PrologFunctorExpression(gs, functor, exprList));
 			// // break;
 
 			// // case "#consSeq":
 			// // expr2 = (IPrologExpression)semanticStack.Pop();
 			// // expr = (IPrologExpression)semanticStack.Pop();
 			// // functor = new PrologFunctor("consSeq");
-			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { expr, expr2 }));
+			// // semanticStack.Push(new PrologFunctorExpression(gs, functor, new List<IPrologExpression>() { expr, expr2 }));
 			// // break;
 
 			// // case "#goalDisjunction":
-			// // functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+			// // functorExpr2 = (PrologFunctorExpression)semanticStack.Pop();
+			// // functorExpr = (PrologFunctorExpression)semanticStack.Pop();
 			// // functor = new PrologFunctor("goal_disjunction");
-			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr, functorExpr2 }));
+			// // semanticStack.Push(new PrologFunctorExpression(gs, functor, new List<IPrologExpression>() { functorExpr, functorExpr2 }));
 			// // break;
 
 			// // case "#ifThenElse":
-			// // functorExpr3 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-			// // functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+			// // functorExpr3 = (PrologFunctorExpression)semanticStack.Pop();
+			// // functorExpr2 = (PrologFunctorExpression)semanticStack.Pop();
 			// // functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
 			// // functor = new PrologFunctor("if_then_else");
-			// // semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor,
+			// // semanticStack.Push(new PrologFunctorExpression(gs, functor,
 			// // new List<IPrologExpression>() { functorExpr, functorExpr2, functorExpr3 }));
 			// // break;
 
@@ -621,7 +612,7 @@ export class PrologGrammar extends GrammarBase {
 			// // // The #DCGClause semantic action will add the extra arguments to the goals in order to support the difference list mechanism.
 			// // // It also converts lists into "unifiable" predicates.
 			// // exprList = (List<IPrologExpression>)semanticStack.Pop();
-			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop(); // The LHS of the clause.
+			// // functorExpr = (PrologFunctorExpression)semanticStack.Pop(); // The LHS of the clause.
 			// // semanticStack.Push(GenerateDCGClause(functorExpr, exprList));
 			// // break;
 
@@ -637,12 +628,12 @@ export class PrologGrammar extends GrammarBase {
 			// // break;
 
 			// // case "#markGoalAsNonDCG":
-			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Peek();
+			// // functorExpr = (PrologFunctorExpression)semanticStack.Peek();
 			// // functorExpr.DCGDoNotAddExtraArguments = true;
 			// // break;
 
 			// // case "#createCaretList":
-			// // functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+			// // functorExpr = (PrologFunctorExpression)semanticStack.Pop();
 			// // variableList = (List<PrologVariable>)semanticStack.Pop();
 			// // semanticStack.Push(new CaretList(variableList, functorExpr));
 			// // break;
@@ -1070,7 +1061,7 @@ export class PrologGrammar extends GrammarBase {
 // return new PrologVariable(string.Format("Var{0}", Guid.NewGuid()));
 // }
 
-// public static PrologNameExpression<PrologFunctor> GenerateDCGClause(PrologNameExpression<PrologFunctor> lhsGoal, List<IPrologExpression> rhsExprList)
+// public static PrologFunctorExpression GenerateDCGClause(PrologFunctorExpression lhsGoal, List<IPrologExpression> rhsExprList)
 // {
 // var rhsGoalList = new List<IPrologExpression>();
 
@@ -1082,24 +1073,24 @@ export class PrologGrammar extends GrammarBase {
 // {
 // var variable3 = GenerateNewVariable();
 
-// var rhsGoal = rhsExpr as PrologNameExpression<PrologFunctor>;
+// var rhsGoal = rhsExpr as PrologFunctorExpression;
 
 // if (rhsGoal == null)
 // {
 // throw new Exception("GenerateDCGClause() : obj is not a functor expression.");
 // }
-// else if (rhsGoal.Name.Name == "." || rhsGoal.Name.Name == "[]")
+// else if (rhsGoal.Name == "." || rhsGoal.Name == "[]")
 // {
 // // Assume that obj is a list.
-// var objAsList = rhsGoal; // (PrologNameExpression<PrologFunctor>)obj;
+// var objAsList = rhsGoal; // (PrologFunctorExpression)obj;
 // var rhsGoalParam1 = variable2;
 // IPrologExpression rhsGoalParam2 = objAsList;
-// PrologNameExpression<PrologFunctor> parentConsCell = null;
+// PrologFunctorExpression parentConsCell = null;
 
 // for (; ; )
 // {
 
-// if (objAsList.Name.Name == "[]" && objAsList.ExpressionList.Count == 0)
+// if (objAsList.Name == "[]" && objAsList.ExpressionList.Count == 0)
 // {
 
 // if (parentConsCell != null)
@@ -1113,10 +1104,10 @@ export class PrologGrammar extends GrammarBase {
 
 // break;
 // }
-// else if (objAsList.Name.Name == "." && objAsList.ExpressionList.Count == 2)
+// else if (objAsList.Name == "." && objAsList.ExpressionList.Count == 2)
 // {
 // parentConsCell = objAsList;
-// objAsList = (PrologNameExpression<PrologFunctor>)objAsList.ExpressionList[1];
+// objAsList = (PrologFunctorExpression)objAsList.ExpressionList[1];
 // }
 // else
 // {
@@ -1125,7 +1116,7 @@ export class PrologGrammar extends GrammarBase {
 // }
 
 // //rhsGoal = new PrologGoal(gs, new PrologPredicate("unifiable"), new List<IPrologExpression>() { rhsGoalParam1, rhsGoalParam2 });
-// rhsGoal = new PrologNameExpression<PrologFunctor>(GrammarSelector.Prolog2, new PrologFunctor("="),
+// rhsGoal = new PrologFunctorExpression(GrammarSelector.Prolog2, new PrologFunctor("="),
 // new List<IPrologExpression>() { rhsGoalParam1, rhsGoalParam2 });
 // variable2 = variable3;
 // }
@@ -1145,7 +1136,7 @@ export class PrologGrammar extends GrammarBase {
 // //return new PrologClause(lhsGoal, rhsGoalList);
 // var rhsGoalListAsPrologList = PrologGlobalInfo.CSharpListToPrologList(rhsGoalList);
 
-// //return new PrologNameExpression<PrologFunctor>(gs, new PrologFunctor("clause"), new List<IPrologExpression>() { lhsGoal, rhsGoalListAsPrologList });
+// //return new PrologFunctorExpression(gs, new PrologFunctor("clause"), new List<IPrologExpression>() { lhsGoal, rhsGoalListAsPrologList });
 // return PrologGlobalInfo.CreateClauseAsFunctorExpression(lhsGoal, rhsGoalListAsPrologList);
 // }
 
@@ -1159,9 +1150,9 @@ export class PrologGrammar extends GrammarBase {
 // PrologFunctor functor;
 // PrologVariable variable;
 // List<PrologVariable> variableList;
-// PrologNameExpression<PrologFunctor> functorExpr;
-// PrologNameExpression<PrologFunctor> functorExpr2;
-// PrologNameExpression<PrologFunctor> functorExpr3;
+// PrologFunctorExpression functorExpr;
+// PrologFunctorExpression functorExpr2;
+// PrologFunctorExpression functorExpr3;
 // PrologClause clause;
 
 // switch (action)
@@ -1193,11 +1184,11 @@ export class PrologGrammar extends GrammarBase {
 // break;
 
 // case "#clauseAsFunctor":
-// functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-// //functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+// functorExpr2 = (PrologFunctorExpression)semanticStack.Pop();
+// //functorExpr = (PrologFunctorExpression)semanticStack.Pop();
 // functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
 // //functor = new PrologFunctor("clause");
-// //semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr, functorExpr2 }));
+// //semanticStack.Push(new PrologFunctorExpression(gs, functor, new List<IPrologExpression>() { functorExpr, functorExpr2 }));
 // semanticStack.Push(PrologGlobalInfo.CreateClauseAsFunctorExpression(functorExpr, functorExpr2));
 // break;
 
@@ -1207,7 +1198,7 @@ export class PrologGrammar extends GrammarBase {
 // expr = (IPrologExpression)semanticStack.Pop();
 // functor = new PrologFunctor(str);
 // exprList = new List<IPrologExpression>() { expr, expr2 };
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
+// semanticStack.Push(new PrologFunctorExpression(gs, functor, exprList));
 // break;
 
 // case "#arithExpr_Prefix":   // The same as #infix, except for the order of the items on the stack.
@@ -1216,7 +1207,7 @@ export class PrologGrammar extends GrammarBase {
 // str = (string)semanticStack.Pop();
 // functor = new PrologFunctor(str);
 // exprList = new List<IPrologExpression>() { expr, expr2 };
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
+// semanticStack.Push(new PrologFunctorExpression(gs, functor, exprList));
 // break;
 
 // case "#unaryMinus":
@@ -1225,29 +1216,29 @@ export class PrologGrammar extends GrammarBase {
 // expr = new PrologIntegerLiteral(0);
 // exprList = new List<IPrologExpression>() { expr, expr2 };
 // functor = new PrologFunctor(str);
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, exprList));
+// semanticStack.Push(new PrologFunctorExpression(gs, functor, exprList));
 // break;
 
 // case "#consSeq":
 // expr2 = (IPrologExpression)semanticStack.Pop();
 // expr = (IPrologExpression)semanticStack.Pop();
 // functor = new PrologFunctor("consSeq");
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { expr, expr2 }));
+// semanticStack.Push(new PrologFunctorExpression(gs, functor, new List<IPrologExpression>() { expr, expr2 }));
 // break;
 
 // case "#goalDisjunction":
-// functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-// functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+// functorExpr2 = (PrologFunctorExpression)semanticStack.Pop();
+// functorExpr = (PrologFunctorExpression)semanticStack.Pop();
 // functor = new PrologFunctor("goal_disjunction");
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor, new List<IPrologExpression>() { functorExpr, functorExpr2 }));
+// semanticStack.Push(new PrologFunctorExpression(gs, functor, new List<IPrologExpression>() { functorExpr, functorExpr2 }));
 // break;
 
 // case "#ifThenElse":
-// functorExpr3 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
-// functorExpr2 = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+// functorExpr3 = (PrologFunctorExpression)semanticStack.Pop();
+// functorExpr2 = (PrologFunctorExpression)semanticStack.Pop();
 // functorExpr = PopAndConvertToFunctorExpression(semanticStack, action);
 // functor = new PrologFunctor("if_then_else");
-// semanticStack.Push(new PrologNameExpression<PrologFunctor>(gs, functor,
+// semanticStack.Push(new PrologFunctorExpression(gs, functor,
 // new List<IPrologExpression>() { functorExpr, functorExpr2, functorExpr3 }));
 // break;
 
@@ -1255,7 +1246,7 @@ export class PrologGrammar extends GrammarBase {
 // // The #DCGClause semantic action will add the extra arguments to the goals in order to support the difference list mechanism.
 // // It also converts lists into "unifiable" predicates.
 // exprList = (List<IPrologExpression>)semanticStack.Pop();
-// functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop(); // The LHS of the clause.
+// functorExpr = (PrologFunctorExpression)semanticStack.Pop(); // The LHS of the clause.
 // semanticStack.Push(GenerateDCGClause(functorExpr, exprList));
 // break;
 
@@ -1271,7 +1262,7 @@ export class PrologGrammar extends GrammarBase {
 // break;
 
 // case "#markGoalAsNonDCG":
-// functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Peek();
+// functorExpr = (PrologFunctorExpression)semanticStack.Peek();
 // functorExpr.DCGDoNotAddExtraArguments = true;
 // break;
 
@@ -1289,7 +1280,7 @@ export class PrologGrammar extends GrammarBase {
 // break;
 
 // case "#createCaretList":
-// functorExpr = (PrologNameExpression<PrologFunctor>)semanticStack.Pop();
+// functorExpr = (PrologFunctorExpression)semanticStack.Pop();
 // variableList = (List<PrologVariable>)semanticStack.Pop();
 // semanticStack.Push(new CaretList(variableList, functorExpr));
 // break;

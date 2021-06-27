@@ -14,12 +14,12 @@ import {
 	createGrammar,
 	IPrologExpression,
 	LanguageSelector,
-	PrologFunctor,
+	// PrologFunctor,
 	PrologFunctorExpression,
 	PrologGlobalInfo,
 	PrologGoal,
 	PrologIntegerLiteral,
-	PrologPredicate,
+	// PrologPredicate,
 	PrologVariable
 } from '../../..';
 
@@ -107,12 +107,12 @@ test('PrologGlobalInfo instanceof test', () => {
 	const intlit = new PrologIntegerLiteral(13);
 	const variable = new PrologVariable('A');
 	const exprList: IPrologExpression[] = [];
-	const predicate = new PrologPredicate('pred');
-	const goal = new PrologGoal(ls, predicate, exprList);
-	const functor = new PrologFunctor('functor');
+	// const predicate = new PrologPredicate('pred');
+	const goal = new PrologGoal(ls, 'pred', exprList);
+	// const functor = new PrologFunctor('functor');
 	const functorExpression = new PrologFunctorExpression(
 		ls,
-		functor,
+		'functor',
 		exprList
 	);
 

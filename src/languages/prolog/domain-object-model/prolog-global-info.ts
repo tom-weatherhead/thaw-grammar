@@ -9,7 +9,7 @@ import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-
 import { IPrologExpression } from './iprolog-expression';
 import { PrologClause } from './prolog-clause';
 import { PrologFloatLiteral } from './prolog-float-literal';
-import { PrologFunctor } from './prolog-functor';
+// import { PrologFunctor } from './prolog-functor';
 import {
 	isPrologFunctorExpression,
 	PrologFunctorExpression
@@ -19,10 +19,11 @@ import { PrologIntegerLiteral } from './prolog-integer-literal';
 
 import { PrologModule } from './prolog-module';
 import { PrologNameExpression } from './prolog-name-expression';
-import { PrologPredicate } from './prolog-predicate';
+// import { PrologPredicate } from './prolog-predicate';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';
+import { createGoalFromFunctorExpression } from '../utilities';
 
 enum SolutionCollectionMode {
 	None,
@@ -758,13 +759,13 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	//         if (firstArgAsFunctorExpression != null)
 	//         {
-	//             var functorName = firstArgAsFunctorExpression.Name.Name;
+	//             var functorName = firstArgAsFunctorExpression.Name;
 	//             var functorArity = firstArgAsFunctorExpression.ExpressionList.Count;
 
 	//             if (secondArgAsFunctorExpression != null)
 	//             {
 
-	//                 if (secondArgAsFunctorExpression.Name.Name != functorName || secondArgAsFunctorExpression.ExpressionList.Count != 0)
+	//                 if (secondArgAsFunctorExpression.Name != functorName || secondArgAsFunctorExpression.ExpressionList.Count != 0)
 	//                 {
 	//                     return null;
 	//                 }
@@ -851,7 +852,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//             // The third argument must be either a variable or the integer zero.
 	//             var firstArgAsString = goal.ExpressionList[0].ToString();
 
-	//             if (secondArgAsFunctorExpression != null && secondArgAsFunctorExpression.Name.Name == firstArgAsString &&
+	//             if (secondArgAsFunctorExpression != null && secondArgAsFunctorExpression.Name == firstArgAsString &&
 	//                 secondArgAsFunctorExpression.ExpressionList.Count == 0)
 	//             {
 	//             }
@@ -1202,7 +1203,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	//         if (functorExpression != null && functorExpression.ExpressionList.Count == 0)
 	//         {
-	//             targetName = functorExpression.Name.Name; // The name probably does not begin with a capital letter or an underscore, unless it was single quoted.
+	//             targetName = functorExpression.Name; // The name probably does not begin with a capital letter or an underscore, unless it was single quoted.
 	//         }
 	//         else if (variable != null)
 	//         {
@@ -1220,7 +1221,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         {
 	//             sbOutput.AppendLine(string.Format("Module '{0}' :", moduleName));
 	//             dictModules[moduleName].ClauseList
-	//                 .Where(clause => clause.Lhs.Name.Name == targetName)
+	//                 .Where(clause => clause.Lhs.Name == targetName)
 	//                 .ToList()
 	//                 .ForEach(clause => sbOutput.AppendLine(clause.ToString()));
 	//             sbOutput.AppendLine();
@@ -1228,7 +1229,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	//         sbOutput.AppendLine("Default module:");
 	//         DefaultModule.ClauseList
-	//             .Where(clause => clause.Lhs.Name.Name == targetName)
+	//             .Where(clause => clause.Lhs.Name == targetName)
 	//             .ToList()
 	//             .ForEach(clause => sbOutput.AppendLine(clause.ToString()));
 	//         return new PrologSubstitution();
@@ -1408,7 +1409,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			// if (
 			// 	typeof lastGoal !== 'undefined' &&
-			// 	lastGoal.Name.Name !== 'print'
+			// 	lastGoal.Name !== 'print'
 			// ) {
 			// 	// Don't do automatic printing if the last goal was a print() goal.
 			this.AutomaticPrint(variablesInQuery, oldSubstitution);
@@ -1484,7 +1485,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// );
 
 		const numArgsInGoal = goal.ExpressionList.length;
-		// const functionKey = new StringIntKey(goal.Name.Name, numArgsInGoal);
+		// const functionKey = new StringIntKey(goal.Name, numArgsInGoal);
 
 		// console.log('Goal signature is', functionKey.toString());
 
@@ -1502,7 +1503,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// if (gs === LanguageSelector.Prolog) // Built-in predicates that are used by Kamin's Prolog only.
 		// {
 
-		// switch (goal.Name.Name)
+		// switch (goal.Name)
 		// {
 		// case "print": // This can take any number of arguments.
 		// Print(unsubstitutedGoal, goal);
@@ -1514,7 +1515,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// }
 		// }
 
-		switch (goal.Name.Name) {
+		switch (goal.Name) {
 			case 'add':
 			case 'sub':
 			case 'mult':
@@ -1533,7 +1534,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 						v,
 						new PrologIntegerLiteral(
 							this.doIntegerArithmetic(
-								goal.Name.Name,
+								goal.Name,
 								n1.Value,
 								n2.Value
 							)
@@ -1566,11 +1567,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					const n2 = goal.ExpressionList[1] as PrologIntegerLiteral;
 
 					if (
-						!this.doIntegerComparison(
-							goal.Name.Name,
-							n1.Value,
-							n2.Value
-						)
+						!this.doIntegerComparison(goal.Name, n1.Value, n2.Value)
 					) {
 						return undefined;
 					}
@@ -1594,8 +1591,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					// 	goal.ExpressionList[0]
 					// );
 					const fe = goal
-						.ExpressionList[0] as PrologNameExpression<PrologFunctor>;
-					const innerGoal = PrologGoal.fromFunctorExpression(fe);
+						.ExpressionList[0] as PrologFunctorExpression;
+					const innerGoal = createGoalFromFunctorExpression(fe);
 
 					const tempGoalList = [innerGoal];
 					// This next line prevents us from adding "not" to the built-in predicates dictionary:
@@ -1707,7 +1704,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// 	{
 			// 	var thenElseGoal = ExpressionToGoal(goal.ExpressionList[1]);
 
-			// 	if (thenElseGoal != null && thenElseGoal.Name.Name == ":" && thenElseGoal.ExpressionList.length == 2)
+			// 	if (thenElseGoal != null && thenElseGoal.Name == ":" && thenElseGoal.ExpressionList.length == 2)
 			// 	{
 			// 	return IfThenElse3(goal.ExpressionList[0], thenElseGoal.ExpressionList[0], thenElseGoal.ExpressionList[1],
 			// 	goalList, cutDetectorList, goalNum, oldSubstitution, parentVariablesToAvoid, variablesInQuery, listOfCurrentModules);
@@ -1776,7 +1773,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		}
 
 		const goalSignature = new StringIntKey(
-			goal.Name.Name,
+			goal.Name,
 			goal.ExpressionList.length
 		).toString();
 
@@ -2038,8 +2035,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// const inputAsFunctorExpression =
 		// 	parseResult as PrologNameExpression<PrologFunctor>;
 
-		// if (typeof inputAsFunctorExpression !== 'undefined' && inputAsFunctorExpression.Name.Name == ':-' && inputAsFunctorExpression.ExpressionList.length === 1) {
-		// if (inputTypeName === PrologNameExpression<PrologFunctor>.name && inputAsFunctorExpression.Name.Name === ':-' && inputAsFunctorExpression.ExpressionList.length === 1) {
+		// if (typeof inputAsFunctorExpression !== 'undefined' && inputAsFunctorExpression.Name == ':-' && inputAsFunctorExpression.ExpressionList.length === 1) {
+		// if (inputTypeName === PrologNameExpression<PrologFunctor>.name && inputAsFunctorExpression.Name === ':-' && inputAsFunctorExpression.ExpressionList.length === 1) {
 		// 	return ProcessCommand(inputAsFunctorExpression.ExpressionList[0], currentModuleName);
 		// }
 		// #endif

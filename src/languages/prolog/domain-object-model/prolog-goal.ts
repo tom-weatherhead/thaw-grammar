@@ -3,9 +3,10 @@
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import { IPrologExpression } from './iprolog-expression';
-import { PrologFunctor } from './prolog-functor';
+import { IPrologNumber } from './iprolog-number';
+// import { PrologFunctor } from './prolog-functor';
 import { PrologNameExpression } from './prolog-name-expression';
-import { PrologPredicate } from './prolog-predicate';
+// import { PrologPredicate } from './prolog-predicate';
 import { PrologSubstitution } from './prolog-substitution';
 
 // ReferenceError: Cannot access 'PrologNameExpression' before initialization
@@ -16,25 +17,25 @@ export function isPrologGoal(obj: unknown): obj is PrologGoal {
 
 	// return typeof ic !== 'undefined' && typeof ic.compareTo === 'function';
 
-	return goal instanceof PrologGoal && goal.Name instanceof PrologPredicate;
+	return goal instanceof PrologGoal; // && goal.Name instanceof PrologPredicate;
 }
 
-export class PrologGoal extends PrologNameExpression<PrologPredicate> {
-	public static fromFunctorExpression(
-		fe: PrologNameExpression<PrologFunctor>
-	): PrologGoal {
-		return new PrologGoal(
-			fe.gs,
-			new PrologPredicate(fe.Name.Name),
-			fe.ExpressionList
-		);
-	}
+export class PrologGoal extends PrologNameExpression /* implements IPrologExpression */ {
+	// public static fromFunctorExpression(
+	// 	fe: PrologNameExpression<PrologFunctor>
+	// ): PrologGoal {
+	// 	return new PrologGoal(
+	// 		fe.gs,
+	// 		fe.Name,
+	// 		fe.ExpressionList
+	// 	);
+	// }
 
 	//public bool DCGDoNotAddExtraArguments = false; // Part of Definite Clause Grammar support.
 
 	constructor(
 		gsParam: LanguageSelector,
-		predicate: PrologPredicate,
+		predicate: string,
 		expressionList: IPrologExpression[]
 	) {
 		super(gsParam, predicate, expressionList);
@@ -52,7 +53,7 @@ export class PrologGoal extends PrologNameExpression<PrologPredicate> {
 	// 	if (
 	// 		typeof otherGoal === 'undefined' ||
 	// 		this.gs !== otherGoal.gs ||
-	// 		this.Name.Name !== otherGoal.Name.Name ||
+	// 		this.Name !== otherGoal.Name ||
 	// 		this.ExpressionList.length !== otherGoal.ExpressionList.length
 	// 	) {
 	// 		return false;
@@ -78,6 +79,10 @@ export class PrologGoal extends PrologNameExpression<PrologPredicate> {
 				expr.ApplySubstitution(substitution)
 			)
 		);
+	}
+
+	public EvaluateToNumber(): IPrologNumber | undefined {
+		return undefined;
 	}
 
 	// public bool IsCut

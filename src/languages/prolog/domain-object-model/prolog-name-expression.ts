@@ -8,26 +8,25 @@ import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
-import { PrologFloatLiteral } from './prolog-float-literal';
-import { PrologFunctor } from './prolog-functor';
+// import { PrologFloatLiteral } from './prolog-float-literal';
+// import { PrologFunctor } from './prolog-functor';
 // import { PrologGoal } from './prolog-goal';
-import { PrologIntegerLiteral } from './prolog-integer-literal';
-import { PrologNameBase } from './prolog-name-base';
+// import { PrologIntegerLiteral } from './prolog-integer-literal';
+// import { PrologNameBase } from './prolog-name-base';
 // import { PrologPredicate } from './prolog-predicate';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 
-export class PrologNameExpression<T extends PrologNameBase>
-	implements IPrologExpression
-{
+export abstract class PrologNameExpression implements IPrologExpression {
+	// <T extends PrologNameBase>
 	public readonly gs: LanguageSelector;
-	public readonly Name: T;
+	public readonly Name: string; // T;
 	public readonly ExpressionList: IPrologExpression[];
 	// public DCGDoNotAddExtraArguments = false; // Part of Definite Clause Grammar support.
 
 	constructor(
 		gs: LanguageSelector,
-		name: T,
+		name: string, // T,
 		expressionList: IPrologExpression[] | undefined = undefined
 	) {
 		this.gs = gs;
@@ -40,49 +39,47 @@ export class PrologNameExpression<T extends PrologNameBase>
 		}
 	}
 
-	private ListToString(expr: IPrologExpression): string {
-		const functorExpression = expr as PrologNameExpression<PrologFunctor>;
+	// private ListToString(expr: IPrologExpression): string {
+	// 	const functorExpression = expr as PrologNameExpression<PrologFunctor>;
 
-		if (
-			typeof functorExpression !== 'undefined' &&
-			functorExpression.Name.Name === '[]' &&
-			functorExpression.ExpressionList.length === 0
-		) {
-			return '';
-		} else if (
-			typeof functorExpression !== 'undefined' &&
-			functorExpression.Name.Name === '.' &&
-			functorExpression.ExpressionList.length === 2
-		) {
-			return `, ${functorExpression.ExpressionList[0]}${this.ListToString(
-				functorExpression.ExpressionList[1]
-			)}`;
-		} else {
-			return ` | ${expr}`;
-		}
-	}
+	// 	if (
+	// 		typeof functorExpression !== 'undefined' &&
+	// 		functorExpression.Name === '[]' &&
+	// 		functorExpression.ExpressionList.length === 0
+	// 	) {
+	// 		return '';
+	// 	} else if (
+	// 		typeof functorExpression !== 'undefined' &&
+	// 		functorExpression.Name === '.' &&
+	// 		functorExpression.ExpressionList.length === 2
+	// 	) {
+	// 		return `, ${functorExpression.ExpressionList[0]}${this.ListToString(
+	// 			functorExpression.ExpressionList[1]
+	// 		)}`;
+	// 	} else {
+	// 		return ` | ${expr}`;
+	// 	}
+	// }
 
-	private SequenceToString(expr: IPrologExpression): string {
-		const functorExpression = expr as PrologNameExpression<PrologFunctor>;
+	// private SequenceToString(expr: IPrologExpression): string {
+	// 	const functorExpression = expr as PrologNameExpression<PrologFunctor>;
 
-		if (
-			typeof functorExpression !== 'undefined' &&
-			functorExpression.Name.Name === 'consSeq' &&
-			functorExpression.ExpressionList.length === 2
-		) {
-			return `${
-				functorExpression.ExpressionList[0]
-			}, ${this.SequenceToString(functorExpression.ExpressionList[1])}`;
-		} else {
-			return `${expr}`;
-		}
-	}
+	// 	if (
+	// 		typeof functorExpression !== 'undefined' &&
+	// 		functorExpression.Name === 'consSeq' &&
+	// 		functorExpression.ExpressionList.length === 2
+	// 	) {
+	// 		return `${
+	// 			functorExpression.ExpressionList[0]
+	// 		}, ${this.SequenceToString(functorExpression.ExpressionList[1])}`;
+	// 	} else {
+	// 		return `${expr}`;
+	// 	}
+	// }
 
 	public toString(): string {
-		const nameAsString = this.Name.toString();
-		const isProlog2FunctorExpression =
-			this.gs === LanguageSelector.Prolog2 &&
-			this.Name.constructor.name === PrologFunctor.name;
+		// const nameAsString = this.Name.toString();
+		const isProlog2FunctorExpression = this.gs === LanguageSelector.Prolog2;
 
 		if (this.ExpressionList.length === 0) {
 			// #if DEAD_CODE
@@ -91,31 +88,29 @@ export class PrologNameExpression<T extends PrologNameBase>
 			// 	return "[]";
 			// }
 			// #endif
-			return nameAsString;
+			return this.Name;
 			// } else if (gs === LanguageSelector.Prolog) {
 			// 	return string.Format("({0} {1})", Name, string.Join(" ", ExpressionList.Select(expr => expr.ToString())));
-		} else if (
-			isProlog2FunctorExpression &&
-			this.ExpressionList.length === 2
-		) {
-			if (nameAsString === '.') {
-				return `[${this.ExpressionList[0]}${this.ListToString(
-					this.ExpressionList[1]
-				)}]`;
-			} else if (nameAsString === 'consSeq') {
-				// #if DEAD_CODE
-				// return string.Format("{0}, {1}", ExpressionList[0], SequenceToString(ExpressionList[1]));
-				// #else
-				// ThAW 2014/03/28 : I added the brackets here because without them, ?- X = [(1, 2), (3, 4)], print(X). yielded [1, 2, 3, 4],
-				// which was misleading.
-				return `(${this.ExpressionList[0]}, ${this.SequenceToString(
-					this.ExpressionList[1]
-				)})`;
-				// #endif
-			}
 		}
-
-		// return string.Format("{0}({1})", Name, string.Join(", ", ExpressionList.Select(expr => expr.ToString())));
+		// else if (
+		// 	isProlog2FunctorExpression &&
+		// 	this.ExpressionList.length === 2
+		// ) {
+		// 	if (this.Name === '.') {
+		// 		return `[${this.ExpressionList[0]}${this.ListToString(
+		// 			this.ExpressionList[1]
+		// 		)}]`;
+		// 		// } else if (this.Name === 'consSeq') {
+		// 		// 	// #if DEAD_CODE
+		// 		// 	// return string.Format("{0}, {1}", ExpressionList[0], SequenceToString(ExpressionList[1]));
+		// 		// 	// #else
+		// 		// 	// ThAW 2014/03/28 : I added the brackets here because without them, ?- X = [(1, 2), (3, 4)], print(X). yielded [1, 2, 3, 4],
+		// 		// 	// which was misleading.
+		// 		// 	return `(${this.ExpressionList[0]}, ${this.SequenceToString(
+		// 		// 		this.ExpressionList[1]
+		// 		// 	)})`;
+		// 		// 	// #endif
+		// 	}
 		// }
 
 		return `${this.Name}(${this.ExpressionList.map(
@@ -179,20 +174,25 @@ export class PrologNameExpression<T extends PrologNameBase>
 		);
 	}
 
-	public ApplySubstitution(
+	public abstract ApplySubstitution(
 		substitution: PrologSubstitution
-	): IPrologExpression {
-		return new PrologNameExpression<T>(
-			this.gs,
-			this.Name,
-			this.ExpressionList.map((expr: IPrologExpression) =>
-				expr.ApplySubstitution(substitution)
-			)
-		);
-	}
+	): IPrologExpression;
+
+	// public ApplySubstitution(
+	// 	substitution: PrologSubstitution
+	// ): IPrologExpression {
+	// 	return new PrologNameExpression<T>(
+	// 		this.gs,
+	// 		this.Name,
+	// 		this.ExpressionList.map((expr: IPrologExpression) =>
+	// 			expr.ApplySubstitution(substitution)
+	// 		)
+	// 	);
+	// }
 
 	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
-		if (otherExpr.constructor.name === PrologVariable.name) {
+		// if (otherExpr.constructor.name === PrologVariable.name) {
+		if (otherExpr instanceof PrologVariable) {
 			return otherExpr.Unify(this);
 		}
 
@@ -204,11 +204,12 @@ export class PrologNameExpression<T extends PrologNameBase>
 		//     return null;
 		// }
 
-		const otherNameExpression = otherExpr as PrologNameExpression<T>;
+		const otherNameExpression = otherExpr as PrologNameExpression;
 
 		if (
-			!this.Name.equals(otherNameExpression.Name) ||
-			this.ExpressionList.length !=
+			this.constructor.name !== otherExpr.constructor.name ||
+			this.Name !== otherNameExpression.Name ||
+			this.ExpressionList.length !==
 				otherNameExpression.ExpressionList.length
 		) {
 			return undefined;
@@ -241,146 +242,148 @@ export class PrologNameExpression<T extends PrologNameBase>
 		);
 	}
 
-	private static EvaluateUnaryOperatorToNumber(
-		thisFunctorExpression: PrologNameExpression<PrologFunctor>
-	): IPrologNumber | undefined {
-		const arg1Evaluated =
-			thisFunctorExpression.ExpressionList[0].EvaluateToNumber();
+	// private static EvaluateUnaryOperatorToNumber(
+	// 	thisFunctorExpression: PrologNameExpression<PrologFunctor>
+	// ): IPrologNumber | undefined {
+	// 	const arg1Evaluated =
+	// 		thisFunctorExpression.ExpressionList[0].EvaluateToNumber();
 
-		if (typeof arg1Evaluated === 'undefined') {
-			return undefined;
-		}
+	// 	if (typeof arg1Evaluated === 'undefined') {
+	// 		return undefined;
+	// 	}
 
-		if (arg1Evaluated.constructor.name === PrologIntegerLiteral.name) {
-			const arg1Value = arg1Evaluated.ToInteger();
-			let result: number;
+	// 	if (arg1Evaluated.constructor.name === PrologIntegerLiteral.name) {
+	// 		const arg1Value = arg1Evaluated.ToInteger();
+	// 		let result: number;
 
-			switch (thisFunctorExpression.Name.Name) {
-				case '+':
-					result = arg1Value;
-					break;
+	// 		switch (thisFunctorExpression.Name) {
+	// 			case '+':
+	// 				result = arg1Value;
+	// 				break;
 
-				case '-':
-					result = -arg1Value;
-					break;
+	// 			case '-':
+	// 				result = -arg1Value;
+	// 				break;
 
-				default:
-					return undefined;
-			}
+	// 			default:
+	// 				return undefined;
+	// 		}
 
-			return new PrologIntegerLiteral(result);
-		} else {
-			const arg1Value = arg1Evaluated.ToDouble();
-			let result: number;
+	// 		return new PrologIntegerLiteral(result);
+	// 	} else {
+	// 		const arg1Value = arg1Evaluated.ToDouble();
+	// 		let result: number;
 
-			switch (thisFunctorExpression.Name.Name) {
-				case '+':
-					result = arg1Value;
-					break;
+	// 		switch (thisFunctorExpression.Name) {
+	// 			case '+':
+	// 				result = arg1Value;
+	// 				break;
 
-				case '-':
-					result = -arg1Value;
-					break;
+	// 			case '-':
+	// 				result = -arg1Value;
+	// 				break;
 
-				default:
-					return undefined;
-			}
+	// 			default:
+	// 				return undefined;
+	// 		}
 
-			return new PrologFloatLiteral(result);
-		}
-	}
+	// 		return new PrologFloatLiteral(result);
+	// 	}
+	// }
 
-	public EvaluateToNumber(): IPrologNumber | undefined {
-		const thisFunctorExpression =
-			this as PrologNameExpression<PrologFunctor>;
+	public abstract EvaluateToNumber(): IPrologNumber | undefined;
 
-		if (typeof thisFunctorExpression === 'undefined') {
-			return undefined;
-		} else if (this.ExpressionList.length === 1) {
-			return PrologNameExpression.EvaluateUnaryOperatorToNumber(
-				thisFunctorExpression
-			);
-		} else if (this.ExpressionList.length !== 2) {
-			return undefined;
-		}
+	// public EvaluateToNumber(): IPrologNumber | undefined {
+	// 	const thisFunctorExpression =
+	// 		this as PrologNameExpression<PrologFunctor>;
 
-		const arg1Evaluated = this.ExpressionList[0].EvaluateToNumber();
-		const arg2Evaluated = this.ExpressionList[1].EvaluateToNumber();
+	// 	if (typeof thisFunctorExpression === 'undefined') {
+	// 		return undefined;
+	// 	} else if (this.ExpressionList.length === 1) {
+	// 		return PrologNameExpression.EvaluateUnaryOperatorToNumber(
+	// 			thisFunctorExpression
+	// 		);
+	// 	} else if (this.ExpressionList.length !== 2) {
+	// 		return undefined;
+	// 	}
 
-		if (
-			typeof arg1Evaluated === 'undefined' ||
-			typeof arg2Evaluated === 'undefined'
-		) {
-			return undefined;
-		}
+	// 	const arg1Evaluated = this.ExpressionList[0].EvaluateToNumber();
+	// 	const arg2Evaluated = this.ExpressionList[1].EvaluateToNumber();
 
-		if (
-			arg1Evaluated.constructor.name === PrologIntegerLiteral.name &&
-			arg2Evaluated.constructor.name === PrologIntegerLiteral.name
-		) {
-			const arg1Value = arg1Evaluated.ToInteger();
-			const arg2Value = arg2Evaluated.ToInteger();
-			let result: number;
+	// 	if (
+	// 		typeof arg1Evaluated === 'undefined' ||
+	// 		typeof arg2Evaluated === 'undefined'
+	// 	) {
+	// 		return undefined;
+	// 	}
 
-			switch (this.Name.Name) {
-				case '+':
-					result = arg1Value + arg2Value;
-					break;
+	// 	if (
+	// 		arg1Evaluated.constructor.name === PrologIntegerLiteral.name &&
+	// 		arg2Evaluated.constructor.name === PrologIntegerLiteral.name
+	// 	) {
+	// 		const arg1Value = arg1Evaluated.ToInteger();
+	// 		const arg2Value = arg2Evaluated.ToInteger();
+	// 		let result: number;
 
-				case '-':
-					result = arg1Value - arg2Value;
-					break;
+	// 		switch (this.Name) {
+	// 			case '+':
+	// 				result = arg1Value + arg2Value;
+	// 				break;
 
-				case '*':
-					result = arg1Value * arg2Value;
-					break;
+	// 			case '-':
+	// 				result = arg1Value - arg2Value;
+	// 				break;
 
-				case '/':
-					result = arg1Value / arg2Value;
-					break;
+	// 			case '*':
+	// 				result = arg1Value * arg2Value;
+	// 				break;
 
-				case 'mod':
-					result = arg1Value % arg2Value;
-					break;
+	// 			case '/':
+	// 				result = arg1Value / arg2Value;
+	// 				break;
 
-				default:
-					return undefined;
-			}
+	// 			case 'mod':
+	// 				result = arg1Value % arg2Value;
+	// 				break;
 
-			return new PrologIntegerLiteral(result);
-		} else {
-			const arg1Value = arg1Evaluated.ToDouble();
-			const arg2Value = arg2Evaluated.ToDouble();
-			let result: number;
+	// 			default:
+	// 				return undefined;
+	// 		}
 
-			switch (this.Name.Name) {
-				case '+':
-					result = arg1Value + arg2Value;
-					break;
+	// 		return new PrologIntegerLiteral(result);
+	// 	} else {
+	// 		const arg1Value = arg1Evaluated.ToDouble();
+	// 		const arg2Value = arg2Evaluated.ToDouble();
+	// 		let result: number;
 
-				case '-':
-					result = arg1Value - arg2Value;
-					break;
+	// 		switch (this.Name) {
+	// 			case '+':
+	// 				result = arg1Value + arg2Value;
+	// 				break;
 
-				case '*':
-					result = arg1Value * arg2Value;
-					break;
+	// 			case '-':
+	// 				result = arg1Value - arg2Value;
+	// 				break;
 
-				case '/':
-					result = arg1Value / arg2Value;
-					break;
+	// 			case '*':
+	// 				result = arg1Value * arg2Value;
+	// 				break;
 
-				case 'mod':
-					result = arg1Value % arg2Value;
-					break;
+	// 			case '/':
+	// 				result = arg1Value / arg2Value;
+	// 				break;
 
-				default:
-					return undefined;
-			}
+	// 			case 'mod':
+	// 				result = arg1Value % arg2Value;
+	// 				break;
 
-			return new PrologFloatLiteral(result);
-		}
-	}
+	// 			default:
+	// 				return undefined;
+	// 		}
+
+	// 		return new PrologFloatLiteral(result);
+	// 	}
+	// }
 
 	// The ToGoal() method was causing a circular dependency:
 	// ReferenceError: Cannot access 'PrologNameExpression' before initialization
@@ -389,7 +392,7 @@ export class PrologNameExpression<T extends PrologNameBase>
 	// public ToGoal(): PrologGoal {
 	// 	return new PrologGoal(
 	// 		this.gs,
-	// 		new PrologPredicate(this.Name.Name),
+	// 		new PrologPredicate(this.Name),
 	// 		this.ExpressionList
 	// 	);
 	// }
