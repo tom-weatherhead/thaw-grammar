@@ -646,7 +646,8 @@ export class PrologGrammar extends GrammarBase {
 		}
 	}
 
-	public tokenToSymbol(token: Token): number {
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	public tokenToSymbol(token: Token): Symbol {
 		// Returns Symbol
 
 		const tokenValueAsString: string = token.tokenValue as string;
@@ -771,7 +772,8 @@ export class PrologGrammar extends GrammarBase {
 
 	public pushTokenOntoSemanticStack(
 		semanticStack: Stack<any>,
-		tokenAsSymbol: number,
+		// eslint-disable-next-line @typescript-eslint/ban-types
+		tokenAsSymbol: Symbol,
 		token: Token
 	): void {
 		const value = token.tokenValue;
