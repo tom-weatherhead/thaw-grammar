@@ -11,6 +11,7 @@ export { KeyNotFoundException } from './common/exceptions/key-not-found-exceptio
 export { NotImplementedException } from './common/exceptions/not-implemented-exception';
 
 export { createGrammar } from './common/grammar-factory';
+export { GrammarBase } from './common/grammar-base';
 
 export { IExpression } from './common/domain-object-model/iexpression';
 export { IGlobalInfo } from './common/domain-object-model/iglobal-info';
