@@ -1,12 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/utilities.ts
 
-import { LanguageSelector } from 'thaw-lexical-analyzer';
-
-// import { PrologFunctor } from './domain-object-model/prolog-functor';
 import { PrologFunctorExpression } from './domain-object-model/prolog-functor-expression';
 import { PrologGoal } from './domain-object-model/prolog-goal';
-// import { PrologNameExpression } from './domain-object-model/prolog-name-expression';
-// import { PrologPredicate } from './domain-object-model/prolog-predicate';
 
 export function createGoalFromFunctorExpression(
 	fe: PrologFunctorExpression
@@ -24,6 +19,7 @@ export function createFunctorExpressionFromGoal(
 
 // From https://stackoverflow.com/questions/201183/how-to-determine-equality-for-two-javascript-objects :
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function deepEquals(x: any, y: any): boolean {
 	const ok = Object.keys;
 	const tx = typeof x;

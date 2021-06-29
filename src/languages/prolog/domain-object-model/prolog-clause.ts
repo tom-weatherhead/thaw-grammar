@@ -8,7 +8,6 @@ import { PrologGlobalInfo } from './prolog-global-info';
 import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
-// import { StringIntKey } from './string-int-key';
 
 export class PrologClause implements IPrologExpression {
 	public readonly Lhs: PrologGoal;
@@ -34,11 +33,6 @@ export class PrologClause implements IPrologExpression {
 	// public override bool Equals(object obj)
 	// {
 
-	//     if (object.ReferenceEquals(this, obj))
-	//     {
-	//         return true;
-	//     }
-
 	//     var otherClause = obj as PrologClause;
 
 	//     if (otherClause == null || !Lhs.Equals(otherClause.Lhs) || Rhs.Count != otherClause.Rhs.Count)
@@ -56,13 +50,6 @@ export class PrologClause implements IPrologExpression {
 	//     }
 
 	//     return true;
-	// }
-
-	// public override int GetHashCode()
-	// {
-	//     return Rhs
-	//         .Select(subgoal => subgoal.GetHashCode())
-	//         .Aggregate(Lhs.GetHashCode(), (accumulator, hashCode) => accumulator * 101 + hashCode);
 	// }
 
 	public FindBindingVariables(): Set<PrologVariable> {

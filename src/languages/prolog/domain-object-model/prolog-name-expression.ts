@@ -4,23 +4,14 @@ import { Set } from 'thaw-common-utilities.ts';
 
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
-// import { setToArray } from './prolog-global-info';
-
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
-// import { PrologFloatLiteral } from './prolog-float-literal';
-// import { PrologFunctor } from './prolog-functor';
-// import { PrologGoal } from './prolog-goal';
-// import { PrologIntegerLiteral } from './prolog-integer-literal';
-// import { PrologNameBase } from './prolog-name-base';
-// import { PrologPredicate } from './prolog-predicate';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 
 export abstract class PrologNameExpression implements IPrologExpression {
-	// <T extends PrologNameBase>
 	public readonly gs: LanguageSelector;
-	public readonly Name: string; // T;
+	public readonly Name: string;
 	public readonly ExpressionList: IPrologExpression[];
 	// public DCGDoNotAddExtraArguments = false; // Part of Definite Clause Grammar support.
 
@@ -79,7 +70,7 @@ export abstract class PrologNameExpression implements IPrologExpression {
 
 	public toString(): string {
 		// const nameAsString = this.Name.toString();
-		const isProlog2FunctorExpression = this.gs === LanguageSelector.Prolog2;
+		// const isProlog2FunctorExpression = this.gs === LanguageSelector.Prolog2;
 
 		if (this.ExpressionList.length === 0) {
 			// #if DEAD_CODE
@@ -120,11 +111,6 @@ export abstract class PrologNameExpression implements IPrologExpression {
 
 	//     public override bool Equals(object obj)
 	//     {
-
-	//         if (object.ReferenceEquals(this, obj))
-	//         {
-	//             return true;
-	//         }
 
 	// #if NAME_EXPRESSION_EQUALITY
 	//         var otherName = obj as T;

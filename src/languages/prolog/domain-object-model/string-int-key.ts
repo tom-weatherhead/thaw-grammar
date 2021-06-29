@@ -1,6 +1,8 @@
 // string-int-key.ts
 
-export class StringIntKey {
+import { IEqualityComparable } from 'thaw-common-utilities.ts';
+
+export class StringIntKey implements IEqualityComparable {
 	public static from(input: string): StringIntKey {
 		const regex = /(.+)\/([0-9]+)/;
 		const match = input.match(regex);
@@ -19,7 +21,6 @@ export class StringIntKey {
 	private readonly n: number;
 
 	constructor(str: string, n: number) {
-		// if (string.IsNullOrEmpty(str))
 		if (!str) {
 			throw new Error('StringIntKey constructor: str is null or empty.');
 		}
@@ -32,23 +33,14 @@ export class StringIntKey {
 		return `${this.str}/${this.n}`;
 	}
 
-	public Equals(obj: unknown): boolean {
-		// if (object.ReferenceEquals(this, obj))
-		// {
-		//     return true;
-		// }
-
-		const otherKey = obj as StringIntKey;
+	public equals(other: unknown): boolean {
+		const otherKey = other as StringIntKey;
 
 		return (
 			typeof otherKey !== 'undefined' &&
+			otherKey instanceof StringIntKey &&
 			otherKey.str === this.str &&
 			otherKey.n === this.n
 		);
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return str.GetHashCode() * 101 + n.GetHashCode();
-	// }
 }

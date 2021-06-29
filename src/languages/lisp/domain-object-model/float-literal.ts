@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/float-literal.ts
 
-'use strict';
-
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
@@ -67,20 +65,9 @@ export class FloatLiteral extends SExpressionBase implements INumber {
 
 	// public override bool Equals(object obj)
 	// {
-
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-
 	// 	FloatLiteral otherFltLit = obj as FloatLiteral;
 
 	// 	return otherFltLit != null && Value == otherFltLit.Value;
-	// }
-
-	// public override int GetHashCode()
-	// {
-	// 	return Value.GetHashCode();
 	// }
 
 	public toInteger(): number {

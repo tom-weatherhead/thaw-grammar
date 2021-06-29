@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/integer-literal.ts
 
-'use strict';
-
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 import { INumber } from './inumber';
@@ -39,27 +37,14 @@ export class IntegerLiteral extends SExpressionBase implements INumber {
 	public toString(): string {
 		// Do not allow the output to be formatted as scientific notation.
 
-		// return this.Value.toString();
-
 		return `${this.value}`;
 	}
 
 	// public override bool Equals(object obj)
 	// {
-
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-
 	// 	IntegerLiteral otherIntLit = obj as IntegerLiteral;
 
 	// 	return otherIntLit != null && Value == otherIntLit.Value;
-	// }
-
-	// public override int GetHashCode()
-	// {
-	// 	return Value.GetHashCode();
 	// }
 
 	public toInteger(): number {

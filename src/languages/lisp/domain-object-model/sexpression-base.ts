@@ -12,10 +12,12 @@ export abstract class SExpressionBase
 	extends SExpressionBareBase
 	implements IExpression<ISExpression>
 {
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		localEnvironment: EnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
 		return this;
 	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

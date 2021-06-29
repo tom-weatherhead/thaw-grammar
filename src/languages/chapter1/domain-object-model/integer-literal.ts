@@ -34,15 +34,15 @@ export class IntegerLiteral implements IExpression<number> {
 	public toString(): string {
 		// Do not allow the output to be formatted as scientific notation.
 
-		// return this.Value.toString();
-
 		return `${this.value}`;
 	}
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		localEnvironment: EnvironmentFrame<number>,
 		globalInfo: IGlobalInfo<number>
 	): number {
 		return this.value;
 	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

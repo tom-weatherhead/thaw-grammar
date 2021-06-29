@@ -1,18 +1,13 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/primitive-operator.ts
 
-'use strict';
-
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { Name } from '../../../common/domain-object-model/name';
-// import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';
 
-// import { ArgumentException } from '../../../common/exceptions/argument-exception';
 import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
-// import { IntegerLiteral } from '../../lisp/domain-object-model/integer-literal';
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 import { LISPOperatorUsage } from '../../lisp/domain-object-model/lisp-operator-usage';
 import { SExpressionBase } from '../../lisp/domain-object-model/sexpression-base';
@@ -191,29 +186,6 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 //         {
 //             return OperatorName.Column;
 //         }
-//     }
-
-//     public override string ToString()
-//     {
-//         return OperatorName.ToString();
-//     }
-
-//     public override bool Equals(object obj)
-//     {
-
-//         if (object.ReferenceEquals(this, obj))
-//         {
-//             return true;
-//         }
-
-//         PrimOp otherPrimOp = obj as PrimOp;
-
-//         return otherPrimOp != null && OperatorName.Equals(otherPrimOp.OperatorName);
-//     }
-
-//     public override int GetHashCode()
-//     {
-//         return OperatorName.GetHashCode();
 //     }
 
 //     public bool IsNumber()

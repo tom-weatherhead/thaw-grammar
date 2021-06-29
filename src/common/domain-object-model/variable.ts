@@ -41,6 +41,7 @@ export class Variable<T> implements IExpression<T> {
 
 	public evaluate(
 		localEnvironment: EnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: IGlobalInfo<T>
 	): T {
 		try {

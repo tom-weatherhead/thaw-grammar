@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/operators.ts
 
-'use strict';
-
 export enum OperatorType {
 	// Unknown,
 	BinaryNumericOperator,
@@ -13,7 +11,7 @@ export enum OperatorType {
 export class Operators {
 	// This class is a Singleton.
 
-	public static getInstance() {
+	public static getInstance(): Operators {
 		if (!Operators.instance) {
 			Operators.instance = new Operators();
 		}

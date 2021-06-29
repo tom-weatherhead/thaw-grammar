@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/lisp-string.ts
 
-'use strict';
-
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 import { SExpressionBase } from './sexpression-base';
 
@@ -26,11 +24,6 @@ export class LISPString extends SExpressionBase {
 		this.value = value;
 	}
 
-	// public override string ToString()
-	// {
-	// 	return Value;
-	// }
-
 	public toString(): string {
 		return '"' + this.value + '"';
 	}
@@ -38,19 +31,9 @@ export class LISPString extends SExpressionBase {
 	// public override bool Equals(object obj)
 	// {
 
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-
 	// 	LISPString otherString = obj as LISPString;
 
 	// 	return otherString != null && Value == otherString.Value;
-	// }
-
-	// public override int GetHashCode()
-	// {
-	// 	return Value.GetHashCode();
 	// }
 
 	public isString(): boolean {

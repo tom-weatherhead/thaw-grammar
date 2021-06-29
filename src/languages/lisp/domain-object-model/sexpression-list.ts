@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/sexpression-list.ts
 
-'use strict';
-
 import { ISExpression } from './isexpression';
 import { NullSExpression } from './null-sexpression';
 import { SExpressionBase } from './sexpression-base';
@@ -33,11 +31,6 @@ export class SExpressionList extends SExpressionBase {
 		this.tail = tail;
 	}
 
-	// public override string ToString()
-	// {
-	// 	return "(" + ToStringWithoutBrackets() + ")";
-	// }
-
 	public toString(): string {
 		// return `(${this.ToStringWithoutBrackets()})`;
 
@@ -46,22 +39,9 @@ export class SExpressionList extends SExpressionBase {
 
 	// public override bool Equals(object obj)
 	// {
-
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-
 	// 	var otherSExprList = obj as SExpressionList;
 
 	// 	return otherSExprList != null && head.Equals(otherSExprList.head) && tail.Equals(otherSExprList.tail);
-	// }
-
-	// public override int GetHashCode()
-	// {
-	// 	// The + 1 is in case this is a list of one element; we don't want (list of head) to have the same hash code as head itself,
-	// 	// since they are both ISExpressions, and could be together in the same set or dictionary.
-	// 	return head.GetHashCode() + 101 * tail.GetHashCode() + 1;
 	// }
 
 	public isList(): boolean {

@@ -29,30 +29,17 @@ export class IntegerLiteral implements IExpression<number> {
 
 	// public override bool Equals(object obj)
 	// {
-
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-
 	// 	IntegerLiteral otherIntLit = obj as IntegerLiteral;
 
 	// 	return otherIntLit != null && Value == otherIntLit.Value;
 	// }
 
-	// public override int GetHashCode()
-	// {
-	// 	return Value.GetHashCode();
-	// }
-
-	// public ToInteger(): number {
-	// 	return this.Value;
-	// }
-
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		localEnvironment: EnvironmentFrame<number>,
 		globalInfo: IGlobalInfo<number>
 	): number {
 		return this.value;
 	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

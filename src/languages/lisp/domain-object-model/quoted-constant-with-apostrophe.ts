@@ -21,10 +21,12 @@ export class QuotedConstantWithApostrophe implements IExpression<ISExpression> {
 		return `'${this.sexpression}`;
 	}
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		localEnvironment: EnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
 		return this.sexpression;
 	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

@@ -2,24 +2,22 @@
 
 import { Set } from 'thaw-common-utilities.ts';
 
-import { LanguageSelector } from 'thaw-lexical-analyzer';
+// import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 import { IPrologExpression } from './iprolog-expression';
 import { PrologClause } from './prolog-clause';
 import { PrologFloatLiteral } from './prolog-float-literal';
-// import { PrologFunctor } from './prolog-functor';
 import {
-	isPrologFunctorExpression,
+	// isPrologFunctorExpression,
 	PrologFunctorExpression
 } from './prolog-functor-expression';
-import { isPrologGoal, PrologGoal } from './prolog-goal';
+import { PrologGoal } from './prolog-goal';
 import { PrologIntegerLiteral } from './prolog-integer-literal';
 
 import { PrologModule } from './prolog-module';
-import { PrologNameExpression } from './prolog-name-expression';
-// import { PrologPredicate } from './prolog-predicate';
+// import { PrologNameExpression } from './prolog-name-expression';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';
@@ -1174,6 +1172,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         return null;
 	//     }
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	private Fail0(goal: PrologGoal): undefined {
 		return undefined;
 	}

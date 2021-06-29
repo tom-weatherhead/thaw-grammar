@@ -1,13 +1,15 @@
 // prolog-integer-literal.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { IEqualityComparable, Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 
-export class PrologIntegerLiteral implements IPrologNumber {
+export class PrologIntegerLiteral
+	implements IEqualityComparable, IPrologNumber
+{
 	public readonly Value: number;
 
 	constructor(value: number) {
@@ -18,26 +20,15 @@ export class PrologIntegerLiteral implements IPrologNumber {
 		return `${this.Value}`;
 	}
 
-	public equals(otherExpr: IPrologExpression): boolean {
-		// public Equals(obj: unknown): boolean {
-		// if (object.ReferenceEquals(this, obj))
-		// {
-		//     return true;
-		// }
-
-		const otherIntLit = otherExpr as PrologIntegerLiteral;
-		// const otherIntLit = obj as PrologIntegerLiteral;
+	public equals(other: unknown): boolean {
+		const otherIntLit = other as PrologIntegerLiteral;
 
 		return (
 			typeof otherIntLit !== 'undefined' &&
+			other instanceof PrologIntegerLiteral &&
 			this.Value === otherIntLit.Value
 		);
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return Value.GetHashCode();
-	// }
 
 	public FindBindingVariables(): Set<PrologVariable> {
 		return new Set<PrologVariable>();

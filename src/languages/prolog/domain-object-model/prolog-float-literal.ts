@@ -1,13 +1,13 @@
 // prolog-float-literal.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { IEqualityComparable, Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 
-export class PrologFloatLiteral implements IPrologNumber {
+export class PrologFloatLiteral implements IEqualityComparable, IPrologNumber {
 	public readonly Value: number;
 
 	constructor(value: number) {
@@ -29,24 +29,15 @@ export class PrologFloatLiteral implements IPrologNumber {
 		return `${this.Value}`;
 	}
 
-	public equals(otherExpr: IPrologExpression): boolean {
-		// if (object.ReferenceEquals(this, obj))
-		// {
-		//     return true;
-		// }
-
-		const otherFloatLit = otherExpr as PrologFloatLiteral;
+	public equals(other: unknown): boolean {
+		const otherFloatLit = other as PrologFloatLiteral;
 
 		return (
 			typeof otherFloatLit !== 'undefined' &&
+			otherFloatLit instanceof PrologFloatLiteral &&
 			this.Value === otherFloatLit.Value
 		);
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return Value.GetHashCode();
-	// }
 
 	public FindBindingVariables(): Set<PrologVariable> {
 		return new Set<PrologVariable>();

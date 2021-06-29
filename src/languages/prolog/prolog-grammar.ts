@@ -22,10 +22,10 @@ import {
 	// isPrologFunctorExpression,
 	PrologFunctorExpression
 } from './domain-object-model/prolog-functor-expression';
-import { PrologGlobalInfo } from './domain-object-model/prolog-global-info';
+// import { PrologGlobalInfo } from './domain-object-model/prolog-global-info';
 import { PrologGoal } from './domain-object-model/prolog-goal';
 import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-literal';
-import { PrologNameExpression } from './domain-object-model/prolog-name-expression';
+// import { PrologNameExpression } from './domain-object-model/prolog-name-expression';
 // import { PrologPredicate } from './domain-object-model/prolog-predicate';
 import { PrologVariable } from './domain-object-model/prolog-variable';
 

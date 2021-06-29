@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/operator-usage.ts
 
-'use strict';
-
 import { EvaluationException } from '../exceptions/evaluation-exception';
 import { EnvironmentFrame } from './environment-frame';
 import { ExpressionList } from './expression-list';
@@ -145,6 +143,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected checkArgTypes(evaluatedArguments: T[]): string | null {
 		return null;
 	}
