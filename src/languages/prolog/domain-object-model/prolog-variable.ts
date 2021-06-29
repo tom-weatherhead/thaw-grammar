@@ -27,22 +27,15 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 		return this.Name;
 	}
 
-	// TODO: public equals(otherExpr: IPrologExpression): boolean {
-	// public Equals(obj: unknown): boolean {
-	public strictEquals(obj: unknown): boolean {
-		// if (object.ReferenceEquals(this, obj))
-		// {
-		//     return true;
-		// }
-
+	public equals(obj: unknown): boolean {
 		const otherVar = obj as PrologVariable;
 
 		// We can compare the Name members with == because Name is a string.
-		return typeof otherVar !== 'undefined' && this.Name === otherVar.Name;
-	}
-
-	public Equals(obj: unknown): boolean {
-		return this.strictEquals(obj);
+		return (
+			typeof otherVar !== 'undefined' &&
+			otherVar instanceof PrologVariable &&
+			this.Name === otherVar.Name
+		);
 	}
 
 	public get IsNonBinding(): boolean {
@@ -74,20 +67,11 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 	}
 
 	public GetListOfBindingVariables(): PrologVariable[] {
-		// const result: PrologVariable[] = [];
-
-		//    this.FindBindingVariables().getIterator().forEach((v: PrologVariable) => {
-		//    	result.push(v);
-		//    });
-
-		//    return result;
-
-		// return setToArray(this.FindBindingVariables());
 		return this.FindBindingVariables().toArray();
 	}
 
 	public ContainsVariable(v: PrologVariable): boolean {
-		return this.Equals(v);
+		return this.equals(v);
 	}
 
 	public ApplySubstitution(sub: PrologSubstitution): IPrologExpression {
@@ -108,7 +92,7 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 		const otherVariable = otherExpr as PrologVariable;
 
 		if (
-			this.Equals(otherExpr) ||
+			this.equals(otherExpr) ||
 			this.IsNonBinding ||
 			// 2014/03/13 : Don't add the binding { X = _ } to any substitution.
 			// But what about a binding such as { X = foo(_) } ?

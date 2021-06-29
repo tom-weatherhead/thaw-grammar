@@ -76,17 +76,6 @@ export class PrologClause implements IPrologExpression {
 	}
 
 	public GetListOfBindingVariables(): PrologVariable[] {
-		// var result = Lhs.GetListOfBindingVariables();
-
-		// foreach (var subgoal in Rhs)
-		// {
-		//     result.AddRangeUnique(subgoal.GetListOfBindingVariables());
-		// }
-
-		// return result;
-
-		// return this.FindBindingVariables();
-		// return setToArray(this.FindBindingVariables());
 		return this.FindBindingVariables().toArray();
 	}
 

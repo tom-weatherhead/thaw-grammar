@@ -75,7 +75,7 @@ export class PrologSubstitution {
 		for (const key of newSub.SubstitutionList.keys()) {
 			const v = new PrologVariable(key);
 
-			if (v.Equals(newSub.SubstitutionList.get(key))) {
+			if (v.equals(newSub.SubstitutionList.get(key))) {
 				varsToRemove.push(new PrologVariable(key));
 			}
 		}

@@ -34,7 +34,7 @@ export class LetStarUsage<T> implements IExpression<T> {
 		// 1) No:
 		// const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
-		// this.bindings.forEach(([v, expr]: [Variable<T>, IExpression<T>]) => {
+		// this.bindings.for Each(([v, expr]: [Variable<T>, IExpression<T>]) => {
 		// 	// For this line, LetUsage.evaluate() does this instead:
 		// 	// newEnvFrame.add(v, expr.evaluate(localEnvironment, globalInfo));
 
@@ -46,7 +46,7 @@ export class LetStarUsage<T> implements IExpression<T> {
 		// 2) Correct C#:
 		// var lastEnv = localEnvironment;
 
-		// foreach (var binding in Bindings)
+		// for each (var binding in Bindings)
 		// {
 		//     var newEnvFrame = new EnvironmentFrame<T>(lastEnv);
 

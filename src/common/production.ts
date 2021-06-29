@@ -8,7 +8,7 @@ import { Symbol } from './symbol';
 
 export type ProductionRhsElementType = Symbol | string;
 
-export class Production {
+export class Production implements IEqualityComparable {
 	public lhs: Symbol;
 	public rhs: ProductionRhsElementType[];
 	private readonly num: number;
@@ -19,10 +19,6 @@ export class Production {
 		this.num = n;
 	}
 
-	// public override string ToString()
-	// {
-	// 	return string.Format("{0}: {1} -> {2}", num, lhs, string.Join(" ", rhs));
-	// }
 	public toString(): string {
 		const lhsAsString: string = Symbol[this.lhs];
 		const rhsAsString: string = this.rhs
@@ -35,41 +31,10 @@ export class Production {
 			})
 			.join(' ');
 
-		// return `${this.num}: ${this.lhs} -> ${this.rhs}`;
-
 		return `${this.num}: ${lhsAsString} -> ${rhsAsString}`;
 	}
 
-	// public override bool Equals(object obj)
-	// {
-
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-
-	// 	Production that = obj as Production;
-
-	// 	// return that != null && lhs.Equals(that.lhs) && rhs.Equals(that.rhs);
-
-	// 	if (that == null || !lhs.Equals(that.lhs) || rhs.Count != that.rhs.Count)
-	// 	{
-	// 		return false;
-	// 	}
-
-	// 	for (int i = 0; i < rhs.Count; ++i)
-	// 	{
-
-	// 		if (!rhs[i].Equals(that.rhs[i]))
-	// 		{
-	// 			return false;
-	// 		}
-	// 	}
-
-	// 	return true;
-	// }
-
-	public strictEquals(other: unknown): boolean {
+	public equals(other: unknown): boolean {
 		const otherProduction = other as Production;
 
 		if (
@@ -78,7 +43,7 @@ export class Production {
 			this.lhs !== otherProduction.lhs ||
 			this.rhs.length !== otherProduction.rhs.length
 		) {
-			//  || this.num !== otherProduction.lhs // Ignore the production number in this equality comparison.
+			//  || this.num !== otherProduction.num // Ignore the production number in this equality comparison.
 			return false;
 		}
 
@@ -91,48 +56,13 @@ export class Production {
 		return true;
 	}
 
-	// public override int GetHashCode()
-	// {
-	// 	return rhs
-	// 		.Select(o => o.GetHashCode())
-	// 		.Aggregate(lhs.GetHashCode(), (accumulator, hashCode) => accumulator * 101 + hashCode);
-	// }
-
-	// public RHSWithNoSemanticActions(): ProductionRhsElementType[] {
 	public RHSWithNoSemanticActions(): Symbol[] {
-		// return this.rhs.filter((o: any) => o is Symbol).Select(o => (Symbol)o).ToList();
-
-		// return this.rhs
-		// 	.filter((o: any) => o as number)
-		// 	.filter((o: number) => o !== undefined);
-
-		// const result: Symbol[] = [];
-
-		// this.rhs.forEach((o: string | Symbol) => {
-		// 	// if (o instanceof Number) {
-		// 	// if (typeof o !== 'string') {
-		// 	if (typeof o === 'number') {
-		// 		result.push(o);
-		// 	}
-		// });
-
-		// // console.log(`RHSWithNoSemanticActions() : Input : ${this.rhs}`);
-		// // console.log(`RHSWithNoSemanticActions() : Output: ${result}`);
-
-		// return result;
-
 		return this.rhs
 			.filter((s: ProductionRhsElementType) => typeof s !== 'string')
 			.map((s: ProductionRhsElementType) => s as Symbol);
 	}
 
 	public StripOutSemanticActions(): Production {
-		// var newRHS = rhs.Where(o => o is Symbol).ToList();
-		// const newRHS = this.rhs.filter((o) => (o as number) !== undefined);
-		// const newRHS = this.rhs.filter(
-		// 	(s: Symbol | string) => typeof s !== 'string'
-		// );
-
 		return new Production(
 			this.lhs,
 			this.RHSWithNoSemanticActions(),

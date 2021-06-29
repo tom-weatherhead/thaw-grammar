@@ -538,7 +538,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//             return null;
 	//         }
 
-	//         foreach (var cl in clausesToRemove)
+	//         for each (var cl in clausesToRemove)
 	//         {
 	//             DefaultModule.ClauseList.Remove(cl);
 	//         }
@@ -1183,15 +1183,15 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//     private PrologSubstitution Listing0(PrologGoal goal)
 	//     {
 
-	//         foreach (var moduleName in dictModules.Keys)
+	//         for each (var moduleName in dictModules.Keys)
 	//         {
 	//             sbOutput.AppendLine(string.Format("Module '{0}' :", moduleName));
-	//             dictModules[moduleName].ClauseList.ForEach(clause => sbOutput.AppendLine(clause.ToString()));
+	//             dictModules[moduleName].ClauseList.For Each(clause => sbOutput.AppendLine(clause.ToString()));
 	//             sbOutput.AppendLine();
 	//         }
 
 	//         sbOutput.AppendLine("Default module:");
-	//         DefaultModule.ClauseList.ForEach(clause => sbOutput.AppendLine(clause.ToString()));
+	//         DefaultModule.ClauseList.For Each(clause => sbOutput.AppendLine(clause.ToString()));
 	//         return new PrologSubstitution();
 	//     }
 
@@ -1217,13 +1217,13 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	//         // TODO? Should we include clauses that contain mentions of targetName on their RHSs?
 
-	//         foreach (var moduleName in dictModules.Keys)
+	//         for each (var moduleName in dictModules.Keys)
 	//         {
 	//             sbOutput.AppendLine(string.Format("Module '{0}' :", moduleName));
 	//             dictModules[moduleName].ClauseList
 	//                 .Where(clause => clause.Lhs.Name == targetName)
 	//                 .ToList()
-	//                 .ForEach(clause => sbOutput.AppendLine(clause.ToString()));
+	//                 .For Each(clause => sbOutput.AppendLine(clause.ToString()));
 	//             sbOutput.AppendLine();
 	//         }
 
@@ -1231,7 +1231,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         DefaultModule.ClauseList
 	//             .Where(clause => clause.Lhs.Name == targetName)
 	//             .ToList()
-	//             .ForEach(clause => sbOutput.AppendLine(clause.ToString()));
+	//             .For Each(clause => sbOutput.AppendLine(clause.ToString()));
 	//         return new PrologSubstitution();
 	//     }
 
@@ -2009,7 +2009,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//     {
 	//         var variablesToAvoid = clause.FindBindingVariables();
 
-	//         foreach (var otherClause in currentModule.ClauseList)
+	//         for each (var otherClause in currentModule.ClauseList)
 	//         {
 	//             var renamedClause = otherClause.RenameVariables(variablesToAvoid, this);
 	//             var unifier = renamedClause.Unify(clause);
@@ -2110,8 +2110,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// let substitution: PrologSubstitution;
 
 			// sbOutput.Clear();
-			// goalList.ForEach(g => cutDetectorList.Add(cutDetector));
-			// goalList.forEach((g: PrologGoal) =>
+			// goalList.For Each(g => cutDetectorList.Add(cutDetector));
+			// goalList.for Each((g: PrologGoal) =>
 			// 	listOfCurrentModules.push(this.DefaultModule)
 			// );
 

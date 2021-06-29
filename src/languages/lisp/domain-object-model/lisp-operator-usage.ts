@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/lisp-operator-usage.ts
 
-'use strict';
-
 import { Set } from 'thaw-common-utilities.ts';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
@@ -339,14 +337,6 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 					: globalInfo.falseValue;
 
 			case 'print':
-				// console.log(evaluatedArguments[0].toString());
-
-				// evaluatedArguments.forEach((evaluatedArgument: number) => {
-				// 	console.log(evaluatedArgument.toString());
-				// });
-
-				// return globalInfo.getTrueValue();
-
 				globalInfo.print(evaluatedArguments);
 
 				return evaluatedArguments[0];

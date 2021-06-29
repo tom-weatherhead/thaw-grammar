@@ -75,7 +75,8 @@ export abstract class GrammarBase implements IGrammar {
 	public findStartingProduction(): Production {
 		const results: Production[] = [];
 
-		this.productions.forEach((p: Production) => {
+		// this.productions.for Each((p: Production) => {
+		for (const p of this.productions) {
 			if (p.lhs === this.startSymbol) {
 				const p2 = p.StripOutSemanticActions();
 
@@ -87,7 +88,7 @@ export abstract class GrammarBase implements IGrammar {
 					}
 				}
 			}
-		});
+		} // );
 
 		if (results.length !== 1) {
 			throw new GrammarException(

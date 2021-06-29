@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/environment-frame.ts
 
-'use strict';
-
 import { ArgumentException } from '../exceptions/argument-exception';
 import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
 import { Variable } from './variable';
@@ -84,9 +82,11 @@ export class EnvironmentFrame<T> {
 			);
 		}
 
-		keys.forEach((key: Variable<T>, i: number) => {
-			this.add(key, values[i]);
-		});
+		// keys.for Each((key: Variable<T>, i: number) => {
+		for (let i = 0; i < keys.length; i++) {
+			this.add(keys[i], values[i]);
+		}
+		// });
 	}
 
 	private dictionaryContainsKey(key: Variable<T>): boolean {

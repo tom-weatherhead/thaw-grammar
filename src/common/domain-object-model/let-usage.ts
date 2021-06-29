@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/let-usage.ts
 
-'use strict';
-
 import { EnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
@@ -33,9 +31,10 @@ export class LetUsage<T> implements IExpression<T> {
 	): T {
 		const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
-		this.bindings.forEach(([v, expr]: [Variable<T>, IExpression<T>]) => {
+		// this.bindings.for Each(([v, expr]: [Variable<T>, IExpression<T>]) => {
+		for (const [v, expr] of this.bindings) {
 			newEnvFrame.add(v, expr.evaluate(localEnvironment, globalInfo));
-		});
+		} // );
 
 		return this.expression.evaluate(newEnvFrame, globalInfo);
 	}

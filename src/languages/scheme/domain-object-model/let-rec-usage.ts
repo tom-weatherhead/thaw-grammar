@@ -27,24 +27,6 @@ export class LetRecUsage<T> implements IExpression<T> {
 		return `(letrec (${bindingsAsString}) ${this.expression})`;
 	}
 
-	// public ISExpression Evaluate(EnvironmentFrame<ISExpression> localEnvironment, IGlobalInfo<ISExpression> globalInfo)
-	// {
-	//     var falseValue = globalInfo.FalseValue;
-	//     var newEnvFrame = new EnvironmentFrame<ISExpression>(localEnvironment);
-
-	//     foreach (var binding in Bindings)   // Add all variables that are bound in Bindings to newEnvFrame before any closures are created in the next loop.
-	//     {
-	//         newEnvFrame.Add(binding.Key, falseValue);
-	//     }
-
-	//     foreach (var binding in Bindings)
-	//     {
-	//         newEnvFrame.Add(binding.Key, binding.Value.Evaluate(newEnvFrame, globalInfo));
-	//     }
-
-	//     return Expression.Evaluate(newEnvFrame, globalInfo);
-	// }
-
 	public evaluate(
 		localEnvironment: EnvironmentFrame<T>,
 		globalInfo: IGlobalInfo<T>
@@ -52,14 +34,16 @@ export class LetRecUsage<T> implements IExpression<T> {
 		const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		this.bindings.forEach(([v, expr]: [Variable<T>, IExpression<T>]) => {
+		// this.bindings.for Each(([v, expr]: [Variable<T>, IExpression<T>]) => {
+		for (const [v, expr] of this.bindings) {
 			// Add all variables that are bound in this.bindings to newEnvFrame before any closures are created in the next loop.
 			newEnvFrame.add(v, globalInfo.falseValue);
-		});
+		} // );
 
-		this.bindings.forEach(([v, expr]: [Variable<T>, IExpression<T>]) => {
+		// this.bindings.for Each(([v, expr]: [Variable<T>, IExpression<T>]) => {
+		for (const [v, expr] of this.bindings) {
 			newEnvFrame.add(v, expr.evaluate(newEnvFrame, globalInfo));
-		});
+		} // );
 
 		return this.expression.evaluate(newEnvFrame, globalInfo);
 	}

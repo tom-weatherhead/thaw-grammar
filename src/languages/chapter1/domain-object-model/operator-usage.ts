@@ -80,14 +80,6 @@ export class Chapter1OperatorUsage extends OperatorUsage<number> {
 					: globalInfo.falseValue;
 
 			case 'print':
-				// console.log(evaluatedArguments[0].toString());
-
-				// evaluatedArguments.forEach((evaluatedArgument: number) => {
-				// 	console.log(evaluatedArgument.toString());
-				// });
-
-				// return globalInfo.getTrueValue();
-
 				globalInfo.print(evaluatedArguments);
 
 				return evaluatedArguments[0];

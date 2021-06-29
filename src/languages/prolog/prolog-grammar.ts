@@ -1071,7 +1071,7 @@ export class PrologGrammar extends GrammarBase {
 // var variable1 = GenerateNewVariable();
 // var variable2 = variable1;
 
-// foreach (var rhsExpr in rhsExprList)
+// for each (var rhsExpr in rhsExprList)
 // {
 // var variable3 = GenerateNewVariable();
 
