@@ -120,7 +120,10 @@ export class Production {
 
 	public StripOutSemanticActions(): Production {
 		// var newRHS = rhs.Where(o => o is Symbol).ToList();
-		const newRHS = this.rhs.filter((o) => (o as number) !== undefined);
+		// const newRHS = this.rhs.filter((o) => (o as number) !== undefined);
+		const newRHS = this.rhs.filter(
+			(o: Symbol | string) => typeof o !== 'string'
+		);
 
 		return new Production(this.lhs, newRHS, this.num);
 	}
