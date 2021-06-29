@@ -5,12 +5,15 @@ import { IEqualityComparable } from 'thaw-common-utilities.ts';
 import { Symbol } from './symbol';
 
 /* eslint-disable @typescript-eslint/ban-types */
+
+export type ProductionRhsElementType = Symbol | string;
+
 export class Production {
-	public lhs: Symbol; // Symbol;
-	public rhs: (Symbol | string)[];
+	public lhs: Symbol;
+	public rhs: ProductionRhsElementType[];
 	private readonly num: number;
 
-	constructor(l: Symbol, r: (Symbol | string)[], n = 0) {
+	constructor(l: Symbol, r: ProductionRhsElementType[], n = 0) {
 		this.lhs = l;
 		this.rhs = r;
 		this.num = n;
@@ -23,11 +26,11 @@ export class Production {
 	public toString(): string {
 		const lhsAsString: string = Symbol[this.lhs];
 		const rhsAsString: string = this.rhs
-			.map((o: Symbol | string) => {
-				if (typeof o === 'string') {
-					return o;
+			.map((s: ProductionRhsElementType) => {
+				if (typeof s === 'string') {
+					return s;
 				} else {
-					return Symbol[o];
+					return Symbol[s];
 				}
 			})
 			.join(' ');
@@ -95,43 +98,53 @@ export class Production {
 	// 		.Aggregate(lhs.GetHashCode(), (accumulator, hashCode) => accumulator * 101 + hashCode);
 	// }
 
-	public RHSWithNoSemanticActions(): number[] {
+	// public RHSWithNoSemanticActions(): ProductionRhsElementType[] {
+	public RHSWithNoSemanticActions(): Symbol[] {
 		// return this.rhs.filter((o: any) => o is Symbol).Select(o => (Symbol)o).ToList();
 
 		// return this.rhs
 		// 	.filter((o: any) => o as number)
 		// 	.filter((o: number) => o !== undefined);
 
-		const result: number[] = [];
+		// const result: Symbol[] = [];
 
-		this.rhs.forEach((o: string | number) => {
-			// if (o instanceof Number) {
-			// if (typeof o !== 'string') {
-			if (typeof o === 'number') {
-				result.push(o);
-			}
-		});
+		// this.rhs.forEach((o: string | Symbol) => {
+		// 	// if (o instanceof Number) {
+		// 	// if (typeof o !== 'string') {
+		// 	if (typeof o === 'number') {
+		// 		result.push(o);
+		// 	}
+		// });
 
-		// console.log(`RHSWithNoSemanticActions() : Input : ${this.rhs}`);
-		// console.log(`RHSWithNoSemanticActions() : Output: ${result}`);
+		// // console.log(`RHSWithNoSemanticActions() : Input : ${this.rhs}`);
+		// // console.log(`RHSWithNoSemanticActions() : Output: ${result}`);
 
-		return result;
+		// return result;
+
+		return this.rhs
+			.filter((s: ProductionRhsElementType) => typeof s !== 'string')
+			.map((s: ProductionRhsElementType) => s as Symbol);
 	}
 
 	public StripOutSemanticActions(): Production {
 		// var newRHS = rhs.Where(o => o is Symbol).ToList();
 		// const newRHS = this.rhs.filter((o) => (o as number) !== undefined);
-		const newRHS = this.rhs.filter(
-			(o: Symbol | string) => typeof o !== 'string'
-		);
+		// const newRHS = this.rhs.filter(
+		// 	(s: Symbol | string) => typeof s !== 'string'
+		// );
 
-		return new Production(this.lhs, newRHS, this.num);
+		return new Production(
+			this.lhs,
+			this.RHSWithNoSemanticActions(),
+			this.num
+		);
 	}
 
-	public ContainsSymbol(symbol: number): boolean {
+	public ContainsSymbol(symbol: Symbol): boolean {
 		return (
 			this.lhs === symbol ||
-			this.rhs.find((o) => o === symbol) !== undefined
+			this.rhs.find((s: ProductionRhsElementType) => s === symbol) !==
+				undefined
 		);
 	}
 }

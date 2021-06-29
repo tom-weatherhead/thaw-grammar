@@ -1,5 +1,10 @@
 // tom-weatherhead/thaw-grammar/src/common/symbols.ts
 
+// TODO: Rename Symbol as something like GrammarSymbol,
+// since Symbol is already defined by JavaScript or Node.js
+// (e.g. Symbol.iterator)
+
+// export enum GrammarSymbol {
 export enum Symbol {
 	UndefinedSymbol = 0,
 	Lambda,
@@ -98,6 +103,7 @@ export enum Symbol {
 	nonterminalExprList,
 	nonterminalExprTail,
 	nonterminalExpression,
+	nonterminalTerm,
 	nonterminalPrimaryTail,
 	nonterminalPrimary,
 	nonterminalAddOp,
