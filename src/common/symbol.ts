@@ -88,6 +88,7 @@ export enum Symbol {
 	terminalFrom,
 	terminalInferPred,
 	terminalNotSymbol,
+	terminalIs,
 	// terminal,
 
 	terminalEOF,

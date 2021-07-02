@@ -44,6 +44,4 @@ export { PrologIntegerLiteral } from './languages/prolog/domain-object-model/pro
 // export { PrologPredicate } from './languages/prolog/domain-object-model/prolog-predicate';
 export { PrologVariable } from './languages/prolog/domain-object-model/prolog-variable';
 
-export { deepEquals } from './languages/prolog/utilities';
-
 export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';

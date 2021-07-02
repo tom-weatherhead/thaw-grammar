@@ -1523,31 +1523,62 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				if (
 					numArgsInGoal === 3 &&
 					goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
-					goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
-					goal.ExpressionList[2] instanceof PrologVariable
+					goal.ExpressionList[1] instanceof PrologIntegerLiteral
 				) {
 					const n1 = goal.ExpressionList[0] as PrologIntegerLiteral;
 					const n2 = goal.ExpressionList[1] as PrologIntegerLiteral;
-					const v = goal.ExpressionList[2] as PrologVariable;
-					const addSubstitution = new PrologSubstitution(
-						v,
-						new PrologIntegerLiteral(
+
+					if (
+						goal.ExpressionList[2] instanceof PrologIntegerLiteral
+					) {
+						const n3 = goal
+							.ExpressionList[2] as PrologIntegerLiteral;
+
+						if (
+							n3.Value ===
 							this.doIntegerArithmetic(
 								goal.Name,
 								n1.Value,
 								n2.Value
 							)
-						)
-					);
+						) {
+							return this.ProveGoalList(
+								goalList,
+								// cutDetectorList,
+								nextGoalNum,
+								oldSubstitution,
+								parentVariablesToAvoid,
+								variablesInQuery,
+								listOfCurrentModules
+							);
+						} else {
+							return undefined;
+						}
+					} else if (
+						goal.ExpressionList[2] instanceof PrologVariable
+					) {
+						const v = goal.ExpressionList[2] as PrologVariable;
+						const addSubstitution = new PrologSubstitution(
+							v,
+							new PrologIntegerLiteral(
+								this.doIntegerArithmetic(
+									goal.Name,
+									n1.Value,
+									n2.Value
+								)
+							)
+						);
 
-					return this.ProveGoalList(
-						goalList, // cutDetectorList,
-						nextGoalNum,
-						oldSubstitution.Compose(addSubstitution),
-						parentVariablesToAvoid,
-						variablesInQuery,
-						listOfCurrentModules
-					);
+						return this.ProveGoalList(
+							goalList,
+							// cutDetectorList,
+							nextGoalNum,
+							oldSubstitution.Compose(addSubstitution),
+							parentVariablesToAvoid,
+							variablesInQuery,
+							listOfCurrentModules
+						);
+					}
 				}
 				break;
 
@@ -1586,9 +1617,6 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			case 'not':
 			case '\\+':
 				if (numArgsInGoal === 1) {
-					// const fe = PrologGlobalInfo.ConvertToFunctorExpression(
-					// 	goal.ExpressionList[0]
-					// );
 					const fe = goal
 						.ExpressionList[0] as PrologFunctorExpression;
 					const innerGoal = createGoalFromFunctorExpression(fe);
@@ -1637,6 +1665,54 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 						variablesInQuery,
 						listOfCurrentModules
 					);
+				}
+
+				break;
+
+			case 'is':
+				if (numArgsInGoal === 2) {
+					const e0 = goal.ExpressionList[0];
+					const n1 = goal.ExpressionList[1].EvaluateToNumber();
+
+					if (typeof n1 === 'undefined') {
+						console.error(
+							`Goal is/3 : '${goal.ExpressionList[1]}' does not evaluate to a number.`
+						);
+
+						return undefined;
+					} else if (e0 instanceof PrologIntegerLiteral) {
+						if (e0.EvaluateToNumber() !== n1) {
+							return undefined;
+						}
+
+						this.ProveGoalList(
+							goalList,
+							// cutDetectorList,
+							nextGoalNum,
+							oldSubstitution,
+							parentVariablesToAvoid,
+							variablesInQuery,
+							listOfCurrentModules
+						);
+					} else if (e0 instanceof PrologVariable) {
+						return this.ProveGoalList(
+							goalList,
+							// cutDetectorList,
+							nextGoalNum,
+							oldSubstitution.Compose(
+								new PrologSubstitution(e0 as PrologVariable, n1)
+							),
+							parentVariablesToAvoid,
+							variablesInQuery,
+							listOfCurrentModules
+						);
+					} else {
+						console.error(
+							`Goal is/3 : '${goal.ExpressionList[0]}' is not an IntegerLiteral or a Variable.`
+						);
+
+						return undefined;
+					}
 				}
 
 				break;

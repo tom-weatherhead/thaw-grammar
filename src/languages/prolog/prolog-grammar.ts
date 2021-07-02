@@ -17,7 +17,6 @@ import { createFunctorExpressionFromGoal } from './utilities';
 import { IPrologExpression } from './domain-object-model/iprolog-expression';
 import { PrologClause } from './domain-object-model/prolog-clause';
 import { PrologFloatLiteral } from './domain-object-model/prolog-float-literal';
-// import { PrologFunctor } from './domain-object-model/prolog-functor';
 import {
 	// isPrologFunctorExpression,
 	PrologFunctorExpression
@@ -26,7 +25,6 @@ import {
 import { PrologGoal } from './domain-object-model/prolog-goal';
 import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-literal';
 // import { PrologNameExpression } from './domain-object-model/prolog-name-expression';
-// import { PrologPredicate } from './domain-object-model/prolog-predicate';
 import { PrologVariable } from './domain-object-model/prolog-variable';
 
 // function explodingCast<T>(value: unknown): T {
@@ -41,8 +39,6 @@ import { PrologVariable } from './domain-object-model/prolog-variable';
 // }
 
 export class PrologGrammar extends GrammarBase {
-	// The Scheme grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
-
 	constructor() {
 		super(Symbol.nonterminalStart);
 
@@ -62,13 +58,14 @@ export class PrologGrammar extends GrammarBase {
 		this.terminals.push(Symbol.terminalIntegerLiteral);
 		this.terminals.push(Symbol.terminalOrBar);
 		this.terminals.push(Symbol.terminalNotSymbol);
+		this.terminals.push(Symbol.terminalIs);
 		// this.terminals.push(Symbol.terminal);
 
 		this.terminals.push(Symbol.terminalEOF);
 
 		// Not yet added:
 		// // From PrologGrammar2
-		// Symbol.T_Is, Symbol.T_Plus,
+		// Symbol.T_Plus,
 		// Symbol.T_Minus, Symbol.T_Multiply, Symbol.T_Divide, Symbol.T_LessThan,
 		// Symbol.T_GreaterThan, Symbol.T_LessEqual, Symbol.T_GreaterEqual, Symbol.T_StringLiteral,
 		// Symbol.T_NotSymbol, Symbol.T_IfThen, Symbol.T_Colon, Symbol.T_Assign,
@@ -295,7 +292,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpression,
-				[Symbol.terminalIntegerLiteral /*, '#createIntegerLiteral' */],
+				[Symbol.terminalIntegerLiteral],
 				17
 			)
 		);
@@ -344,9 +341,7 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpression,
-				[
-					Symbol.nonterminalList // , Symbol.nonterminalListTail
-				],
+				[Symbol.nonterminalList],
 				22
 			)
 		);
@@ -418,6 +413,32 @@ export class PrologGrammar extends GrammarBase {
 				Symbol.nonterminalGoal,
 				[Symbol.terminalNotSymbol, Symbol.nonterminalGoal, '#not'],
 				29
+			)
+		);
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalGoal,
+				[
+					Symbol.nonterminalVariable,
+					Symbol.terminalIs,
+					Symbol.nonterminalExpression,
+					'#createGoal_Is'
+				],
+				30
+			)
+		);
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalGoal,
+				[
+					Symbol.terminalIntegerLiteral,
+					Symbol.terminalIs,
+					Symbol.nonterminalExpression,
+					'#createGoal_Is'
+				],
+				31
 			)
 		);
 	}
@@ -528,9 +549,7 @@ export class PrologGrammar extends GrammarBase {
 			case '#createFunctorExpression':
 				exprList = semanticStack.pop() as IPrologExpression[];
 				str = semanticStack.pop() as string;
-				// functor = new PrologFunctor(str);
 				semanticStack.push(
-					// TODO: new PrologFunctorExpression(
 					new PrologFunctorExpression(gs, str, exprList)
 				);
 				break;
@@ -538,14 +557,12 @@ export class PrologGrammar extends GrammarBase {
 			// **** BEGIN - For lists
 
 			case '#createNilFunctor':
-				// functor = new PrologFunctor('[]');
 				semanticStack.push(new PrologFunctorExpression(gs, '[]', []));
 				break;
 
 			case '#createConsFunctor':
 				expr2 = semanticStack.pop() as IPrologExpression;
 				expr = semanticStack.pop() as IPrologExpression;
-				// functor = new PrologFunctor('.');
 				semanticStack.push(
 					new PrologFunctorExpression(gs, '.', [expr, expr2])
 				);
@@ -555,16 +572,16 @@ export class PrologGrammar extends GrammarBase {
 
 			case '#not': // #metaPredicateWithGoal
 				goal = semanticStack.pop() as PrologGoal;
-				// functorExpr = new PrologFunctorExpression(
-				// 	gs,
-				// 	new PrologFunctor(goal.Name),
-				// 	goal.ExpressionList
-				// );
 				functorExpr = createFunctorExpressionFromGoal(goal);
-				// functor = new PrologFunctor('not');
 				semanticStack.push(
 					new PrologFunctorExpression(gs, 'not', [functorExpr])
 				);
+				break;
+
+			case '#createGoal_Is':
+				expr2 = semanticStack.pop() as IPrologExpression;
+				expr = semanticStack.pop() as IPrologExpression;
+				semanticStack.push(new PrologGoal(gs, 'is', [expr, expr2]));
 				break;
 
 			// // case "#arithExpr_Prefix":   // The same as #infix, except for the order of the items on the stack.
@@ -662,7 +679,8 @@ export class PrologGrammar extends GrammarBase {
 						return Symbol.terminalInferPred;
 					case ':-':
 						return Symbol.terminalFrom;
-					// case "is": return Symbol.T_Is;
+					case 'is':
+						return Symbol.terminalIs;
 					// case "+": return Symbol.T_Plus;
 					// case "-": return Symbol.T_Minus;
 					// case "*": return Symbol.T_Multiply;
@@ -789,6 +807,7 @@ export class PrologGrammar extends GrammarBase {
 
 			case Symbol.terminalNameBeginningWithCapital:
 			case Symbol.terminalNameNotBeginningWithCapital:
+				// case Symbol.terminalIs:
 				semanticStack.push(value); // value is really a string; it must be converted to a Prolog domain model type later.
 				break;
 
@@ -813,7 +832,6 @@ export class PrologGrammar extends GrammarBase {
 			// case Symbol.T_NotEqual:
 			// case Symbol.T_NotUnifiable:
 			// case Symbol.T_Univ:
-			// case Symbol.T_Is:
 			// 	semanticStack.push(value);
 			// 	break;
 

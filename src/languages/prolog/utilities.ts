@@ -20,20 +20,20 @@ export function createFunctorExpressionFromGoal(
 // From https://stackoverflow.com/questions/201183/how-to-determine-equality-for-two-javascript-objects :
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-export function deepEquals(x: any, y: any): boolean {
-	const ok = Object.keys;
-	const tx = typeof x;
-	const ty = typeof y;
+// export function deepEquals(x: any, y: any): boolean {
+// 	const ok = Object.keys;
+// 	const tx = typeof x;
+// 	const ty = typeof y;
 
-	return x &&
-		y &&
-		tx === 'object' &&
-		tx === ty &&
-		x.constructor === y.constructor // Fixes the error where deepEquals({}, []) was returning true.
-		? ok(x).length === ok(y).length &&
-				ok(x).every((key) => deepEquals(x[key], y[key]))
-		: x === y;
-}
+// 	return x &&
+// 		y &&
+// 		tx === 'object' &&
+// 		tx === ty &&
+// 		x.constructor === y.constructor // Fixes the error where deepEquals({}, []) was returning true.
+// 		? ok(x).length === ok(y).length &&
+// 				ok(x).every((key) => deepEquals(x[key], y[key]))
+// 		: x === y;
+// }
 
 // Some comments:
 
