@@ -1533,15 +1533,17 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					) {
 						const n3 = goal
 							.ExpressionList[2] as PrologIntegerLiteral;
+						const result = this.doIntegerArithmetic(
+							goal.Name,
+							n1.Value,
+							n2.Value
+						);
 
-						if (
-							n3.Value ===
-							this.doIntegerArithmetic(
-								goal.Name,
-								n1.Value,
-								n2.Value
-							)
-						) {
+						// console.log(
+						// 	`Goal = ${goal.Name}; n3 = ${n3}; result = ${result}`
+						// );
+
+						if (n3.Value === result) {
 							return this.ProveGoalList(
 								goalList,
 								// cutDetectorList,
@@ -1825,6 +1827,68 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			default:
 				break;
 		}
+
+		// **** BEGIN Special case: E.g. add(2, N, 5) ****
+
+		if (
+			goal.Name === 'add' &&
+			numArgsInGoal === 3 &&
+			goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
+			goal.ExpressionList[1] instanceof PrologVariable &&
+			goal.ExpressionList[2] instanceof PrologIntegerLiteral
+		) {
+			// If 2 + N === 5 then N === 5 - 2
+			const n0 = goal.ExpressionList[0] as PrologIntegerLiteral;
+			const v1 = goal.ExpressionList[1] as PrologVariable;
+			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
+
+			const addSubstitution = new PrologSubstitution(
+				v1,
+				new PrologIntegerLiteral(
+					this.doIntegerArithmetic('sub', n2.Value, n0.Value)
+				)
+			);
+
+			return this.ProveGoalList(
+				goalList,
+				// cutDetectorList,
+				nextGoalNum,
+				oldSubstitution.Compose(addSubstitution),
+				parentVariablesToAvoid,
+				variablesInQuery,
+				listOfCurrentModules
+			);
+		} else if (
+			goal.Name === 'add' &&
+			numArgsInGoal === 3 &&
+			goal.ExpressionList[0] instanceof PrologVariable &&
+			goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
+			goal.ExpressionList[2] instanceof PrologIntegerLiteral
+		) {
+			// If N + 2 === 5 then N === 5 - 2
+			const v0 = goal.ExpressionList[0] as PrologVariable;
+			const n1 = goal.ExpressionList[1] as PrologIntegerLiteral;
+			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
+
+			const addSubstitution = new PrologSubstitution(
+				v0,
+				new PrologIntegerLiteral(
+					this.doIntegerArithmetic('sub', n2.Value, n1.Value)
+				)
+			);
+
+			return this.ProveGoalList(
+				goalList,
+				// cutDetectorList,
+				nextGoalNum,
+				oldSubstitution.Compose(addSubstitution),
+				parentVariablesToAvoid,
+				variablesInQuery,
+				listOfCurrentModules
+			);
+		}
+
+		// **** END Special case: E.g. add(2, N, 5) ****
 
 		let resultSubstitution = this.ProveGoalListUsingModule(
 			goal,
