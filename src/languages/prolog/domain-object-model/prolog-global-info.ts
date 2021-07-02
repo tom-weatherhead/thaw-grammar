@@ -1886,6 +1886,62 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				variablesInQuery,
 				listOfCurrentModules
 			);
+		} else if (
+			goal.Name === 'sub' &&
+			numArgsInGoal === 3 &&
+			goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
+			goal.ExpressionList[1] instanceof PrologVariable &&
+			goal.ExpressionList[2] instanceof PrologIntegerLiteral
+		) {
+			// If 5 - N === 2 then N === 5 - 2
+			const n0 = goal.ExpressionList[0] as PrologIntegerLiteral;
+			const v1 = goal.ExpressionList[1] as PrologVariable;
+			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
+
+			const addSubstitution = new PrologSubstitution(
+				v1,
+				new PrologIntegerLiteral(
+					this.doIntegerArithmetic('sub', n0.Value, n2.Value)
+				)
+			);
+
+			return this.ProveGoalList(
+				goalList,
+				// cutDetectorList,
+				nextGoalNum,
+				oldSubstitution.Compose(addSubstitution),
+				parentVariablesToAvoid,
+				variablesInQuery,
+				listOfCurrentModules
+			);
+		} else if (
+			goal.Name === 'sub' &&
+			numArgsInGoal === 3 &&
+			goal.ExpressionList[0] instanceof PrologVariable &&
+			goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
+			goal.ExpressionList[2] instanceof PrologIntegerLiteral
+		) {
+			// If N - 2 === 3 then N === 2 + 3
+			const v0 = goal.ExpressionList[0] as PrologVariable;
+			const n1 = goal.ExpressionList[1] as PrologIntegerLiteral;
+			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
+
+			const addSubstitution = new PrologSubstitution(
+				v0,
+				new PrologIntegerLiteral(
+					this.doIntegerArithmetic('add', n1.Value, n2.Value)
+				)
+			);
+
+			return this.ProveGoalList(
+				goalList,
+				// cutDetectorList,
+				nextGoalNum,
+				oldSubstitution.Compose(addSubstitution),
+				parentVariablesToAvoid,
+				variablesInQuery,
+				listOfCurrentModules
+			);
 		}
 
 		// **** END Special case: E.g. add(2, N, 5) ****
