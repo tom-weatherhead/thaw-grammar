@@ -19,10 +19,7 @@ export class EvaluableExpression implements IExpression<ISExpression> {
 	public readonly firstExpression: IExpression<ISExpression>;
 	public readonly expressionList: ExpressionList<ISExpression>;
 
-	constructor(
-		firstExpression: IExpression<ISExpression>,
-		expressionList: ExpressionList<ISExpression>
-	) {
+	constructor(firstExpression: IExpression<ISExpression>, expressionList: ExpressionList<ISExpression>) {
 		// console.log('Creating an instance of EvaluableExpression...');
 		this.firstExpression = firstExpression;
 		this.expressionList = expressionList;
@@ -42,14 +39,9 @@ export class EvaluableExpression implements IExpression<ISExpression> {
 		// if ((this.firstExpression instanceof Variable<ISExpression>) || localEnvironment.isDefined(firstExprAsVariable)) {
 		if (
 			!(this.firstExpression instanceof Variable) ||
-			localEnvironment.isDefined(
-				this.firstExpression as Variable<ISExpression>
-			)
+			localEnvironment.isDefined(this.firstExpression as Variable<ISExpression>)
 		) {
-			const firstExprValue = this.firstExpression.evaluate(
-				localEnvironment,
-				globalInfo
-			);
+			const firstExprValue = this.firstExpression.evaluate(localEnvironment, globalInfo);
 
 			// firstExprValue = DeThunkSExpression(firstExprValue, globalInfo);
 
@@ -68,21 +60,13 @@ export class EvaluableExpression implements IExpression<ISExpression> {
 
 			// console.log('firstExprValue is callable. Calling it...');
 
-			return callableSExpr.call(
-				this.expressionList,
-				localEnvironment,
-				globalInfo
-			);
+			return callableSExpr.call(this.expressionList, localEnvironment, globalInfo);
 		}
 
 		// throw new EvaluationException('EvaluableExpression.evaluate() : This expression is either bad or not yet supported');
 
-		const firstExprValueX = this.firstExpression.evaluate(
-			localEnvironment,
-			globalInfo
-		);
-		const firstExprValueIsCallable =
-			(firstExprValueX as ICallableSExpression) !== undefined;
+		const firstExprValueX = this.firstExpression.evaluate(localEnvironment, globalInfo);
+		const firstExprValueIsCallable = (firstExprValueX as ICallableSExpression) !== undefined;
 
 		throw new EvaluationException(
 			`EvaluableExpression.evaluate() : Foo. firstExprValueIsCallable: ${firstExprValueIsCallable}`

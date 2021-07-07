@@ -30,9 +30,7 @@ export class CallCCUsage implements IExpression<ISExpression> {
 		const evaluatedBody = this.body.evaluate(localEnvironment, globalInfo);
 
 		if (!(evaluatedBody instanceof Closure)) {
-			throw new EvaluationException(
-				'CallCCUsage.evaluate() : Body does not evaluate to a Closure.'
-			);
+			throw new EvaluationException('CallCCUsage.evaluate() : Body does not evaluate to a Closure.');
 		}
 
 		const closure = evaluatedBody as Closure;
@@ -49,9 +47,7 @@ export class CallCCUsage implements IExpression<ISExpression> {
 		const ccGuid = Math.random(); // Guid.NewGuid();
 		const exprList = new ExpressionList<ISExpression>();
 
-		exprList.value.push(
-			new Continuation(ccGuid, closure.line, closure.column)
-		);
+		exprList.value.push(new Continuation(ccGuid, closure.line, closure.column));
 
 		try {
 			return closure.call(exprList, localEnvironment, globalInfo);

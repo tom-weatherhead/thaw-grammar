@@ -31,10 +31,7 @@ export abstract class GrammarBase implements IGrammar {
 
 	public abstract get selectorsOfCompatibleParsers(): number[]; // This is a 'get' accessor.
 
-	public abstract executeSemanticAction(
-		semanticStack: Stack<any>,
-		action: string
-	): void;
+	public abstract executeSemanticAction(semanticStack: Stack<any>, action: string): void;
 
 	public abstract tokenToSymbol(token: Token): number;
 	// public tokenToSymbol(token: Token): number { // returns Symbol

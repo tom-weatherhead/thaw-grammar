@@ -23,10 +23,7 @@ export class IntegerLiteral extends SExpressionBase implements INumber {
 				'value'
 			);
 		} else if (Number.isNaN(value)) {
-			throw new ArgumentException(
-				'IntegerLiteral constructor: value is not a number (NaN).',
-				'value'
-			);
+			throw new ArgumentException('IntegerLiteral constructor: value is not a number (NaN).', 'value');
 			// } else if (Math.floor(value) !== value) {
 			// throw new ArgumentException(`IntegerLiteral constructor: value '${value}' is not an integer.`, 'value');
 		}
@@ -55,7 +52,7 @@ export class IntegerLiteral extends SExpressionBase implements INumber {
 		return this.value;
 	}
 
-	public isNumber(): boolean {
+	public override isNumber(): boolean {
 		return true;
 	}
 

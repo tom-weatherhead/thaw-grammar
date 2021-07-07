@@ -36,10 +36,7 @@ export {
 	PrologFunctorExpression
 } from './languages/prolog/domain-object-model/prolog-functor-expression';
 export { PrologGlobalInfo } from './languages/prolog/domain-object-model/prolog-global-info';
-export {
-	isPrologGoal,
-	PrologGoal
-} from './languages/prolog/domain-object-model/prolog-goal';
+export { isPrologGoal, PrologGoal } from './languages/prolog/domain-object-model/prolog-goal';
 export { PrologIntegerLiteral } from './languages/prolog/domain-object-model/prolog-integer-literal';
 // export { PrologPredicate } from './languages/prolog/domain-object-model/prolog-predicate';
 export { PrologVariable } from './languages/prolog/domain-object-model/prolog-variable';

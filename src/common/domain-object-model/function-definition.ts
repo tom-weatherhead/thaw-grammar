@@ -13,11 +13,7 @@ export class FunctionDefinition<T> implements IExpression<T> {
 	public readonly argList: VariableList<T>;
 	public readonly body: IExpression<T>;
 
-	constructor(
-		functionName: Name,
-		argList: VariableList<T>,
-		body: IExpression<T>
-	) {
+	constructor(functionName: Name, argList: VariableList<T>, body: IExpression<T>) {
 		this.functionName = functionName;
 		this.argList = argList;
 		this.body = body;
@@ -27,10 +23,7 @@ export class FunctionDefinition<T> implements IExpression<T> {
 		return `(define ${this.functionName} ${this.argList} ${this.body})`;
 	}
 
-	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
-		globalInfo: IGlobalInfo<T>
-	): T {
+	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
 		globalInfo.functionDefinitions.set(this.functionName.value, this);
 
 		return globalInfo.trueValue;

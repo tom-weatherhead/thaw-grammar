@@ -10,10 +10,7 @@ export class LISPSymbol extends SExpressionBase {
 		super();
 
 		if (!value) {
-			throw new ArgumentException(
-				'LISPSymbol constructor: value is null or empty.',
-				'value'
-			);
+			throw new ArgumentException('LISPSymbol constructor: value is null or empty.', 'value');
 		}
 
 		this.value = value;
@@ -30,7 +27,7 @@ export class LISPSymbol extends SExpressionBase {
 	// 	return otherSymbol != null && Value == otherSymbol.Value;
 	// }
 
-	public isSymbol(): boolean {
+	public override isSymbol(): boolean {
 		return true;
 	}
 }

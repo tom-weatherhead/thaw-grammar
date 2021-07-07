@@ -9,10 +9,7 @@ export class SExpressionList extends SExpressionBase {
 		return this.makeFromListHelper(l, 0);
 	}
 
-	private static makeFromListHelper(
-		l: ISExpression[],
-		i: number
-	): ISExpression {
+	private static makeFromListHelper(l: ISExpression[], i: number): ISExpression {
 		if (i >= l.length) {
 			return new NullSExpression();
 		}
@@ -44,7 +41,7 @@ export class SExpressionList extends SExpressionBase {
 	// 	return otherSExprList != null && head.Equals(otherSExprList.head) && tail.Equals(otherSExprList.tail);
 	// }
 
-	public isList(): boolean {
+	public override isList(): boolean {
 		return true;
 	}
 

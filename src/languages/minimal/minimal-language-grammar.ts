@@ -40,18 +40,10 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		this.nonTerminals.push(Symbol.nonterminalExpressionList);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalStart,
-				[Symbol.nonterminalExpression, Symbol.terminalEOF],
-				1
-			)
+			new Production(Symbol.nonterminalStart, [Symbol.nonterminalExpression, Symbol.terminalEOF], 1)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
-				[Symbol.terminalIntegerLiteral],
-				2
-			)
+			new Production(Symbol.nonterminalExpression, [Symbol.terminalIntegerLiteral], 2)
 		);
 		this.productions.push(
 			new Production(
@@ -67,31 +59,19 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalBracketedExpression,
-				[
-					Symbol.terminalPlus,
-					Symbol.nonterminalExpressionList,
-					'#operatorUsage'
-				],
+				[Symbol.terminalPlus, Symbol.nonterminalExpressionList, '#operatorUsage'],
 				4
 			)
 		);
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpressionList,
-				[
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionList,
-					'#expressionList'
-				],
+				[Symbol.nonterminalExpression, Symbol.nonterminalExpressionList, '#expressionList'],
 				5
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[Symbol.Lambda, '#emptyExpressionList'],
-				6
-			)
+			new Production(Symbol.nonterminalExpressionList, [Symbol.Lambda, '#emptyExpressionList'], 6)
 		);
 	}
 
@@ -104,10 +84,7 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
-	public executeSemanticAction(
-		semanticStack: Stack<any>,
-		action: string
-	): void {
+	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		// console.log(`MinimalLanguageGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
 		let name: Name;
@@ -133,9 +110,7 @@ export class MinimalLanguageGrammar extends GrammarBase {
 				break;
 
 			default:
-				throw new GrammarException(
-					`Unrecognized semantic action: ${action}`
-				);
+				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
 	}
 
@@ -166,11 +141,7 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		);
 	}
 
-	public pushTokenOntoSemanticStack(
-		semanticStack: Stack<any>,
-		tokenAsSymbol: number,
-		token: Token
-	): void {
+	public pushTokenOntoSemanticStack(semanticStack: Stack<any>, tokenAsSymbol: number, token: Token): void {
 		switch (tokenAsSymbol) {
 			case Symbol.terminalIntegerLiteral:
 				// console.log(`Pushing IntegerLiteral ${token.tokenValue as number} onto the semanticStack`);
@@ -180,11 +151,7 @@ export class MinimalLanguageGrammar extends GrammarBase {
 			case Symbol.terminalPlus:
 				// console.log(`Pushing Name '${token.tokenValue as string}' onto the semanticStack`);
 				semanticStack.push(
-					new Name(
-						token.tokenValue as string,
-						token.line,
-						token.column /*, false */
-					)
+					new Name(token.tokenValue as string, token.line, token.column /*, false */)
 				);
 				break;
 

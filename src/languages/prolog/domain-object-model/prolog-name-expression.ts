@@ -104,9 +104,9 @@ export abstract class PrologNameExpression implements IPrologExpression {
 		// 	}
 		// }
 
-		return `${this.Name}(${this.ExpressionList.map(
-			(expr: IPrologExpression) => expr.toString()
-		).join(', ')})`;
+		return `${this.Name}(${this.ExpressionList.map((expr: IPrologExpression) => expr.toString()).join(
+			', '
+		)})`;
 	}
 
 	//     public override bool Equals(object obj)
@@ -155,14 +155,10 @@ export abstract class PrologNameExpression implements IPrologExpression {
 	}
 
 	public ContainsVariable(v: PrologVariable): boolean {
-		return this.ExpressionList.some((expr: IPrologExpression) =>
-			expr.ContainsVariable(v)
-		);
+		return this.ExpressionList.some((expr: IPrologExpression) => expr.ContainsVariable(v));
 	}
 
-	public abstract ApplySubstitution(
-		substitution: PrologSubstitution
-	): IPrologExpression;
+	public abstract ApplySubstitution(substitution: PrologSubstitution): IPrologExpression;
 
 	// public ApplySubstitution(
 	// 	substitution: PrologSubstitution
@@ -195,8 +191,7 @@ export abstract class PrologNameExpression implements IPrologExpression {
 		if (
 			this.constructor.name !== otherExpr.constructor.name ||
 			this.Name !== otherNameExpression.Name ||
-			this.ExpressionList.length !==
-				otherNameExpression.ExpressionList.length
+			this.ExpressionList.length !== otherNameExpression.ExpressionList.length
 		) {
 			return undefined;
 		}
@@ -204,12 +199,8 @@ export abstract class PrologNameExpression implements IPrologExpression {
 		let substitution = new PrologSubstitution();
 
 		for (let i = 0; i < this.ExpressionList.length; ++i) {
-			const newExpr1 =
-				this.ExpressionList[i].ApplySubstitution(substitution);
-			const newExpr2 =
-				otherNameExpression.ExpressionList[i].ApplySubstitution(
-					substitution
-				);
+			const newExpr1 = this.ExpressionList[i].ApplySubstitution(substitution);
+			const newExpr2 = otherNameExpression.ExpressionList[i].ApplySubstitution(substitution);
 			const substitution2 = newExpr1.Unify(newExpr2);
 
 			if (typeof substitution2 === 'undefined') {
@@ -223,9 +214,7 @@ export abstract class PrologNameExpression implements IPrologExpression {
 	}
 
 	public get IsGround(): boolean {
-		return this.ExpressionList.every(
-			(expr: IPrologExpression) => expr.IsGround
-		);
+		return this.ExpressionList.every((expr: IPrologExpression) => expr.IsGround);
 	}
 
 	// private static EvaluateUnaryOperatorToNumber(

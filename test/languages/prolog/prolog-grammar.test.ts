@@ -149,11 +149,7 @@ test('PrologGlobalInfo instanceof test', () => {
 	// const predicate = new PrologPredicate('pred');
 	const goal = new PrologGoal(ls, 'pred', exprList);
 	// const functor = new PrologFunctor('functor');
-	const functorExpression = new PrologFunctorExpression(
-		ls,
-		'functor',
-		exprList
-	);
+	const functorExpression = new PrologFunctorExpression(ls, 'functor', exprList);
 
 	// Act
 	// Assert

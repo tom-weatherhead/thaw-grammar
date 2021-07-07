@@ -11,30 +11,26 @@ export class LetRecUsage<T> implements IExpression<T> {
 	public readonly bindings: [Variable<T>, IExpression<T>][];
 	public readonly expression: IExpression<T>;
 
-	constructor(
-		bindings: [Variable<T>, IExpression<T>][],
-		expression: IExpression<T>
-	) {
+	constructor(bindings: [Variable<T>, IExpression<T>][], expression: IExpression<T>) {
 		this.bindings = bindings;
 		this.expression = expression;
 	}
 
 	public toString(): string {
-		const fnBindingAsString = ([v, expr]: [Variable<T>, IExpression<T>]) =>
-			`(${v} ${expr})`;
+		const fnBindingAsString = ([v, expr]: [Variable<T>, IExpression<T>]) => `(${v} ${expr})`;
 		const bindingsAsString = this.bindings.map(fnBindingAsString).join(' ');
 
 		return `(letrec (${bindingsAsString}) ${this.expression})`;
 	}
 
-	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
-		globalInfo: IGlobalInfo<T>
-	): T {
+	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
 		const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		for (const [v, expr] of this.bindings) {
+		// for (const [v, expr] of this.bindings) {
+		for (const binding of this.bindings) {
+			const v = binding[0];
+
 			// Add all variables that are bound in this.bindings to newEnvFrame before any closures are created in the next loop.
 			newEnvFrame.add(v, globalInfo.falseValue);
 		}

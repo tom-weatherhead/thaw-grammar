@@ -52,14 +52,11 @@ export class Closure extends SExpressionBase implements ICallableSExpression {
 			);
 		}
 
-		const evaluatedArguments = expressionList.value.map(
-			(expr: IExpression<ISExpression>) =>
-				expr.evaluate(localEnvironment, globalInfo)
+		const evaluatedArguments = expressionList.value.map((expr: IExpression<ISExpression>) =>
+			expr.evaluate(localEnvironment, globalInfo)
 		);
 
-		const newEnvironment = new EnvironmentFrame<ISExpression>(
-			this.closureEnvironment
-		);
+		const newEnvironment = new EnvironmentFrame<ISExpression>(this.closureEnvironment);
 
 		// if (globalInfo.Debug) {
 		// 	LISPGlobalInfo.CreateStackTraceInNewEnvironmentFrame(localEnvironment, newEnvironment, Line, Column);
@@ -70,7 +67,7 @@ export class Closure extends SExpressionBase implements ICallableSExpression {
 		return this.body.evaluate(newEnvironment, globalInfo);
 	}
 
-	public isClosure(): boolean {
+	public override isClosure(): boolean {
 		return true;
 	}
 
@@ -78,7 +75,7 @@ export class Closure extends SExpressionBase implements ICallableSExpression {
 		return '<closure>';
 	}
 
-	public evaluate(
+	public override evaluate(
 		/* eslint-disable @typescript-eslint/no-unused-vars */
 		localEnvironment: EnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>

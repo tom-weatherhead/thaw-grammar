@@ -25,7 +25,7 @@ export class Chapter1GlobalInfo extends GlobalInfoBase<number> {
 		return this.trueValueForAccessor;
 	}
 
-	public valueIsFalse(value: number): boolean {
+	public override valueIsFalse(value: number): boolean {
 		return value === this.falseValue;
 	}
 

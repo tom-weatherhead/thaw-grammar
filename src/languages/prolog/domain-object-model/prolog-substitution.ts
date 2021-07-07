@@ -51,14 +51,10 @@ export class PrologSubstitution {
 			const sub = this.SubstitutionList.get(key);
 
 			if (typeof sub === 'undefined') {
-				throw new Error(
-					'PrologSubstitution.Compose() : sub is undefined.'
-				);
+				throw new Error('PrologSubstitution.Compose() : sub is undefined.');
 			}
 
-			const newUnifiable = sub.ApplySubstitution(
-				otherSub
-			) as IPrologExpression;
+			const newUnifiable = sub.ApplySubstitution(otherSub) as IPrologExpression;
 
 			if (typeof newUnifiable === 'undefined') {
 				throw new Error(
@@ -158,8 +154,6 @@ export class PrologSubstitution {
 			values.push(vv);
 		}
 
-		return (
-			values.length === Array.from(this.SubstitutionList.keys()).length
-		);
+		return values.length === Array.from(this.SubstitutionList.keys()).length;
 	}
 }

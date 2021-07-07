@@ -27,16 +27,9 @@ export class CondUsage<T> implements IExpression<T> {
 			.join(' ')})`;
 	}
 
-	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
-		globalInfo: IGlobalInfo<T>
-	): T {
+	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
 		for (const [expr1, expr2] of this.exprPairList) {
-			if (
-				!globalInfo.valueIsFalse(
-					expr1.evaluate(localEnvironment, globalInfo)
-				)
-			) {
+			if (!globalInfo.valueIsFalse(expr1.evaluate(localEnvironment, globalInfo))) {
 				return expr2.evaluate(localEnvironment, globalInfo);
 			}
 		}

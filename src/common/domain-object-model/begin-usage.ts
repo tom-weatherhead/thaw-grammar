@@ -11,10 +11,7 @@ export class BeginUsage<T> implements IExpression<T> {
 	public readonly firstExpression: IExpression<T>;
 	public readonly expressionList: ExpressionList<T>;
 
-	constructor(
-		firstExpression: IExpression<T>,
-		expressionList: ExpressionList<T>
-	) {
+	constructor(firstExpression: IExpression<T>, expressionList: ExpressionList<T>) {
 		this.firstExpression = firstExpression;
 		this.expressionList = expressionList;
 	}
@@ -23,10 +20,7 @@ export class BeginUsage<T> implements IExpression<T> {
 		return `(begin ${this.firstExpression} ${this.expressionList})`;
 	}
 
-	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
-		globalInfo: IGlobalInfo<T>
-	): T {
+	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
 		return this.expressionList.value.reduce(
 			(previousResult: T, expression: IExpression<T>) =>
 				expression.evaluate(localEnvironment, globalInfo), // Lint: Yes, previousResult is unused.

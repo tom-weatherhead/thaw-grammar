@@ -15,10 +15,7 @@ export class LISPString extends SExpressionBase {
 		// }
 
 		if (!value) {
-			throw new ArgumentException(
-				'LISPString constructor: value is null or empty.',
-				'value'
-			);
+			throw new ArgumentException('LISPString constructor: value is null or empty.', 'value');
 		}
 
 		this.value = value;
@@ -36,7 +33,7 @@ export class LISPString extends SExpressionBase {
 	// 	return otherString != null && Value == otherString.Value;
 	// }
 
-	public isString(): boolean {
+	public override isString(): boolean {
 		return true;
 	}
 }

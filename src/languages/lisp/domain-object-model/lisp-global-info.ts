@@ -14,8 +14,7 @@ import { NullSExpression } from './null-sexpression';
 
 export class LISPGlobalInfo extends GlobalInfoBase<ISExpression> {
 	private readonly trueValueForAccessor: ISExpression = new LISPSymbol('T'); // Symbols are immutable
-	private readonly falseValueForAccessor: ISExpression =
-		new NullSExpression(); // This is immutable too
+	private readonly falseValueForAccessor: ISExpression = new NullSExpression(); // This is immutable too
 	// private readonly Dictionary<Name, IMacroDefinition<ISExpression>> MacroDefs = new Dictionary<Name, IMacroDefinition<ISExpression>>();
 	// public static readonly Variable<ISExpression> varStackTrace = new Variable<ISExpression>("__STACK_TRACE__", 0, 0);
 
@@ -162,7 +161,7 @@ export class LISPGlobalInfo extends GlobalInfoBase<ISExpression> {
 		return this.trueValueForAccessor;
 	}
 
-	public valueIsFalse(value: ISExpression): boolean {
+	public override valueIsFalse(value: ISExpression): boolean {
 		return value.isNull();
 	}
 
@@ -212,7 +211,7 @@ export class LISPGlobalInfo extends GlobalInfoBase<ISExpression> {
 	// 	//Console.WriteLine("newStackTrace = {0}", newStackTrace);
 	// }
 
-	public setDebug(debug: boolean): boolean {
+	public override setDebug(debug: boolean): boolean {
 		this.debug = debug;
 
 		return true;

@@ -298,69 +298,41 @@ export class LISPGrammar extends GrammarBase {
 
 		// This initial production needed to be added: Start -> Input EOF
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalStart,
-				[Symbol.nonterminalInput, Symbol.terminalEOF],
-				1
-			)
+			new Production(Symbol.nonterminalStart, [Symbol.nonterminalInput, Symbol.terminalEOF], 1)
 		);
 
 		// Input -> ( BracketedInput )
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalInput,
-				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalBracketedInput,
-					Symbol.terminalRightBracket
-				],
+				[Symbol.terminalLeftBracket, Symbol.nonterminalBracketedInput, Symbol.terminalRightBracket],
 				2
 			)
 		);
 
 		// Input -> UnbracketedInput
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalInput,
-				[Symbol.nonterminalUnbracketedInput],
-				3
-			)
+			new Production(Symbol.nonterminalInput, [Symbol.nonterminalUnbracketedInput], 3)
 		);
 
 		// BracketedInput -> BracketedExpression
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedInput,
-				[Symbol.nonterminalBracketedExpression],
-				4
-			)
+			new Production(Symbol.nonterminalBracketedInput, [Symbol.nonterminalBracketedExpression], 4)
 		);
 
 		// BracketedInput -> FunDef
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedInput,
-				[Symbol.nonterminalFunDef],
-				5
-			)
+			new Production(Symbol.nonterminalBracketedInput, [Symbol.nonterminalFunDef], 5)
 		);
 
 		// - UnbracketedInput -> Value
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalUnbracketedInput,
-				[Symbol.nonterminalValue],
-				6
-			)
+			new Production(Symbol.nonterminalUnbracketedInput, [Symbol.nonterminalValue], 6)
 		);
 
 		// - UnbracketedInput -> Variable
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalUnbracketedInput,
-				[Symbol.nonterminalVariable],
-				7
-			)
+			new Production(Symbol.nonterminalUnbracketedInput, [Symbol.nonterminalVariable], 7)
 		);
 
 		// FunDef -> define Function ArgList Expression
@@ -382,11 +354,7 @@ export class LISPGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalArgList,
-				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalVariableList,
-					Symbol.terminalRightBracket
-				],
+				[Symbol.terminalLeftBracket, Symbol.nonterminalVariableList, Symbol.terminalRightBracket],
 				9
 			)
 		);
@@ -395,41 +363,21 @@ export class LISPGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalVariableList,
-				[
-					Symbol.nonterminalVariable,
-					Symbol.nonterminalVariableList,
-					'#variableList'
-				],
+				[Symbol.nonterminalVariable, Symbol.nonterminalVariableList, '#variableList'],
 				10
 			)
 		);
 
 		// VariableList -> Lambda
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalVariableList,
-				[Symbol.Lambda, '#emptyVariableList'],
-				11
-			)
+			new Production(Symbol.nonterminalVariableList, [Symbol.Lambda, '#emptyVariableList'], 11)
 		);
 
 		// Expression -> Value
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
-				[Symbol.nonterminalValue],
-				12
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalExpression, [Symbol.nonterminalValue], 12));
 
 		// Expression -> Variable
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
-				[Symbol.nonterminalVariable],
-				13
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalExpression, [Symbol.nonterminalVariable], 13));
 
 		// Expression -> ( BracketedExpression )
 		this.productions.push(
@@ -463,12 +411,7 @@ export class LISPGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalBracketedExpression,
-				[
-					Symbol.terminalWhile,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
-					'#while'
-				],
+				[Symbol.terminalWhile, Symbol.nonterminalExpression, Symbol.nonterminalExpression, '#while'],
 				16
 			)
 		);
@@ -477,12 +420,7 @@ export class LISPGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalBracketedExpression,
-				[
-					Symbol.terminalSet,
-					Symbol.nonterminalVariable,
-					Symbol.nonterminalExpression,
-					'#set'
-				],
+				[Symbol.terminalSet, Symbol.nonterminalVariable, Symbol.nonterminalExpression, '#set'],
 				17
 			)
 		);
@@ -505,11 +443,7 @@ export class LISPGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalBracketedExpression,
-				[
-					Symbol.nonterminalOptr,
-					Symbol.nonterminalExpressionList,
-					'#operatorUsage'
-				],
+				[Symbol.nonterminalOptr, Symbol.nonterminalExpressionList, '#operatorUsage'],
 				19
 			)
 		);
@@ -518,131 +452,55 @@ export class LISPGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalExpressionList,
-				[
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionList,
-					'#expressionList'
-				],
+				[Symbol.nonterminalExpression, Symbol.nonterminalExpressionList, '#expressionList'],
 				20
 			)
 		);
 
 		// ExpressionList -> Lambda
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[Symbol.Lambda, '#emptyExpressionList'],
-				21
-			)
+			new Production(Symbol.nonterminalExpressionList, [Symbol.Lambda, '#emptyExpressionList'], 21)
 		);
 
 		// Optr -> Function
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalOptr,
-				[Symbol.nonterminalFunction],
-				22
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalOptr, [Symbol.nonterminalFunction], 22));
 
 		// Optr -> Value-Op
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalOptr,
-				[Symbol.nonterminalValueOp],
-				23
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalOptr, [Symbol.nonterminalValueOp], 23));
 
 		// Value -> Integer
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValue,
-				[Symbol.terminalIntegerLiteral],
-				24
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValue, [Symbol.terminalIntegerLiteral], 24));
 
 		// Value-Op -> +
-		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalPlus], 25)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalPlus], 25));
 
 		// Value-Op -> -
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalMinus],
-				26
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalMinus], 26));
 
 		// Value-Op -> *
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalMultiply],
-				27
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalMultiply], 27));
 
 		// Value-Op -> /
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalDivide],
-				28
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalDivide], 28));
 
 		// Value-Op -> =
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalEquals],
-				29
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalEquals], 29));
 
 		// Value-Op -> <
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalLessThan],
-				30
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalLessThan], 30));
 
 		// Value-Op -> >
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalGreaterThan],
-				31
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalGreaterThan], 31));
 
 		// Value-Op -> print
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalPrint],
-				32
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalPrint], 32));
 
 		// Function -> Name
-		this.productions.push(
-			new Production(Symbol.nonterminalFunction, [Symbol.terminalID], 33)
-		);
+		this.productions.push(new Production(Symbol.nonterminalFunction, [Symbol.terminalID], 33));
 
 		// Variable -> Name
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalVariable,
-				[Symbol.terminalID, '#variable'],
-				34
-			)
+			new Production(Symbol.nonterminalVariable, [Symbol.terminalID, '#variable'], 34)
 		);
 
 		// Integer -> ...
@@ -672,105 +530,51 @@ export class LISPGrammar extends GrammarBase {
 		// Value-Op -> list
 
 		// Value -> Quoted-Const
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValue,
-				[Symbol.nonterminalQuotedConst],
-				35
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValue, [Symbol.nonterminalQuotedConst], 35));
 
 		// Value-Op -> cons
-		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCons], 36)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalCons], 36));
 
 		// Value-Op -> car
-		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCar], 37)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalCar], 37));
 
 		// Value-Op -> cdr
-		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalCdr], 38)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalCdr], 38));
 
 		// Value-Op -> number?
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalNumberPred],
-				39
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalNumberPred], 39));
 
 		// Value-Op -> symbol?
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalSymbolPred],
-				40
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalSymbolPred], 40));
 
 		// Value-Op -> list?
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalListPred],
-				41
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalListPred], 41));
 
 		// Value-Op -> null?
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalValueOp,
-				[Symbol.terminalNullPred],
-				42
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalNullPred], 42));
 
 		// Quoted-Const -> ' S-Expression
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalQuotedConst,
-				[
-					Symbol.terminalApostrophe,
-					Symbol.nonterminalSExpression,
-					'#quotedConstantWithApostrophe'
-				],
+				[Symbol.terminalApostrophe, Symbol.nonterminalSExpression, '#quotedConstantWithApostrophe'],
 				43
 			)
 		);
 
 		// S-Expression -> Integer
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalSExpression,
-				[Symbol.terminalIntegerLiteral],
-				44
-			)
+			new Production(Symbol.nonterminalSExpression, [Symbol.terminalIntegerLiteral], 44)
 		);
 
 		// S-Expression -> Symbol
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalSExpression,
-				[Symbol.nonterminalSymbol],
-				45
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalSExpression, [Symbol.nonterminalSymbol], 45));
 
 		// S-Expression -> ( S-Expression-List )
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalSExpression,
-				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalSExpressionList,
-					Symbol.terminalRightBracket
-				],
+				[Symbol.terminalLeftBracket, Symbol.nonterminalSExpressionList, Symbol.terminalRightBracket],
 				46
 			)
 		);
@@ -789,22 +593,14 @@ export class LISPGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalSExpressionList,
-				[
-					Symbol.nonterminalSExpression,
-					Symbol.nonterminalSExpressionListTail,
-					'#sExpressionList'
-				],
+				[Symbol.nonterminalSExpression, Symbol.nonterminalSExpressionListTail, '#sExpressionList'],
 				47
 			)
 		);
 
 		// S-Expression-List-Tail -> S-Expression-List
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalSExpressionListTail,
-				[Symbol.nonterminalSExpressionList],
-				48
-			)
+			new Production(Symbol.nonterminalSExpressionListTail, [Symbol.nonterminalSExpressionList], 48)
 		);
 
 		// S-Expression-List-Tail -> . S-Expression
@@ -819,21 +615,11 @@ export class LISPGrammar extends GrammarBase {
 
 		// S-Expression-List -> Lambda
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalSExpressionList,
-				[Symbol.Lambda, '#emptySExpressionList'],
-				50
-			)
+			new Production(Symbol.nonterminalSExpressionList, [Symbol.Lambda, '#emptySExpressionList'], 50)
 		);
 
 		// Symbol -> Name
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalSymbol,
-				[Symbol.terminalID, '#symbol'],
-				51
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalSymbol, [Symbol.terminalID, '#symbol'], 51));
 
 		// BracketedExpression -> cond ( Expression Expression ) ExprPairList
 		this.productions.push(
@@ -869,17 +655,11 @@ export class LISPGrammar extends GrammarBase {
 
 		// ExprPairList -> Lambda
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExprPairList,
-				[Symbol.Lambda, '#emptyExprPairList'],
-				54
-			)
+			new Production(Symbol.nonterminalExprPairList, [Symbol.Lambda, '#emptyExprPairList'], 54)
 		);
 
 		// Value-Op -> list
-		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalList], 55)
-		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalList], 55));
 
 		// **** BEGIN : Ignore for now ****
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_StringPred }, 73)); // Note: Number is out of order
@@ -976,10 +756,7 @@ export class LISPGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
-	public executeSemanticAction(
-		semanticStack: Stack<any>,
-		action: string
-	): void {
+	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		// console.log(`LISPGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
 		let name: Name;
@@ -993,29 +770,18 @@ export class LISPGrammar extends GrammarBase {
 		let head: ISExpression;
 		let tail: ISExpression;
 		let varExprList: [Variable<ISExpression>, IExpression<ISExpression>][];
-		let exprPairList: [
-			IExpression<ISExpression>,
-			IExpression<ISExpression>
-		][];
+		let exprPairList: [IExpression<ISExpression>, IExpression<ISExpression>][];
 
 		switch (action) {
 			case '#functionDefinition':
 				expression = semanticStack.pop() as IExpression<ISExpression>; // The function's body
-				variableList =
-					semanticStack.pop() as VariableList<ISExpression>; // The function's formal argument list
+				variableList = semanticStack.pop() as VariableList<ISExpression>; // The function's formal argument list
 				name = semanticStack.pop() as Name; // The function name
-				semanticStack.push(
-					new FunctionDefinition<ISExpression>(
-						name,
-						variableList,
-						expression
-					)
-				); // Add line and column?
+				semanticStack.push(new FunctionDefinition<ISExpression>(name, variableList, expression)); // Add line and column?
 				break;
 
 			case '#variableList':
-				variableList =
-					semanticStack.pop() as VariableList<ISExpression>;
+				variableList = semanticStack.pop() as VariableList<ISExpression>;
 				variable = semanticStack.pop() as Variable<ISExpression>;
 				variableList.value.unshift(variable);
 				semanticStack.push(variableList);
@@ -1029,50 +795,35 @@ export class LISPGrammar extends GrammarBase {
 				expression3 = semanticStack.pop() as IExpression<ISExpression>;
 				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
-				semanticStack.push(
-					new IfUsage<ISExpression>(
-						expression,
-						expression2,
-						expression3
-					)
-				); // Add line and column?
+				semanticStack.push(new IfUsage<ISExpression>(expression, expression2, expression3)); // Add line and column?
 				break;
 
 			case '#while':
 				expression2 = semanticStack.pop() as IExpression<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
-				semanticStack.push(
-					new WhileUsage<ISExpression>(expression, expression2)
-				); // Add line and column?
+				semanticStack.push(new WhileUsage<ISExpression>(expression, expression2)); // Add line and column?
 				break;
 
 			case '#set':
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				variable = semanticStack.pop() as Variable<ISExpression>;
-				semanticStack.push(
-					new SetUsage<ISExpression>(variable, expression)
-				); // Add line and column?
+				semanticStack.push(new SetUsage<ISExpression>(variable, expression)); // Add line and column?
 				break;
 
 			case '#begin':
-				expressionList =
-					semanticStack.pop() as ExpressionList<ISExpression>;
+				expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
-				semanticStack.push(
-					new BeginUsage<ISExpression>(expression, expressionList)
-				); // Add line and column?
+				semanticStack.push(new BeginUsage<ISExpression>(expression, expressionList)); // Add line and column?
 				break;
 
 			case '#operatorUsage':
-				expressionList =
-					semanticStack.pop() as ExpressionList<ISExpression>;
+				expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
 				name = semanticStack.pop() as Name;
 				semanticStack.push(new LISPOperatorUsage(name, expressionList));
 				break;
 
 			case '#expressionList':
-				expressionList =
-					semanticStack.pop() as ExpressionList<ISExpression>;
+				expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				expressionList.value.unshift(expression);
 				semanticStack.push(expressionList);
@@ -1084,27 +835,17 @@ export class LISPGrammar extends GrammarBase {
 
 			case '#variable':
 				name = semanticStack.pop() as Name;
-				semanticStack.push(
-					new Variable<ISExpression>(
-						name.value,
-						name.line,
-						name.column
-					)
-				);
+				semanticStack.push(new Variable<ISExpression>(name.value, name.line, name.column));
 				break;
 
 			case '#quotedConstantWithApostrophe':
 				sexpression = semanticStack.pop() as ISExpression;
-				semanticStack.push(
-					new QuotedConstantWithApostrophe(sexpression)
-				);
+				semanticStack.push(new QuotedConstantWithApostrophe(sexpression));
 				break;
 
 			case '#quotedConstantWithQuoteKeyword':
 				sexpression = semanticStack.pop() as ISExpression;
-				semanticStack.push(
-					new QuotedConstantWithQuoteKeyword(sexpression)
-				);
+				semanticStack.push(new QuotedConstantWithQuoteKeyword(sexpression));
 				break;
 
 			case '#sExpressionList':
@@ -1145,30 +886,18 @@ export class LISPGrammar extends GrammarBase {
 				break;
 
 			case '#emptyExprPairList':
-				semanticStack.push(
-					new Array<
-						[IExpression<ISExpression>, IExpression<ISExpression>]
-					>()
-				);
+				semanticStack.push(new Array<[IExpression<ISExpression>, IExpression<ISExpression>]>());
 				break;
 
 			case '#letUsage':
 				expression = semanticStack.pop() as IExpression<ISExpression>;
-				varExprList = semanticStack.pop() as [
-					Variable<ISExpression>,
-					IExpression<ISExpression>
-				][];
+				varExprList = semanticStack.pop() as [Variable<ISExpression>, IExpression<ISExpression>][];
 				name = semanticStack.pop() as Name;
-				semanticStack.push(
-					this.createLetUsage(name, varExprList, expression)
-				);
+				semanticStack.push(this.createLetUsage(name, varExprList, expression));
 				break;
 
 			case '#varExprList':
-				varExprList = semanticStack.pop() as [
-					Variable<ISExpression>,
-					IExpression<ISExpression>
-				][];
+				varExprList = semanticStack.pop() as [Variable<ISExpression>, IExpression<ISExpression>][];
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				variable = semanticStack.pop() as Variable<ISExpression>;
 				varExprList.unshift([variable, expression]);
@@ -1176,11 +905,7 @@ export class LISPGrammar extends GrammarBase {
 				break;
 
 			case '#emptyVarExprList':
-				semanticStack.push(
-					new Array<
-						[Variable<ISExpression>, IExpression<ISExpression>]
-					>()
-				);
+				semanticStack.push(new Array<[Variable<ISExpression>, IExpression<ISExpression>]>());
 				break;
 
 			// case '#macroDefinition':
@@ -1191,9 +916,7 @@ export class LISPGrammar extends GrammarBase {
 			// 	break;
 
 			default:
-				throw new GrammarException(
-					`Unrecognized semantic action: ${action}`
-				);
+				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
 	}
 
@@ -1320,26 +1043,22 @@ export class LISPGrammar extends GrammarBase {
 						return Symbol.terminalID;
 				}
 
-				break;
+			// break;
 
 			default:
 				break;
 		}
 
 		throw new GrammarException(
-			`No grammar symbol matches token ${token.tokenType} ${
-				LexicalState[token.tokenType]
-			} (value '${token.tokenValue}')`,
+			`No grammar symbol matches token ${token.tokenType} ${LexicalState[token.tokenType]} (value '${
+				token.tokenValue
+			}')`,
 			token.line,
 			token.column
 		);
 	}
 
-	public pushTokenOntoSemanticStack(
-		semanticStack: Stack<any>,
-		tokenAsSymbol: number,
-		token: Token
-	): void {
+	public pushTokenOntoSemanticStack(semanticStack: Stack<any>, tokenAsSymbol: number, token: Token): void {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
@@ -1378,9 +1097,7 @@ export class LISPGrammar extends GrammarBase {
 			case Symbol.terminalFloor:
 			case Symbol.terminalThrow:
 			case Symbol.terminalStringLessThan:
-				semanticStack.push(
-					new Name(value as string, token.line, token.column)
-				);
+				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
 
 			case Symbol.terminalIntegerLiteral:

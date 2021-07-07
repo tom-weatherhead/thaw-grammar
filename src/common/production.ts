@@ -63,18 +63,12 @@ export class Production implements IEqualityComparable {
 	}
 
 	public StripOutSemanticActions(): Production {
-		return new Production(
-			this.lhs,
-			this.RHSWithNoSemanticActions(),
-			this.num
-		);
+		return new Production(this.lhs, this.RHSWithNoSemanticActions(), this.num);
 	}
 
 	public ContainsSymbol(symbol: Symbol): boolean {
 		return (
-			this.lhs === symbol ||
-			this.rhs.find((s: ProductionRhsElementType) => s === symbol) !==
-				undefined
+			this.lhs === symbol || this.rhs.find((s: ProductionRhsElementType) => s === symbol) !== undefined
 		);
 	}
 }

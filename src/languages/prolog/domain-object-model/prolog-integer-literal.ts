@@ -7,9 +7,7 @@ import { IPrologNumber } from './iprolog-number';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 
-export class PrologIntegerLiteral
-	implements IEqualityComparable, IPrologNumber
-{
+export class PrologIntegerLiteral implements IEqualityComparable, IPrologNumber {
 	public readonly Value: number;
 
 	constructor(value: number) {

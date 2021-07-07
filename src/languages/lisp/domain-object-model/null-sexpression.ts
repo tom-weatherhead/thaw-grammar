@@ -13,7 +13,7 @@ export class NullSExpression extends SExpressionBase {
 	// 	return obj is NullSExpression;
 	// }
 
-	public isNull(): boolean {
+	public override isNull(): boolean {
 		return true;
 	}
 }

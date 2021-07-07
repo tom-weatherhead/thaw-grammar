@@ -61,10 +61,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 
 	// This is virtual because Scheme.PrimOp overrides it.
 
-	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
-		globalInfo: IGlobalInfo<T>
-	): T {
+	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
 		const actualNumArgs = this.expressionList.value.length;
 		const expectedNumArgs = this.tryGetExpectedNumArgs(globalInfo);
 
@@ -89,9 +86,8 @@ export class OperatorUsage<T> implements IExpression<T> {
 		// 	return macroResult;
 		// }
 
-		const evaluatedArguments = this.expressionList.value.map(
-			(expr: IExpression<T>) =>
-				expr.evaluate(localEnvironment, globalInfo)
+		const evaluatedArguments = this.expressionList.value.map((expr: IExpression<T>) =>
+			expr.evaluate(localEnvironment, globalInfo)
 		);
 		// var argTypesErrorMessage = CheckArgTypes(evaluatedArguments);
 
@@ -102,25 +98,15 @@ export class OperatorUsage<T> implements IExpression<T> {
 		// 		operatorName.Line, operatorName.Column);
 		// }
 
-		return this.evaluateAux(
-			evaluatedArguments,
-			localEnvironment,
-			globalInfo
-		);
+		return this.evaluateAux(evaluatedArguments, localEnvironment, globalInfo);
 	}
 
-	protected tryGetExpectedNumArgs(
-		globalInfo: IGlobalInfo<T>
-	): number | undefined {
-		if (
-			['<', '>', '+', '-', '*', '/'].indexOf(this.operatorName.value) >= 0
-		) {
+	protected tryGetExpectedNumArgs(globalInfo: IGlobalInfo<T>): number | undefined {
+		if (['<', '>', '+', '-', '*', '/'].indexOf(this.operatorName.value) >= 0) {
 			return 2;
 		}
 
-		const fnDefRaw = globalInfo.functionDefinitions.get(
-			this.operatorName.value
-		);
+		const fnDefRaw = globalInfo.functionDefinitions.get(this.operatorName.value);
 		// const macroDef = globalInfo.MacroDefinitions.get(this.operatorName);
 
 		switch (this.operatorName.value) {
@@ -169,48 +155,38 @@ export class OperatorUsage<T> implements IExpression<T> {
 		globalInfo: IGlobalInfo<T>
 	): T {
 		const firstArgAsInt =
-			evaluatedArguments.length > 0 &&
-			globalInfo.valueIsInteger(evaluatedArguments[0])
+			evaluatedArguments.length > 0 && globalInfo.valueIsInteger(evaluatedArguments[0])
 				? globalInfo.valueAsInteger(evaluatedArguments[0])
 				: 0;
 		const secondArgAsInt =
-			evaluatedArguments.length > 1 &&
-			globalInfo.valueIsInteger(evaluatedArguments[1])
+			evaluatedArguments.length > 1 && globalInfo.valueIsInteger(evaluatedArguments[1])
 				? globalInfo.valueAsInteger(evaluatedArguments[1])
 				: 0;
 
-		const twoArgumentIntegerPredicateRaw =
-			this.twoArgumentIntegerPredicates.get(this.operatorName.value);
-		const twoArgumentIntegerOperatorRaw =
-			this.twoArgumentIntegerOperators.get(this.operatorName.value);
+		const twoArgumentIntegerPredicateRaw = this.twoArgumentIntegerPredicates.get(this.operatorName.value);
+		const twoArgumentIntegerOperatorRaw = this.twoArgumentIntegerOperators.get(this.operatorName.value);
 
 		// if (IntegerOperatorKeeper.TwoArgumentOperators.ContainsKey(this.operatorName.Value))
 		if (typeof twoArgumentIntegerOperatorRaw !== 'undefined') {
 			// return globalInfo.IntegerAsValue(IntegerOperatorKeeper.TwoArgumentOperators[operatorName.Value](firstArgAsInt, secondArgAsInt));
 			return globalInfo.integerAsValue(
-				(
-					twoArgumentIntegerOperatorRaw as (
-						operand1: number,
-						operand2: number
-					) => number
-				)(firstArgAsInt, secondArgAsInt)
+				(twoArgumentIntegerOperatorRaw as (operand1: number, operand2: number) => number)(
+					firstArgAsInt,
+					secondArgAsInt
+				)
 			);
 			// } else if (IntegerOperatorKeeper.TwoArgumentPredicates.ContainsKey(this.operatorName.Value))
 		} else if (typeof twoArgumentIntegerPredicateRaw !== 'undefined') {
 			// return IntegerOperatorKeeper.TwoArgumentPredicates[operatorName.Value](firstArgAsInt, secondArgAsInt) ? globalInfo.TrueValue : globalInfo.FalseValue;
-			return (
-				twoArgumentIntegerPredicateRaw as (
-					operand1: number,
-					operand2: number
-				) => boolean
-			)(firstArgAsInt, secondArgAsInt)
+			return (twoArgumentIntegerPredicateRaw as (operand1: number, operand2: number) => boolean)(
+				firstArgAsInt,
+				secondArgAsInt
+			)
 				? globalInfo.trueValue
 				: globalInfo.falseValue;
 		}
 
-		const fnDefRaw = globalInfo.functionDefinitions.get(
-			this.operatorName.value
-		);
+		const fnDefRaw = globalInfo.functionDefinitions.get(this.operatorName.value);
 
 		switch (this.operatorName.value) {
 			case '=':
@@ -227,9 +203,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 				if (typeof fnDefRaw !== 'undefined') {
 					// Evaluate a user-defined function.
 					const newEnvironment = new EnvironmentFrame<T>(
-						globalInfo.dynamicScoping
-							? localEnvironment
-							: globalInfo.globalEnvironment
+						globalInfo.dynamicScoping ? localEnvironment : globalInfo.globalEnvironment
 					);
 
 					// if (globalInfo.Debug)
@@ -239,10 +213,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 
 					const fnDef = fnDefRaw as FunctionDefinition<T>;
 
-					newEnvironment.compose(
-						fnDef.argList.value,
-						evaluatedArguments
-					);
+					newEnvironment.compose(fnDef.argList.value, evaluatedArguments);
 
 					return fnDef.body.evaluate(newEnvironment, globalInfo);
 				}

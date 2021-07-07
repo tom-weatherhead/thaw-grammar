@@ -137,32 +137,18 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalStart,
-				[
-					Symbol.nonterminalInput,
-					Symbol.terminalDot,
-					Symbol.terminalEOF
-				],
+				[Symbol.nonterminalInput, Symbol.terminalDot, Symbol.terminalEOF],
 				1
 			)
 		);
 
 		// 2: Input -> Clause
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalInput,
-				[Symbol.nonterminalClause, '#createClause'],
-				2
-			)
+			new Production(Symbol.nonterminalInput, [Symbol.nonterminalClause, '#createClause'], 2)
 		);
 
 		// 3: Input -> Query
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalInput,
-				[Symbol.nonterminalQuery],
-				3
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalInput, [Symbol.nonterminalQuery], 3));
 
 		// 4: Clause -> LHSGoal ClauseTail
 		this.productions.push(
@@ -200,11 +186,7 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalClauseTail,
-				[Symbol.Lambda, '#createEmptyGoalList'],
-				7
-			)
+			new Production(Symbol.nonterminalClauseTail, [Symbol.Lambda, '#createEmptyGoalList'], 7)
 		);
 
 		this.productions.push(
@@ -221,11 +203,7 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalGoalListTail,
-				[Symbol.Lambda, '#createEmptyGoalList'],
-				9
-			)
+			new Production(Symbol.nonterminalGoalListTail, [Symbol.Lambda, '#createEmptyGoalList'], 9)
 		);
 
 		// Goal -> NameNotBeginningWithCapital TailOfGoalOrFunctorExpr
@@ -290,29 +268,15 @@ export class PrologGrammar extends GrammarBase {
 
 		// Expr -> IntegerLiteral
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
-				[Symbol.terminalIntegerLiteral],
-				17
-			)
+			new Production(Symbol.nonterminalExpression, [Symbol.terminalIntegerLiteral], 17)
 		);
 
 		// Expr -> Variable
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
-				[Symbol.nonterminalVariable],
-				18
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalExpression, [Symbol.nonterminalVariable], 18));
 
 		// Expr -> FunctorExpr
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
-				[Symbol.nonterminalFunctorExpression],
-				19
-			)
+			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalFunctorExpression], 19)
 		);
 
 		// Variable -> NameBeginningWithCapital
@@ -338,13 +302,7 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		// Lists.
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
-				[Symbol.nonterminalList],
-				22
-			)
-		);
+		this.productions.push(new Production(Symbol.nonterminalExpression, [Symbol.nonterminalList], 22));
 
 		this.productions.push(
 			new Production(
@@ -359,31 +317,19 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContents,
-				[Symbol.Lambda, '#createNilFunctor'],
-				24
-			)
+			new Production(Symbol.nonterminalListContents, [Symbol.Lambda, '#createNilFunctor'], 24)
 		);
 
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalListContents,
-				[
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalListContentsTail,
-					'#createConsFunctor'
-				],
+				[Symbol.nonterminalExpression, Symbol.nonterminalListContentsTail, '#createConsFunctor'],
 				25
 			)
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContentsTail,
-				[Symbol.Lambda, '#createNilFunctor'],
-				26
-			)
+			new Production(Symbol.nonterminalListContentsTail, [Symbol.Lambda, '#createNilFunctor'], 26)
 		);
 
 		this.productions.push(
@@ -484,10 +430,7 @@ export class PrologGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
-	public executeSemanticAction(
-		semanticStack: Stack<any>,
-		action: string
-	): void {
+	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		const gs = LanguageSelector.Prolog2;
 
 		let str: string;
@@ -549,9 +492,7 @@ export class PrologGrammar extends GrammarBase {
 			case '#createFunctorExpression':
 				exprList = semanticStack.pop() as IPrologExpression[];
 				str = semanticStack.pop() as string;
-				semanticStack.push(
-					new PrologFunctorExpression(gs, str, exprList)
-				);
+				semanticStack.push(new PrologFunctorExpression(gs, str, exprList));
 				break;
 
 			// **** BEGIN - For lists
@@ -563,9 +504,7 @@ export class PrologGrammar extends GrammarBase {
 			case '#createConsFunctor':
 				expr2 = semanticStack.pop() as IPrologExpression;
 				expr = semanticStack.pop() as IPrologExpression;
-				semanticStack.push(
-					new PrologFunctorExpression(gs, '.', [expr, expr2])
-				);
+				semanticStack.push(new PrologFunctorExpression(gs, '.', [expr, expr2]));
 				break;
 
 			// **** END - For lists
@@ -573,9 +512,7 @@ export class PrologGrammar extends GrammarBase {
 			case '#not': // #metaPredicateWithGoal
 				goal = semanticStack.pop() as PrologGoal;
 				functorExpr = createFunctorExpressionFromGoal(goal);
-				semanticStack.push(
-					new PrologFunctorExpression(gs, 'not', [functorExpr])
-				);
+				semanticStack.push(new PrologFunctorExpression(gs, 'not', [functorExpr]));
 				break;
 
 			case '#createGoal_Is':
@@ -656,10 +593,7 @@ export class PrologGrammar extends GrammarBase {
 			// // break;
 
 			default:
-				throw new ArgumentException(
-					`Unrecognized semantic action: '${action}'`,
-					'action'
-				);
+				throw new ArgumentException(`Unrecognized semantic action: '${action}'`, 'action');
 		}
 	}
 
@@ -780,9 +714,9 @@ export class PrologGrammar extends GrammarBase {
 		}
 
 		throw new GrammarException(
-			`No grammar symbol matches token ${token.tokenType} ${
-				LexicalState[token.tokenType]
-			} (value '${token.tokenValue}')`,
+			`No grammar symbol matches token ${token.tokenType} ${LexicalState[token.tokenType]} (value '${
+				token.tokenValue
+			}')`,
 			token.line,
 			token.column
 		);
@@ -798,11 +732,13 @@ export class PrologGrammar extends GrammarBase {
 
 		switch (tokenAsSymbol) {
 			case Symbol.terminalIntegerLiteral:
-				semanticStack.push(new PrologIntegerLiteral(value));
+				// semanticStack.push(new PrologIntegerLiteral(value as number));
+				semanticStack.push(new PrologIntegerLiteral(token.getValueAsNumber()));
 				break;
 
 			case Symbol.terminalFloatLiteral:
-				semanticStack.push(new PrologFloatLiteral(value));
+				// semanticStack.push(new PrologFloatLiteral(value as number));
+				semanticStack.push(new PrologFloatLiteral(token.getValueAsNumber()));
 				break;
 
 			case Symbol.terminalNameBeginningWithCapital:

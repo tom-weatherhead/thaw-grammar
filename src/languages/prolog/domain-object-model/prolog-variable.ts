@@ -15,9 +15,7 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 
 	constructor(name: string) {
 		if (!name) {
-			throw new Error(
-				'A PrologVariable cannot have a null or empty name'
-			);
+			throw new Error('A PrologVariable cannot have a null or empty name');
 		}
 
 		this.Name = name;
@@ -100,9 +98,7 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 		) {
 			return new PrologSubstitution();
 		} else if (
-			[PrologClause.name, PrologGoal.name].indexOf(
-				otherExpr.constructor.name
-			) >= 0 ||
+			[PrologClause.name, PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
 			otherExpr.ContainsVariable(this)
 		) {
 			// console.log('PrologVariable.Unify(): Returning undefined');

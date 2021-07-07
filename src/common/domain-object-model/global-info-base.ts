@@ -10,10 +10,7 @@ import { IGlobalInfo } from './iglobal-info';
 // export abstract class GlobalInfoBase<T> implements IGlobalInfo<T>, IGlobalInfoOps {
 export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 	public readonly globalEnvironment = new EnvironmentFrame<T>(null);
-	public readonly functionDefinitions = new Map<
-		string,
-		FunctionDefinition<T>
-	>();
+	public readonly functionDefinitions = new Map<string, FunctionDefinition<T>>();
 	public dynamicScoping: boolean;
 	public debug: boolean;
 	private printedText: string;
@@ -82,9 +79,7 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 	public print(evaluatedArguments: T[]): void {
 		this.printedText =
 			this.printedText +
-			evaluatedArguments
-				.map((evaluatedArgument: T) => `${evaluatedArgument}`)
-				.join(', ') +
+			evaluatedArguments.map((evaluatedArgument: T) => `${evaluatedArgument}`).join(', ') +
 			'\n';
 	}
 

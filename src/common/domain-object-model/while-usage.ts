@@ -19,15 +19,8 @@ export class WhileUsage<T> implements IExpression<T> {
 		return `(if ${this.condition} ${this.body})`;
 	}
 
-	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
-		globalInfo: IGlobalInfo<T>
-	): T {
-		while (
-			!globalInfo.valueIsFalse(
-				this.condition.evaluate(localEnvironment, globalInfo)
-			)
-		) {
+	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+		while (!globalInfo.valueIsFalse(this.condition.evaluate(localEnvironment, globalInfo))) {
 			this.body.evaluate(localEnvironment, globalInfo);
 		}
 

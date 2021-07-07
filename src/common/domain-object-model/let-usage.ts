@@ -9,26 +9,19 @@ export class LetUsage<T> implements IExpression<T> {
 	public readonly bindings: [Variable<T>, IExpression<T>][];
 	public readonly expression: IExpression<T>;
 
-	constructor(
-		bindings: [Variable<T>, IExpression<T>][],
-		expression: IExpression<T>
-	) {
+	constructor(bindings: [Variable<T>, IExpression<T>][], expression: IExpression<T>) {
 		this.bindings = bindings;
 		this.expression = expression;
 	}
 
 	public toString(): string {
-		const fnBindingAsString = ([v, expr]: [Variable<T>, IExpression<T>]) =>
-			`(${v} ${expr})`;
+		const fnBindingAsString = ([v, expr]: [Variable<T>, IExpression<T>]) => `(${v} ${expr})`;
 		const bindingsAsString = this.bindings.map(fnBindingAsString).join(' ');
 
 		return `(let (${bindingsAsString}) ${this.expression})`;
 	}
 
-	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
-		globalInfo: IGlobalInfo<T>
-	): T {
+	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
 		const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
 		// this.bindings.for Each(([v, expr]: [Variable<T>, IExpression<T>]) => {

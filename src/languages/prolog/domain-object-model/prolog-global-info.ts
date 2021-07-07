@@ -8,7 +8,7 @@ import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-
 
 import { IPrologExpression } from './iprolog-expression';
 import { PrologClause } from './prolog-clause';
-import { PrologFloatLiteral } from './prolog-float-literal';
+// import { PrologFloatLiteral } from './prolog-float-literal';
 import {
 	// isPrologFunctorExpression,
 	PrologFunctorExpression
@@ -31,8 +31,7 @@ enum SolutionCollectionMode {
 
 export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* implements IGlobalInfoOps, IParser */ {
 	public static readonly ClauseAdded = 'Clause added.';
-	public static readonly ClauseAlreadyExists =
-		'An identical clause is already in the clause list.';
+	public static readonly ClauseAlreadyExists = 'An identical clause is already in the clause list.';
 	public static readonly IsomorphicClauseAlreadyExists =
 		'An isomorphic clause is already in the clause list.';
 	public static readonly IsomorphicOrMoreGeneralClauseAlreadyExists =
@@ -64,7 +63,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// 	// #endif
 	// public IInterpreterFileLoader FileLoader = null;
 	private readonly DefaultModule = new PrologModule();
-	private readonly dictModules = new Map<string, PrologModule>(); // The keys are file paths.
+	// private readonly dictModules = new Map<string, PrologModule>(); // The keys are file paths.
 
 	// constructor(gs: LanguageSelector, t: ITokenizer) {
 	constructor() {
@@ -145,7 +144,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// 		// #endif
 	//     }
 
-	public toString(): string {
+	public override toString(): string {
 		return 'PrologGlobalInfo.toString()';
 	}
 
@@ -418,9 +417,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		return new PrologVariable(`Var${this.variableRenameNum}`);
 	}
 
-	private GetVariablesFromGoalList(
-		goalListParam: PrologGoal[]
-	): Set<PrologVariable> {
+	private GetVariablesFromGoalList(goalListParam: PrologGoal[]): Set<PrologVariable> {
 		const result = new Set<PrologVariable>();
 
 		// console.log('goalListParam is', typeof goalListParam, goalListParam);
@@ -432,9 +429,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		return result;
 	}
 
-	public GetListOfBindingVariablesFromGoalList(
-		goalListParam: PrologGoal[]
-	): PrologVariable[] {
+	public GetListOfBindingVariablesFromGoalList(goalListParam: PrologGoal[]): PrologVariable[] {
 		let result: PrologVariable[] = [];
 
 		for (const goal of goalListParam) {
@@ -918,10 +913,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// #endif
 	//     }
 
-	private AutomaticPrint(
-		variablesInQuery: PrologVariable[],
-		substitution: PrologSubstitution
-	): void {
+	private AutomaticPrint(variablesInQuery: PrologVariable[], substitution: PrologSubstitution): void {
 		if (variablesInQuery.length === 0) {
 			return;
 		}
@@ -933,57 +925,52 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			const value = substitution.SubstitutionList.get(key);
 
 			if (typeof value !== 'undefined') {
-				substitutionsForBindingVariables.SubstitutionList.set(
-					key,
-					value
-				);
+				substitutionsForBindingVariables.SubstitutionList.set(key, value);
 			}
 		}
 
-		this.printDirect(
-			`Satisfying substitution is: ${substitutionsForBindingVariables}`
-		);
+		this.printDirect(`Satisfying substitution is: ${substitutionsForBindingVariables}`);
 	}
 
-	private Is2(goal: PrologGoal): PrologSubstitution | undefined {
-		const rhsEvaluated = goal.ExpressionList[1].EvaluateToNumber();
+	// private Is2(goal: PrologGoal): PrologSubstitution | undefined {
+	// 	const rhsEvaluated = goal.ExpressionList[1].EvaluateToNumber();
 
-		if (typeof rhsEvaluated === 'undefined') {
-			return undefined;
-		}
+	// 	if (typeof rhsEvaluated === 'undefined') {
+	// 		return undefined;
+	// 	}
 
-		// if (goal.ExpressionList[0] is IPrologNumber) {
-		if (
-			goal.ExpressionList[0] instanceof PrologIntegerLiteral ||
-			goal.ExpressionList[0] instanceof PrologFloatLiteral
-		) {
-			// if (goal.ExpressionList[0].Equals(rhsEvaluated)) { // Remember that the int 1 does not equal the double 1.0 according to this code.
-			if (goal.ExpressionList[0].EvaluateToNumber() === rhsEvaluated) {
-				return new PrologSubstitution();
-			}
-		} else if (goal.ExpressionList[0] instanceof PrologVariable) {
-			//var newSubstitution = new PrologSubstitution((PrologVariable)goal.ExpressionList[0], rhsEvaluated);
-			// Use Unify() because goal.ExpressionList[0] could be a non-binding variable.
+	// 	// if (goal.ExpressionList[0] is IPrologNumber) {
+	// 	if (
+	// 		goal.ExpressionList[0] instanceof PrologIntegerLiteral ||
+	// 		goal.ExpressionList[0] instanceof PrologFloatLiteral
+	// 	) {
+	// 		// if (goal.ExpressionList[0].Equals(rhsEvaluated)) { // Remember that the int 1 does not equal the double 1.0 according to this code.
+	// 		if (goal.ExpressionList[0].EvaluateToNumber() === rhsEvaluated) {
+	// 			return new PrologSubstitution();
+	// 		}
+	// 	} else if (goal.ExpressionList[0] instanceof PrologVariable) {
+	// 		//var newSubstitution = new PrologSubstitution((PrologVariable)goal.ExpressionList[0], rhsEvaluated);
+	// 		// Use Unify() because goal.ExpressionList[0] could be a non-binding variable.
 
-			return goal.ExpressionList[0].Unify(rhsEvaluated);
-		}
+	// 		return goal.ExpressionList[0].Unify(rhsEvaluated);
+	// 	}
 
-		return undefined;
-	}
+	// 	return undefined;
+	// }
 
-	private Unifiable2(goal: PrologGoal): PrologSubstitution | undefined {
-		return goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
-	}
+	// private Unifiable2(goal: PrologGoal): PrologSubstitution | undefined {
+	// 	return goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
+	// }
 
-	private NotUnifiable2(goal: PrologGoal): PrologSubstitution | undefined {
-		const s = goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
+	// private NotUnifiable2(goal: PrologGoal): PrologSubstitution | undefined {
+	// 	const s = goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
 
-		if (typeof s !== 'undefined') {
-			return undefined;
-		}
+	// 	if (typeof s !== 'undefined') {
+	// 		return undefined;
+	// 	}
 
-		return new PrologSubstitution();
-	}
+	// 	return new PrologSubstitution();
+	// }
 
 	//     private PrologSubstitution Equals2(PrologGoal goal)
 	//     {
@@ -1074,13 +1061,13 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         }
 	//     }
 
-	private Integer1(goal: PrologGoal): PrologSubstitution | undefined {
-		if (goal.ExpressionList[0] instanceof PrologIntegerLiteral) {
-			return new PrologSubstitution();
-		}
+	// private Integer1(goal: PrologGoal): PrologSubstitution | undefined {
+	// 	if (goal.ExpressionList[0] instanceof PrologIntegerLiteral) {
+	// 		return new PrologSubstitution();
+	// 	}
 
-		return undefined;
-	}
+	// 	return undefined;
+	// }
 
 	//     private PrologSubstitution Float1(PrologGoal goal)
 	//     {
@@ -1123,21 +1110,21 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         }
 	//     }
 
-	private Var1(goal: PrologGoal): PrologSubstitution | undefined {
-		if (goal.ExpressionList[0] instanceof PrologVariable) {
-			return new PrologSubstitution();
-		}
+	// private Var1(goal: PrologGoal): PrologSubstitution | undefined {
+	// 	if (goal.ExpressionList[0] instanceof PrologVariable) {
+	// 		return new PrologSubstitution();
+	// 	}
 
-		return undefined;
-	}
+	// 	return undefined;
+	// }
 
-	private NonVar1(goal: PrologGoal): PrologSubstitution | undefined {
-		if (goal.ExpressionList[0] instanceof PrologVariable) {
-			return undefined;
-		}
+	// private NonVar1(goal: PrologGoal): PrologSubstitution | undefined {
+	// 	if (goal.ExpressionList[0] instanceof PrologVariable) {
+	// 		return undefined;
+	// 	}
 
-		return new PrologSubstitution();
-	}
+	// 	return new PrologSubstitution();
+	// }
 
 	//     private PrologSubstitution Ground1(PrologGoal goal)
 	//     {
@@ -1173,9 +1160,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//     }
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	private Fail0(goal: PrologGoal): undefined {
-		return undefined;
-	}
+	// private Fail0(goal: PrologGoal): undefined {
+	// 	return undefined;
+	// }
 
 	//     // "listing" and "listing(targetName)"; see http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse4
 
@@ -1352,9 +1339,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 				return n1 % n2;
 			default:
-				throw new Error(
-					`doIntegerArithmetic() : Unsupported operator '${op}'`
-				);
+				throw new Error(`doIntegerArithmetic() : Unsupported operator '${op}'`);
 		}
 	}
 
@@ -1373,9 +1358,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			case 'ne': // '!=':
 				return n1 !== n2;
 			default:
-				throw new Error(
-					`doIntegerComparison() : Unsupported operator '${op}'`
-				);
+				throw new Error(`doIntegerComparison() : Unsupported operator '${op}'`);
 		}
 	}
 
@@ -1428,9 +1411,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		// #if SUBSTITUTION_KEY_COUNT_LIMIT
 		if (oldSubstitution.SubstitutionList.size > 100) {
-			throw new Error(
-				'ProveGoalList() : **** Aborting because the substitution is too long. ****'
-			);
+			throw new Error('ProveGoalList() : **** Aborting because the substitution is too long. ****');
 		}
 		// #endif
 
@@ -1474,9 +1455,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// 	return cutSubstitution;
 		// }
 
-		const goal = unsubstitutedGoal.ApplySubstitution(
-			oldSubstitution
-		) as PrologGoal;
+		const goal = unsubstitutedGoal.ApplySubstitution(oldSubstitution) as PrologGoal;
 
 		// console.log(
 		// 	'ProveGoalList() : 1) substituted goal is',
@@ -1528,16 +1507,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					const n1 = goal.ExpressionList[0] as PrologIntegerLiteral;
 					const n2 = goal.ExpressionList[1] as PrologIntegerLiteral;
 
-					if (
-						goal.ExpressionList[2] instanceof PrologIntegerLiteral
-					) {
-						const n3 = goal
-							.ExpressionList[2] as PrologIntegerLiteral;
-						const result = this.doIntegerArithmetic(
-							goal.Name,
-							n1.Value,
-							n2.Value
-						);
+					if (goal.ExpressionList[2] instanceof PrologIntegerLiteral) {
+						const n3 = goal.ExpressionList[2] as PrologIntegerLiteral;
+						const result = this.doIntegerArithmetic(goal.Name, n1.Value, n2.Value);
 
 						// console.log(
 						// 	`Goal = ${goal.Name}; n3 = ${n3}; result = ${result}`
@@ -1556,19 +1528,11 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 						} else {
 							return undefined;
 						}
-					} else if (
-						goal.ExpressionList[2] instanceof PrologVariable
-					) {
+					} else if (goal.ExpressionList[2] instanceof PrologVariable) {
 						const v = goal.ExpressionList[2] as PrologVariable;
 						const addSubstitution = new PrologSubstitution(
 							v,
-							new PrologIntegerLiteral(
-								this.doIntegerArithmetic(
-									goal.Name,
-									n1.Value,
-									n2.Value
-								)
-							)
+							new PrologIntegerLiteral(this.doIntegerArithmetic(goal.Name, n1.Value, n2.Value))
 						);
 
 						return this.ProveGoalList(
@@ -1598,9 +1562,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					const n1 = goal.ExpressionList[0] as PrologIntegerLiteral;
 					const n2 = goal.ExpressionList[1] as PrologIntegerLiteral;
 
-					if (
-						!this.doIntegerComparison(goal.Name, n1.Value, n2.Value)
-					) {
+					if (!this.doIntegerComparison(goal.Name, n1.Value, n2.Value)) {
 						return undefined;
 					}
 
@@ -1619,19 +1581,15 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			case 'not':
 			case '\\+':
 				if (numArgsInGoal === 1) {
-					const fe = goal
-						.ExpressionList[0] as PrologFunctorExpression;
+					const fe = goal.ExpressionList[0] as PrologFunctorExpression;
 					const innerGoal = createGoalFromFunctorExpression(fe);
 
 					const tempGoalList = [innerGoal];
 					// This next line prevents us from adding "not" to the built-in predicates dictionary:
 					// const tempCutDetectorList = [cutDetectorList[goalNum]];
-					const tempListOfCurrentModules = [
-						listOfCurrentModules[goalNum]
-					];
+					const tempListOfCurrentModules = [listOfCurrentModules[goalNum]];
 					const cachedAllMode = this.allMode;
-					const cachedSolutionCollectionMode =
-						this.solutionCollectionMode;
+					const cachedSolutionCollectionMode = this.solutionCollectionMode;
 					let localSubstitution: PrologSubstitution | undefined;
 
 					this.allMode = false;
@@ -1650,8 +1608,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 						);
 					} finally {
 						this.allMode = cachedAllMode;
-						this.solutionCollectionMode =
-							cachedSolutionCollectionMode;
+						this.solutionCollectionMode = cachedSolutionCollectionMode;
 					}
 
 					if (typeof localSubstitution !== 'undefined') {
@@ -1701,9 +1658,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 							goalList,
 							// cutDetectorList,
 							nextGoalNum,
-							oldSubstitution.Compose(
-								new PrologSubstitution(e0 as PrologVariable, n1)
-							),
+							oldSubstitution.Compose(new PrologSubstitution(e0 as PrologVariable, n1)),
 							parentVariablesToAvoid,
 							variablesInQuery,
 							listOfCurrentModules
@@ -1844,9 +1799,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			const addSubstitution = new PrologSubstitution(
 				v1,
-				new PrologIntegerLiteral(
-					this.doIntegerArithmetic('sub', n2.Value, n0.Value)
-				)
+				new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n2.Value, n0.Value))
 			);
 
 			return this.ProveGoalList(
@@ -1872,9 +1825,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			const addSubstitution = new PrologSubstitution(
 				v0,
-				new PrologIntegerLiteral(
-					this.doIntegerArithmetic('sub', n2.Value, n1.Value)
-				)
+				new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n2.Value, n1.Value))
 			);
 
 			return this.ProveGoalList(
@@ -1900,9 +1851,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			const addSubstitution = new PrologSubstitution(
 				v1,
-				new PrologIntegerLiteral(
-					this.doIntegerArithmetic('sub', n0.Value, n2.Value)
-				)
+				new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n0.Value, n2.Value))
 			);
 
 			return this.ProveGoalList(
@@ -1928,9 +1877,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			const addSubstitution = new PrologSubstitution(
 				v0,
-				new PrologIntegerLiteral(
-					this.doIntegerArithmetic('add', n1.Value, n2.Value)
-				)
+				new PrologIntegerLiteral(this.doIntegerArithmetic('add', n1.Value, n2.Value))
 			);
 
 			return this.ProveGoalList(
@@ -1967,10 +1914,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			return resultSubstitution;
 		}
 
-		const goalSignature = new StringIntKey(
-			goal.Name,
-			goal.ExpressionList.length
-		).toString();
+		const goalSignature = new StringIntKey(goal.Name, goal.ExpressionList.length).toString();
 
 		for (const key of currentModule.ImportList.keys()) {
 			const v = currentModule.ImportList.get(key);
@@ -2086,17 +2030,14 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			// //Console.WriteLine("ProveGoal: Composing unifier with substitution: {0}", oldSubstitution);
 
-			let localSubstitution: PrologSubstitution | undefined =
-				oldSubstitution.Compose(unifier);
+			let localSubstitution: PrologSubstitution | undefined = oldSubstitution.Compose(unifier);
 
 			// console.log(
 			// 	`ProveGoalListUsingModule() : The composition of substitutions ${oldSubstitution} and ${unifier} is ${localSubstitution}`
 			// );
 
 			// See the program F2.16.txt for a test of the cut.
-			const newVariablesToAvoid = this.GetVariablesFromGoalList(
-				newClause.Rhs
-			);
+			const newVariablesToAvoid = this.GetVariablesFromGoalList(newClause.Rhs);
 
 			newVariablesToAvoid.unionInPlace(variablesToAvoid);
 
@@ -2110,10 +2051,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			goalList.splice(nextGoalNum, 0, ...newClause.Rhs);
 			// console.log('goalList length after splice:', goalList.length);
 
-			if (
-				goalList.length !==
-				goalListLengthBeforeSplice + newClause.Rhs.length
-			) {
+			if (goalList.length !== goalListLengthBeforeSplice + newClause.Rhs.length) {
 				throw new Error('BOOM: goalListLengthBeforeSplice');
 			}
 
@@ -2218,10 +2156,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         return false;
 	//     }
 
-	public ProcessInput(
-		parseResult: PrologClause | PrologGoal[],
-		currentModuleName = ''
-	): string {
+	public ProcessInput(parseResult: PrologClause | PrologGoal[], currentModuleName = ''): string {
 		// #if SUPPORT_USER_DEFINED_OPERATORS
 		const inputTypeName = parseResult.constructor.name;
 
@@ -2283,9 +2218,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// }
 
 			//Console.WriteLine("Adding clause '{0}' to module '{1}'.", clause, currentModuleName);
-			console.log(
-				`Adding clause '${clause}' to module '${currentModuleName}'.`
-			);
+			console.log(`Adding clause '${clause}' to module '${currentModuleName}'.`);
 			currentModule.ClauseList.push(clause);
 
 			return PrologGlobalInfo.ClauseAdded;
@@ -2397,9 +2330,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			let satisfied: boolean;
 
 			if (this.allMode) {
-				this.printDirect(
-					`Number of solutions found: ${this.numSolutionsFound}`
-				);
+				this.printDirect(`Number of solutions found: ${this.numSolutionsFound}`);
 				satisfied = this.numSolutionsFound > 0;
 				// return (
 				// 	this.getPrintedText() + `\n${PrologGlobalInfo.NotSatisfied}`
@@ -2408,17 +2339,11 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				satisfied = typeof substitution !== 'undefined';
 			}
 
-			this.printDirect(
-				satisfied
-					? PrologGlobalInfo.Satisfied
-					: PrologGlobalInfo.NotSatisfied
-			);
+			this.printDirect(satisfied ? PrologGlobalInfo.Satisfied : PrologGlobalInfo.NotSatisfied);
 
 			return this.getPrintedText();
 		} else if (typeof parseResult === 'undefined') {
-			throw new Error(
-				'PrologGlobalInfo.ProcessInput() : parseResult is undefined'
-			);
+			throw new Error('PrologGlobalInfo.ProcessInput() : parseResult is undefined');
 		} else {
 			throw new Error(
 				`PrologGlobalInfo.ProcessInput() : parseResult is of unrecognized type ${inputTypeName}`

@@ -9,8 +9,6 @@ export class ExpressionList<T> {
 	public readonly value: IExpression<T>[] = [];
 
 	public toString(): string {
-		return `(${this.value
-			.map((expr: IExpression<T>) => expr.toString())
-			.join(' ')})`;
+		return `(${this.value.map((expr: IExpression<T>) => expr.toString()).join(' ')})`;
 	}
 }

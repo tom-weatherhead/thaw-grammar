@@ -18,10 +18,7 @@ export class Variable<T> implements IExpression<T> {
 
 	constructor(name: string, line: number, column: number) {
 		if (!name) {
-			throw new ArgumentNullException(
-				'A Variable cannot have a null or empty name',
-				'name'
-			);
+			throw new ArgumentNullException('A Variable cannot have a null or empty name', 'name');
 		}
 
 		// Console.WriteLine("Creating a Variable named '{0}'.", name);

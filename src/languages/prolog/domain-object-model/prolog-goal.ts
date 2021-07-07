@@ -33,11 +33,7 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 
 	//public bool DCGDoNotAddExtraArguments = false; // Part of Definite Clause Grammar support.
 
-	constructor(
-		gsParam: LanguageSelector,
-		predicate: string,
-		expressionList: IPrologExpression[]
-	) {
+	constructor(gsParam: LanguageSelector, predicate: string, expressionList: IPrologExpression[]) {
 		super(gsParam, predicate, expressionList);
 	}
 
@@ -69,15 +65,11 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 	// 	return true;
 	// }
 
-	public ApplySubstitution(
-		substitution: PrologSubstitution
-	): IPrologExpression {
+	public ApplySubstitution(substitution: PrologSubstitution): IPrologExpression {
 		return new PrologGoal(
 			this.gs,
 			this.Name,
-			this.ExpressionList.map((expr: IPrologExpression) =>
-				expr.ApplySubstitution(substitution)
-			)
+			this.ExpressionList.map((expr: IPrologExpression) => expr.ApplySubstitution(substitution))
 		);
 	}
 

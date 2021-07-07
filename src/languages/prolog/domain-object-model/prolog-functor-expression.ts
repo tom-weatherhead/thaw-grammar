@@ -10,9 +10,7 @@ import { PrologIntegerLiteral } from './prolog-integer-literal';
 import { PrologNameExpression } from './prolog-name-expression';
 import { PrologSubstitution } from './prolog-substitution';
 
-export function isPrologFunctorExpression(
-	obj: unknown
-): obj is PrologFunctorExpression {
+export function isPrologFunctorExpression(obj: unknown): obj is PrologFunctorExpression {
 	// const fe = obj as PrologFunctorExpression;
 
 	// return (
@@ -25,11 +23,7 @@ export function isPrologFunctorExpression(
 
 export class PrologFunctorExpression extends PrologNameExpression {
 	// implements IPrologExpression
-	constructor(
-		gsParam: LanguageSelector,
-		functor: string,
-		expressionList: IPrologExpression[]
-	) {
+	constructor(gsParam: LanguageSelector, functor: string, expressionList: IPrologExpression[]) {
 		super(gsParam, functor, expressionList);
 	}
 
@@ -66,29 +60,22 @@ export class PrologFunctorExpression extends PrologNameExpression {
 			functorExpression.Name === 'consSeq' &&
 			functorExpression.ExpressionList.length === 2
 		) {
-			return `${
-				functorExpression.ExpressionList[0]
-			}, ${this.SequenceToString(functorExpression.ExpressionList[1])}`;
+			return `${functorExpression.ExpressionList[0]}, ${this.SequenceToString(
+				functorExpression.ExpressionList[1]
+			)}`;
 		} else {
 			return `${expr}`;
 		}
 	}
 
-	public toString(): string {
-		if (
-			this.gs === LanguageSelector.Prolog2 &&
-			this.ExpressionList.length === 2
-		) {
+	public override toString(): string {
+		if (this.gs === LanguageSelector.Prolog2 && this.ExpressionList.length === 2) {
 			if (this.Name === '.') {
-				return `[${this.ExpressionList[0]}${this.ListToString(
-					this.ExpressionList[1]
-				)}]`;
+				return `[${this.ExpressionList[0]}${this.ListToString(this.ExpressionList[1])}]`;
 			} else if (this.Name === 'consSeq') {
 				// ThAW 2014/03/28 : I added the brackets here because without them, ?- X = [(1, 2), (3, 4)], print(X). yielded [1, 2, 3, 4],
 				// which was misleading.
-				return `(${this.ExpressionList[0]}, ${this.SequenceToString(
-					this.ExpressionList[1]
-				)})`;
+				return `(${this.ExpressionList[0]}, ${this.SequenceToString(this.ExpressionList[1])})`;
 			}
 		}
 
@@ -119,23 +106,18 @@ export class PrologFunctorExpression extends PrologNameExpression {
 	// 	return true;
 	// }
 
-	public ApplySubstitution(
-		substitution: PrologSubstitution
-	): IPrologExpression {
+	public ApplySubstitution(substitution: PrologSubstitution): IPrologExpression {
 		return new PrologFunctorExpression(
 			this.gs,
 			this.Name,
-			this.ExpressionList.map((expr: IPrologExpression) =>
-				expr.ApplySubstitution(substitution)
-			)
+			this.ExpressionList.map((expr: IPrologExpression) => expr.ApplySubstitution(substitution))
 		);
 	}
 
 	private static EvaluateUnaryOperatorToNumber(
 		thisFunctorExpression: PrologFunctorExpression
 	): IPrologNumber | undefined {
-		const arg1Evaluated =
-			thisFunctorExpression.ExpressionList[0].EvaluateToNumber();
+		const arg1Evaluated = thisFunctorExpression.ExpressionList[0].EvaluateToNumber();
 
 		if (typeof arg1Evaluated === 'undefined') {
 			return undefined;
@@ -198,10 +180,7 @@ export class PrologFunctorExpression extends PrologNameExpression {
 		const arg1Evaluated = this.ExpressionList[0].EvaluateToNumber();
 		const arg2Evaluated = this.ExpressionList[1].EvaluateToNumber();
 
-		if (
-			typeof arg1Evaluated === 'undefined' ||
-			typeof arg2Evaluated === 'undefined'
-		) {
+		if (typeof arg1Evaluated === 'undefined' || typeof arg2Evaluated === 'undefined') {
 			return undefined;
 		}
 

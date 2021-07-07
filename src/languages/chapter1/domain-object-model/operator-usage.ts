@@ -6,9 +6,7 @@ import { OperatorUsage } from '../../../common/domain-object-model/operator-usag
 import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 export class Chapter1OperatorUsage extends OperatorUsage<number> {
-	protected tryGetExpectedNumArgs(
-		globalInfo: IGlobalInfo<number>
-	): number | undefined {
+	protected override tryGetExpectedNumArgs(globalInfo: IGlobalInfo<number>): number | undefined {
 		switch (this.operatorName.value) {
 			// case 'list':
 			// 	return -1;  // Any number of arguments is permitted.
@@ -25,7 +23,7 @@ export class Chapter1OperatorUsage extends OperatorUsage<number> {
 		}
 	}
 
-	protected evaluateAux(
+	protected override evaluateAux(
 		evaluatedArguments: number[],
 		localEnvironment: EnvironmentFrame<number>,
 		globalInfo: IGlobalInfo<number>
@@ -34,8 +32,7 @@ export class Chapter1OperatorUsage extends OperatorUsage<number> {
 			// 2019-12-22: Hack:
 			case '+':
 				return evaluatedArguments.reduce(
-					(accumulator, evaluatedArgument) =>
-						accumulator + evaluatedArgument,
+					(accumulator, evaluatedArgument) => accumulator + evaluatedArgument,
 					0
 				);
 
@@ -46,8 +43,7 @@ export class Chapter1OperatorUsage extends OperatorUsage<number> {
 				// return evaluatedArguments[0] * evaluatedArguments[1];
 
 				return evaluatedArguments.reduce(
-					(accumulator, evaluatedArgument) =>
-						accumulator * evaluatedArgument,
+					(accumulator, evaluatedArgument) => accumulator * evaluatedArgument,
 					1
 				);
 
@@ -60,9 +56,7 @@ export class Chapter1OperatorUsage extends OperatorUsage<number> {
 					);
 				}
 
-				return Math.floor(
-					evaluatedArguments[0] / evaluatedArguments[1]
-				);
+				return Math.floor(evaluatedArguments[0] / evaluatedArguments[1]);
 
 			case '=':
 				return evaluatedArguments[0] === evaluatedArguments[1]
@@ -95,11 +89,7 @@ export class Chapter1OperatorUsage extends OperatorUsage<number> {
 				);
 
 			default:
-				return super.evaluateAux(
-					evaluatedArguments,
-					localEnvironment,
-					globalInfo
-				); // This handles = for all types
+				return super.evaluateAux(evaluatedArguments, localEnvironment, globalInfo); // This handles = for all types
 		}
 	}
 }

@@ -8,8 +8,6 @@ export class VariableList<T> {
 	public readonly value: Variable<T>[] = [];
 
 	public toString(): string {
-		return `(${this.value
-			.map((v: Variable<T>) => v.toString())
-			.join(' ')})`;
+		return `(${this.value.map((v: Variable<T>) => v.toString()).join(' ')})`;
 	}
 }

@@ -20,14 +20,8 @@ export class SetUsage<T> implements IExpression<T> {
 		return `(set ${this.variableName} ${this.expression})`;
 	}
 
-	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
-		globalInfo: IGlobalInfo<T>
-	): T {
-		const expressionValue = this.expression.evaluate(
-			localEnvironment,
-			globalInfo
-		);
+	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+		const expressionValue = this.expression.evaluate(localEnvironment, globalInfo);
 
 		// If the variable is not already defined in a local env, we may have to assign it to the global env.
 		// console.log(`SetUsage<T>.Evaluate() : var is ${this.variableName.Name}; value is ${expressionValue}`);

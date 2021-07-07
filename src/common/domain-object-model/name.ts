@@ -11,10 +11,7 @@ export class Name {
 
 	constructor(value: string, line = 0, column = 0) {
 		if (!value) {
-			throw new ArgumentNullException(
-				'A Name cannot have a null or empty value',
-				'value'
-			);
+			throw new ArgumentNullException('A Name cannot have a null or empty value', 'value');
 		}
 
 		this.value = value;

@@ -36,10 +36,7 @@ test('SchemeGlobalInfo number to and from IntegerLiteral and FloatLiteral test',
 	const exampleFloatLiteral = new FloatLiteral(exampleFloat);
 	const exampleNull = new NullSExpression();
 	const exampleSymbol1 = new LISPSymbol('a');
-	const exampleSExpressionList1 = new SExpressionList(
-		exampleSymbol1,
-		exampleNull
-	);
+	const exampleSExpressionList1 = new SExpressionList(exampleSymbol1, exampleNull);
 	const exampleString = new LISPString('str');
 	const examplePrimOp = new PrimOp(new Name('+'));
 	// const exampleClosure = new Closure(...);
@@ -80,27 +77,13 @@ test('SchemeGlobalInfo number to and from IntegerLiteral and FloatLiteral test',
 	expect(globalInfo.valueIsInteger(examplePrimOp)).toBeFalsy();
 	// expect(globalInfo.valueIsInteger(exampleClosure)).toBeFalsy();
 
-	expect(globalInfo.valueAsInteger(exampleIntegerLiteral)).toBe(
-		exampleInteger
-	);
-	expect(globalInfo.valueAsInteger(exampleFloatLiteral)).toBe(
-		exampleFloatAsInteger
-	);
-	expect(() => globalInfo.valueAsInteger(exampleNull)).toThrow(
-		'ArgumentException'
-	);
-	expect(() => globalInfo.valueAsInteger(exampleSymbol1)).toThrow(
-		'ArgumentException'
-	);
-	expect(() => globalInfo.valueAsInteger(exampleSExpressionList1)).toThrow(
-		'ArgumentException'
-	);
-	expect(() => globalInfo.valueAsInteger(exampleString)).toThrow(
-		'ArgumentException'
-	);
-	expect(() => globalInfo.valueAsInteger(examplePrimOp)).toThrow(
-		'ArgumentException'
-	);
+	expect(globalInfo.valueAsInteger(exampleIntegerLiteral)).toBe(exampleInteger);
+	expect(globalInfo.valueAsInteger(exampleFloatLiteral)).toBe(exampleFloatAsInteger);
+	expect(() => globalInfo.valueAsInteger(exampleNull)).toThrow('ArgumentException');
+	expect(() => globalInfo.valueAsInteger(exampleSymbol1)).toThrow('ArgumentException');
+	expect(() => globalInfo.valueAsInteger(exampleSExpressionList1)).toThrow('ArgumentException');
+	expect(() => globalInfo.valueAsInteger(exampleString)).toThrow('ArgumentException');
+	expect(() => globalInfo.valueAsInteger(examplePrimOp)).toThrow('ArgumentException');
 	// expect(() => globalInfo.valueAsInteger(exampleClosure)).toThrow('ArgumentException');
 
 	expect(globalInfo.valueIsNumber(exampleIntegerLiteral)).toBeTruthy();
@@ -112,32 +95,15 @@ test('SchemeGlobalInfo number to and from IntegerLiteral and FloatLiteral test',
 	expect(globalInfo.valueIsNumber(examplePrimOp)).toBeFalsy();
 	// expect(globalInfo.valueIsNumber(exampleClosure)).toBeFalsy();
 
-	expect(globalInfo.valueAsNumber(exampleIntegerLiteral)).toBe(
-		exampleInteger
-	);
+	expect(globalInfo.valueAsNumber(exampleIntegerLiteral)).toBe(exampleInteger);
 	expect(globalInfo.valueAsNumber(exampleFloatLiteral)).toBe(exampleFloat);
-	expect(() => globalInfo.valueAsNumber(exampleNull)).toThrow(
-		'ArgumentException'
-	);
-	expect(() => globalInfo.valueAsNumber(exampleSymbol1)).toThrow(
-		'ArgumentException'
-	);
-	expect(() => globalInfo.valueAsNumber(exampleSExpressionList1)).toThrow(
-		'ArgumentException'
-	);
-	expect(() => globalInfo.valueAsNumber(exampleString)).toThrow(
-		'ArgumentException'
-	);
-	expect(() => globalInfo.valueAsNumber(examplePrimOp)).toThrow(
-		'ArgumentException'
-	);
+	expect(() => globalInfo.valueAsNumber(exampleNull)).toThrow('ArgumentException');
+	expect(() => globalInfo.valueAsNumber(exampleSymbol1)).toThrow('ArgumentException');
+	expect(() => globalInfo.valueAsNumber(exampleSExpressionList1)).toThrow('ArgumentException');
+	expect(() => globalInfo.valueAsNumber(exampleString)).toThrow('ArgumentException');
+	expect(() => globalInfo.valueAsNumber(examplePrimOp)).toThrow('ArgumentException');
 	// expect(() => globalInfo.valueAsNumber(exampleClosure)).toThrow('ArgumentException');
 
-	expect(
-		globalInfo.numberAsIntegerValue(exampleInteger) instanceof
-			IntegerLiteral
-	).toBeTruthy();
-	expect(
-		globalInfo.numberAsFloatValue(exampleFloat) instanceof FloatLiteral
-	).toBeTruthy();
+	expect(globalInfo.numberAsIntegerValue(exampleInteger) instanceof IntegerLiteral).toBeTruthy();
+	expect(globalInfo.numberAsFloatValue(exampleFloat) instanceof FloatLiteral).toBeTruthy();
 });

@@ -3,15 +3,11 @@
 import { PrologFunctorExpression } from './domain-object-model/prolog-functor-expression';
 import { PrologGoal } from './domain-object-model/prolog-goal';
 
-export function createGoalFromFunctorExpression(
-	fe: PrologFunctorExpression
-): PrologGoal {
+export function createGoalFromFunctorExpression(fe: PrologFunctorExpression): PrologGoal {
 	return new PrologGoal(fe.gs, fe.Name, fe.ExpressionList);
 }
 
-export function createFunctorExpressionFromGoal(
-	goal: PrologGoal
-): PrologFunctorExpression {
+export function createFunctorExpressionFromGoal(goal: PrologGoal): PrologFunctorExpression {
 	return new PrologFunctorExpression(goal.gs, goal.Name, goal.ExpressionList);
 }
 

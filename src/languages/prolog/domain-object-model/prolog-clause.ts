@@ -22,9 +22,7 @@ export class PrologClause implements IPrologExpression {
 		let tail = '';
 
 		if (this.Rhs.length > 0) {
-			tail =
-				' :- ' +
-				this.Rhs.map((goal: PrologGoal) => goal.toString()).join(', ');
+			tail = ' :- ' + this.Rhs.map((goal: PrologGoal) => goal.toString()).join(', ');
 		}
 
 		return this.Lhs.toString() + tail;
@@ -67,32 +65,18 @@ export class PrologClause implements IPrologExpression {
 	}
 
 	public ContainsVariable(v: PrologVariable): boolean {
-		return (
-			this.ContainsVariable(v) ||
-			this.Rhs.some((goal: PrologGoal) => goal.ContainsVariable(v))
-		);
+		return this.ContainsVariable(v) || this.Rhs.some((goal: PrologGoal) => goal.ContainsVariable(v));
 	}
 
-	public ApplySubstitution(
-		substitution: PrologSubstitution
-	): IPrologExpression {
+	public ApplySubstitution(substitution: PrologSubstitution): IPrologExpression {
 		return new PrologClause(
 			this.Lhs.ApplySubstitution(substitution) as PrologGoal,
-			this.Rhs.map(
-				(subgoal: PrologGoal) =>
-					subgoal.ApplySubstitution(substitution) as PrologGoal
-			)
+			this.Rhs.map((subgoal: PrologGoal) => subgoal.ApplySubstitution(substitution) as PrologGoal)
 		);
 	}
 
-	private isVariableInArrayOfVariables(
-		v: PrologVariable,
-		a: PrologVariable[]
-	): boolean {
-		return (
-			typeof a.find((vv: PrologVariable) => vv.Name === v.Name) !==
-			'undefined'
-		);
+	private isVariableInArrayOfVariables(v: PrologVariable, a: PrologVariable[]): boolean {
+		return typeof a.find((vv: PrologVariable) => vv.Name === v.Name) !== 'undefined';
 	}
 
 	public RenameVariables(
@@ -107,12 +91,7 @@ export class PrologClause implements IPrologExpression {
 		// for (const oldVariable of oldVariables.getIterator()) {
 		for (const oldVariable of oldVariables) {
 			// if (!variablesToAvoid.contains(oldVariable)) {
-			if (
-				!this.isVariableInArrayOfVariables(
-					oldVariable,
-					arrayOfVariablesToAvoid
-				)
-			) {
+			if (!this.isVariableInArrayOfVariables(oldVariable, arrayOfVariablesToAvoid)) {
 				continue;
 			}
 
@@ -126,14 +105,8 @@ export class PrologClause implements IPrologExpression {
 			} while (
 				// oldVariables.contains(newVariable) ||
 				// variablesToAvoid.contains(newVariable)
-				this.isVariableInArrayOfVariables(
-					newVariable,
-					arrayOfOldVariables
-				) ||
-				this.isVariableInArrayOfVariables(
-					newVariable,
-					arrayOfVariablesToAvoid
-				)
+				this.isVariableInArrayOfVariables(newVariable, arrayOfOldVariables) ||
+				this.isVariableInArrayOfVariables(newVariable, arrayOfVariablesToAvoid)
 			);
 
 			substitution.SubstitutionList.set(oldVariable.Name, newVariable); // This is safe because all of the oldVariables and newVariables are unique.
@@ -146,10 +119,7 @@ export class PrologClause implements IPrologExpression {
 	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
 		const otherClause = otherExpr as PrologClause;
 
-		if (
-			typeof otherClause === 'undefined' ||
-			this.Rhs.length !== otherClause.Rhs.length
-		) {
+		if (typeof otherClause === 'undefined' || this.Rhs.length !== otherClause.Rhs.length) {
 			return undefined;
 		}
 
@@ -191,10 +161,7 @@ export class PrologClause implements IPrologExpression {
 	}
 
 	public get IsGround(): boolean {
-		return (
-			this.Lhs.IsGround &&
-			this.Rhs.every((goal: PrologGoal) => goal.IsGround)
-		);
+		return this.Lhs.IsGround && this.Rhs.every((goal: PrologGoal) => goal.IsGround);
 	}
 
 	public EvaluateToNumber(): IPrologNumber | undefined {

@@ -20,10 +20,7 @@ import { SExpressionList } from './sexpression-list';
 export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	private readonly operatorsThatTakeEitherIntOrFloatArgs = new Set<string>();
 
-	constructor(
-		operatorName: Name,
-		expressionList: ExpressionList<ISExpression>
-	) {
+	constructor(operatorName: Name, expressionList: ExpressionList<ISExpression>) {
 		super(operatorName, expressionList);
 
 		this.operatorsThatTakeEitherIntOrFloatArgs.add('<');
@@ -35,9 +32,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	}
 
 	// TODO: Rename this function to getExpectedNumArgs()
-	protected tryGetExpectedNumArgs(
-		globalInfo: IGlobalInfo<ISExpression>
-	): number | undefined {
+	protected override tryGetExpectedNumArgs(globalInfo: IGlobalInfo<ISExpression>): number | undefined {
 		// if (DoubleOperatorKeeper.OneArgumentOperators.ContainsKey(OperatorName.Value))
 		// {
 		// 	result = 1;
@@ -99,7 +94,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	// return IsListOfStrings(argAsList.Tail);
 	// }
 
-	protected checkArgTypes(evaluatedArguments: ISExpression[]): string | null {
+	protected override checkArgTypes(evaluatedArguments: ISExpression[]): string | null {
 		switch (this.operatorName.value) {
 			case 'number?':
 			case 'symbol?':
@@ -155,10 +150,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 
 			case 'listtostring':
 				// if (!IsListOfStrings(evaluatedArguments[0]))
-				if (
-					!evaluatedArguments[0].isList() &&
-					!evaluatedArguments[0].isNull()
-				) {
+				if (!evaluatedArguments[0].isList() && !evaluatedArguments[0].isNull()) {
 					// throw new ArgumentException(string.Format("Operator {0} : Argument is not a list or a null.", OperatorName.Value));
 					return 'Argument is not a list or a null';
 				}
@@ -262,7 +254,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	// 	throw new Exception(string.Format("LISPOperatorUsage.EvaluateAuxFloat() : Invalid operator {0}", OperatorName.Value));
 	// }
 
-	protected evaluateAux(
+	protected override evaluateAux(
 		evaluatedArguments: ISExpression[],
 		localEnvironment: EnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
@@ -279,8 +271,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				return new IntegerLiteral(
 					evaluatedArguments.reduce(
 						(accumulator, evaluatedArgument) =>
-							accumulator +
-							(evaluatedArgument as IntegerLiteral).value,
+							accumulator + (evaluatedArgument as IntegerLiteral).value,
 						0
 					)
 				);
@@ -296,8 +287,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				return new IntegerLiteral(
 					evaluatedArguments.reduce(
 						(accumulator, evaluatedArgument) =>
-							accumulator *
-							(evaluatedArgument as IntegerLiteral).value,
+							accumulator * (evaluatedArgument as IntegerLiteral).value,
 						1
 					)
 				);
@@ -343,18 +333,13 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 
 			case 'random':
 				return new IntegerLiteral(
-					Math.floor(
-						(evaluatedArguments[0] as IntegerLiteral).value *
-							Math.random()
-					)
+					Math.floor((evaluatedArguments[0] as IntegerLiteral).value * Math.random())
 				);
 
 			case 'floor':
 				// Or: return globalInfo.valueAsInteger(evaluatedArguments[0]);
 
-				return new IntegerLiteral(
-					Math.floor((evaluatedArguments[0] as IntegerLiteral).value)
-				);
+				return new IntegerLiteral(Math.floor((evaluatedArguments[0] as IntegerLiteral).value));
 
 			case 'throw':
 				throw new LISPException(
@@ -364,10 +349,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				);
 
 			case 'cons':
-				return new SExpressionList(
-					evaluatedArguments[0],
-					evaluatedArguments[1]
-				);
+				return new SExpressionList(evaluatedArguments[0], evaluatedArguments[1]);
 
 			case 'car':
 				sExprList = evaluatedArguments[0] as SExpressionList;
@@ -392,29 +374,19 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				return sExprList.tail;
 
 			case 'number?':
-				return evaluatedArguments[0].isNumber()
-					? globalInfo.trueValue
-					: globalInfo.falseValue;
+				return evaluatedArguments[0].isNumber() ? globalInfo.trueValue : globalInfo.falseValue;
 
 			case 'symbol?':
-				return evaluatedArguments[0].isSymbol()
-					? globalInfo.trueValue
-					: globalInfo.falseValue;
+				return evaluatedArguments[0].isSymbol() ? globalInfo.trueValue : globalInfo.falseValue;
 
 			case 'list?':
-				return evaluatedArguments[0].isList()
-					? globalInfo.trueValue
-					: globalInfo.falseValue;
+				return evaluatedArguments[0].isList() ? globalInfo.trueValue : globalInfo.falseValue;
 
 			case 'null?':
-				return evaluatedArguments[0].isNull()
-					? globalInfo.trueValue
-					: globalInfo.falseValue;
+				return evaluatedArguments[0].isNull() ? globalInfo.trueValue : globalInfo.falseValue;
 
 			case 'string?':
-				return evaluatedArguments[0].isString()
-					? globalInfo.trueValue
-					: globalInfo.falseValue;
+				return evaluatedArguments[0].isString() ? globalInfo.trueValue : globalInfo.falseValue;
 
 			case 'list':
 				return SExpressionList.makeFromList(evaluatedArguments);
@@ -469,11 +441,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				// 		((INumber)evaluatedArguments[1]).ToDouble()));
 				// }
 
-				return super.evaluateAux(
-					evaluatedArguments,
-					localEnvironment,
-					globalInfo
-				); // This handles = for all types
+				return super.evaluateAux(evaluatedArguments, localEnvironment, globalInfo); // This handles = for all types
 		}
 	}
 }

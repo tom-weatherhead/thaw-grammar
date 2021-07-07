@@ -88,10 +88,7 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 				'random'
 			].indexOf(this.name.value) >= 0
 		) {
-			const operatorUsage = new LISPOperatorUsage(
-				this.name,
-				expressionList
-			);
+			const operatorUsage = new LISPOperatorUsage(this.name, expressionList);
 
 			return operatorUsage.evaluate(localEnvironment, globalInfo);
 		}
@@ -99,21 +96,16 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 		// First, check the number of arguments. (TODO)
 		// Then check the argument types. (TODO)
 		// Then:
-		const evaluatedArguments = expressionList.value.map(
-			(expr: IExpression<ISExpression>) =>
-				expr.evaluate(localEnvironment, globalInfo)
+		const evaluatedArguments = expressionList.value.map((expr: IExpression<ISExpression>) =>
+			expr.evaluate(localEnvironment, globalInfo)
 		);
 
 		switch (this.name.value) {
 			case 'primop?':
-				return evaluatedArguments[0].isPrimOp()
-					? globalInfo.trueValue
-					: globalInfo.falseValue;
+				return evaluatedArguments[0].isPrimOp() ? globalInfo.trueValue : globalInfo.falseValue;
 
 			case 'closure?':
-				return evaluatedArguments[0].isClosure()
-					? globalInfo.trueValue
-					: globalInfo.falseValue;
+				return evaluatedArguments[0].isClosure() ? globalInfo.trueValue : globalInfo.falseValue;
 
 			default:
 				throw new EvaluationException(
@@ -126,7 +118,7 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 		// return globalInfo.falseValue;
 	}
 
-	public isPrimOp(): boolean {
+	public override isPrimOp(): boolean {
 		return true;
 	}
 
@@ -134,7 +126,7 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 		return this.name.value;
 	}
 
-	public evaluate(
+	public override evaluate(
 		/* eslint-disable @typescript-eslint/no-unused-vars */
 		localEnvironment: EnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>

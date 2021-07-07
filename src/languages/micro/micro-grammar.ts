@@ -42,21 +42,14 @@ export class MicroGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
-	public executeSemanticAction(
-		semanticStack: Stack<any>,
-		action: string
-	): void {}
+	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {}
 
 	public tokenToSymbol(token: Token): number {
 		// Returns Symbol
 		return Symbol.UndefinedSymbol;
 	}
 
-	public pushTokenOntoSemanticStack(
-		semanticStack: Stack<any>,
-		tokenAsSymbol: number,
-		token: Token
-	): void {}
+	public pushTokenOntoSemanticStack(semanticStack: Stack<any>, tokenAsSymbol: number, token: Token): void {}
 }
 
 // export class MicroGrammar extends GrammarBase {

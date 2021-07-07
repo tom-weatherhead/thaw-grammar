@@ -20,10 +20,7 @@ export class Operators {
 	}
 
 	private static instance: Operators;
-	private readonly mapOperatorNameToDetails = new Map<
-		string,
-		[OperatorType, number, any]
-	>();
+	private readonly mapOperatorNameToDetails = new Map<string, [OperatorType, number, any]>();
 
 	private constructor() {
 		this.mapOperatorNameToDetails.set('+', [

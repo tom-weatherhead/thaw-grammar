@@ -15,10 +15,7 @@ import { ContinuationException } from '../exceptions/continuation-exception';
 
 import { ICallableSExpression } from './icallable-sexpression';
 
-export class Continuation
-	extends SExpressionBase
-	implements ICallableSExpression
-{
+export class Continuation extends SExpressionBase implements ICallableSExpression {
 	public readonly ccGuid: number; // was Guid in C#
 	public readonly line: number;
 	public readonly column: number;
@@ -35,7 +32,7 @@ export class Continuation
 		return '<continuation>';
 	}
 
-	public isClosure(): boolean {
+	public override isClosure(): boolean {
 		return true;
 	}
 
@@ -54,9 +51,6 @@ export class Continuation
 			);
 		}
 
-		throw new ContinuationException(
-			this.ccGuid,
-			args.value[0].evaluate(localEnvironment, globalInfo)
-		);
+		throw new ContinuationException(this.ccGuid, args.value[0].evaluate(localEnvironment, globalInfo));
 	}
 }
