@@ -1,7 +1,7 @@
 {
 	"name": "thaw-grammar",
 	"version": "0.0.2",
-	"description": "Node.js implementations of the grammars of several programming languages. Written in TypeScript.",
+	"description": "Implementations of the grammars of several programming languages, including LISP, Scheme, and Prolog.",
 	"keywords": [
 		"CFG",
 		"context-free grammar",

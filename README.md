@@ -1,5 +1,5 @@
 # thaw-grammar
-Context-free grammars for several programming languages.
+Implementations of the grammars of several programming languages, including LISP, Scheme, and Prolog.
 
 Obligatory BadgeFest:
 
@@ -99,9 +99,9 @@ Obligatory BadgeFest:
 [lines-of-code-url]: https://badgen.net/codeclimate/loc/tom-weatherhead/thaw-grammar
 [technical-debt-badge-image]: https://badgen.net/codeclimate/tech-debt/tom-weatherhead/thaw-grammar
 [technical-debt-url]: https://badgen.net/codeclimate/tech-debt/tom-weatherhead/thaw-grammar
-[maintainability-badge-image]: https://api.codeclimate.com/v1/badges/0123456789abcdef0123/maintainability
+[maintainability-badge-image]: https://api.codeclimate.com/v1/badges/a5eb95066763b9a9163b/maintainability
 [maintainability-url]: https://codeclimate.com/github/tom-weatherhead/thaw-grammar/maintainability
-[test-coverage-badge-image]: https://api.codeclimate.com/v1/badges/0123456789abcdef0123/test_coverage
+[test-coverage-badge-image]: https://api.codeclimate.com/v1/badges/a5eb95066763b9a9163b/test_coverage
 [test-coverage-url]: https://codeclimate.com/github/tom-weatherhead/thaw-grammar/test_coverage
 [jest-badge-image]: https://img.shields.io/badge/tested_with-jest-99424f.svg
 [jest-url]: https://github.com/facebook/jest
