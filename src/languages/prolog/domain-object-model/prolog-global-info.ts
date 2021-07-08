@@ -1500,7 +1500,16 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// }
 		// }
 
+		// Built-in predicates:
+
 		switch (goal.Name) {
+			case 'fail':
+				if (numArgsInGoal === 0) {
+					return undefined;
+				}
+
+				break;
+
 			case 'add':
 			case 'sub':
 			case 'mult':
@@ -1517,10 +1526,6 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					if (goal.ExpressionList[2] instanceof PrologIntegerLiteral) {
 						const n3 = goal.ExpressionList[2] as PrologIntegerLiteral;
 						const result = this.doIntegerArithmetic(goal.Name, n1.Value, n2.Value);
-
-						// console.log(
-						// 	`Goal = ${goal.Name}; n3 = ${n3}; result = ${result}`
-						// );
 
 						if (n3.Value === result) {
 							return this.ProveGoalList(
