@@ -469,6 +469,7 @@ export class PrologGrammar extends GrammarBase {
 			case '#createGoal':
 				exprList = semanticStack.pop() as IPrologExpression[];
 				str = semanticStack.pop() as string;
+				console.log('#createGoal: Goal name is', str);
 				semanticStack.push(new PrologGoal(gs, str, exprList));
 				break;
 
@@ -643,16 +644,25 @@ export class PrologGrammar extends GrammarBase {
 
 				const firstChar = tokenValueAsString.substring(0, 1);
 
-				if (
-					firstChar.toUpperCase() === firstChar ||
-					// The following supports non-binding variables such as _ and _Foo .
-					// See http://www.csupomona.edu/~jrfisher/www/prolog_tutorial/2_3.html
-					// TODO: Should we require the second character (if it exists) to be a capital letter if the first is an underscore?
-					tokenValueAsString.startsWith('_')
-				) {
-					return Symbol.terminalNameBeginningWithCapital;
-				} else {
+				// if (
+				// 	firstChar.toUpperCase() === firstChar ||
+				// 	// The following supports non-binding variables such as _ and _Foo .
+				// 	// See http://www.csupomona.edu/~jrfisher/www/prolog_tutorial/2_3.html
+				// 	// TODO: Should we require the second character (if it exists) to be a capital letter if the first is an underscore?
+				// 	tokenValueAsString.startsWith('_')
+				// ) {
+				// 	return Symbol.terminalNameBeginningWithCapital;
+				// } else {
+				// 	// This case includes tokenExclamation (the cut).
+				// 	return Symbol.terminalNameNotBeginningWithCapital;
+				// }
+
+				if (firstChar.toLowerCase() === firstChar && !tokenValueAsString.startsWith('_')) {
+					// This case includes non-binding variables (i.e. variable names that start with _)
+					// as well as tokenExclamation (the cut).
 					return Symbol.terminalNameNotBeginningWithCapital;
+				} else {
+					return Symbol.terminalNameBeginningWithCapital;
 				}
 
 			case LexicalState.tokenIntLit:
@@ -744,7 +754,12 @@ export class PrologGrammar extends GrammarBase {
 			case Symbol.terminalNameBeginningWithCapital:
 			case Symbol.terminalNameNotBeginningWithCapital:
 				// case Symbol.terminalIs:
-				semanticStack.push(value); // value is really a string; it must be converted to a Prolog domain model type later.
+
+				if (typeof value !== 'string') {
+					throw new Error('Oh bugger.');
+				}
+
+				semanticStack.push(value as string); // value is really a string; it must be converted to a Prolog domain model type later.
 				break;
 
 			// case Symbol.terminalStringLiteral:
