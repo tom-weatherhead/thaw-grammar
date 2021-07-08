@@ -6,6 +6,8 @@ import { Set } from 'thaw-common-utilities.ts';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
+import { CutBacktrackException } from './cut-backtrack-exception';
+import { CutDetector } from './cut-detector';
 import { IPrologExpression } from './iprolog-expression';
 import { PrologClause } from './prolog-clause';
 // import { PrologFloatLiteral } from './prolog-float-literal';
@@ -1364,7 +1366,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	private ProveGoalList(
 		goalList: PrologGoal[],
-		// cutDetectorList: CutDetector[],
+		cutDetectorList: CutDetector[],
 		goalNum: number,
 		oldSubstitution: PrologSubstitution,
 		parentVariablesToAvoid: Set<PrologVariable>,
@@ -1436,24 +1438,29 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// console.log('unsubstitutedGoal is', unsubstitutedGoal.toString());
 		// console.log('oldSubstitution is', oldSubstitution.toString());
 
-		// if (unsubstitutedGoal.IsCut) {
-		// 	// The "cut" goal always succeeds.
-		// 	// #if CONSOLE_WRITELINE
-		// 	console.log('ProveGoal: Detected a cut.');
-		// 	// #endif
+		if (unsubstitutedGoal.isCut) {
+			// The "cut" goal always succeeds.
+			console.log('ProveGoal: Detected a cut.');
 
-		// 	// 2014/03/07
-		// 	var cutDetector = cutDetectorList[goalNum];
-		// 	var cutSubstitution = ProveGoalList(goalList, cutDetectorList, nextGoalNum, oldSubstitution, parentVariablesToAvoid,
-		// 	variablesInQuery, listOfCurrentModules);
+			// 2014/03/07
+			const cutDetector = cutDetectorList[goalNum];
+			const cutSubstitution = this.ProveGoalList(
+				goalList,
+				cutDetectorList,
+				nextGoalNum,
+				oldSubstitution,
+				parentVariablesToAvoid,
+				variablesInQuery,
+				listOfCurrentModules
+			);
 
-		// 	if (typeof cutSubstitution === 'undefined' && cutDetector !== null) {
-		// 		// We may not backtrack through a cut.
-		// 		throw new CutBacktrackException(cutDetector.Guid);
-		// 	}
+			if (typeof cutSubstitution === 'undefined' && typeof cutDetector !== 'undefined') {
+				// We may not backtrack through a cut.
+				throw new CutBacktrackException(cutDetector.guid);
+			}
 
-		// 	return cutSubstitution;
-		// }
+			return cutSubstitution;
+		}
 
 		const goal = unsubstitutedGoal.ApplySubstitution(oldSubstitution) as PrologGoal;
 
@@ -1518,7 +1525,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 						if (n3.Value === result) {
 							return this.ProveGoalList(
 								goalList,
-								// cutDetectorList,
+								cutDetectorList,
 								nextGoalNum,
 								oldSubstitution,
 								parentVariablesToAvoid,
@@ -1537,7 +1544,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 						return this.ProveGoalList(
 							goalList,
-							// cutDetectorList,
+							cutDetectorList,
 							nextGoalNum,
 							oldSubstitution.Compose(addSubstitution),
 							parentVariablesToAvoid,
@@ -1568,7 +1575,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 					return this.ProveGoalList(
 						goalList,
-						// cutDetectorList,
+						cutDetectorList,
 						nextGoalNum,
 						oldSubstitution,
 						parentVariablesToAvoid,
@@ -1586,7 +1593,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 					const tempGoalList = [innerGoal];
 					// This next line prevents us from adding "not" to the built-in predicates dictionary:
-					// const tempCutDetectorList = [cutDetectorList[goalNum]];
+					const tempCutDetectorList = [cutDetectorList[goalNum]];
 					const tempListOfCurrentModules = [listOfCurrentModules[goalNum]];
 					const cachedAllMode = this.allMode;
 					const cachedSolutionCollectionMode = this.solutionCollectionMode;
@@ -1599,7 +1606,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 						// We don't need to use parentVariablesToAvoid here, since we don't propagate localSubstitution.
 						localSubstitution = this.ProveGoalList(
 							tempGoalList,
-							// tempCutDetectorList,
+							tempCutDetectorList,
 							0,
 							new PrologSubstitution(),
 							innerGoal.FindBindingVariables(),
@@ -1617,7 +1624,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 					return this.ProveGoalList(
 						goalList,
-						// cutDetectorList,
+						cutDetectorList,
 						nextGoalNum,
 						oldSubstitution,
 						parentVariablesToAvoid,
@@ -1646,7 +1653,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 						this.ProveGoalList(
 							goalList,
-							// cutDetectorList,
+							cutDetectorList,
 							nextGoalNum,
 							oldSubstitution,
 							parentVariablesToAvoid,
@@ -1656,7 +1663,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					} else if (e0 instanceof PrologVariable) {
 						return this.ProveGoalList(
 							goalList,
-							// cutDetectorList,
+							cutDetectorList,
 							nextGoalNum,
 							oldSubstitution.Compose(new PrologSubstitution(e0 as PrologVariable, n1)),
 							parentVariablesToAvoid,
@@ -1804,7 +1811,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			return this.ProveGoalList(
 				goalList,
-				// cutDetectorList,
+				cutDetectorList,
 				nextGoalNum,
 				oldSubstitution.Compose(addSubstitution),
 				parentVariablesToAvoid,
@@ -1830,7 +1837,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			return this.ProveGoalList(
 				goalList,
-				// cutDetectorList,
+				cutDetectorList,
 				nextGoalNum,
 				oldSubstitution.Compose(addSubstitution),
 				parentVariablesToAvoid,
@@ -1856,7 +1863,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			return this.ProveGoalList(
 				goalList,
-				// cutDetectorList,
+				cutDetectorList,
 				nextGoalNum,
 				oldSubstitution.Compose(addSubstitution),
 				parentVariablesToAvoid,
@@ -1882,7 +1889,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			return this.ProveGoalList(
 				goalList,
-				// cutDetectorList,
+				cutDetectorList,
 				nextGoalNum,
 				oldSubstitution.Compose(addSubstitution),
 				parentVariablesToAvoid,
@@ -1896,7 +1903,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		let resultSubstitution = this.ProveGoalListUsingModule(
 			goal,
 			goalList,
-			// cutDetectorList,
+			cutDetectorList,
 			nextGoalNum,
 			oldSubstitution,
 			parentVariablesToAvoid,
@@ -1923,7 +1930,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				resultSubstitution = this.ProveGoalListUsingModule(
 					goal,
 					goalList,
-					// cutDetectorList,
+					cutDetectorList,
 					nextGoalNum,
 					oldSubstitution,
 					parentVariablesToAvoid,
@@ -1953,7 +1960,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	private ProveGoalListUsingModule(
 		goal: PrologGoal,
 		goalList: PrologGoal[],
-		// List<CutDetector> cutDetectorList,
+		cutDetectorList: CutDetector[],
 		nextGoalNum: number,
 		oldSubstitution: PrologSubstitution,
 		parentVariablesToAvoid: Set<PrologVariable>,
@@ -2042,7 +2049,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			newVariablesToAvoid.unionInPlace(variablesToAvoid);
 
 			// ThAW 2014/03/06 : We want to support cuts in goal disjunctions and if/then/else constructs.
-			// var cutDetector = new CutDetector();
+			const cutDetector = new CutDetector();
 
 			const goalListLengthBeforeSplice = goalList.length;
 
@@ -2064,35 +2071,33 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// );
 
 			for (let i = 0; i < newClause.Rhs.length; i++) {
-				// cutDetectorList.splice(nextGoalNum, 0, cutDetector);
+				cutDetectorList.splice(nextGoalNum, 0, cutDetector);
 				listOfCurrentModules.splice(nextGoalNum, 0, currentModule);
 			}
 
 			try {
 				localSubstitution = this.ProveGoalList(
 					goalList,
-					// cutDetectorList,
+					cutDetectorList,
 					nextGoalNum,
 					localSubstitution,
 					newVariablesToAvoid,
 					variablesInQuery,
 					listOfCurrentModules
 				);
+			} catch (
+				error // 2014/03/07
+			) {
+				// Clean up the lists before we return or re-throw.
+				//goalList.RemoveRange(nextGoalNum, newClause.Rhs.Count);
+				//cutDetectorList.RemoveRange(nextGoalNum, newClause.Rhs.Count);
+
+				if (!(error instanceof CutBacktrackException) || error.guid !== cutDetector.guid) {
+					throw error;
+				}
+
+				return undefined;
 			} finally {
-				// catch (CutBacktrackException ex) // 2014/03/07
-				// {
-				// // Clean up the lists before we return or re-throw.
-				// //goalList.RemoveRange(nextGoalNum, newClause.Rhs.Count);
-				// //cutDetectorList.RemoveRange(nextGoalNum, newClause.Rhs.Count);
-
-				// if (ex.Guid.Equals(cutDetector.Guid))
-				// {
-				// return null;
-				// }
-
-				// throw;
-				// }
-
 				// console.log(
 				// 	'goalList length before undo of splice:',
 				// 	goalList.length
@@ -2105,7 +2110,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				// );
 
 				// cutDetectorList.RemoveRange(nextGoalNum, newClause.Rhs.Count);
-				// cutDetectorList.splice(nextGoalNum, newClause.Rhs.length);
+				cutDetectorList.splice(nextGoalNum, newClause.Rhs.length);
 
 				// listOfCurrentModules.RemoveRange(
 				// 	nextGoalNum,
@@ -2232,10 +2237,10 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			this.numSolutionsFound = 0;
 
 			// var goalList = new List<PrologGoal>((List<PrologGoal>)parseResult);
-			// var cutDetectorList = new List<CutDetector>();
+			const cutDetectorList: CutDetector[] = [];
 			const listOfCurrentModules: PrologModule[] = [];
-			// var cutDetector = new CutDetector();
-			// let substitution: PrologSubstitution;
+			const cutDetector = new CutDetector();
+			let substitution: PrologSubstitution | undefined;
 
 			// sbOutput.Clear();
 			// goalList.For Each(g => cutDetectorList.Add(cutDetector));
@@ -2249,25 +2254,25 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// );
 
 			for (let i = 0; i < goalList.length; i++) {
+				cutDetectorList.push(cutDetector);
 				listOfCurrentModules.push(this.DefaultModule);
 			}
 
-			// try {
-			const substitution = this.ProveGoalList(
-				goalList,
-				// cutDetectorList,
-				0,
-				new PrologSubstitution(),
-				this.GetVariablesFromGoalList(goalList),
-				this.GetListOfBindingVariablesFromGoalList(goalList),
-				listOfCurrentModules
-			);
-			// } catch (CutBacktrackException ex) {
-
-			// 	if (!ex.Guid.Equals(cutDetector.Guid)) {
-			// 		throw;
-			// 	}
-			// }
+			try {
+				substitution = this.ProveGoalList(
+					goalList,
+					cutDetectorList,
+					0,
+					new PrologSubstitution(),
+					this.GetVariablesFromGoalList(goalList),
+					this.GetListOfBindingVariablesFromGoalList(goalList),
+					listOfCurrentModules
+				);
+			} catch (error) {
+				if (!(error instanceof CutBacktrackException) || error.guid !== cutDetector.guid) {
+					throw error;
+				}
+			}
 
 			// if (sbOutput.Length > 0) {
 			// 	sbOutput.AppendLine();

@@ -77,13 +77,9 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 		return undefined;
 	}
 
-	// public bool IsCut
-	// {
-	//     get
-	//     {
-	//         return Name.Name == "!";
-	//     }
-	// }
+	public get isCut(): boolean {
+		return this.Name === '!';
+	}
 
 	// #if DEAD_CODE
 	//    public bool IsIsomorphicTo(PrologGoal otherGoal)
