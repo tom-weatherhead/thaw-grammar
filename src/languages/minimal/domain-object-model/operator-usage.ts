@@ -48,7 +48,10 @@ export class OperatorUsage implements IExpression<number> {
 
 	// This is virtual because Scheme.PrimOp overrides it.
 
-	public evaluate(localEnvironment: EnvironmentFrame<number>, globalInfo: IGlobalInfo<number>): number {
+	public evaluate(
+		localEnvironment: EnvironmentFrame<number>,
+		globalInfo: IGlobalInfo<number>
+	): number {
 		const actualNumArgs = this.expressionList.value.length;
 
 		if (actualNumArgs !== 2) {

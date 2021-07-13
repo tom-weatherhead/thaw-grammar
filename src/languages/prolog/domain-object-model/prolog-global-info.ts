@@ -33,7 +33,8 @@ enum SolutionCollectionMode {
 
 export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* implements IGlobalInfoOps, IParser */ {
 	public static readonly ClauseAdded = 'Clause added.';
-	public static readonly ClauseAlreadyExists = 'An identical clause is already in the clause list.';
+	public static readonly ClauseAlreadyExists =
+		'An identical clause is already in the clause list.';
 	public static readonly IsomorphicClauseAlreadyExists =
 		'An isomorphic clause is already in the clause list.';
 	public static readonly IsomorphicOrMoreGeneralClauseAlreadyExists =
@@ -915,7 +916,10 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// #endif
 	//     }
 
-	private AutomaticPrint(variablesInQuery: PrologVariable[], substitution: PrologSubstitution): void {
+	private AutomaticPrint(
+		variablesInQuery: PrologVariable[],
+		substitution: PrologSubstitution
+	): void {
 		if (variablesInQuery.length === 0) {
 			return;
 		}
@@ -1413,7 +1417,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		// #if SUBSTITUTION_KEY_COUNT_LIMIT
 		if (oldSubstitution.SubstitutionList.size > 100) {
-			throw new Error('ProveGoalList() : **** Aborting because the substitution is too long. ****');
+			throw new Error(
+				'ProveGoalList() : **** Aborting because the substitution is too long. ****'
+			);
 		}
 		// #endif
 
@@ -1544,7 +1550,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 						const v = goal.ExpressionList[2] as PrologVariable;
 						const addSubstitution = new PrologSubstitution(
 							v,
-							new PrologIntegerLiteral(this.doIntegerArithmetic(goal.Name, n1.Value, n2.Value))
+							new PrologIntegerLiteral(
+								this.doIntegerArithmetic(goal.Name, n1.Value, n2.Value)
+							)
 						);
 
 						return this.ProveGoalList(
@@ -1670,7 +1678,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 							goalList,
 							cutDetectorList,
 							nextGoalNum,
-							oldSubstitution.Compose(new PrologSubstitution(e0 as PrologVariable, n1)),
+							oldSubstitution.Compose(
+								new PrologSubstitution(e0 as PrologVariable, n1)
+							),
 							parentVariablesToAvoid,
 							variablesInQuery,
 							listOfCurrentModules
@@ -2042,7 +2052,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			// //Console.WriteLine("ProveGoal: Composing unifier with substitution: {0}", oldSubstitution);
 
-			let localSubstitution: PrologSubstitution | undefined = oldSubstitution.Compose(unifier);
+			let localSubstitution: PrologSubstitution | undefined =
+				oldSubstitution.Compose(unifier);
 
 			// console.log(
 			// 	`ProveGoalListUsingModule() : The composition of substitutions ${oldSubstitution} and ${unifier} is ${localSubstitution}`
@@ -2349,7 +2360,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				satisfied = typeof substitution !== 'undefined';
 			}
 
-			this.printDirect(satisfied ? PrologGlobalInfo.Satisfied : PrologGlobalInfo.NotSatisfied);
+			this.printDirect(
+				satisfied ? PrologGlobalInfo.Satisfied : PrologGlobalInfo.NotSatisfied
+			);
 
 			return this.getPrintedText();
 		} else if (typeof parseResult === 'undefined') {

@@ -19,7 +19,11 @@ export interface IGrammar {
 	selectorsOfCompatibleParsers: number[]; // An array of members of the enum ParserSelector
 	executeSemanticAction(semanticStack: Stack<any>, action: string): void;
 	tokenToSymbol(token: Token): Symbol;
-	pushTokenOntoSemanticStack(semanticStack: Stack<any>, tokenAsSymbol: Symbol, token: Token): void;
+	pushTokenOntoSemanticStack(
+		semanticStack: Stack<any>,
+		tokenAsSymbol: Symbol,
+		token: Token
+	): void;
 	findStartingProduction(): Production;
 	// removeProductionsContainingSymbol(symbol: number): void;
 }

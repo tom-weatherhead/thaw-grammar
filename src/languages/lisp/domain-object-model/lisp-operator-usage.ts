@@ -32,7 +32,9 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	}
 
 	// TODO: Rename this function to getExpectedNumArgs()
-	protected override tryGetExpectedNumArgs(globalInfo: IGlobalInfo<ISExpression>): number | undefined {
+	protected override tryGetExpectedNumArgs(
+		globalInfo: IGlobalInfo<ISExpression>
+	): number | undefined {
 		// if (DoubleOperatorKeeper.OneArgumentOperators.ContainsKey(OperatorName.Value))
 		// {
 		// 	result = 1;
@@ -339,7 +341,9 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 			case 'floor':
 				// Or: return globalInfo.valueAsInteger(evaluatedArguments[0]);
 
-				return new IntegerLiteral(Math.floor((evaluatedArguments[0] as IntegerLiteral).value));
+				return new IntegerLiteral(
+					Math.floor((evaluatedArguments[0] as IntegerLiteral).value)
+				);
 
 			case 'throw':
 				throw new LISPException(
@@ -374,19 +378,29 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				return sExprList.tail;
 
 			case 'number?':
-				return evaluatedArguments[0].isNumber() ? globalInfo.trueValue : globalInfo.falseValue;
+				return evaluatedArguments[0].isNumber()
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			case 'symbol?':
-				return evaluatedArguments[0].isSymbol() ? globalInfo.trueValue : globalInfo.falseValue;
+				return evaluatedArguments[0].isSymbol()
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			case 'list?':
-				return evaluatedArguments[0].isList() ? globalInfo.trueValue : globalInfo.falseValue;
+				return evaluatedArguments[0].isList()
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			case 'null?':
-				return evaluatedArguments[0].isNull() ? globalInfo.trueValue : globalInfo.falseValue;
+				return evaluatedArguments[0].isNull()
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			case 'string?':
-				return evaluatedArguments[0].isString() ? globalInfo.trueValue : globalInfo.falseValue;
+				return evaluatedArguments[0].isString()
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			case 'list':
 				return SExpressionList.makeFromList(evaluatedArguments);

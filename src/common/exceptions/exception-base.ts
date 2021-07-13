@@ -8,7 +8,8 @@ export abstract class ExceptionBase {
 	public readonly column: number;
 
 	protected constructor(typeName: string, message: string, line = 0, column = 0) {
-		const lineAndColumnText = line > 0 && column > 0 ? ` at line ${line}, column ${column}` : '';
+		const lineAndColumnText =
+			line > 0 && column > 0 ? ` at line ${line}, column ${column}` : '';
 
 		this.message = `${typeName}${lineAndColumnText}: ${message}`;
 		this.line = line;

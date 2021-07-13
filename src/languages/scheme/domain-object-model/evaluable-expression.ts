@@ -19,7 +19,10 @@ export class EvaluableExpression implements IExpression<ISExpression> {
 	public readonly firstExpression: IExpression<ISExpression>;
 	public readonly expressionList: ExpressionList<ISExpression>;
 
-	constructor(firstExpression: IExpression<ISExpression>, expressionList: ExpressionList<ISExpression>) {
+	constructor(
+		firstExpression: IExpression<ISExpression>,
+		expressionList: ExpressionList<ISExpression>
+	) {
 		// console.log('Creating an instance of EvaluableExpression...');
 		this.firstExpression = firstExpression;
 		this.expressionList = expressionList;

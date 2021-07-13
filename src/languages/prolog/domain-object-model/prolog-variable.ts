@@ -6,8 +6,8 @@ import { IEqualityComparable, Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
-import { PrologClause } from './prolog-clause';
-import { PrologGoal } from './prolog-goal';
+// import { PrologClause } from './prolog-clause';
+// import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';
 
 export class PrologVariable implements IEqualityComparable, IPrologExpression {
@@ -98,7 +98,8 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 		) {
 			return new PrologSubstitution();
 		} else if (
-			[PrologClause.name, PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
+			// [PrologClause.name, PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
+			// [PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
 			otherExpr.ContainsVariable(this)
 		) {
 			// console.log('PrologVariable.Unify(): Returning undefined');

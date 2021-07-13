@@ -148,7 +148,9 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		// 3: Input -> Query
-		this.productions.push(new Production(Symbol.nonterminalInput, [Symbol.nonterminalQuery], 3));
+		this.productions.push(
+			new Production(Symbol.nonterminalInput, [Symbol.nonterminalQuery], 3)
+		);
 
 		// 4: Clause -> LHSGoal ClauseTail
 		this.productions.push(
@@ -203,7 +205,11 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(Symbol.nonterminalGoalListTail, [Symbol.Lambda, '#createEmptyGoalList'], 9)
+			new Production(
+				Symbol.nonterminalGoalListTail,
+				[Symbol.Lambda, '#createEmptyGoalList'],
+				9
+			)
 		);
 
 		// Goal -> NameNotBeginningWithCapital TailOfGoalOrFunctorExpr
@@ -272,7 +278,9 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		// Expr -> Variable
-		this.productions.push(new Production(Symbol.nonterminalExpression, [Symbol.nonterminalVariable], 18));
+		this.productions.push(
+			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalVariable], 18)
+		);
 
 		// Expr -> FunctorExpr
 		this.productions.push(
@@ -302,7 +310,9 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		// Lists.
-		this.productions.push(new Production(Symbol.nonterminalExpression, [Symbol.nonterminalList], 22));
+		this.productions.push(
+			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalList], 22)
+		);
 
 		this.productions.push(
 			new Production(
@@ -323,13 +333,21 @@ export class PrologGrammar extends GrammarBase {
 		this.productions.push(
 			new Production(
 				Symbol.nonterminalListContents,
-				[Symbol.nonterminalExpression, Symbol.nonterminalListContentsTail, '#createConsFunctor'],
+				[
+					Symbol.nonterminalExpression,
+					Symbol.nonterminalListContentsTail,
+					'#createConsFunctor'
+				],
 				25
 			)
 		);
 
 		this.productions.push(
-			new Production(Symbol.nonterminalListContentsTail, [Symbol.Lambda, '#createNilFunctor'], 26)
+			new Production(
+				Symbol.nonterminalListContentsTail,
+				[Symbol.Lambda, '#createNilFunctor'],
+				26
+			)
 		);
 
 		this.productions.push(
@@ -724,9 +742,9 @@ export class PrologGrammar extends GrammarBase {
 		}
 
 		throw new GrammarException(
-			`No grammar symbol matches token ${token.tokenType} ${LexicalState[token.tokenType]} (value '${
-				token.tokenValue
-			}')`,
+			`No grammar symbol matches token ${token.tokenType} ${
+				LexicalState[token.tokenType]
+			} (value '${token.tokenValue}')`,
 			token.line,
 			token.column
 		);

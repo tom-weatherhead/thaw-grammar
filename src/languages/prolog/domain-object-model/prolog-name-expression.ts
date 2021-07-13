@@ -6,10 +6,10 @@ import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
-import { PrologSubstitution } from './prolog-substitution';
+// import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 
-export abstract class PrologNameExpression implements IPrologExpression {
+export abstract class PrologNameExpression /* implements IPrologExpression */ {
 	public readonly gs: LanguageSelector;
 	public readonly Name: string;
 	public readonly ExpressionList: IPrologExpression[];
@@ -104,9 +104,9 @@ export abstract class PrologNameExpression implements IPrologExpression {
 		// 	}
 		// }
 
-		return `${this.Name}(${this.ExpressionList.map((expr: IPrologExpression) => expr.toString()).join(
-			', '
-		)})`;
+		return `${this.Name}(${this.ExpressionList.map((expr: IPrologExpression) =>
+			expr.toString()
+		).join(', ')})`;
 	}
 
 	//     public override bool Equals(object obj)
@@ -158,7 +158,7 @@ export abstract class PrologNameExpression implements IPrologExpression {
 		return this.ExpressionList.some((expr: IPrologExpression) => expr.ContainsVariable(v));
 	}
 
-	public abstract ApplySubstitution(substitution: PrologSubstitution): IPrologExpression;
+	// public abstract ApplySubstitution(substitution: PrologSubstitution): IPrologExpression;
 
 	// public ApplySubstitution(
 	// 	substitution: PrologSubstitution
@@ -172,46 +172,46 @@ export abstract class PrologNameExpression implements IPrologExpression {
 	// 	);
 	// }
 
-	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
-		// if (otherExpr.constructor.name === PrologVariable.name) {
-		if (otherExpr instanceof PrologVariable) {
-			return otherExpr.Unify(this);
-		}
+	// public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
+	// 	// if (otherExpr.constructor.name === PrologVariable.name) {
+	// 	if (otherExpr instanceof PrologVariable) {
+	// 		return otherExpr.Unify(this);
+	// 	}
 
-		// if (!GetType().Equals(otherExpr.GetType()))
-		// {
-		//     // A PrologFunctorExpression can unify with a PrologFunctorExpression;
-		//     // a PrologGoal can unify with a PrologGoal,
-		//     // but a PrologFunctorExpression cannot unify with a PrologGoal.
-		//     return null;
-		// }
+	// 	// if (!GetType().Equals(otherExpr.GetType()))
+	// 	// {
+	// 	//     // A PrologFunctorExpression can unify with a PrologFunctorExpression;
+	// 	//     // a PrologGoal can unify with a PrologGoal,
+	// 	//     // but a PrologFunctorExpression cannot unify with a PrologGoal.
+	// 	//     return null;
+	// 	// }
 
-		const otherNameExpression = otherExpr as PrologNameExpression;
+	// 	const otherNameExpression = otherExpr as PrologNameExpression;
 
-		if (
-			this.constructor.name !== otherExpr.constructor.name ||
-			this.Name !== otherNameExpression.Name ||
-			this.ExpressionList.length !== otherNameExpression.ExpressionList.length
-		) {
-			return undefined;
-		}
+	// 	if (
+	// 		this.constructor.name !== otherExpr.constructor.name ||
+	// 		this.Name !== otherNameExpression.Name ||
+	// 		this.ExpressionList.length !== otherNameExpression.ExpressionList.length
+	// 	) {
+	// 		return undefined;
+	// 	}
 
-		let substitution = new PrologSubstitution();
+	// 	let substitution = new PrologSubstitution();
 
-		for (let i = 0; i < this.ExpressionList.length; ++i) {
-			const newExpr1 = this.ExpressionList[i].ApplySubstitution(substitution);
-			const newExpr2 = otherNameExpression.ExpressionList[i].ApplySubstitution(substitution);
-			const substitution2 = newExpr1.Unify(newExpr2);
+	// 	for (let i = 0; i < this.ExpressionList.length; ++i) {
+	// 		const newExpr1 = this.ExpressionList[i].ApplySubstitution(substitution);
+	// 		const newExpr2 = otherNameExpression.ExpressionList[i].ApplySubstitution(substitution);
+	// 		const substitution2 = newExpr1.Unify(newExpr2);
 
-			if (typeof substitution2 === 'undefined') {
-				return undefined;
-			}
+	// 		if (typeof substitution2 === 'undefined') {
+	// 			return undefined;
+	// 		}
 
-			substitution = substitution.Compose(substitution2);
-		}
+	// 		substitution = substitution.Compose(substitution2);
+	// 	}
 
-		return substitution;
-	}
+	// 	return substitution;
+	// }
 
 	public get IsGround(): boolean {
 		return this.ExpressionList.every((expr: IPrologExpression) => expr.IsGround);

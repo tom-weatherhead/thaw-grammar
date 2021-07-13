@@ -8,7 +8,10 @@ import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { ISExpression } from './isexpression';
 import { SExpressionBareBase } from './sexpression-bare-base';
 
-export abstract class SExpressionBase extends SExpressionBareBase implements IExpression<ISExpression> {
+export abstract class SExpressionBase
+	extends SExpressionBareBase
+	implements IExpression<ISExpression>
+{
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		localEnvironment: EnvironmentFrame<ISExpression>,

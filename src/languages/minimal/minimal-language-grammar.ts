@@ -40,7 +40,11 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		this.nonTerminals.push(Symbol.nonterminalExpressionList);
 
 		this.productions.push(
-			new Production(Symbol.nonterminalStart, [Symbol.nonterminalExpression, Symbol.terminalEOF], 1)
+			new Production(
+				Symbol.nonterminalStart,
+				[Symbol.nonterminalExpression, Symbol.terminalEOF],
+				1
+			)
 		);
 		this.productions.push(
 			new Production(Symbol.nonterminalExpression, [Symbol.terminalIntegerLiteral], 2)
@@ -71,7 +75,11 @@ export class MinimalLanguageGrammar extends GrammarBase {
 			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalExpressionList, [Symbol.Lambda, '#emptyExpressionList'], 6)
+			new Production(
+				Symbol.nonterminalExpressionList,
+				[Symbol.Lambda, '#emptyExpressionList'],
+				6
+			)
 		);
 	}
 
@@ -141,7 +149,11 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		);
 	}
 
-	public pushTokenOntoSemanticStack(semanticStack: Stack<any>, tokenAsSymbol: number, token: Token): void {
+	public pushTokenOntoSemanticStack(
+		semanticStack: Stack<any>,
+		tokenAsSymbol: number,
+		token: Token
+	): void {
 		switch (tokenAsSymbol) {
 			case Symbol.terminalIntegerLiteral:
 				// console.log(`Pushing IntegerLiteral ${token.tokenValue as number} onto the semanticStack`);

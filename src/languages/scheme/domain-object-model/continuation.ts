@@ -51,6 +51,9 @@ export class Continuation extends SExpressionBase implements ICallableSExpressio
 			);
 		}
 
-		throw new ContinuationException(this.ccGuid, args.value[0].evaluate(localEnvironment, globalInfo));
+		throw new ContinuationException(
+			this.ccGuid,
+			args.value[0].evaluate(localEnvironment, globalInfo)
+		);
 	}
 }

@@ -21,7 +21,12 @@ export class LambdaExpression implements IExpression<ISExpression> {
 	public readonly line: number;
 	public readonly column: number;
 
-	constructor(argList: VariableList<ISExpression>, body: IExpression<ISExpression>, line = 0, column = 0) {
+	constructor(
+		argList: VariableList<ISExpression>,
+		body: IExpression<ISExpression>,
+		line = 0,
+		column = 0
+	) {
 		// console.log('Creating an instance of LambdaExpression...');
 		// console.log(`-> argList is ${typeof argList} ${argList}`);
 		// console.log(`-> body is ${typeof body} ${body}`);

@@ -102,10 +102,14 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 
 		switch (this.name.value) {
 			case 'primop?':
-				return evaluatedArguments[0].isPrimOp() ? globalInfo.trueValue : globalInfo.falseValue;
+				return evaluatedArguments[0].isPrimOp()
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			case 'closure?':
-				return evaluatedArguments[0].isClosure() ? globalInfo.trueValue : globalInfo.falseValue;
+				return evaluatedArguments[0].isClosure()
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			default:
 				throw new EvaluationException(

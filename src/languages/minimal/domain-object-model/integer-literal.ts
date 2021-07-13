@@ -9,9 +9,15 @@ export class IntegerLiteral implements IExpression<number> {
 
 	constructor(value: any) {
 		if (typeof value !== 'number') {
-			throw new ArgumentException('IntegerLiteral constructor: value is not a number.', 'value');
+			throw new ArgumentException(
+				'IntegerLiteral constructor: value is not a number.',
+				'value'
+			);
 		} else if (Math.floor(value) !== value) {
-			throw new ArgumentException('IntegerLiteral constructor: value is not an integer.', 'value');
+			throw new ArgumentException(
+				'IntegerLiteral constructor: value is not an integer.',
+				'value'
+			);
 		}
 
 		this.value = value as number;
@@ -29,7 +35,10 @@ export class IntegerLiteral implements IExpression<number> {
 	// }
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
-	public evaluate(localEnvironment: EnvironmentFrame<number>, globalInfo: IGlobalInfo<number>): number {
+	public evaluate(
+		localEnvironment: EnvironmentFrame<number>,
+		globalInfo: IGlobalInfo<number>
+	): number {
 		return this.value;
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */

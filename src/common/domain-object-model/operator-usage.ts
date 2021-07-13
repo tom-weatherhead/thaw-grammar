@@ -163,8 +163,12 @@ export class OperatorUsage<T> implements IExpression<T> {
 				? globalInfo.valueAsInteger(evaluatedArguments[1])
 				: 0;
 
-		const twoArgumentIntegerPredicateRaw = this.twoArgumentIntegerPredicates.get(this.operatorName.value);
-		const twoArgumentIntegerOperatorRaw = this.twoArgumentIntegerOperators.get(this.operatorName.value);
+		const twoArgumentIntegerPredicateRaw = this.twoArgumentIntegerPredicates.get(
+			this.operatorName.value
+		);
+		const twoArgumentIntegerOperatorRaw = this.twoArgumentIntegerOperators.get(
+			this.operatorName.value
+		);
 
 		// if (IntegerOperatorKeeper.TwoArgumentOperators.ContainsKey(this.operatorName.Value))
 		if (typeof twoArgumentIntegerOperatorRaw !== 'undefined') {
@@ -178,10 +182,9 @@ export class OperatorUsage<T> implements IExpression<T> {
 			// } else if (IntegerOperatorKeeper.TwoArgumentPredicates.ContainsKey(this.operatorName.Value))
 		} else if (typeof twoArgumentIntegerPredicateRaw !== 'undefined') {
 			// return IntegerOperatorKeeper.TwoArgumentPredicates[operatorName.Value](firstArgAsInt, secondArgAsInt) ? globalInfo.TrueValue : globalInfo.FalseValue;
-			return (twoArgumentIntegerPredicateRaw as (operand1: number, operand2: number) => boolean)(
-				firstArgAsInt,
-				secondArgAsInt
-			)
+			return (
+				twoArgumentIntegerPredicateRaw as (operand1: number, operand2: number) => boolean
+			)(firstArgAsInt, secondArgAsInt)
 				? globalInfo.trueValue
 				: globalInfo.falseValue;
 		}

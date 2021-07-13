@@ -20,7 +20,10 @@ export class FloatLiteral extends SExpressionBase implements INumber {
 				'value'
 			);
 		} else if (Number.isNaN(value)) {
-			throw new ArgumentException('FloatLiteral constructor: value is not a number (NaN).', 'value');
+			throw new ArgumentException(
+				'FloatLiteral constructor: value is not a number (NaN).',
+				'value'
+			);
 		}
 
 		this.value = value as number;

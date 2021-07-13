@@ -10,6 +10,9 @@ export interface IPrologExpression {
 	// TODO:
 	// equals(otherExpr: IPrologExpression): boolean;
 
+	IsGround: boolean;
+	// IsClauseOrGoal: boolean; // A hack to avoid a circular dependency
+
 	// /* HashSet<PrologVariable> */ FindBindingVariables(): PrologVariable[];     // Finds only binding variables; ignores non-binding variables such as _
 	FindBindingVariables(): Set<PrologVariable>; // Finds only binding variables; ignores non-binding variables such as _
 	/* List<PrologVariable> */ GetListOfBindingVariables(): PrologVariable[]; // As above, but this returns a list, which is ordered, and contains no duplicates
@@ -17,6 +20,5 @@ export interface IPrologExpression {
 	ApplySubstitution(substitution: PrologSubstitution): IPrologExpression;
 	Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined;
 	// bool IsGround { get; }  // True iff the expression contains no variables.
-	IsGround: boolean;
 	EvaluateToNumber(): IPrologNumber | undefined;
 }

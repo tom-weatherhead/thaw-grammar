@@ -65,12 +65,42 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 	// 	return true;
 	// }
 
-	public ApplySubstitution(substitution: PrologSubstitution): IPrologExpression {
+	public ApplySubstitution(substitution: PrologSubstitution): PrologGoal {
 		return new PrologGoal(
 			this.gs,
 			this.Name,
-			this.ExpressionList.map((expr: IPrologExpression) => expr.ApplySubstitution(substitution))
+			this.ExpressionList.map((expr: IPrologExpression) =>
+				expr.ApplySubstitution(substitution)
+			)
 		);
+	}
+
+	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
+		const otherNameExpression = otherExpr as PrologGoal;
+
+		if (
+			this.constructor.name !== otherExpr.constructor.name ||
+			this.Name !== otherNameExpression.Name ||
+			this.ExpressionList.length !== otherNameExpression.ExpressionList.length
+		) {
+			return undefined;
+		}
+
+		let substitution = new PrologSubstitution();
+
+		for (let i = 0; i < this.ExpressionList.length; ++i) {
+			const newExpr1 = this.ExpressionList[i].ApplySubstitution(substitution);
+			const newExpr2 = otherNameExpression.ExpressionList[i].ApplySubstitution(substitution);
+			const substitution2 = newExpr1.Unify(newExpr2);
+
+			if (typeof substitution2 === 'undefined') {
+				return undefined;
+			}
+
+			substitution = substitution.Compose(substitution2);
+		}
+
+		return substitution;
 	}
 
 	public EvaluateToNumber(): IPrologNumber | undefined {

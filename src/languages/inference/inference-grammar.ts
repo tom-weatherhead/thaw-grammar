@@ -47,7 +47,11 @@ export class InferenceGrammar extends GrammarBase {
 		return Symbol.UndefinedSymbol;
 	}
 
-	public pushTokenOntoSemanticStack(semanticStack: Stack<any>, tokenAsSymbol: number, token: Token): void {}
+	public pushTokenOntoSemanticStack(
+		semanticStack: Stack<any>,
+		tokenAsSymbol: number,
+		token: Token
+	): void {}
 }
 
 // export class InferenceGrammar extends GrammarBase {

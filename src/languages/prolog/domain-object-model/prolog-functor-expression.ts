@@ -9,6 +9,7 @@ import { PrologFloatLiteral } from './prolog-float-literal';
 import { PrologIntegerLiteral } from './prolog-integer-literal';
 import { PrologNameExpression } from './prolog-name-expression';
 import { PrologSubstitution } from './prolog-substitution';
+import { PrologVariable } from './prolog-variable';
 
 export function isPrologFunctorExpression(obj: unknown): obj is PrologFunctorExpression {
 	// const fe = obj as PrologFunctorExpression;
@@ -21,8 +22,7 @@ export function isPrologFunctorExpression(obj: unknown): obj is PrologFunctorExp
 	return obj instanceof PrologFunctorExpression;
 }
 
-export class PrologFunctorExpression extends PrologNameExpression {
-	// implements IPrologExpression
+export class PrologFunctorExpression extends PrologNameExpression implements IPrologExpression {
 	constructor(gsParam: LanguageSelector, functor: string, expressionList: IPrologExpression[]) {
 		super(gsParam, functor, expressionList);
 	}
@@ -75,7 +75,9 @@ export class PrologFunctorExpression extends PrologNameExpression {
 			} else if (this.Name === 'consSeq') {
 				// ThAW 2014/03/28 : I added the brackets here because without them, ?- X = [(1, 2), (3, 4)], print(X). yielded [1, 2, 3, 4],
 				// which was misleading.
-				return `(${this.ExpressionList[0]}, ${this.SequenceToString(this.ExpressionList[1])})`;
+				return `(${this.ExpressionList[0]}, ${this.SequenceToString(
+					this.ExpressionList[1]
+				)})`;
 			}
 		}
 
@@ -110,8 +112,51 @@ export class PrologFunctorExpression extends PrologNameExpression {
 		return new PrologFunctorExpression(
 			this.gs,
 			this.Name,
-			this.ExpressionList.map((expr: IPrologExpression) => expr.ApplySubstitution(substitution))
+			this.ExpressionList.map((expr: IPrologExpression) =>
+				expr.ApplySubstitution(substitution)
+			)
 		);
+	}
+
+	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
+		// if (otherExpr.constructor.name === PrologVariable.name) {
+		if (otherExpr instanceof PrologVariable) {
+			return otherExpr.Unify(this);
+		}
+
+		// if (!GetType().Equals(otherExpr.GetType()))
+		// {
+		//     // A PrologFunctorExpression can unify with a PrologFunctorExpression;
+		//     // a PrologGoal can unify with a PrologGoal,
+		//     // but a PrologFunctorExpression cannot unify with a PrologGoal.
+		//     return null;
+		// }
+
+		const otherNameExpression = otherExpr as PrologFunctorExpression;
+
+		if (
+			this.constructor.name !== otherExpr.constructor.name ||
+			this.Name !== otherNameExpression.Name ||
+			this.ExpressionList.length !== otherNameExpression.ExpressionList.length
+		) {
+			return undefined;
+		}
+
+		let substitution = new PrologSubstitution();
+
+		for (let i = 0; i < this.ExpressionList.length; ++i) {
+			const newExpr1 = this.ExpressionList[i].ApplySubstitution(substitution);
+			const newExpr2 = otherNameExpression.ExpressionList[i].ApplySubstitution(substitution);
+			const substitution2 = newExpr1.Unify(newExpr2);
+
+			if (typeof substitution2 === 'undefined') {
+				return undefined;
+			}
+
+			substitution = substitution.Compose(substitution2);
+		}
+
+		return substitution;
 	}
 
 	private static EvaluateUnaryOperatorToNumber(

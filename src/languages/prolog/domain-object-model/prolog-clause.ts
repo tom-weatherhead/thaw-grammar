@@ -2,14 +2,14 @@
 
 import { Set } from 'thaw-common-utilities.ts';
 
-import { IPrologExpression } from './iprolog-expression';
+// import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
 import { PrologGlobalInfo } from './prolog-global-info';
 import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 
-export class PrologClause implements IPrologExpression {
+export class PrologClause /* implements IPrologExpression */ {
 	public readonly Lhs: PrologGoal;
 	public readonly Rhs: PrologGoal[];
 
@@ -65,13 +65,18 @@ export class PrologClause implements IPrologExpression {
 	}
 
 	public ContainsVariable(v: PrologVariable): boolean {
-		return this.ContainsVariable(v) || this.Rhs.some((goal: PrologGoal) => goal.ContainsVariable(v));
+		return (
+			this.ContainsVariable(v) ||
+			this.Rhs.some((goal: PrologGoal) => goal.ContainsVariable(v))
+		);
 	}
 
-	public ApplySubstitution(substitution: PrologSubstitution): IPrologExpression {
+	public ApplySubstitution(substitution: PrologSubstitution): PrologClause {
 		return new PrologClause(
 			this.Lhs.ApplySubstitution(substitution) as PrologGoal,
-			this.Rhs.map((subgoal: PrologGoal) => subgoal.ApplySubstitution(substitution) as PrologGoal)
+			this.Rhs.map(
+				(subgoal: PrologGoal) => subgoal.ApplySubstitution(substitution) as PrologGoal
+			)
 		);
 	}
 
@@ -116,7 +121,7 @@ export class PrologClause implements IPrologExpression {
 		return this.ApplySubstitution(substitution) as PrologClause;
 	}
 
-	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
+	public Unify(otherExpr: PrologClause): PrologSubstitution | undefined {
 		const otherClause = otherExpr as PrologClause;
 
 		if (typeof otherClause === 'undefined' || this.Rhs.length !== otherClause.Rhs.length) {

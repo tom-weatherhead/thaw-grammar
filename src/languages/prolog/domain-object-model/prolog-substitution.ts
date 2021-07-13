@@ -1,5 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-substitution.ts
 
+// 2021-07-13: Warning: Circular dependency:
+// prolog-substitution.js -> prolog-variable.js -> prolog-clause.js -> prolog-substitution.js
+
 import { Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';

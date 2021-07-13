@@ -68,7 +68,8 @@ export class Production implements IEqualityComparable {
 
 	public ContainsSymbol(symbol: Symbol): boolean {
 		return (
-			this.lhs === symbol || this.rhs.find((s: ProductionRhsElementType) => s === symbol) !== undefined
+			this.lhs === symbol ||
+			this.rhs.find((s: ProductionRhsElementType) => s === symbol) !== undefined
 		);
 	}
 }
