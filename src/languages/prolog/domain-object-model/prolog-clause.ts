@@ -149,21 +149,21 @@ export class PrologClause /* implements IPrologExpression */ {
 		return substitution;
 	}
 
-	public IsIsomorphicTo(
-		otherClause: PrologClause,
-		variablesToAvoid: Set<PrologVariable> | undefined,
-		globalInfo: PrologGlobalInfo
-	): boolean {
-		if (typeof variablesToAvoid === 'undefined') {
-			variablesToAvoid = this.FindBindingVariables();
-		}
+	// public IsIsomorphicTo(
+	// 	otherClause: PrologClause,
+	// 	variablesToAvoid: Set<PrologVariable> | undefined,
+	// 	globalInfo: PrologGlobalInfo
+	// ): boolean {
+	// 	if (typeof variablesToAvoid === 'undefined') {
+	// 		variablesToAvoid = this.FindBindingVariables();
+	// 	}
 
-		otherClause = otherClause.RenameVariables(variablesToAvoid, globalInfo);
+	// 	otherClause = otherClause.RenameVariables(variablesToAvoid, globalInfo);
 
-		const unifier = this.Unify(otherClause);
+	// 	const unifier = this.Unify(otherClause);
 
-		return typeof unifier !== 'undefined' && unifier.IsOneToOne;
-	}
+	// 	return typeof unifier !== 'undefined' && unifier.IsOneToOne;
+	// }
 
 	public get IsGround(): boolean {
 		return this.Lhs.IsGround && this.Rhs.every((goal: PrologGoal) => goal.IsGround);

@@ -1,22 +1,28 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-substitution.ts
 
 // 2021-07-13: Warning: Circular dependency:
-// prolog-substitution.js -> prolog-variable.js -> prolog-clause.js -> prolog-substitution.js
+// prolog-substitution.js -> prolog-variable.js -> prolog-substitution.js
 
 import { Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';
-import { PrologVariable } from './prolog-variable';
+// import { PrologVariable } from './prolog-variable';
 
 export class PrologSubstitution {
 	public readonly SubstitutionList = new Map<string, IPrologExpression>();
 
 	constructor(
-		v: PrologVariable | undefined = undefined,
+		v: string | undefined = undefined,
 		expr: IPrologExpression | undefined = undefined // To conveniently make a substitution with a single entry.
 	) {
 		if (typeof v !== 'undefined' && typeof expr !== 'undefined') {
-			this.SubstitutionList.set(v.Name, expr);
+			if (v === '') {
+				throw new Error(
+					'PrologSubstitution constructor: The variable name is the empty string.'
+				);
+			}
+
+			this.SubstitutionList.set(v, expr);
 		} else if (typeof v !== 'undefined' || typeof expr !== 'undefined') {
 			throw new Error(
 				'PrologSubstitution constructor: One of the two args is defined; the other is undefined.'
@@ -69,18 +75,20 @@ export class PrologSubstitution {
 		}
 
 		// 2) Remove identities.
-		const varsToRemove: PrologVariable[] = [];
+		const varsToRemove: string[] = [];
 
 		for (const key of newSub.SubstitutionList.keys()) {
-			const v = new PrologVariable(key);
+			// const v = new PrologVariable(key);
+			const value = newSub.SubstitutionList.get(key);
 
-			if (v.equals(newSub.SubstitutionList.get(key))) {
-				varsToRemove.push(new PrologVariable(key));
+			// if (v.equals(newSub.SubstitutionList.get(key))) {
+			if (typeof value === 'string' && value === key) {
+				varsToRemove.push(key);
 			}
 		}
 
 		for (const v of varsToRemove) {
-			newSub.SubstitutionList.delete(v.Name);
+			newSub.SubstitutionList.delete(v);
 		}
 
 		// 3) Remove duplicate variables; i.e. add substitutions from keys in otherSub that are not keys in the "this" Substitution.
@@ -99,14 +107,23 @@ export class PrologSubstitution {
 
 		// #if SUBSTITUTION_COMPOSITION_VERIFICATION
 		// According to Kamin, we should ensure that no member of newSub.SubstitutionList.Keys appears in newSub.SubstitutionList.Values .
-		const variablesInValues = new Set<PrologVariable>();
+		const variablesInValues = new Set<string>();
 
 		for (const value of newSub.SubstitutionList.values()) {
-			variablesInValues.unionInPlace(value.FindBindingVariables());
+			// variablesInValues.unionInPlace(value.FindBindingVariables());
+
+			const bindingVariables = value.FindBindingVariables();
+
+			for (const bv of bindingVariables) {
+				variablesInValues.add(bv.Name);
+			}
+
+			// variablesInValues.unionInPlace(bindingVariables);
 		}
 
 		for (const key of newSub.SubstitutionList.keys()) {
-			if (variablesInValues.contains(new PrologVariable(key))) {
+			// if (variablesInValues.contains(new PrologVariable(key))) {
+			if (variablesInValues.contains(key)) {
 				// #if CONSOLE_WRITELINE
 				// console.log(
 				// 	'PrologSubstitution.Compose() : Unacceptable substitution; returning null.'
@@ -122,41 +139,41 @@ export class PrologSubstitution {
 		return newSub;
 	}
 
-	public ContainsOnlyVariables(): boolean {
-		return Array.from(this.SubstitutionList.values()).every(
-			(v: IPrologExpression) => v.constructor.name === PrologVariable.name
-		);
-	}
+	// public ContainsOnlyVariables(): boolean {
+	// 	return Array.from(this.SubstitutionList.values()).every(
+	// 		(v: IPrologExpression) => v.constructor.name === PrologVariable.name
+	// 	);
+	// }
 
-	public FindBindingVariables(): Set<PrologVariable> {
-		const result = new Set<PrologVariable>();
+	// public FindBindingVariables(): Set<PrologVariable> {
+	// 	const result = new Set<PrologVariable>();
 
-		for (const key of this.SubstitutionList.keys()) {
-			result.add(new PrologVariable(key));
+	// 	for (const key of this.SubstitutionList.keys()) {
+	// 		result.add(new PrologVariable(key));
 
-			const v = this.SubstitutionList.get(key);
+	// 		const v = this.SubstitutionList.get(key);
 
-			if (typeof v !== 'undefined') {
-				result.unionInPlace(v.FindBindingVariables());
-			}
-		}
+	// 		if (typeof v !== 'undefined') {
+	// 			result.unionInPlace(v.FindBindingVariables());
+	// 		}
+	// 	}
 
-		return result;
-	}
+	// 	return result;
+	// }
 
-	public get IsOneToOne(): boolean {
-		const values: PrologVariable[] = [];
+	// public get IsOneToOne(): boolean {
+	// 	const values: PrologVariable[] = [];
 
-		for (const value of this.SubstitutionList.values()) {
-			const vv = value as PrologVariable;
+	// 	for (const value of this.SubstitutionList.values()) {
+	// 		const vv = value as PrologVariable;
 
-			if (typeof vv === 'undefined') {
-				return false;
-			}
+	// 		if (typeof vv === 'undefined') {
+	// 			return false;
+	// 		}
 
-			values.push(vv);
-		}
+	// 		values.push(vv);
+	// 	}
 
-		return values.length === Array.from(this.SubstitutionList.keys()).length;
-	}
+	// 	return values.length === Array.from(this.SubstitutionList.keys()).length;
+	// }
 }

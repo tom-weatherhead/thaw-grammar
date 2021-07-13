@@ -113,7 +113,7 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 			// This is the "occurs" check.
 			return undefined; // This PrologVariable and the IPrologExpression are not unifiable.
 		} else {
-			return new PrologSubstitution(this, otherExpr);
+			return new PrologSubstitution(this.Name, otherExpr);
 		}
 	}
 

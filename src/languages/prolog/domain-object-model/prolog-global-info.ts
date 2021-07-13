@@ -23,7 +23,7 @@ import { PrologModule } from './prolog-module';
 import { PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';
-import { createGoalFromFunctorExpression } from '../utilities';
+import { createGoalFromFunctorExpression, findBindingVariablesInSubstitution } from '../utilities';
 
 enum SolutionCollectionMode {
 	None,
@@ -1549,7 +1549,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 					} else if (goal.ExpressionList[2] instanceof PrologVariable) {
 						const v = goal.ExpressionList[2] as PrologVariable;
 						const addSubstitution = new PrologSubstitution(
-							v,
+							v.Name,
 							new PrologIntegerLiteral(
 								this.doIntegerArithmetic(goal.Name, n1.Value, n2.Value)
 							)
@@ -1674,13 +1674,13 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 							listOfCurrentModules
 						);
 					} else if (e0 instanceof PrologVariable) {
+						// We can say e0.Name because we already know that
+						// e0 instanceof PrologVariable is true.
 						return this.ProveGoalList(
 							goalList,
 							cutDetectorList,
 							nextGoalNum,
-							oldSubstitution.Compose(
-								new PrologSubstitution(e0 as PrologVariable, n1)
-							),
+							oldSubstitution.Compose(new PrologSubstitution(e0.Name, n1)),
 							parentVariablesToAvoid,
 							variablesInQuery,
 							listOfCurrentModules
@@ -1820,7 +1820,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
 			const addSubstitution = new PrologSubstitution(
-				v1,
+				v1.Name,
 				new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n2.Value, n0.Value))
 			);
 
@@ -1846,7 +1846,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
 			const addSubstitution = new PrologSubstitution(
-				v0,
+				v0.Name,
 				new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n2.Value, n1.Value))
 			);
 
@@ -1872,7 +1872,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
 			const addSubstitution = new PrologSubstitution(
-				v1,
+				v1.Name,
 				new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n0.Value, n2.Value))
 			);
 
@@ -1898,7 +1898,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
 			const addSubstitution = new PrologSubstitution(
-				v0,
+				v0.Name,
 				new PrologIntegerLiteral(this.doIntegerArithmetic('add', n1.Value, n2.Value))
 			);
 
@@ -1988,7 +1988,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		const variablesToAvoid = goal.FindBindingVariables();
 
 		variablesToAvoid.unionInPlace(parentVariablesToAvoid);
-		variablesToAvoid.unionInPlace(oldSubstitution.FindBindingVariables());
+		// variablesToAvoid.unionInPlace(oldSubstitution.FindBindingVariables());
+		variablesToAvoid.unionInPlace(findBindingVariablesInSubstitution(oldSubstitution));
 
 		// console.log(
 		// 	`ProveGoalListUsingModule() : The variables to avoid for goal ${goal} are:`
