@@ -27,19 +27,19 @@ export default {
 			format: 'es',
 			esModule: true,
 			compact: true,
-			globals: { uuid: 'uuid' }
-			// plugins: [nodeResolve(), terser()]
+			globals: { uuid: 'uuid' },
+			plugins: [terser()]
 		},
 		{
 			file: 'dist/thaw-grammar.js',
 			name: 'thaw-grammar',
 			format: 'umd',
 			compact: true,
-			globals: { uuid: 'uuid' }
-			// plugins: [nodeResolve(), terser()]
+			globals: { uuid: 'uuid' },
+			plugins: [terser()]
 		}
 	],
 	context: 'this',
 	external: ['uuid'],
-	plugins: [nodeResolve(), terser()]
+	plugins: [nodeResolve()]
 };

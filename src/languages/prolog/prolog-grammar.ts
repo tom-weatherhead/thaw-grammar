@@ -487,7 +487,7 @@ export class PrologGrammar extends GrammarBase {
 			case '#createGoal':
 				exprList = semanticStack.pop() as IPrologExpression[];
 				str = semanticStack.pop() as string;
-				console.log('#createGoal: Goal name is', str);
+				// console.log('#createGoal: Goal name is', str);
 				semanticStack.push(new PrologGoal(gs, str, exprList));
 				break;
 

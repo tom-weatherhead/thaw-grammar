@@ -1446,7 +1446,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		if (unsubstitutedGoal.isCut) {
 			// The "cut" goal always succeeds.
-			console.log('ProveGoal: Detected a cut.');
+			// console.log('ProveGoal: Detected a cut.');
 
 			// 2014/03/07
 			const cutDetector = cutDetectorList[goalNum];
@@ -2240,7 +2240,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// }
 
 			//Console.WriteLine("Adding clause '{0}' to module '{1}'.", clause, currentModuleName);
-			console.log(`Adding clause '${clause}' to module '${currentModuleName}'.`);
+			// console.log(`Adding clause '${clause}' to module '${currentModuleName}'.`);
 			currentModule.ClauseList.push(clause);
 
 			return PrologGlobalInfo.ClauseAdded;
