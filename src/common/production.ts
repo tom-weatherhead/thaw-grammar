@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/production.ts
 
-// import { IEqualityComparable } from 'thaw-common-utilities.ts';
+import { IEqualityComparable } from 'thaw-common-utilities.ts';
 
 import { Symbol } from './symbol';
 
@@ -8,7 +8,29 @@ import { Symbol } from './symbol';
 
 export type ProductionRhsElementType = Symbol | string;
 
-export class Production /* implements IEqualityComparable */ {
+// A user-defined type guard. See e.g. https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
+
+export function isProduction(obj: unknown): obj is Production {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const aaaargh = obj as any;
+	const lhs = aaaargh.lhs;
+	const rhs = aaaargh.rhs;
+	const num = aaaargh.num;
+
+	return (
+		typeof lhs !== 'undefined' &&
+		typeof lhs === 'number' &&
+		typeof rhs !== 'undefined' &&
+		rhs instanceof Array &&
+		rhs.every(
+			(element: unknown) => typeof element === 'number' || typeof element === 'string'
+		) &&
+		typeof num !== 'undefined' &&
+		typeof num === 'number'
+	);
+}
+
+export class Production implements IEqualityComparable {
 	public lhs: Symbol;
 	public rhs: ProductionRhsElementType[];
 	private readonly num: number;
@@ -34,12 +56,13 @@ export class Production /* implements IEqualityComparable */ {
 		return `${this.num}: ${lhsAsString} -> ${rhsAsString}`;
 	}
 
-	// public equals(other: unknown): boolean {
-	public equals(otherProduction: Production): boolean {
-		// const otherProduction = other as Production;
+	// public equals(otherProduction: Production): boolean {
+	public equals(other: unknown): boolean {
+		const otherProduction = other as Production;
 
 		if (
-			typeof otherProduction === 'undefined' ||
+			// typeof otherProduction === 'undefined' ||
+			!isProduction(other) ||
 			// !(other instanceof Production) ||
 			// otherProduction.constructor.name !== this.constructor.name ||
 			this.lhs !== otherProduction.lhs ||

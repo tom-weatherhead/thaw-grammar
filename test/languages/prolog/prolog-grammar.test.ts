@@ -14,14 +14,17 @@ import {
 	createGrammar,
 	// deepEquals,
 	IPrologExpression,
+	isProduction,
 	LanguageSelector,
+	Production,
 	// PrologFunctor,
 	PrologFunctorExpression,
 	PrologGlobalInfo,
 	PrologGoal,
 	PrologIntegerLiteral,
 	// PrologPredicate,
-	PrologVariable
+	PrologVariable,
+	Symbol
 } from '../../..';
 
 // test('deepEquals test', () => {
@@ -173,3 +176,28 @@ test('PrologGlobalInfo instanceof test', () => {
 	expect(variable instanceof PrologIntegerLiteral).toBeFalsy();
 	expect(variable instanceof PrologVariable).toBeTruthy();
 });
+
+/* eslint-disable @typescript-eslint/ban-types */
+
+test('Prolog type guard test', () => {
+	const p = new Production(
+		Symbol.nonterminalStart,
+		[Symbol.nonterminalExpression, Symbol.terminalEOF, '#action'],
+		1337
+	);
+
+	console.log('Prolog type guard test: typeof p.lhs is:', typeof p.lhs); // number
+	console.log('Prolog type guard test: typeof p.rhs is:', typeof p.rhs); // object
+	console.log('Prolog type guard test: p.rhs instanceof Array is:', p.rhs instanceof Array); // true
+	console.log('Prolog type guard test: typeof p.rhs.length is:', typeof p.rhs.length);
+	console.log('Prolog type guard test: typeof p.rhs[0] is:', typeof p.rhs[0]); // number
+	console.log('Prolog type guard test: typeof p.rhs[1] is:', typeof p.rhs[1]); // number
+	console.log('Prolog type guard test: typeof p.rhs[2] is:', typeof p.rhs[2]); // string
+	console.log('Prolog type guard test: typeof p.num is:', typeof p.num); // number
+
+	expect(p).toBeTruthy();
+	expect(isProduction(p)).toBeTruthy();
+	expect(p.equals(p)).toBeTruthy();
+});
+
+/* eslint-enable @typescript-eslint/ban-types */
