@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/production.ts
 
-import { IEqualityComparable } from 'thaw-common-utilities.ts';
+// import { IEqualityComparable } from 'thaw-common-utilities.ts';
 
 import { Symbol } from './symbol';
 
@@ -8,7 +8,7 @@ import { Symbol } from './symbol';
 
 export type ProductionRhsElementType = Symbol | string;
 
-export class Production implements IEqualityComparable {
+export class Production /* implements IEqualityComparable */ {
 	public lhs: Symbol;
 	public rhs: ProductionRhsElementType[];
 	private readonly num: number;
@@ -34,12 +34,14 @@ export class Production implements IEqualityComparable {
 		return `${this.num}: ${lhsAsString} -> ${rhsAsString}`;
 	}
 
-	public equals(other: unknown): boolean {
-		const otherProduction = other as Production;
+	// public equals(other: unknown): boolean {
+	public equals(otherProduction: Production): boolean {
+		// const otherProduction = other as Production;
 
 		if (
 			typeof otherProduction === 'undefined' ||
-			!(other instanceof Production) ||
+			// !(other instanceof Production) ||
+			// otherProduction.constructor.name !== this.constructor.name ||
 			this.lhs !== otherProduction.lhs ||
 			this.rhs.length !== otherProduction.rhs.length
 		) {
