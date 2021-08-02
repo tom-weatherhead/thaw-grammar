@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/exceptions/evaluation-exception.ts
 
-'use strict';
-
 import { ExceptionBase } from './exception-base';
 
 export class EvaluationException extends ExceptionBase {

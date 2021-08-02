@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/variable.ts
 
-'use strict';
-
 import { ArgumentNullException } from '../exceptions/argument-null-exception';
 import { EvaluationException } from '../exceptions/evaluation-exception';
 // import { KeyNotFoundException } from '../exceptions/key-not-found-exception';

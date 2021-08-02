@@ -62,7 +62,7 @@ import { PrimOp } from './domain-object-model/primitive-operator';
 export class SchemeGrammar extends GrammarBase {
 	// The Scheme grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
 
-	constructor() {
+	constructor(isSASL = false) {
 		super(Symbol.nonterminalStart);
 
 		// Start with the LISP grammar.
@@ -93,9 +93,8 @@ export class SchemeGrammar extends GrammarBase {
 		this.terminals.push(Symbol.terminalRightBracket);
 		// this.terminals.push(Symbol.terminalDefine); // Used for LISP; removed for Scheme.
 		this.terminals.push(Symbol.terminalIf);
-		this.terminals.push(Symbol.terminalWhile);
+
 		this.terminals.push(Symbol.terminalSet);
-		this.terminals.push(Symbol.terminalBegin);
 		this.terminals.push(Symbol.terminalPlus);
 		this.terminals.push(Symbol.terminalMinus);
 		this.terminals.push(Symbol.terminalMultiply);
@@ -103,7 +102,6 @@ export class SchemeGrammar extends GrammarBase {
 		this.terminals.push(Symbol.terminalEquals);
 		this.terminals.push(Symbol.terminalLessThan);
 		this.terminals.push(Symbol.terminalGreaterThan);
-		this.terminals.push(Symbol.terminalPrint);
 		this.terminals.push(Symbol.terminalID);
 		this.terminals.push(Symbol.terminalIntegerLiteral);
 		// this.terminals.push(Symbol.terminalFloatLiteral);
@@ -125,9 +123,6 @@ export class SchemeGrammar extends GrammarBase {
 		this.terminals.push(Symbol.terminalLetStar);
 		this.terminals.push(Symbol.terminalLetRec);
 		this.terminals.push(Symbol.terminalQuoteKeyword);
-		// this.terminals.push(Symbol.terminalRplaca);
-		// this.terminals.push(Symbol.terminalRplacd);
-		// this.terminals.push(Symbol.terminalDefineMacro);
 		// this.terminals.push(Symbol.terminalStringLiteral);
 		// this.terminals.push(Symbol.terminalToString);
 		// this.terminals.push(Symbol.terminalListToString);
@@ -151,6 +146,15 @@ export class SchemeGrammar extends GrammarBase {
 
 		this.terminals.push(Symbol.terminalEOF);
 
+		if (!isSASL) {
+			this.terminals.push(Symbol.terminalWhile);
+			this.terminals.push(Symbol.terminalBegin);
+			this.terminals.push(Symbol.terminalPrint);
+			// this.terminals.push(Symbol.terminalRplaca);
+			// this.terminals.push(Symbol.terminalRplacd);
+			// this.terminals.push(Symbol.terminalDefineMacro);
+		}
+
 		this.nonTerminals.push(Symbol.nonterminalStart);
 		this.nonTerminals.push(Symbol.nonterminalInput);
 		this.nonTerminals.push(Symbol.nonterminalExpression);
@@ -170,13 +174,16 @@ export class SchemeGrammar extends GrammarBase {
 		this.nonTerminals.push(Symbol.nonterminalSExpressionListTail);
 		this.nonTerminals.push(Symbol.nonterminalSymbol);
 		this.nonTerminals.push(Symbol.nonterminalExprPairList);
-		// this.nonTerminals.push(Symbol.nonterminalMacroDef);
 		this.nonTerminals.push(Symbol.nonterminalLetKeyword);
 		this.nonTerminals.push(Symbol.nonterminalVarExprList);
 
 		// this.nonTerminals.push(Symbol.nonterminalBracketedEntity);
 		// this.nonTerminals.push(Symbol.nonterminalBracketedInput);
 		// this.nonTerminals.push(Symbol.nonterminalUnbracketedInput);
+
+		// if (!isSASL) {
+		// 	this.nonTerminals.push(Symbol.nonterminalMacroDef);
+		// }
 
 		// This initial production needed to be added: Start -> Input EOF
 		this.productions.push(
@@ -320,35 +327,6 @@ export class SchemeGrammar extends GrammarBase {
 			)
 		);
 
-		// BracketedExpression -> if Expression Expression Expression
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
-				[
-					Symbol.terminalIf,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
-					'#if'
-				],
-				15
-			)
-		);
-
-		// BracketedExpression -> while Expression Expression
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
-				[
-					Symbol.terminalWhile,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
-					'#while'
-				],
-				16
-			)
-		);
-
 		// BracketedExpression -> set Variable Expression
 		this.productions.push(
 			new Production(
@@ -360,20 +338,6 @@ export class SchemeGrammar extends GrammarBase {
 					'#set'
 				],
 				17
-			)
-		);
-
-		// BracketedExpression -> begin Expression ExpressionList
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
-				[
-					Symbol.terminalBegin,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionList,
-					'#begin'
-				],
-				18
 			)
 		);
 
@@ -451,11 +415,6 @@ export class SchemeGrammar extends GrammarBase {
 		// Value-Op -> >
 		this.productions.push(
 			new Production(Symbol.nonterminalValueOp, [Symbol.terminalGreaterThan], 31)
-		);
-
-		// Value-Op -> print
-		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalPrint], 32)
 		);
 
 		// Function -> Name
@@ -601,48 +560,6 @@ export class SchemeGrammar extends GrammarBase {
 			new Production(Symbol.nonterminalSymbol, [Symbol.terminalID, '#symbol'], 51)
 		);
 
-		// BracketedExpression -> cond ( Expression Expression ) ExprPairList
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
-				[
-					Symbol.terminalCond,
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
-					Symbol.terminalRightBracket,
-					Symbol.nonterminalExprPairList,
-					'#condUsage'
-				],
-				52
-			)
-		);
-
-		// ExprPairList -> ( Expression Expression ) ExprPairList
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExprPairList,
-				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
-					Symbol.terminalRightBracket,
-					Symbol.nonterminalExprPairList,
-					'#exprPairList'
-				],
-				53
-			)
-		);
-
-		// ExprPairList -> Lambda
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalExprPairList,
-				[Symbol.Lambda, '#emptyExprPairList'],
-				54
-			)
-		);
-
 		// Value-Op -> list
 		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalList], 55));
 
@@ -750,8 +667,6 @@ export class SchemeGrammar extends GrammarBase {
 		// this.productions.push(new Production(Symbol.nonterminalValue, [Symbol.terminalStringLiteral], 75)); // Note: Number is out of order
 
 		// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalThrow], 34));
-		// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalRplaca], 56));
-		// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalRplacd], 57));
 		// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalToString], 76));
 		// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalListToString], 77));
 		// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalStringToList], 78));
@@ -765,37 +680,6 @@ export class SchemeGrammar extends GrammarBase {
 		// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalAtan2], 89));
 		// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalStringLessThan], 91));
 		// **** END : Ignore for now ****
-
-		// Old
-		// this.productions.push(new Production(Symbol.nonterminalInput, [Symbol.nonterminalMacroDef], 58));
-		// this.productions.push(new Production(
-		// 	Symbol.nonterminalMacroDef,
-		// 	[
-		// 		Symbol.terminalLeftBracket,
-		// 		Symbol.terminalDefineMacro,
-		// 		Symbol.nonterminalFunction,
-		// 		Symbol.nonterminalArgList,
-		// 		Symbol.nonterminalExpression,
-		// 		Symbol.terminalRightBracket,
-		// 		'#macroDefinition'
-		// 	],
-		// 	59));
-
-		// New
-		// BracketedInput -> MacroDef
-		// this.productions.push(new Production(Symbol.nonterminalBracketedInput,
-		// 	[
-		// 		Symbol.nonterminalMacroDef
-		// 	], n));
-		// this.productions.push(new Production(
-		// 	Symbol.nonterminalMacroDef,
-		// 	[
-		// 		Symbol.terminalDefineMacro,
-		// 		Symbol.nonterminalFunction,
-		// 		Symbol.nonterminalArgList,
-		// 		Symbol.nonterminalExpression,
-		// 		'#macroDefinition'
-		// 	], n));
 
 		// Next production number is 56.
 
@@ -880,6 +764,132 @@ export class SchemeGrammar extends GrammarBase {
 				107
 			)
 		);
+
+		if (!isSASL) {
+			// BracketedExpression -> if Expression Expression Expression
+			this.productions.push(
+				new Production(
+					Symbol.nonterminalBracketedExpression,
+					[
+						Symbol.terminalIf,
+						Symbol.nonterminalExpression,
+						Symbol.nonterminalExpression,
+						Symbol.nonterminalExpression,
+						'#if'
+					],
+					15
+				)
+			);
+
+			// BracketedExpression -> while Expression Expression
+			this.productions.push(
+				new Production(
+					Symbol.nonterminalBracketedExpression,
+					[
+						Symbol.terminalWhile,
+						Symbol.nonterminalExpression,
+						Symbol.nonterminalExpression,
+						'#while'
+					],
+					16
+				)
+			);
+
+			// BracketedExpression -> begin Expression ExpressionList
+			this.productions.push(
+				new Production(
+					Symbol.nonterminalBracketedExpression,
+					[
+						Symbol.terminalBegin,
+						Symbol.nonterminalExpression,
+						Symbol.nonterminalExpressionList,
+						'#begin'
+					],
+					18
+				)
+			);
+
+			// Value-Op -> print
+			this.productions.push(
+				new Production(Symbol.nonterminalValueOp, [Symbol.terminalPrint], 32)
+			);
+
+			// BracketedExpression -> cond ( Expression Expression ) ExprPairList
+			this.productions.push(
+				new Production(
+					Symbol.nonterminalBracketedExpression,
+					[
+						Symbol.terminalCond,
+						Symbol.terminalLeftBracket,
+						Symbol.nonterminalExpression,
+						Symbol.nonterminalExpression,
+						Symbol.terminalRightBracket,
+						Symbol.nonterminalExprPairList,
+						'#condUsage'
+					],
+					52
+				)
+			);
+
+			// ExprPairList -> ( Expression Expression ) ExprPairList
+			this.productions.push(
+				new Production(
+					Symbol.nonterminalExprPairList,
+					[
+						Symbol.terminalLeftBracket,
+						Symbol.nonterminalExpression,
+						Symbol.nonterminalExpression,
+						Symbol.terminalRightBracket,
+						Symbol.nonterminalExprPairList,
+						'#exprPairList'
+					],
+					53
+				)
+			);
+
+			// ExprPairList -> Lambda
+			this.productions.push(
+				new Production(
+					Symbol.nonterminalExprPairList,
+					[Symbol.Lambda, '#emptyExprPairList'],
+					54
+				)
+			);
+
+			// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalRplaca], 56));
+			// this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalRplacd], 57));
+
+			// Old
+			// this.productions.push(new Production(Symbol.nonterminalInput, [Symbol.nonterminalMacroDef], 58));
+			// this.productions.push(new Production(
+			// 	Symbol.nonterminalMacroDef,
+			// 	[
+			// 		Symbol.terminalLeftBracket,
+			// 		Symbol.terminalDefineMacro,
+			// 		Symbol.nonterminalFunction,
+			// 		Symbol.nonterminalArgList,
+			// 		Symbol.nonterminalExpression,
+			// 		Symbol.terminalRightBracket,
+			// 		'#macroDefinition'
+			// 	],
+			// 	59));
+
+			// New
+			// BracketedInput -> MacroDef
+			// this.productions.push(new Production(Symbol.nonterminalBracketedInput,
+			// 	[
+			// 		Symbol.nonterminalMacroDef
+			// 	], n));
+			// this.productions.push(new Production(
+			// 	Symbol.nonterminalMacroDef,
+			// 	[
+			// 		Symbol.terminalDefineMacro,
+			// 		Symbol.nonterminalFunction,
+			// 		Symbol.nonterminalArgList,
+			// 		Symbol.nonterminalExpression,
+			// 		'#macroDefinition'
+			// 	], n));
+		}
 	}
 
 	public get languageName(): string {

@@ -13,9 +13,12 @@ export { NotImplementedException } from './common/exceptions/not-implemented-exc
 export { createGrammar } from './common/grammar-factory';
 export { GrammarBase } from './common/grammar-base';
 
+export { EnvironmentFrame } from './common/domain-object-model/environment-frame';
 export { IExpression } from './common/domain-object-model/iexpression';
+export { GlobalInfoBase } from './common/domain-object-model/global-info-base';
 export { IGlobalInfo } from './common/domain-object-model/iglobal-info';
 // export { IGlobalInfoOps } from './common/domain-object-model/iglobal-info-ops';
+export { Variable } from './common/domain-object-model/variable';
 
 export { IGrammar } from './common/igrammar';
 export { ParserSelector } from './common/parser-selectors';

@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/scheme-global-info.ts
 
-'use strict';
-
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 import { ArgumentException } from '../../../common/exceptions/argument-exception';

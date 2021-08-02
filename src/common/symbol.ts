@@ -89,6 +89,11 @@ export enum Symbol {
 	terminalInferPred,
 	terminalNotSymbol,
 	terminalIs,
+
+	// EcstaSKI terminals
+	terminalFn,
+	terminalThickArrow,
+
 	// terminal,
 
 	terminalEOF,
@@ -155,5 +160,9 @@ export enum Symbol {
 	nonterminalListContentsTail,
 	nonterminalFunctorExpression,
 	nonterminalTailOfGoalOrFunctorExpression,
-	nonterminalExpressionListTail
+	nonterminalExpressionListTail,
+
+	// EcstaSKI non-terminals
+	nonterminalLambdaExpression,
+	nonterminalLetStatement
 }

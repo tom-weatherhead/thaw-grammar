@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/grammar-factory.ts
 
-'use strict';
-
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import { APLGrammar } from '../languages/apl/apl-grammar';

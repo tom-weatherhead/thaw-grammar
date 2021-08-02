@@ -14,7 +14,7 @@ import {
 	createGrammar,
 	// deepEquals,
 	IPrologExpression,
-	isProduction,
+	// isProduction,
 	LanguageSelector,
 	Production,
 	// PrologFunctor,
@@ -186,17 +186,17 @@ test('Prolog type guard test', () => {
 		1337
 	);
 
-	console.log('Prolog type guard test: typeof p.lhs is:', typeof p.lhs); // number
-	console.log('Prolog type guard test: typeof p.rhs is:', typeof p.rhs); // object
-	console.log('Prolog type guard test: p.rhs instanceof Array is:', p.rhs instanceof Array); // true
-	console.log('Prolog type guard test: typeof p.rhs.length is:', typeof p.rhs.length);
-	console.log('Prolog type guard test: typeof p.rhs[0] is:', typeof p.rhs[0]); // number
-	console.log('Prolog type guard test: typeof p.rhs[1] is:', typeof p.rhs[1]); // number
-	console.log('Prolog type guard test: typeof p.rhs[2] is:', typeof p.rhs[2]); // string
-	console.log('Prolog type guard test: typeof p.num is:', typeof p.num); // number
+	// console.log('Prolog type guard test: typeof p.lhs is:', typeof p.lhs); // number
+	// console.log('Prolog type guard test: typeof p.rhs is:', typeof p.rhs); // object
+	// console.log('Prolog type guard test: p.rhs instanceof Array is:', p.rhs instanceof Array); // true
+	// console.log('Prolog type guard test: typeof p.rhs.length is:', typeof p.rhs.length);
+	// console.log('Prolog type guard test: typeof p.rhs[0] is:', typeof p.rhs[0]); // number
+	// console.log('Prolog type guard test: typeof p.rhs[1] is:', typeof p.rhs[1]); // number
+	// console.log('Prolog type guard test: typeof p.rhs[2] is:', typeof p.rhs[2]); // string
+	// console.log('Prolog type guard test: typeof p.num is:', typeof p.num); // number
 
 	expect(p).toBeTruthy();
-	expect(isProduction(p)).toBeTruthy();
+	// expect(isProduction(p)).toBeTruthy();
 	expect(p.equals(p)).toBeTruthy();
 });
 

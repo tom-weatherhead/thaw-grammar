@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/exceptions/argument-exception.ts
 
-'use strict';
-
 import { ExceptionBase } from './exception-base';
 
 export class ArgumentException extends ExceptionBase {

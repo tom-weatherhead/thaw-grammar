@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/name.ts
 
-'use strict';
-
 import { ArgumentNullException } from '../exceptions/argument-null-exception';
 
 export class Name {

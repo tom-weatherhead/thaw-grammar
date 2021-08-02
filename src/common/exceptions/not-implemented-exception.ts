@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/exceptions/not-implemented-exception.ts
 
-'use strict';
-
 import { ExceptionBase } from './exception-base';
 
 export class NotImplementedException extends ExceptionBase {

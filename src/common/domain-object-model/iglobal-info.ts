@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/iglobal-info.ts
 
-'use strict';
-
 import { EnvironmentFrame } from './environment-frame';
 import { FunctionDefinition } from './function-definition';
 

@@ -138,8 +138,6 @@
 
 // **** END : From the C# version in the Inference project ****
 
-'use strict';
-
 import { Stack } from 'thaw-common-utilities.ts';
 
 import { LexicalState, Token } from 'thaw-lexical-analyzer';

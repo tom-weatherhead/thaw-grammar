@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/imacro-definition.ts
 
-'use strict';
-
 import { EnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';

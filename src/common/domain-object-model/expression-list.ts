@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/expression-list.ts
 
-'use strict';
-
 import { IExpression } from './iexpression';
 
 export class ExpressionList<T> {

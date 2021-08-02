@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/continuation.ts
 
-'use strict';
-
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';

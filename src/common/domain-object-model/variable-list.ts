@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/variable-list.ts
 
-'use strict';
-
 import { Variable } from './variable';
 
 export class VariableList<T> {

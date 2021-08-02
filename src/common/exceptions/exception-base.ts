@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/exceptions/exception-base.ts
 
-'use strict';
-
 export abstract class ExceptionBase {
 	public readonly message: string;
 	public readonly line: number;

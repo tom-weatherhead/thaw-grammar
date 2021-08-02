@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/begin-usage.ts
 
-'use strict';
-
 import { EnvironmentFrame } from './environment-frame';
 import { ExpressionList } from './expression-list';
 import { IExpression } from './iexpression';

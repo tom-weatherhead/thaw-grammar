@@ -1,65 +1,157 @@
 // tom-weatherhead/thaw-grammar/src/languages/sasl/sasl-grammar.ts
 
-'use strict';
-
 import { Stack } from 'thaw-common-utilities.ts';
 
-import {
-	// LexicalState,
-	Token
-} from 'thaw-lexical-analyzer';
+import { LexicalState, Token } from 'thaw-lexical-analyzer';
 
-// import { ExpressionList }  from '../../common/domain-object-model/expression-list';
-// import { IExpression }  from '../../common/domain-object-model/iexpression';
-// import { Name }  from '../../common/domain-object-model/name';
+import { ExpressionList } from '../../common/domain-object-model/expression-list';
+import { IExpression } from '../../common/domain-object-model/iexpression';
+import { Name } from '../../common/domain-object-model/name';
 // import { Variable }  from '../../common/domain-object-model/variable';
-// import { VariableList }  from '../../common/domain-object-model/variable-list';
-
-// import { BeginUsage }  from '../../common/domain-object-model/begin-usage';
-// import { CondUsage }  from '../../common/domain-object-model/cond-usage';
-// import { FunctionDefinition }  from '../../common/domain-object-model/function-definition';
-// import { IfUsage }  from '../../common/domain-object-model/if-usage';
-// import { LetStarUsage }  from '../../common/domain-object-model/let-star-usage';
-// import { LetUsage }  from '../../common/domain-object-model/let-usage';
-// import { OperatorUsage }  from '../../common/domain-object-model/operator-usage';
-// import { SetUsage }  from '../../common/domain-object-model/set-usage';
-// import { WhileUsage }  from '../../common/domain-object-model/while-usage';
+import { VariableList } from '../../common/domain-object-model/variable-list';
 
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
-import { GrammarBase } from '../../common/grammar-base';
 import { ParserSelector } from '../../common/parser-selectors';
-// import { Production }  from '../../common/production';
+import { Production } from '../../common/production';
 import { Symbol } from '../../common/symbol';
 
-export class SASLGrammar extends GrammarBase {
-	// The Scheme grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
+import { ISExpression } from '../../languages/lisp/domain-object-model/isexpression';
+
+import { SchemeGrammar } from '../../languages/scheme/scheme-grammar';
+
+import { SASLEvaluableExpression } from './domain-object-model/evaluable-expression';
+import { SASLLambdaExpression } from './domain-object-model/lambda-expression';
+import { SASLPrimOp } from './domain-object-model/prim-op';
+
+export class SASLGrammar extends SchemeGrammar {
+	// extends SchemeGrammar
+	// The SASL grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
 
 	constructor() {
-		super(Symbol.nonterminalStart);
+		// super(Symbol.nonterminalStart);
+		super(true);
 
+		// this.terminals.remove(Symbol.terminalWhile);
+		// Terminals.Remove(Symbol.T_Begin);
+		// Terminals.Remove(Symbol.T_Print);
+		// Terminals.Remove(Symbol.T_Rplaca);
+		// Terminals.Remove(Symbol.T_Rplacd);
+		// Terminals.Remove(Symbol.T_DefineMacro);
+		// this.nonTerminals.remove(Symbol.nonterminalMacroDef);
+		// this.removeProductionsContainingSymbol(Symbol.terminalWhile);
+		// RemoveProductionsContainingSymbol(Symbol.T_Begin);
+		// RemoveProductionsContainingSymbol(Symbol.T_Print);
+		// RemoveProductionsContainingSymbol(Symbol.T_Set);
+		// RemoveProductionsContainingSymbol(Symbol.T_Rplaca);
+		// RemoveProductionsContainingSymbol(Symbol.T_Rplacd);
+		// RemoveProductionsContainingSymbol(Symbol.T_If);
+		// RemoveProductionsContainingSymbol(Symbol.N_MacroDef);
+		// RemoveProductionsContainingSymbol(Symbol.N_ExprPairList);   // This removes the three productions related to cond.
+
+		this.productions.push(
+			new Production(
+				Symbol.nonterminalInput,
+				[
+					Symbol.terminalLeftBracket,
+					Symbol.terminalSet,
+					Symbol.nonterminalVariable,
+					Symbol.nonterminalExpression,
+					Symbol.terminalRightBracket,
+					'#set'
+				],
+				70
+			)
+		);
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalIf], 71));
+		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalCond], 72));
 		// ...
 	}
 
-	public get languageName(): string {
+	public override get languageName(): string {
 		return 'SASL';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public override get selectorsOfCompatibleParsers(): number[] {
 		return [ParserSelector.LL1];
 	}
 
-	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {}
+	public override executeSemanticAction(semanticStack: Stack<any>, action: string): void {
+		let name: Name;
+		let expression: IExpression<ISExpression>;
 
-	public tokenToSymbol(token: Token): number {
-		// Returns Symbol
-		return Symbol.UndefinedSymbol;
+		switch (action) {
+			case '#evaluableExpression':
+				const expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
+
+				expression = semanticStack.pop() as IExpression<ISExpression>;
+				semanticStack.push(new SASLEvaluableExpression(expression, expressionList));
+				break;
+
+			case '#lambdaExpression':
+				const body = semanticStack.pop() as IExpression<ISExpression>;
+				const argList = semanticStack.pop() as VariableList<ISExpression>;
+
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new SASLLambdaExpression(argList, body, name.line, name.column));
+				break;
+
+			case '#valueOp':
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new SASLPrimOp(name));
+				break;
+
+			default:
+				super.executeSemanticAction(semanticStack, action);
+				break;
+		}
 	}
 
-	public pushTokenOntoSemanticStack(
+	public override tokenToSymbol(token: Token): number {
+		// Returns Symbol
+		const tokenValueAsString = `${token.tokenValue}`;
+
+		switch (token.tokenType) {
+			case LexicalState.tokenIdent:
+				switch (tokenValueAsString) {
+					case 'while':
+					case 'begin':
+					case 'print':
+					case 'rplaca':
+					case 'rplacd':
+					case 'define-macro':
+						return Symbol.terminalID;
+
+					default:
+						break;
+				}
+
+				break;
+
+			default:
+				break;
+		}
+
+		return super.tokenToSymbol(token);
+	}
+
+	public override pushTokenOntoSemanticStack(
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token
-	): void {}
+	): void {
+		const value = token.tokenValue;
+
+		switch (tokenAsSymbol) {
+			case Symbol.terminalIf:
+			case Symbol.terminalCond:
+				semanticStack.push(new Name(value as string, token.line, token.column));
+				break;
+
+			default:
+				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
+				break;
+		}
+	}
 }
