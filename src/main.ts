@@ -25,11 +25,29 @@ export { ParserSelector } from './common/parser-selectors';
 export { Production } from './common/production';
 export { Symbol } from './common/symbol';
 
+// The Chapter 1 language from Kamin
 export { Chapter1GlobalInfo } from './languages/chapter1/domain-object-model/global-info';
-export { ISExpression } from './languages/lisp/domain-object-model/isexpression';
-export { LISPGlobalInfo } from './languages/lisp/domain-object-model/lisp-global-info';
+
+// My (ThAW's) minimal language
 export { MinimalLanguageGlobalInfo } from './languages/minimal/domain-object-model/global-info';
 
+// LISP
+export { ISExpression } from './languages/lisp/domain-object-model/isexpression';
+export { LISPGlobalInfo } from './languages/lisp/domain-object-model/lisp-global-info';
+
+// Scheme
+export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';
+
+// SASL
+export { SASLGlobalInfo } from './languages/sasl/domain-object-model/global-info';
+
+// APL
+
+// CLU
+
+// Smalltalk
+
+// Prolog
 export { IPrologExpression } from './languages/prolog/domain-object-model/iprolog-expression';
 export { PrologClause } from './languages/prolog/domain-object-model/prolog-clause';
 export { PrologFloatLiteral } from './languages/prolog/domain-object-model/prolog-float-literal';
@@ -43,5 +61,3 @@ export { isPrologGoal, PrologGoal } from './languages/prolog/domain-object-model
 export { PrologIntegerLiteral } from './languages/prolog/domain-object-model/prolog-integer-literal';
 // export { PrologPredicate } from './languages/prolog/domain-object-model/prolog-predicate';
 export { PrologVariable } from './languages/prolog/domain-object-model/prolog-variable';
-
-export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';

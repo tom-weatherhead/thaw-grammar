@@ -50,20 +50,20 @@ export class SASLGrammar extends SchemeGrammar {
 		// RemoveProductionsContainingSymbol(Symbol.N_MacroDef);
 		// RemoveProductionsContainingSymbol(Symbol.N_ExprPairList);   // This removes the three productions related to cond.
 
-		this.productions.push(
-			new Production(
-				Symbol.nonterminalInput,
-				[
-					Symbol.terminalLeftBracket,
-					Symbol.terminalSet,
-					Symbol.nonterminalVariable,
-					Symbol.nonterminalExpression,
-					Symbol.terminalRightBracket,
-					'#set'
-				],
-				70
-			)
-		);
+		// this.productions.push(
+		// 	new Production(
+		// 		Symbol.nonterminalInput,
+		// 		[
+		// 			Symbol.terminalLeftBracket,
+		// 			Symbol.terminalSet,
+		// 			Symbol.nonterminalVariable,
+		// 			Symbol.nonterminalExpression,
+		// 			Symbol.terminalRightBracket,
+		// 			'#set'
+		// 		],
+		// 		70
+		// 	)
+		// );
 		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalIf], 71));
 		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalCond], 72));
 		// ...
@@ -93,8 +93,9 @@ export class SASLGrammar extends SchemeGrammar {
 				const body = semanticStack.pop() as IExpression<ISExpression>;
 				const argList = semanticStack.pop() as VariableList<ISExpression>;
 
-				name = semanticStack.pop() as Name;
-				semanticStack.push(new SASLLambdaExpression(argList, body, name.line, name.column));
+				// name = semanticStack.pop() as Name;
+				// semanticStack.push(new SASLLambdaExpression(argList, body, name.line, name.column));
+				semanticStack.push(new SASLLambdaExpression(argList, body));
 				break;
 
 			case '#valueOp':
