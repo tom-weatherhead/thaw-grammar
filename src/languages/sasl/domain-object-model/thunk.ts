@@ -30,6 +30,7 @@ export function isThunk(obj: unknown): obj is Thunk {
 
 export class Thunk extends SExpressionBase {
 	public readonly typename = typenameThunk;
+	private dethunkedValue: ISExpression | undefined;
 
 	constructor(
 		public readonly body: IExpression<ISExpression>,
@@ -41,6 +42,10 @@ export class Thunk extends SExpressionBase {
 	// Do we need to override Equals() and GetHashCode() ?
 
 	public toString(): string {
+		if (typeof this.dethunkedValue !== 'undefined') {
+			return this.dethunkedValue.toString();
+		}
+
 		return '<thunk>';
 	}
 
@@ -48,7 +53,39 @@ export class Thunk extends SExpressionBase {
 	//     return object.ReferenceEquals(this, obj);
 	// }
 
+	public override isNumber(): boolean {
+		return typeof this.dethunkedValue !== 'undefined' && this.dethunkedValue.isNumber();
+	}
+
+	public override isSymbol(): boolean {
+		return typeof this.dethunkedValue !== 'undefined' && this.dethunkedValue.isSymbol();
+	}
+
+	public override isList(): boolean {
+		return typeof this.dethunkedValue !== 'undefined' && this.dethunkedValue.isList();
+	}
+
+	public override isNull(): boolean {
+		return typeof this.dethunkedValue !== 'undefined' && this.dethunkedValue.isNull();
+	}
+
+	public override isPrimOp(): boolean {
+		return typeof this.dethunkedValue !== 'undefined' && this.dethunkedValue.isPrimOp();
+	}
+
+	public override isClosure(): boolean {
+		return typeof this.dethunkedValue !== 'undefined' && this.dethunkedValue.isClosure();
+	}
+
+	public override isString(): boolean {
+		return typeof this.dethunkedValue !== 'undefined' && this.dethunkedValue.isString();
+	}
+
 	public dethunk(globalInfo: IGlobalInfo<ISExpression>): ISExpression {
+		if (typeof this.dethunkedValue !== 'undefined') {
+			return this.dethunkedValue;
+		}
+
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		let sexpr: ISExpression = this;
 
@@ -57,6 +94,8 @@ export class Thunk extends SExpressionBase {
 
 			sexpr = thunk.body.evaluate(this.thunkEnvironment, globalInfo);
 		}
+
+		this.dethunkedValue = sexpr;
 
 		return sexpr;
 	}
@@ -68,6 +107,10 @@ export class Thunk extends SExpressionBase {
 		// const result = this.body.evaluate(this.thunkEnvironment, globalInfo);
 		//
 		// return SASLGlobalInfo.deThunk(result, globalInfo);
+
+		if (typeof this.dethunkedValue !== 'undefined') {
+			return this.dethunkedValue;
+		}
 
 		return this.dethunk(globalInfo);
 	}

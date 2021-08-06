@@ -2,6 +2,7 @@
 
 export { LanguageSelector } from 'thaw-lexical-analyzer';
 
+// Exceptions
 export { ArgumentException } from './common/exceptions/argument-exception';
 export { ArgumentNullException } from './common/exceptions/argument-null-exception';
 export { EvaluationException } from './common/exceptions/evaluation-exception';
@@ -10,9 +11,7 @@ export { GrammarException } from './common/exceptions/grammar-exception';
 export { KeyNotFoundException } from './common/exceptions/key-not-found-exception';
 export { NotImplementedException } from './common/exceptions/not-implemented-exception';
 
-export { createGrammar } from './common/grammar-factory';
-export { GrammarBase } from './common/grammar-base';
-
+// Common DOM (Domain Object Model)
 export { EnvironmentFrame } from './common/domain-object-model/environment-frame';
 export { IExpression } from './common/domain-object-model/iexpression';
 export { GlobalInfoBase } from './common/domain-object-model/global-info-base';
@@ -20,34 +19,40 @@ export { IGlobalInfo } from './common/domain-object-model/iglobal-info';
 // export { IGlobalInfoOps } from './common/domain-object-model/iglobal-info-ops';
 export { Variable } from './common/domain-object-model/variable';
 
+// Other common stuff
+export { GrammarBase } from './common/grammar-base';
+export { createGrammar } from './common/grammar-factory';
 export { IGrammar } from './common/igrammar';
 export { ParserSelector } from './common/parser-selectors';
 export { Production } from './common/production';
 export { Symbol } from './common/symbol';
 
-// The Chapter 1 language from Kamin
+// The Chapter 1 language from Kamin (Kamin 1/8)
 export { Chapter1GlobalInfo } from './languages/chapter1/domain-object-model/global-info';
 
 // My (ThAW's) minimal language
 export { MinimalLanguageGlobalInfo } from './languages/minimal/domain-object-model/global-info';
 
-// LISP
+// LISP (Kamin 2/8)
 export { ISExpression } from './languages/lisp/domain-object-model/isexpression';
 export { LISPGlobalInfo } from './languages/lisp/domain-object-model/lisp-global-info';
 
-// Scheme
+// APL (Kamin 3/8)
+// export { APLGlobalInfo } from './languages/apl/domain-object-model/global-info';
+
+// Scheme (Kamin 4/8)
 export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';
 
-// SASL
+// SASL (Kamin 5/8)
 export { SASLGlobalInfo } from './languages/sasl/domain-object-model/global-info';
 
-// APL
+// CLU (Kamin 6/8)
+// export { CLUGlobalInfo } from './languages/clu/domain-object-model/global-info';
 
-// CLU
+// Smalltalk (Kamin 7/8)
+// export { SmalltalkGlobalInfo } from './languages/smalltalk/domain-object-model/global-info';
 
-// Smalltalk
-
-// Prolog
+// Prolog (Kamin 8/8)
 export { IPrologExpression } from './languages/prolog/domain-object-model/iprolog-expression';
 export { PrologClause } from './languages/prolog/domain-object-model/prolog-clause';
 export { PrologFloatLiteral } from './languages/prolog/domain-object-model/prolog-float-literal';
