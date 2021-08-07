@@ -900,6 +900,7 @@ export class SchemeGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		// console.log(`SchemeGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
@@ -1257,6 +1258,7 @@ export class SchemeGrammar extends GrammarBase {
 	}
 
 	public pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token

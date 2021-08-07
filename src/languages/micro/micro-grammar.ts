@@ -1,31 +1,12 @@
 // tom-weatherhead/thaw-grammar/src/languages/micro/micro-grammar.ts
 
-'use strict';
-
 import { Stack } from 'thaw-common-utilities.ts';
 
-import {
-	// LexicalState,
-	Token
-} from 'thaw-lexical-analyzer';
-
-// import { ExpressionList }  from '../../common/domain-object-model/expression-list';
-// import { IExpression }  from '../../common/domain-object-model/iexpression';
-// import { Name }  from '../../common/domain-object-model/name';
-// import { Variable }  from '../../common/domain-object-model/variable';
-// import { VariableList }  from '../../common/domain-object-model/variable-list';
-
-// import { ArgumentException } from '../../common/exceptions/argument-exception';
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
+import { Token } from 'thaw-lexical-analyzer';
 
 import { GrammarBase } from '../../common/grammar-base';
 import { ParserSelector } from '../../common/parser-selectors';
-// import { Production }  from '../../common/production';
 import { Symbol } from '../../common/symbol';
-
-// export function dummyMicroGrammar() : string {
-// 	return 'dummyMicroGrammar';
-// }
 
 export class MicroGrammar extends GrammarBase {
 	constructor() {
@@ -42,18 +23,23 @@ export class MicroGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public tokenToSymbol(token: Token): number {
 		// Returns Symbol
 		return Symbol.UndefinedSymbol;
 	}
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token
 	): void {}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }
 
 // export class MicroGrammar extends GrammarBase {

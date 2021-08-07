@@ -77,6 +77,7 @@ export class SASLGrammar extends SchemeGrammar {
 		return [ParserSelector.LL1];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public override executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		let name: Name;
 		let expression: IExpression<ISExpression>;
@@ -138,6 +139,7 @@ export class SASLGrammar extends SchemeGrammar {
 	}
 
 	public override pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token

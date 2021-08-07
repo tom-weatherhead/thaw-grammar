@@ -10,7 +10,7 @@ export class IntegerLiteral extends SExpressionBase implements INumber {
 	// , IConvertibleToGraph
 	public readonly value: number;
 
-	constructor(value: any) {
+	constructor(value: unknown) {
 		super();
 
 		// HACK ThAW 2020-01-06 : The value in an IntegerLiteral can be int or float.

@@ -7,7 +7,7 @@ import { ArgumentException } from '../../../common/exceptions/argument-exception
 export class IntegerLiteral implements IExpression<number> {
 	public readonly value: number;
 
-	constructor(value: any) {
+	constructor(value: unknown) {
 		if (typeof value !== 'number') {
 			throw new ArgumentException(
 				'IntegerLiteral constructor: value is not a number.',

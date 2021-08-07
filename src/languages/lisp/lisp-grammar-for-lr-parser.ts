@@ -890,6 +890,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		return [ParserSelector.LR1, ParserSelector.SLR1, ParserSelector.LALR1];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		// console.log(`LISPGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
@@ -1203,6 +1204,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 	}
 
 	public pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token

@@ -30,6 +30,7 @@ export class SASLLambdaExpression extends LambdaExpression implements IConvertib
 
 	public override evaluate(
 		localEnvironment: EnvironmentFrame<ISExpression>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
 		return new SASLClosure(this.argList, this.body, localEnvironment, this.line, this.column);

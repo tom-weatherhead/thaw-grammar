@@ -3,8 +3,6 @@
 // A minimal grammar that supports the input: (+ 2 3)
 // I.e. Tokens: LeftBracket, Plus, IntegerLiteral_2, IntegerLiteral_3, RightBracket, EOF.
 
-'use strict';
-
 import { Stack } from 'thaw-common-utilities.ts';
 
 import { LexicalState, Token } from 'thaw-lexical-analyzer';
@@ -92,6 +90,7 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		// console.log(`MinimalLanguageGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
@@ -150,6 +149,7 @@ export class MinimalLanguageGrammar extends GrammarBase {
 	}
 
 	public pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token

@@ -11,7 +11,7 @@ export class FloatLiteral extends SExpressionBase implements INumber {
 	// , IConvertibleToGraph
 	public readonly value: number;
 
-	constructor(value: any) {
+	constructor(value: unknown) {
 		super();
 
 		if (typeof value !== 'number') {

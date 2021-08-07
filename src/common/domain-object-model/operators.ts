@@ -20,6 +20,7 @@ export class Operators {
 	}
 
 	private static instance: Operators;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private readonly mapOperatorNameToDetails = new Map<string, [OperatorType, number, any]>();
 
 	private constructor() {
@@ -62,6 +63,7 @@ export class Operators {
 		// this.mapOperatorNameToDetails.set('', [OperatorType., 0, () => ]);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public getOperator(name: string): [OperatorType, number, any] | undefined {
 		return this.mapOperatorNameToDetails.get(name);
 	}

@@ -2,27 +2,33 @@
 
 import { ArgumentException } from '../exceptions/argument-exception';
 import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
+
 import { Variable } from './variable';
 
 export class EnvironmentFrame<T> {
 	public readonly dict: Map<string, T>;
-	public readonly next: EnvironmentFrame<T> | null;
+	public readonly next: EnvironmentFrame<T> | undefined;
 
-	constructor(next: EnvironmentFrame<T> | null = null) {
+	constructor(next?: EnvironmentFrame<T>) {
 		this.dict = new Map<string, T>();
 		this.next = next;
 	}
 
 	public isDefined(key: Variable<T>): boolean {
-		if (this.dictionaryContainsKey(key)) {
-			return true;
-		}
+		// if (this.dictionaryContainsKey(key)) {
+		// 	return true;
+		// }
+		//
+		// if (typeof this.next !== 'undefined') {
+		// 	return this.next.isDefined(key);
+		// }
+		//
+		// return false;
 
-		if (this.next !== null) {
-			return this.next.isDefined(key);
-		}
-
-		return false;
+		return (
+			this.dictionaryContainsKey(key) ||
+			(typeof this.next !== 'undefined' && this.next.isDefined(key))
+		);
 	}
 
 	public lookup(key: Variable<T>): T {
@@ -35,16 +41,20 @@ export class EnvironmentFrame<T> {
 			// 	key, (next != null) ? "a local" : "the global", dict[key]);
 
 			// return this.dict.get(key.name) as T;
-			const lookupResult = this.dict.get(key.name) as T;
+			const lookupResult = this.dict.get(key.name); // as T;
 
 			// if (lookupResult === undefined) {
 			// 	console.error('Error in EnvironmentFrame.lookup() : lookupResult is defined, but is not of the expected type.');
 			// }
 
+			if (typeof lookupResult === 'undefined') {
+				throw new Error(`EnvironmentFrame.lookup('${key.name}') : Value is undefined`);
+			}
+
 			return lookupResult;
 		}
 
-		if (this.next !== null) {
+		if (typeof this.next !== 'undefined') {
 			return this.next.lookup(key);
 		}
 
@@ -64,7 +74,7 @@ export class EnvironmentFrame<T> {
 		// 	console.log('Warning in EnvironmentFrame.addBubbleDown() : The value being added is falsy.');
 		// }
 
-		if (!this.dictionaryContainsKey(key) && this.next !== null) {
+		if (!this.dictionaryContainsKey(key) && typeof this.next !== 'undefined') {
 			this.next.addBubbleDown(key, value); // Bubble down towards the global environment.
 		} else {
 			// Bug fix: Before 2013/12/04, the "else" above was absent, and the code below was executed unconditionally.
@@ -82,14 +92,14 @@ export class EnvironmentFrame<T> {
 			);
 		}
 
-		// keys.for Each((key: Variable<T>, i: number) => {
 		for (let i = 0; i < keys.length; i++) {
 			this.add(keys[i], values[i]);
 		}
-		// });
 	}
 
 	private dictionaryContainsKey(key: Variable<T>): boolean {
-		return typeof this.dict.get(key.name) !== 'undefined';
+		// return typeof this.dict.get(key.name) !== 'undefined';
+
+		return this.dict.has(key.name);
 	}
 }

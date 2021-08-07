@@ -8,7 +8,7 @@ export class IntegerLiteral implements IExpression<number> {
 	public readonly line: number;
 	public readonly column: number;
 
-	constructor(value: any, line = 0, column = 0) {
+	constructor(value: unknown, line = 0, column = 0) {
 		if (typeof value !== 'number') {
 			throw new ArgumentException(
 				`IntegerLiteral constructor: typeof value is not 'number'; it is '${typeof value}'.`,

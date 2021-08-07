@@ -448,6 +448,7 @@ export class PrologGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		const gs = LanguageSelector.Prolog2;
 
@@ -751,6 +752,7 @@ export class PrologGrammar extends GrammarBase {
 	}
 
 	public pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		// eslint-disable-next-line @typescript-eslint/ban-types
 		tokenAsSymbol: Symbol,

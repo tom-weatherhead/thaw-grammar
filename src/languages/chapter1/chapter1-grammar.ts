@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/chapter1/chapter1-grammar.ts
 
-'use strict';
-
 import { Stack } from 'thaw-common-utilities.ts';
 
 import { LexicalState, Token } from 'thaw-lexical-analyzer';
@@ -15,7 +13,6 @@ import { VariableList } from '../../common/domain-object-model/variable-list';
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
 import { IfUsage } from '../../common/domain-object-model/if-usage';
-// import { OperatorUsage } from '../../common/domain-object-model/operator-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
@@ -310,6 +307,7 @@ export class Chapter1Grammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		// console.log(`Chapter1Grammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
@@ -458,6 +456,7 @@ export class Chapter1Grammar extends GrammarBase {
 	}
 
 	public pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token

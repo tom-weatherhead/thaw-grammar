@@ -31,6 +31,7 @@ export abstract class GrammarBase implements IGrammar {
 
 	public abstract get selectorsOfCompatibleParsers(): number[]; // This is a 'get' accessor.
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public abstract executeSemanticAction(semanticStack: Stack<any>, action: string): void;
 
 	public abstract tokenToSymbol(token: Token): number;
@@ -64,6 +65,7 @@ export abstract class GrammarBase implements IGrammar {
 	// }
 
 	public abstract pushTokenOntoSemanticStack(
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token
@@ -100,6 +102,7 @@ export abstract class GrammarBase implements IGrammar {
 	// 	this.productions = this.productions.filter((production: Production) => !production.ContainsSymbol(symbol));
 	// }
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	protected addProduction(lhs: number, rhs: any[], n = 0): void {
 		this.productions.push(new Production(lhs, rhs, n));
 	}

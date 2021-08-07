@@ -9,7 +9,7 @@ import { IGlobalInfo } from './iglobal-info';
 
 // export abstract class GlobalInfoBase<T> implements IGlobalInfo<T>, IGlobalInfoOps {
 export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
-	public readonly globalEnvironment = new EnvironmentFrame<T>(null);
+	public readonly globalEnvironment = new EnvironmentFrame<T>();
 	public readonly functionDefinitions = new Map<string, FunctionDefinition<T>>();
 	public dynamicScoping: boolean;
 	public debug: boolean;

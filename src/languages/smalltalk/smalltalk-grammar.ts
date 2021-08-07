@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/smalltalk-grammar.ts
 
-'use strict';
-
 import { Stack } from 'thaw-common-utilities.ts';
 
 import {
@@ -50,16 +48,23 @@ export class SmalltalkGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public tokenToSymbol(token: Token): number {
 		// Returns Symbol
 		return Symbol.UndefinedSymbol;
 	}
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: number,
 		token: Token
 	): void {}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

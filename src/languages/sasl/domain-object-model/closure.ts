@@ -28,6 +28,7 @@ export class SASLClosure extends Closure {
 	protected callHelper_EvaluateArguments(
 		args: ExpressionList<ISExpression>,
 		localEnvironment: EnvironmentFrame<ISExpression>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: SASLGlobalInfo
 	): ISExpression[] {
 		return args.value.map((expr) => (isThunk(expr) ? expr : new Thunk(expr, localEnvironment)));

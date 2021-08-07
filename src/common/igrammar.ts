@@ -10,16 +10,18 @@ import { Symbol } from './symbol';
 
 /* eslint-disable @typescript-eslint/ban-types */
 export interface IGrammar {
-	terminals: Symbol[]; // Symbol[]
-	nonTerminals: Symbol[]; // Symbol[]
-	startSymbol: Symbol; // Symbol
+	terminals: Symbol[];
+	nonTerminals: Symbol[];
+	startSymbol: Symbol;
 	productions: Production[];
 
 	languageName: string; // This is a 'get' accessor.
 	selectorsOfCompatibleParsers: number[]; // An array of members of the enum ParserSelector
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	executeSemanticAction(semanticStack: Stack<any>, action: string): void;
 	tokenToSymbol(token: Token): Symbol;
 	pushTokenOntoSemanticStack(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: Stack<any>,
 		tokenAsSymbol: Symbol,
 		token: Token
