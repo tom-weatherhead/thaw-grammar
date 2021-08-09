@@ -386,7 +386,7 @@ export class Chapter1Grammar extends GrammarBase {
 				break;
 
 			default:
-				throw new GrammarException(`Unrecognized semantic action: ${action}`);
+				throw new GrammarException(`Unrecognized semantic action: '${action}'`);
 		}
 	}
 
