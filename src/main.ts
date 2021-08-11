@@ -41,6 +41,7 @@ export { LISPGlobalInfo } from './languages/lisp/domain-object-model/lisp-global
 // export { APLGlobalInfo } from './languages/apl/domain-object-model/global-info';
 
 // Scheme (Kamin 4/8)
+export { PrimOp } from './languages/scheme/domain-object-model/primitive-operator';
 export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-global-info';
 
 // SASL (Kamin 5/8)

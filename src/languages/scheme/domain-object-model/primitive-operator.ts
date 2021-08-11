@@ -41,7 +41,7 @@ import { ICallableSExpression } from './icallable-sexpression';
 // }
 
 export class PrimOp extends SExpressionBase implements ICallableSExpression {
-	// Old (C#) comment: We cannot inherit from SExpressionBase here bacause we already inherit from LISPOperatorUsage.
+	// Old (C#) comment: We cannot inherit from SExpressionBase here because we already inherit from LISPOperatorUsage.
 	public readonly name: Name;
 	public readonly line: number;
 	public readonly column: number;
