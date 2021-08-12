@@ -13,7 +13,7 @@ import { isIVariable, IVariable } from './interfaces/ivariable';
 
 // import { isPrologVariable, PrologVariable } from './prolog-variable';
 
-export class PrologSubstitution implements ISubstitution {
+class PrologSubstitution implements ISubstitution {
 	public readonly SubstitutionList = new Map<string, IPrologExpression>();
 
 	constructor(

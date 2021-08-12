@@ -7,7 +7,9 @@ import { IPrologNumber } from './interfaces/iprolog-number';
 // import { PrologFunctor } from './prolog-functor';
 import { PrologNameExpression } from './prolog-name-expression';
 // import { PrologPredicate } from './prolog-predicate';
-import { PrologSubstitution } from './prolog-substitution';
+import { createSubstitution } from './prolog-substitution';
+
+import { ISubstitution } from './interfaces/isubstitution';
 
 // ReferenceError: Cannot access 'PrologNameExpression' before initialization
 // -> Circular dependency? See e.g. https://github.com/webpack/webpack/issues/12724
@@ -65,7 +67,7 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 	// 	return true;
 	// }
 
-	public ApplySubstitution(substitution: PrologSubstitution): PrologGoal {
+	public ApplySubstitution(substitution: ISubstitution): PrologGoal {
 		return new PrologGoal(
 			this.gs,
 			this.Name,
@@ -75,7 +77,7 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 		);
 	}
 
-	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
+	public Unify(otherExpr: IPrologExpression): ISubstitution | undefined {
 		const otherNameExpression = otherExpr as PrologGoal;
 
 		if (
@@ -86,7 +88,7 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 			return undefined;
 		}
 
-		let substitution = new PrologSubstitution();
+		let substitution = createSubstitution();
 
 		for (let i = 0; i < this.ExpressionList.length; ++i) {
 			const newExpr1 = this.ExpressionList[i].ApplySubstitution(substitution);
