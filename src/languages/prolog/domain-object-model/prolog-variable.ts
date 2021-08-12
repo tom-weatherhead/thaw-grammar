@@ -1,16 +1,26 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-variable.ts
 
-import { IEqualityComparable, Set } from 'thaw-common-utilities.ts';
-
-// import { setToArray } from './prolog-global-info';
+import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';
 import { IPrologNumber } from './iprolog-number';
-// import { PrologClause } from './prolog-clause';
-// import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';
 
-export class PrologVariable implements IEqualityComparable, IPrologExpression {
+import { IVariable } from './interfaces/ivariable';
+
+const typenamePrologVariable = 'PrologVariable';
+
+export function isPrologVariable(obj: unknown): obj is PrologVariable {
+	const otherPrologVariable = obj as PrologVariable;
+
+	return (
+		typeof otherPrologVariable !== 'undefined' &&
+		otherPrologVariable.typename === typenamePrologVariable
+	);
+}
+
+export class PrologVariable implements /* IEqualityComparable, IPrologExpression, */ IVariable {
+	public readonly typename: string = typenamePrologVariable;
 	public readonly Name: string;
 
 	constructor(name: string) {
@@ -26,13 +36,13 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 	}
 
 	public equals(obj: unknown): boolean {
-		const otherVar = obj as PrologVariable;
+		const otherVar = obj as IVariable;
 
 		// We can compare the Name members with == because Name is a string.
 		return (
-			typeof otherVar !== 'undefined' &&
-			otherVar instanceof PrologVariable &&
-			this.Name === otherVar.Name
+			// typeof otherVar !== 'undefined' &&
+			// otherVar instanceof PrologVariable &&
+			isPrologVariable(otherVar) && this.Name === otherVar.Name
 		);
 	}
 
@@ -45,7 +55,8 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 		return this.Name.startsWith('_');
 	}
 
-	public FindBindingVariables(): Set<PrologVariable> {
+	// public FindBindingVariables(): Set<PrologVariable> {
+	public FindBindingVariables(): IImmutableSet<IVariable> {
 		// if (this.IsNonBinding) // This allows the test Prolog2Parser_Fixture.DoNotRenameNonBindingVariablesTest() to pass.
 		// {
 		//     return [];   // Ignore non-binding variables; we don't want to rename them to binding variables.
@@ -55,7 +66,7 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 
 		// return Set.createFromArray(this.IsNonBinding ? [] : [this]);
 
-		const result = new Set<PrologVariable>();
+		const result = new Set<IVariable>();
 
 		if (!this.IsNonBinding) {
 			result.add(this);
@@ -64,11 +75,11 @@ export class PrologVariable implements IEqualityComparable, IPrologExpression {
 		return result;
 	}
 
-	public GetListOfBindingVariables(): PrologVariable[] {
+	public GetListOfBindingVariables(): IVariable[] {
 		return this.FindBindingVariables().toArray();
 	}
 
-	public ContainsVariable(v: PrologVariable): boolean {
+	public ContainsVariable(v: IVariable): boolean {
 		return this.equals(v);
 	}
 

@@ -1,14 +1,17 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-substitution.ts
 
-// 2021-07-13: Warning: Circular dependency:
-// prolog-substitution.js -> prolog-variable.js -> prolog-substitution.js
-
 import { Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';
-// import { PrologVariable } from './prolog-variable';
 
-export class PrologSubstitution {
+import { ISubstitution } from './interfaces/isubstitution';
+
+// 2021-07-13: Warning: Circular dependency: caused by reference to prolog-variable.ts :
+// prolog-substitution.js -> prolog-variable.js -> prolog-substitution.js
+
+// import { isPrologVariable, PrologVariable } from './prolog-variable';
+
+export class PrologSubstitution implements ISubstitution {
 	public readonly SubstitutionList = new Map<string, IPrologExpression>();
 
 	constructor(
@@ -35,20 +38,31 @@ export class PrologSubstitution {
 	}
 
 	public toString(): string {
-		const result: string[] = [];
-		const keys = [...this.SubstitutionList.keys()];
+		// Version 1
+		// const result: string[] = [];
+		// const keys = [...this.SubstitutionList.keys()];
+		//
+		// keys.sort();
+		//
+		// for (const v of keys) {
+		// 	const expr = this.SubstitutionList.get(v);
+		//
+		// 	if (typeof v !== 'undefined') {
+		// 		result.push(`${v} -> ${expr}`);
+		// 	}
+		// }
+		//
+		// return '[' + result.join('; ') + ']';
 
-		keys.sort();
+		// Version 2
+		const entries = [...this.SubstitutionList.entries()];
 
-		for (const v of keys) {
-			const expr = this.SubstitutionList.get(v);
+		// e1[0] is e1.key; e1[1] would be e1.value
+		// entries.sort((e1: [string, IPrologExpression], e2: [string, IPrologExpression]) => e1[0].localeCompare(e2[0]));
+		entries.sort((e1, e2) => e1[0].localeCompare(e2[0]));
 
-			if (typeof v !== 'undefined') {
-				result.push(`${v} -> ${expr}`);
-			}
-		}
-
-		return '[' + result.join('; ') + ']';
+		// return `[${entries.map(([key, value]: [string, IPrologExpression]) => `${key} -> ${value}`).join('; ')}]`;
+		return `[${entries.map(([key, value]) => `${key} -> ${value}`).join('; ')}]`;
 	}
 
 	public Compose(otherSub: PrologSubstitution): PrologSubstitution {
@@ -56,12 +70,13 @@ export class PrologSubstitution {
 
 		// 1) Apply the Src substitution to this's terms.
 
-		for (const key of this.SubstitutionList.keys()) {
-			const sub = this.SubstitutionList.get(key);
+		// for (const key of this.SubstitutionList.keys()) {
+		for (const [key, sub] of this.SubstitutionList.entries()) {
+			// const sub = this.SubstitutionList.get(key);
 
-			if (typeof sub === 'undefined') {
-				throw new Error('PrologSubstitution.Compose() : sub is undefined.');
-			}
+			// if (typeof sub === 'undefined') {
+			// 	throw new Error('PrologSubstitution.Compose() : sub is undefined.');
+			// }
 
 			const newUnifiable = sub.ApplySubstitution(otherSub) as IPrologExpression;
 
@@ -77,9 +92,17 @@ export class PrologSubstitution {
 		// 2) Remove identities.
 		const varsToRemove: string[] = [];
 
-		for (const key of newSub.SubstitutionList.keys()) {
+		// for (const key of newSub.SubstitutionList.keys()) {
+		for (const [key, value] of newSub.SubstitutionList.entries()) {
 			// const v = new PrologVariable(key);
-			const value = newSub.SubstitutionList.get(key);
+			// const value = newSub.SubstitutionList.get(key);
+
+			// Or:
+			// if (isPrologVariable(value) && (value as PrologVariable).Name === key) {
+			// 	throw new Error(
+			// 		'PrologSubstitution: An identity should have been removed from the substitution, but was not.'
+			// 	);
+			// }
 
 			// if (v.equals(newSub.SubstitutionList.get(key))) {
 			if (typeof value === 'string' && value === key) {
@@ -93,15 +116,15 @@ export class PrologSubstitution {
 
 		// 3) Remove duplicate variables; i.e. add substitutions from keys in otherSub that are not keys in the "this" Substitution.
 
-		for (const key of otherSub.SubstitutionList.keys()) {
+		for (const [key, v] of otherSub.SubstitutionList.entries()) {
 			//if (!newSub.SubstitutionList.ContainsKey(key))    // In error.
 			if (!this.SubstitutionList.has(key)) {
 				// Correct, according to the CS 486 course notes.
-				const v = otherSub.SubstitutionList.get(key);
+				// const v = otherSub.SubstitutionList.get(key);
 
-				if (typeof v !== 'undefined') {
-					newSub.SubstitutionList.set(key, v);
-				}
+				// if (typeof v !== 'undefined') {
+				newSub.SubstitutionList.set(key, v);
+				// }
 			}
 		}
 

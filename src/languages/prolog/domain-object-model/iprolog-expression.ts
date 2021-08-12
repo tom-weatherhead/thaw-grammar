@@ -1,10 +1,12 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/iprolog-expression.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { IPrologNumber } from './iprolog-number';
 import { PrologSubstitution } from './prolog-substitution';
-import { PrologVariable } from './prolog-variable';
+// import { PrologVariable } from './prolog-variable';
+
+import { IVariable } from './interfaces/ivariable';
 
 export interface IPrologExpression {
 	// TODO:
@@ -14,9 +16,10 @@ export interface IPrologExpression {
 	// IsClauseOrGoal: boolean; // A hack to avoid a circular dependency
 
 	// /* HashSet<PrologVariable> */ FindBindingVariables(): PrologVariable[];     // Finds only binding variables; ignores non-binding variables such as _
-	FindBindingVariables(): Set<PrologVariable>; // Finds only binding variables; ignores non-binding variables such as _
-	/* List<PrologVariable> */ GetListOfBindingVariables(): PrologVariable[]; // As above, but this returns a list, which is ordered, and contains no duplicates
-	ContainsVariable(v: PrologVariable): boolean;
+	// FindBindingVariables(): Set<PrologVariable>; // Finds only binding variables; ignores non-binding variables such as _
+	FindBindingVariables(): IImmutableSet<IVariable>; // Finds only binding variables; ignores non-binding variables such as _
+	/* List<PrologVariable> */ GetListOfBindingVariables(): IVariable[]; // As above, but this returns a list, which is ordered, and contains no duplicates
+	ContainsVariable(v: IVariable): boolean;
 	ApplySubstitution(substitution: PrologSubstitution): IPrologExpression;
 	Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined;
 	// bool IsGround { get; }  // True iff the expression contains no variables.
