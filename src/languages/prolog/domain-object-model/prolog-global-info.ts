@@ -8,7 +8,7 @@ import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-
 
 import { CutBacktrackException } from './cut-backtrack-exception';
 import { CutDetector } from './cut-detector';
-import { IPrologExpression } from './iprolog-expression';
+import { IPrologExpression } from './interfaces/iprolog-expression';
 import { PrologClause } from './prolog-clause';
 // import { PrologFloatLiteral } from './prolog-float-literal';
 import {

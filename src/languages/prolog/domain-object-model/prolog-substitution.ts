@@ -2,7 +2,7 @@
 
 import { Set } from 'thaw-common-utilities.ts';
 
-import { IPrologExpression } from './iprolog-expression';
+import { IPrologExpression } from './interfaces/iprolog-expression';
 
 import { ISubstitution } from './interfaces/isubstitution';
 

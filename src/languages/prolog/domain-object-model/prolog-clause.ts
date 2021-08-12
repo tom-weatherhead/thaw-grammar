@@ -2,8 +2,8 @@
 
 import { Set } from 'thaw-common-utilities.ts';
 
-// import { IPrologExpression } from './iprolog-expression';
-import { IPrologNumber } from './iprolog-number';
+// import { IPrologExpression } from './interfaces/iprolog-expression';
+import { IPrologNumber } from './interfaces/iprolog-number';
 import { PrologGlobalInfo } from './prolog-global-info';
 import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';

@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/interfaces/isubstitution.ts
 
-import { IPrologExpression } from '../iprolog-expression';
+import { IPrologExpression } from './iprolog-expression';
 
 export interface ISubstitution {
 	readonly SubstitutionList: Map<string, IPrologExpression>;

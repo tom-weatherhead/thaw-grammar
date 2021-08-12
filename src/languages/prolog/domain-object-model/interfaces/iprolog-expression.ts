@@ -1,12 +1,12 @@
-// tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/iprolog-expression.ts
+// tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/interfaces/iprolog-expression.ts
 
 import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { IPrologNumber } from './iprolog-number';
-import { PrologSubstitution } from './prolog-substitution';
+import { PrologSubstitution } from '../prolog-substitution';
 // import { PrologVariable } from './prolog-variable';
 
-import { IVariable } from './interfaces/ivariable';
+import { IVariable } from './ivariable';
 
 export interface IPrologExpression {
 	// TODO:

@@ -14,7 +14,7 @@ import { Symbol } from '../../common/symbol';
 
 import { createFunctorExpressionFromGoal } from './utilities';
 
-import { IPrologExpression } from './domain-object-model/iprolog-expression';
+import { IPrologExpression } from './domain-object-model/interfaces/iprolog-expression';
 import { PrologClause } from './domain-object-model/prolog-clause';
 import { PrologFloatLiteral } from './domain-object-model/prolog-float-literal';
 import {
@@ -24,7 +24,6 @@ import {
 // import { PrologGlobalInfo } from './domain-object-model/prolog-global-info';
 import { PrologGoal } from './domain-object-model/prolog-goal';
 import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-literal';
-// import { PrologNameExpression } from './domain-object-model/prolog-name-expression';
 import { PrologVariable } from './domain-object-model/prolog-variable';
 
 // function explodingCast<T>(value: unknown): T {

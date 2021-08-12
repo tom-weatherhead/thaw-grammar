@@ -2,9 +2,9 @@
 
 import { IEqualityComparable, IImmutableSet } from 'thaw-common-utilities.ts';
 
-import { IPrologExpression } from '../iprolog-expression';
+import { IPrologExpression } from './iprolog-expression';
 
-import { IPrologNumber } from '../iprolog-number';
+import { IPrologNumber } from './iprolog-number';
 
 import { ISubstitution } from './isubstitution';
 

@@ -2,8 +2,8 @@
 
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
-import { IPrologExpression } from './iprolog-expression';
-import { IPrologNumber } from './iprolog-number';
+import { IPrologExpression } from './interfaces/iprolog-expression';
+import { IPrologNumber } from './interfaces/iprolog-number';
 // import { PrologFunctor } from './prolog-functor';
 import { PrologNameExpression } from './prolog-name-expression';
 // import { PrologPredicate } from './prolog-predicate';

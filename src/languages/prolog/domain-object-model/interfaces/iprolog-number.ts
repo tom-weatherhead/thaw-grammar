@@ -1,4 +1,4 @@
-// tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/iprolog-number.ts
+// tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/interfaces/iprolog-number.ts
 
 import { IPrologExpression } from './iprolog-expression';
 
