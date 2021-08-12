@@ -1,11 +1,13 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/utilities.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
 
 import { PrologFunctorExpression } from './domain-object-model/prolog-functor-expression';
 import { PrologGoal } from './domain-object-model/prolog-goal';
-import { PrologSubstitution } from './domain-object-model/prolog-substitution';
-import { PrologVariable } from './domain-object-model/prolog-variable';
+import { createVariable } from './domain-object-model/prolog-variable';
+
+import { ISubstitution } from './domain-object-model/interfaces/isubstitution';
+import { IVariable } from './domain-object-model/interfaces/ivariable';
 
 export function createGoalFromFunctorExpression(fe: PrologFunctorExpression): PrologGoal {
 	return new PrologGoal(fe.gs, fe.Name, fe.ExpressionList);
@@ -34,11 +36,11 @@ export function createFunctorExpressionFromGoal(goal: PrologGoal): PrologFunctor
 // 	);
 // }
 
-export function findBindingVariablesInSubstitution(s: PrologSubstitution): Set<PrologVariable> {
-	const result = new Set<PrologVariable>();
+export function findBindingVariablesInSubstitution(s: ISubstitution): IImmutableSet<IVariable> {
+	const result = new Set<IVariable>();
 
 	for (const key of s.SubstitutionList.keys()) {
-		result.add(new PrologVariable(key));
+		result.add(createVariable(key));
 
 		const v = s.SubstitutionList.get(key);
 

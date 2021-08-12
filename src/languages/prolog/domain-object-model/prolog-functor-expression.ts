@@ -8,8 +8,11 @@ import { IPrologNumber } from './interfaces/iprolog-number';
 import { PrologFloatLiteral } from './prolog-float-literal';
 import { PrologIntegerLiteral } from './prolog-integer-literal';
 import { PrologNameExpression } from './prolog-name-expression';
-import { PrologSubstitution } from './prolog-substitution';
-import { PrologVariable } from './prolog-variable';
+import { createSubstitution } from './prolog-substitution';
+// import { PrologVariable } from './prolog-variable';
+
+import { ISubstitution } from './interfaces/isubstitution';
+import { isIVariable } from './interfaces/ivariable';
 
 export function isPrologFunctorExpression(obj: unknown): obj is PrologFunctorExpression {
 	// const fe = obj as PrologFunctorExpression;
@@ -108,7 +111,7 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 	// 	return true;
 	// }
 
-	public ApplySubstitution(substitution: PrologSubstitution): IPrologExpression {
+	public ApplySubstitution(substitution: ISubstitution): IPrologExpression {
 		return new PrologFunctorExpression(
 			this.gs,
 			this.Name,
@@ -118,9 +121,9 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 		);
 	}
 
-	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
+	public Unify(otherExpr: IPrologExpression): ISubstitution | undefined {
 		// if (otherExpr.constructor.name === PrologVariable.name) {
-		if (otherExpr instanceof PrologVariable) {
+		if (isIVariable(otherExpr)) {
 			return otherExpr.Unify(this);
 		}
 
@@ -142,7 +145,7 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 			return undefined;
 		}
 
-		let substitution = new PrologSubstitution();
+		let substitution = createSubstitution();
 
 		for (let i = 0; i < this.ExpressionList.length; ++i) {
 			const newExpr1 = this.ExpressionList[i].ApplySubstitution(substitution);

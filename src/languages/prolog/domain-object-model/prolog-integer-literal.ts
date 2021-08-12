@@ -1,11 +1,13 @@
 // prolog-integer-literal.ts
 
-import { IEqualityComparable, Set } from 'thaw-common-utilities.ts';
+import { IEqualityComparable, IImmutableSet, Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
-import { PrologSubstitution } from './prolog-substitution';
-import { PrologVariable } from './prolog-variable';
+import { createSubstitution } from './prolog-substitution';
+
+import { ISubstitution } from './interfaces/isubstitution';
+import { IVariable, isIVariable } from './interfaces/ivariable';
 
 export class PrologIntegerLiteral implements IEqualityComparable, IPrologNumber {
 	public readonly Value: number;
@@ -28,32 +30,31 @@ export class PrologIntegerLiteral implements IEqualityComparable, IPrologNumber 
 		);
 	}
 
-	public FindBindingVariables(): Set<PrologVariable> {
-		return new Set<PrologVariable>();
+	public FindBindingVariables(): IImmutableSet<IVariable> {
+		return new Set<IVariable>();
 	}
 
-	public GetListOfBindingVariables(): PrologVariable[] {
+	public GetListOfBindingVariables(): IVariable[] {
 		return [];
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public ContainsVariable(v: PrologVariable): boolean {
+	public ContainsVariable(v: IVariable): boolean {
 		return false;
 	}
 
 	public ApplySubstitution(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		substitution: PrologSubstitution
+		substitution: ISubstitution
 	): IPrologExpression {
 		return this;
 	}
 
-	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
+	public Unify(otherExpr: IPrologExpression): ISubstitution | undefined {
 		if (this.equals(otherExpr)) {
 			// Do not use "if (this == otherExpr)", which just compares references.
-			return new PrologSubstitution();
-			// } else if (otherExpr.constructor.name === PrologVariable.name) {
-		} else if (otherExpr instanceof PrologVariable) {
+			return createSubstitution();
+		} else if (isIVariable(otherExpr)) {
 			return otherExpr.Unify(this);
 		}
 

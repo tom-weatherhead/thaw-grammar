@@ -12,9 +12,12 @@ import {
 
 import {
 	createGrammar,
+	createVariable,
 	// deepEquals,
 	IPrologExpression,
+	isIVariable,
 	// isProduction,
+	IVariable,
 	LanguageSelector,
 	Production,
 	// PrologFunctor,
@@ -23,7 +26,7 @@ import {
 	PrologGoal,
 	PrologIntegerLiteral,
 	// PrologPredicate,
-	PrologVariable,
+	// PrologVariable,
 	Symbol
 } from '../../..';
 
@@ -116,16 +119,16 @@ test('Find PrologVariable in Set test', () => {
 	// const grammar = createGrammar(LanguageSelector.Prolog);
 	// const grammar = createGrammar(LanguageSelector.Prolog2);
 	// const globalInfo = new PrologGlobalInfo();
-	const setWith = new Set<PrologVariable>();
-	const setWithout = new Set<PrologVariable>();
-	const variable = new PrologVariable('A');
+	const setWith = new Set<IVariable>();
+	const setWithout = new Set<IVariable>();
+	const variable = createVariable('A');
 
-	setWith.add(new PrologVariable('B'));
-	setWith.add(new PrologVariable('A'));
-	setWith.add(new PrologVariable('C'));
+	setWith.add(createVariable('B'));
+	setWith.add(createVariable('A'));
+	setWith.add(createVariable('C'));
 
-	setWithout.add(new PrologVariable('B'));
-	setWithout.add(new PrologVariable('C'));
+	setWithout.add(createVariable('B'));
+	setWithout.add(createVariable('C'));
 
 	// Act
 	// Assert
@@ -147,7 +150,7 @@ test('PrologGlobalInfo instanceof test', () => {
 	// Arrange
 	const ls = LanguageSelector.Prolog2;
 	const intlit = new PrologIntegerLiteral(13);
-	const variable = new PrologVariable('A');
+	const variable = createVariable('A');
 	const exprList: IPrologExpression[] = [];
 	// const predicate = new PrologPredicate('pred');
 	const goal = new PrologGoal(ls, 'pred', exprList);
@@ -159,22 +162,22 @@ test('PrologGlobalInfo instanceof test', () => {
 	expect(functorExpression instanceof PrologFunctorExpression).toBeTruthy();
 	expect(functorExpression instanceof PrologGoal).toBeFalsy();
 	expect(functorExpression instanceof PrologIntegerLiteral).toBeFalsy();
-	expect(functorExpression instanceof PrologVariable).toBeFalsy();
+	expect(isIVariable(functorExpression)).toBeFalsy();
 
 	expect(goal instanceof PrologFunctorExpression).toBeFalsy();
 	expect(goal instanceof PrologGoal).toBeTruthy();
 	expect(goal instanceof PrologIntegerLiteral).toBeFalsy();
-	expect(goal instanceof PrologVariable).toBeFalsy();
+	expect(isIVariable(goal)).toBeFalsy();
 
 	expect(intlit instanceof PrologFunctorExpression).toBeFalsy();
 	expect(intlit instanceof PrologGoal).toBeFalsy();
 	expect(intlit instanceof PrologIntegerLiteral).toBeTruthy();
-	expect(intlit instanceof PrologVariable).toBeFalsy();
+	expect(isIVariable(intlit)).toBeFalsy();
 
 	expect(variable instanceof PrologFunctorExpression).toBeFalsy();
 	expect(variable instanceof PrologGoal).toBeFalsy();
 	expect(variable instanceof PrologIntegerLiteral).toBeFalsy();
-	expect(variable instanceof PrologVariable).toBeTruthy();
+	expect(isIVariable(variable)).toBeTruthy();
 });
 
 /* eslint-disable @typescript-eslint/ban-types */

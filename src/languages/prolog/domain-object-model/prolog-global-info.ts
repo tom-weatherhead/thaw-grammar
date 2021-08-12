@@ -2,22 +2,15 @@
 
 import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
 
-// import { LanguageSelector } from 'thaw-lexical-analyzer';
-
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 import { CutBacktrackException } from './cut-backtrack-exception';
 import { CutDetector } from './cut-detector';
 import { PrologClause } from './prolog-clause';
-// import { PrologFloatLiteral } from './prolog-float-literal';
-import {
-	// isPrologFunctorExpression,
-	PrologFunctorExpression
-} from './prolog-functor-expression';
+import { PrologFunctorExpression } from './prolog-functor-expression';
 import { PrologGoal } from './prolog-goal';
 import { PrologIntegerLiteral } from './prolog-integer-literal';
 import { PrologModule } from './prolog-module';
-// import { PrologNameExpression } from './prolog-name-expression';
 import { createSubstitution } from './prolog-substitution';
 import { createVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';

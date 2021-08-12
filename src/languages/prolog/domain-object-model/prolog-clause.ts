@@ -4,11 +4,12 @@ import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { PrologGlobalInfo } from './prolog-global-info';
 import { PrologGoal } from './prolog-goal';
-import { PrologSubstitution } from './prolog-substitution';
+import { createSubstitution } from './prolog-substitution';
 // import { PrologVariable } from './prolog-variable';
 
 // import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
+import { ISubstitution } from './interfaces/isubstitution';
 import { IVariable } from './interfaces/ivariable';
 
 export class PrologClause /* implements IPrologExpression */ {
@@ -73,7 +74,7 @@ export class PrologClause /* implements IPrologExpression */ {
 		);
 	}
 
-	public ApplySubstitution(substitution: PrologSubstitution): PrologClause {
+	public ApplySubstitution(substitution: ISubstitution): PrologClause {
 		return new PrologClause(
 			this.Lhs.ApplySubstitution(substitution) as PrologGoal,
 			this.Rhs.map(
@@ -91,7 +92,7 @@ export class PrologClause /* implements IPrologExpression */ {
 		globalInfo: PrologGlobalInfo
 	): PrologClause {
 		const oldVariables = this.FindBindingVariables();
-		const substitution = new PrologSubstitution();
+		const substitution = createSubstitution();
 		const arrayOfOldVariables = oldVariables.toArray();
 		const arrayOfVariablesToAvoid = variablesToAvoid.toArray();
 
@@ -123,7 +124,7 @@ export class PrologClause /* implements IPrologExpression */ {
 		return this.ApplySubstitution(substitution) as PrologClause;
 	}
 
-	public Unify(otherExpr: PrologClause): PrologSubstitution | undefined {
+	public Unify(otherExpr: PrologClause): ISubstitution | undefined {
 		const otherClause = otherExpr as PrologClause;
 
 		if (typeof otherClause === 'undefined' || this.Rhs.length !== otherClause.Rhs.length) {

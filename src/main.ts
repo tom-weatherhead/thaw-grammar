@@ -54,7 +54,6 @@ export { SASLGlobalInfo } from './languages/sasl/domain-object-model/global-info
 // export { SmalltalkGlobalInfo } from './languages/smalltalk/domain-object-model/global-info';
 
 // Prolog (Kamin 8/8)
-export { IPrologExpression } from './languages/prolog/domain-object-model/interfaces/iprolog-expression';
 export { PrologClause } from './languages/prolog/domain-object-model/prolog-clause';
 export { PrologFloatLiteral } from './languages/prolog/domain-object-model/prolog-float-literal';
 export {
@@ -64,4 +63,10 @@ export {
 export { PrologGlobalInfo } from './languages/prolog/domain-object-model/prolog-global-info';
 export { isPrologGoal, PrologGoal } from './languages/prolog/domain-object-model/prolog-goal';
 export { PrologIntegerLiteral } from './languages/prolog/domain-object-model/prolog-integer-literal';
-export { PrologVariable } from './languages/prolog/domain-object-model/prolog-variable';
+export { createVariable } from './languages/prolog/domain-object-model/prolog-variable';
+
+export { IPrologExpression } from './languages/prolog/domain-object-model/interfaces/iprolog-expression';
+export {
+	isIVariable,
+	IVariable
+} from './languages/prolog/domain-object-model/interfaces/ivariable';
