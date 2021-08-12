@@ -1,13 +1,12 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-name-expression.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
 
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
-// import { PrologSubstitution } from './prolog-substitution';
-import { PrologVariable } from './prolog-variable';
+import { IVariable } from './interfaces/ivariable';
 
 export abstract class PrologNameExpression /* implements IPrologExpression */ {
 	public readonly gs: LanguageSelector;
@@ -140,8 +139,8 @@ export abstract class PrologNameExpression /* implements IPrologExpression */ {
 	//         return true;
 	//     }
 
-	public FindBindingVariables(): Set<PrologVariable> {
-		const result = new Set<PrologVariable>();
+	public FindBindingVariables(): IImmutableSet<IVariable> {
+		const result = new Set<IVariable>();
 
 		for (const expr of this.ExpressionList) {
 			result.unionInPlace(expr.FindBindingVariables());
@@ -150,11 +149,11 @@ export abstract class PrologNameExpression /* implements IPrologExpression */ {
 		return result;
 	}
 
-	public GetListOfBindingVariables(): PrologVariable[] {
+	public GetListOfBindingVariables(): IVariable[] {
 		return this.FindBindingVariables().toArray();
 	}
 
-	public ContainsVariable(v: PrologVariable): boolean {
+	public ContainsVariable(v: IVariable): boolean {
 		return this.ExpressionList.some((expr: IPrologExpression) => expr.ContainsVariable(v));
 	}
 

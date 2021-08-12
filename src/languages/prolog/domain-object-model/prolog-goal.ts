@@ -97,7 +97,7 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 				return undefined;
 			}
 
-			substitution = substitution.Compose(substitution2);
+			substitution = substitution.compose(substitution2);
 		}
 
 		return substitution;

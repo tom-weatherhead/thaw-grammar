@@ -1,13 +1,15 @@
 // prolog-clause.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { IImmutableSet } from 'thaw-common-utilities.ts';
 
-// import { IPrologExpression } from './interfaces/iprolog-expression';
-import { IPrologNumber } from './interfaces/iprolog-number';
 import { PrologGlobalInfo } from './prolog-global-info';
 import { PrologGoal } from './prolog-goal';
 import { PrologSubstitution } from './prolog-substitution';
-import { PrologVariable } from './prolog-variable';
+// import { PrologVariable } from './prolog-variable';
+
+// import { IPrologExpression } from './interfaces/iprolog-expression';
+import { IPrologNumber } from './interfaces/iprolog-number';
+import { IVariable } from './interfaces/ivariable';
 
 export class PrologClause /* implements IPrologExpression */ {
 	public readonly Lhs: PrologGoal;
@@ -50,21 +52,21 @@ export class PrologClause /* implements IPrologExpression */ {
 	//     return true;
 	// }
 
-	public FindBindingVariables(): Set<PrologVariable> {
-		const result = this.Lhs.FindBindingVariables();
+	public FindBindingVariables(): IImmutableSet<IVariable> {
+		let result = this.Lhs.FindBindingVariables();
 
 		for (const subgoal of this.Rhs) {
-			result.unionInPlace(subgoal.FindBindingVariables());
+			result = result.union(subgoal.FindBindingVariables());
 		}
 
 		return result;
 	}
 
-	public GetListOfBindingVariables(): PrologVariable[] {
+	public GetListOfBindingVariables(): IVariable[] {
 		return this.FindBindingVariables().toArray();
 	}
 
-	public ContainsVariable(v: PrologVariable): boolean {
+	public ContainsVariable(v: IVariable): boolean {
 		return (
 			this.ContainsVariable(v) ||
 			this.Rhs.some((goal: PrologGoal) => goal.ContainsVariable(v))
@@ -80,12 +82,12 @@ export class PrologClause /* implements IPrologExpression */ {
 		);
 	}
 
-	private isVariableInArrayOfVariables(v: PrologVariable, a: PrologVariable[]): boolean {
-		return typeof a.find((vv: PrologVariable) => vv.Name === v.Name) !== 'undefined';
+	private isVariableInArrayOfVariables(v: IVariable, a: IVariable[]): boolean {
+		return typeof a.find((vv: IVariable) => vv.Name === v.Name) !== 'undefined';
 	}
 
 	public RenameVariables(
-		variablesToAvoid: Set<PrologVariable>,
+		variablesToAvoid: IImmutableSet<IVariable>,
 		globalInfo: PrologGlobalInfo
 	): PrologClause {
 		const oldVariables = this.FindBindingVariables();
@@ -100,7 +102,7 @@ export class PrologClause /* implements IPrologExpression */ {
 				continue;
 			}
 
-			let newVariable: PrologVariable;
+			let newVariable: IVariable;
 
 			do {
 				newVariable = globalInfo.GetNextUniqueVariable();
@@ -143,7 +145,7 @@ export class PrologClause /* implements IPrologExpression */ {
 				return undefined;
 			}
 
-			substitution = substitution.Compose(substitution2);
+			substitution = substitution.compose(substitution2);
 		}
 
 		return substitution;

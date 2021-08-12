@@ -9,7 +9,7 @@ export interface ISubstitution {
 	// IsOneToOne: boolean;
 
 	toString(): string;
-	Compose(otherSub: ISubstitution): ISubstitution;
-	// ContainsOnlyVariables(): boolean;
+	compose(otherSub: ISubstitution): ISubstitution;
+	containsOnlyVariables(): boolean;
 	// FindBindingVariables(): Set<PrologVariable>;
 }

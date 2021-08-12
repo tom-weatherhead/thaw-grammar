@@ -14,7 +14,6 @@ import { Symbol } from '../../common/symbol';
 
 import { createFunctorExpressionFromGoal } from './utilities';
 
-import { IPrologExpression } from './domain-object-model/interfaces/iprolog-expression';
 import { PrologClause } from './domain-object-model/prolog-clause';
 import { PrologFloatLiteral } from './domain-object-model/prolog-float-literal';
 import {
@@ -24,7 +23,9 @@ import {
 // import { PrologGlobalInfo } from './domain-object-model/prolog-global-info';
 import { PrologGoal } from './domain-object-model/prolog-goal';
 import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-literal';
-import { PrologVariable } from './domain-object-model/prolog-variable';
+import { createVariable } from './domain-object-model/prolog-variable';
+
+import { IPrologExpression } from './domain-object-model/interfaces/iprolog-expression';
 
 // function explodingCast<T>(value: unknown): T {
 // 	const castValue = value as T;
@@ -505,7 +506,7 @@ export class PrologGrammar extends GrammarBase {
 
 			case '#createVariable':
 				str = semanticStack.pop() as string;
-				semanticStack.push(new PrologVariable(str));
+				semanticStack.push(createVariable(str));
 				break;
 
 			case '#createFunctorExpression':

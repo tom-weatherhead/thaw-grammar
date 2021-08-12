@@ -4,8 +4,9 @@ import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
-import { PrologSubstitution } from './prolog-substitution';
+import { createSubstitution } from './prolog-substitution';
 
+import { ISubstitution } from './interfaces/isubstitution';
 import { isIVariable, IVariable, typenamePrologVariable } from './interfaces/ivariable';
 
 // const typenamePrologVariable = 'PrologVariable';
@@ -83,7 +84,7 @@ export class PrologVariable implements /* IEqualityComparable, IPrologExpression
 		return this.equals(v);
 	}
 
-	public ApplySubstitution(sub: PrologSubstitution): IPrologExpression {
+	public ApplySubstitution(sub: ISubstitution): IPrologExpression {
 		const value = sub.SubstitutionList.get(this.Name);
 
 		if (typeof value !== 'undefined') {
@@ -93,7 +94,7 @@ export class PrologVariable implements /* IEqualityComparable, IPrologExpression
 		return this;
 	}
 
-	public Unify(otherExpr: IPrologExpression): PrologSubstitution | undefined {
+	public Unify(otherExpr: IPrologExpression): ISubstitution | undefined {
 		// console.log('PrologVariable.Unify():');
 		// console.log('  this is', typeof this, this);
 		// console.log('  otherExpr is', typeof otherExpr, otherExpr);
@@ -107,7 +108,7 @@ export class PrologVariable implements /* IEqualityComparable, IPrologExpression
 			// But what about a binding such as { X = foo(_) } ?
 			(typeof otherVariable !== 'undefined' && otherVariable.IsNonBinding)
 		) {
-			return new PrologSubstitution();
+			return createSubstitution();
 		} else if (
 			// [PrologClause.name, PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
 			// [PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
@@ -124,7 +125,7 @@ export class PrologVariable implements /* IEqualityComparable, IPrologExpression
 			// This is the "occurs" check.
 			return undefined; // This PrologVariable and the IPrologExpression are not unifiable.
 		} else {
-			return new PrologSubstitution(this.Name, otherExpr);
+			return createSubstitution(this.Name, otherExpr);
 		}
 	}
 
@@ -135,4 +136,8 @@ export class PrologVariable implements /* IEqualityComparable, IPrologExpression
 	public EvaluateToNumber(): IPrologNumber | undefined {
 		return undefined;
 	}
+}
+
+export function createVariable(name: string): IVariable {
+	return new PrologVariable(name);
 }

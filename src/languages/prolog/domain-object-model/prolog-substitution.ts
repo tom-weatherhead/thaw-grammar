@@ -67,7 +67,7 @@ export class PrologSubstitution implements ISubstitution {
 		return `[${entries.map(([key, value]) => `${key} -> ${value}`).join('; ')}]`;
 	}
 
-	public Compose(otherSub: ISubstitution): ISubstitution {
+	public compose(otherSub: ISubstitution): ISubstitution {
 		const newSub = new PrologSubstitution();
 
 		// 1) Apply the Src substitution to this's terms.
@@ -165,11 +165,11 @@ export class PrologSubstitution implements ISubstitution {
 		return newSub;
 	}
 
-	// public ContainsOnlyVariables(): boolean {
-	// 	return Array.from(this.SubstitutionList.values()).every(
-	// 		(v: IPrologExpression) => v.constructor.name === PrologVariable.name
-	// 	);
-	// }
+	public containsOnlyVariables(): boolean {
+		return [...this.SubstitutionList.values()].every(isIVariable);
+		// (v: IPrologExpression) => v.constructor.name === PrologVariable.name
+		// );
+	}
 
 	// public FindBindingVariables(): Set<PrologVariable> {
 	// 	const result = new Set<PrologVariable>();
@@ -202,4 +202,11 @@ export class PrologSubstitution implements ISubstitution {
 
 	// 	return values.length === Array.from(this.SubstitutionList.keys()).length;
 	// }
+}
+
+export function createSubstitution(
+	v: string | undefined = undefined,
+	expr: IPrologExpression | undefined = undefined // To conveniently make a substitution with a single entry.
+): ISubstitution {
+	return new PrologSubstitution(v, expr);
 }

@@ -153,7 +153,7 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 				return undefined;
 			}
 
-			substitution = substitution.Compose(substitution2);
+			substitution = substitution.compose(substitution2);
 		}
 
 		return substitution;

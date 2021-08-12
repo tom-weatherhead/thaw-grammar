@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-global-info.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
 
 // import { LanguageSelector } from 'thaw-lexical-analyzer';
 
@@ -8,7 +8,6 @@ import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-
 
 import { CutBacktrackException } from './cut-backtrack-exception';
 import { CutDetector } from './cut-detector';
-import { IPrologExpression } from './interfaces/iprolog-expression';
 import { PrologClause } from './prolog-clause';
 // import { PrologFloatLiteral } from './prolog-float-literal';
 import {
@@ -20,10 +19,14 @@ import { PrologIntegerLiteral } from './prolog-integer-literal';
 
 import { PrologModule } from './prolog-module';
 // import { PrologNameExpression } from './prolog-name-expression';
-import { PrologSubstitution } from './prolog-substitution';
+import { createSubstitution, PrologSubstitution } from './prolog-substitution';
 import { PrologVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';
 import { createGoalFromFunctorExpression, findBindingVariablesInSubstitution } from '../utilities';
+
+import { IPrologExpression } from './interfaces/iprolog-expression';
+import { ISubstitution } from './interfaces/isubstitution';
+import { IVariable } from './interfaces/ivariable';
 
 enum SolutionCollectionMode {
 	None,
@@ -1372,9 +1375,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		goalList: PrologGoal[],
 		cutDetectorList: CutDetector[],
 		goalNum: number,
-		oldSubstitution: PrologSubstitution,
-		parentVariablesToAvoid: Set<PrologVariable>,
-		variablesInQuery: PrologVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
+		oldSubstitution: ISubstitution,
+		parentVariablesToAvoid: IImmutableSet<IVariable>,
+		variablesInQuery: IVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
 		listOfCurrentModules: PrologModule[]
 	): PrologSubstitution | undefined {
 		if (goalNum >= goalList.length) {
@@ -1559,7 +1562,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 							goalList,
 							cutDetectorList,
 							nextGoalNum,
-							oldSubstitution.Compose(addSubstitution),
+							oldSubstitution.compose(addSubstitution),
 							parentVariablesToAvoid,
 							variablesInQuery,
 							listOfCurrentModules
@@ -1621,7 +1624,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 							tempGoalList,
 							tempCutDetectorList,
 							0,
-							new PrologSubstitution(),
+							createSubstitution(),
 							innerGoal.FindBindingVariables(),
 							[],
 							tempListOfCurrentModules
@@ -1680,7 +1683,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 							goalList,
 							cutDetectorList,
 							nextGoalNum,
-							oldSubstitution.Compose(new PrologSubstitution(e0.Name, n1)),
+							oldSubstitution.compose(new PrologSubstitution(e0.Name, n1)),
 							parentVariablesToAvoid,
 							variablesInQuery,
 							listOfCurrentModules
@@ -1828,7 +1831,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				goalList,
 				cutDetectorList,
 				nextGoalNum,
-				oldSubstitution.Compose(addSubstitution),
+				oldSubstitution.compose(addSubstitution),
 				parentVariablesToAvoid,
 				variablesInQuery,
 				listOfCurrentModules
@@ -1854,7 +1857,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				goalList,
 				cutDetectorList,
 				nextGoalNum,
-				oldSubstitution.Compose(addSubstitution),
+				oldSubstitution.compose(addSubstitution),
 				parentVariablesToAvoid,
 				variablesInQuery,
 				listOfCurrentModules
@@ -1880,7 +1883,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				goalList,
 				cutDetectorList,
 				nextGoalNum,
-				oldSubstitution.Compose(addSubstitution),
+				oldSubstitution.compose(addSubstitution),
 				parentVariablesToAvoid,
 				variablesInQuery,
 				listOfCurrentModules
@@ -1906,7 +1909,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				goalList,
 				cutDetectorList,
 				nextGoalNum,
-				oldSubstitution.Compose(addSubstitution),
+				oldSubstitution.compose(addSubstitution),
 				parentVariablesToAvoid,
 				variablesInQuery,
 				listOfCurrentModules
@@ -1977,19 +1980,19 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		goalList: PrologGoal[],
 		cutDetectorList: CutDetector[],
 		nextGoalNum: number,
-		oldSubstitution: PrologSubstitution,
-		parentVariablesToAvoid: Set<PrologVariable>,
-		variablesInQuery: PrologVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
+		oldSubstitution: ISubstitution,
+		parentVariablesToAvoid: IImmutableSet<IVariable>,
+		variablesInQuery: IVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
 		currentModule: PrologModule,
 		listOfCurrentModules: PrologModule[]
-	): PrologSubstitution | undefined {
+	): ISubstitution | undefined {
 		// console.log('ProveGoalListUsingModule() : currentModule name is', currentModule.Name);
 
-		const variablesToAvoid = goal.FindBindingVariables();
-
-		variablesToAvoid.unionInPlace(parentVariablesToAvoid);
-		// variablesToAvoid.unionInPlace(oldSubstitution.FindBindingVariables());
-		variablesToAvoid.unionInPlace(findBindingVariablesInSubstitution(oldSubstitution));
+		const variablesToAvoid = goal
+			.FindBindingVariables()
+			.union(parentVariablesToAvoid)
+			// variablesToAvoid.unionInPlace(oldSubstitution.FindBindingVariables());
+			.union(findBindingVariablesInSubstitution(oldSubstitution));
 
 		// console.log(
 		// 	`ProveGoalListUsingModule() : The variables to avoid for goal ${goal} are:`
@@ -2054,7 +2057,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// //Console.WriteLine("ProveGoal: Composing unifier with substitution: {0}", oldSubstitution);
 
 			let localSubstitution: PrologSubstitution | undefined =
-				oldSubstitution.Compose(unifier);
+				oldSubstitution.compose(unifier);
 
 			// console.log(
 			// 	`ProveGoalListUsingModule() : The composition of substitutions ${oldSubstitution} and ${unifier} is ${localSubstitution}`
