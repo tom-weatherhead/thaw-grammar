@@ -6,18 +6,18 @@ import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
 import { PrologSubstitution } from './prolog-substitution';
 
-import { IVariable } from './interfaces/ivariable';
+import { isIVariable, IVariable, typenamePrologVariable } from './interfaces/ivariable';
 
-const typenamePrologVariable = 'PrologVariable';
+// const typenamePrologVariable = 'PrologVariable';
 
-export function isPrologVariable(obj: unknown): obj is PrologVariable {
-	const otherPrologVariable = obj as PrologVariable;
-
-	return (
-		typeof otherPrologVariable !== 'undefined' &&
-		otherPrologVariable.typename === typenamePrologVariable
-	);
-}
+// export function isPrologVariable(obj: unknown): obj is PrologVariable {
+// 	const otherPrologVariable = obj as PrologVariable;
+//
+// 	return (
+// 		typeof otherPrologVariable !== 'undefined' &&
+// 		otherPrologVariable.typename === typenamePrologVariable
+// 	);
+// }
 
 export class PrologVariable implements /* IEqualityComparable, IPrologExpression, */ IVariable {
 	public readonly typename: string = typenamePrologVariable;
@@ -42,7 +42,7 @@ export class PrologVariable implements /* IEqualityComparable, IPrologExpression
 		return (
 			// typeof otherVar !== 'undefined' &&
 			// otherVar instanceof PrologVariable &&
-			isPrologVariable(otherVar) && this.Name === otherVar.Name
+			isIVariable(otherVar) && this.Name === otherVar.Name
 		);
 	}
 

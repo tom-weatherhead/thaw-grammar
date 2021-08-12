@@ -8,18 +8,32 @@ import { IPrologNumber } from './iprolog-number';
 
 import { ISubstitution } from './isubstitution';
 
+export const typenamePrologVariable = 'PrologVariable';
+
 export interface IVariable extends IEqualityComparable, IPrologExpression {
 	readonly typename: string;
 	readonly Name: string;
 
+	IsNonBinding: boolean;
+	IsGround: boolean;
+
 	toString(): string;
 	equals(obj: unknown): boolean;
-	IsNonBinding: boolean;
-	FindBindingVariables(): IImmutableSet<IVariable>;
-	GetListOfBindingVariables(): IVariable[];
+
+	FindBindingVariables(): IImmutableSet<IVariable>; // or IImmutableSet<string>?
+	GetListOfBindingVariables(): IVariable[]; // or IImmutableArray<string>?
 	ContainsVariable(v: IVariable): boolean;
 	ApplySubstitution(sub: ISubstitution): IPrologExpression;
 	Unify(otherExpr: IPrologExpression): ISubstitution | undefined;
-	IsGround: boolean;
 	EvaluateToNumber(): IPrologNumber | undefined;
+}
+
+export function isIVariable(obj: unknown): obj is IVariable {
+	const otherIVariable = obj as IVariable;
+
+	return (
+		typeof otherIVariable !== 'undefined' &&
+		otherIVariable.typename === typenamePrologVariable &&
+		typeof otherIVariable.Name === 'string'
+	);
 }

@@ -6,6 +6,8 @@ import { IPrologExpression } from './interfaces/iprolog-expression';
 
 import { ISubstitution } from './interfaces/isubstitution';
 
+import { isIVariable, IVariable } from './interfaces/ivariable';
+
 // 2021-07-13: Warning: Circular dependency: caused by reference to prolog-variable.ts :
 // prolog-substitution.js -> prolog-variable.js -> prolog-substitution.js
 
@@ -65,7 +67,7 @@ export class PrologSubstitution implements ISubstitution {
 		return `[${entries.map(([key, value]) => `${key} -> ${value}`).join('; ')}]`;
 	}
 
-	public Compose(otherSub: PrologSubstitution): PrologSubstitution {
+	public Compose(otherSub: ISubstitution): ISubstitution {
 		const newSub = new PrologSubstitution();
 
 		// 1) Apply the Src substitution to this's terms.
@@ -98,11 +100,12 @@ export class PrologSubstitution implements ISubstitution {
 			// const value = newSub.SubstitutionList.get(key);
 
 			// Or:
-			// if (isPrologVariable(value) && (value as PrologVariable).Name === key) {
-			// 	throw new Error(
-			// 		'PrologSubstitution: An identity should have been removed from the substitution, but was not.'
-			// 	);
-			// }
+			if (isIVariable(value) && (value as IVariable).Name === key) {
+				throw new Error(
+					'PrologSubstitution: An identity should have been removed from the substitution, but was not.'
+				);
+				// varsToRemove.push(key);
+			}
 
 			// if (v.equals(newSub.SubstitutionList.get(key))) {
 			if (typeof value === 'string' && value === key) {
