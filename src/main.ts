@@ -27,15 +27,17 @@ export { ParserSelector } from './common/parser-selectors';
 export { Production } from './common/production';
 export { Symbol } from './common/symbol';
 
-// The Chapter 1 language from Kamin (Kamin 1/8)
-export { Chapter1GlobalInfo } from './languages/chapter1/domain-object-model/global-info';
-
 // My (ThAW's) minimal language
 export { MinimalLanguageGlobalInfo } from './languages/minimal/domain-object-model/global-info';
+
+// The Chapter 1 language from Kamin (Kamin 1/8)
+export { Chapter1GlobalInfo } from './languages/chapter1/domain-object-model/global-info';
 
 // LISP (Kamin 2/8)
 export { ISExpression } from './languages/lisp/domain-object-model/isexpression';
 export { LISPGlobalInfo } from './languages/lisp/domain-object-model/lisp-global-info';
+
+export { LISPGrammarForLRParser } from './languages/lisp/lisp-grammar-for-lr-parser';
 
 // APL (Kamin 3/8)
 // export { APLGlobalInfo } from './languages/apl/domain-object-model/global-info';

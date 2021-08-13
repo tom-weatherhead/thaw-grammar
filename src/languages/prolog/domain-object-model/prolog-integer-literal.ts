@@ -1,6 +1,6 @@
 // prolog-integer-literal.ts
 
-import { IEqualityComparable, IImmutableSet, Set } from 'thaw-common-utilities.ts';
+import { createSet, IEqualityComparable, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
@@ -31,7 +31,7 @@ export class PrologIntegerLiteral implements IEqualityComparable, IPrologNumber 
 	}
 
 	public FindBindingVariables(): IImmutableSet<IVariable> {
-		return new Set<IVariable>();
+		return createSet<IVariable>();
 	}
 
 	public GetListOfBindingVariables(): IVariable[] {

@@ -194,8 +194,6 @@
 
 // **** END : From the C# version in the Inference project ****
 
-'use strict';
-
 import { Stack } from 'thaw-common-utilities.ts';
 
 import { LexicalState, Token } from 'thaw-lexical-analyzer';
@@ -1190,7 +1188,7 @@ export class LISPGrammarForLRParser extends GrammarBase {
 						return Symbol.terminalID;
 				}
 
-				break;
+			// break;
 
 			default:
 				break;

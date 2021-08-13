@@ -11,5 +11,5 @@ export interface ISubstitution {
 	toString(): string;
 	compose(otherSub: ISubstitution): ISubstitution;
 	containsOnlyVariables(): boolean;
-	// FindBindingVariables(): Set<PrologVariable>;
+	// FindBindingVariables(): IImmutableSet<IVariable>;
 }

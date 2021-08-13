@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/utilities.ts
 
-import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
+import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { PrologFunctorExpression } from './domain-object-model/prolog-functor-expression';
 import { PrologGoal } from './domain-object-model/prolog-goal';
@@ -37,7 +37,7 @@ export function createFunctorExpressionFromGoal(goal: PrologGoal): PrologFunctor
 // }
 
 export function findBindingVariablesInSubstitution(s: ISubstitution): IImmutableSet<IVariable> {
-	const result = new Set<IVariable>();
+	const result = createSet<IVariable>();
 
 	for (const key of s.SubstitutionList.keys()) {
 		result.add(createVariable(key));

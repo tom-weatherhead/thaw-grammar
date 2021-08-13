@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/lisp-operator-usage.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { createSet } from 'thaw-common-utilities.ts';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
@@ -18,7 +18,7 @@ import { LISPString } from './lisp-string';
 import { SExpressionList } from './sexpression-list';
 
 export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
-	private readonly operatorsThatTakeEitherIntOrFloatArgs = new Set<string>();
+	private readonly operatorsThatTakeEitherIntOrFloatArgs = createSet<string>();
 
 	constructor(operatorName: Name, expressionList: ExpressionList<ISExpression>) {
 		super(operatorName, expressionList);

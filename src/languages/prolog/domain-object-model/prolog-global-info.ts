@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-global-info.ts
 
-import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
+import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
@@ -415,8 +415,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		return createVariable(`Var${this.variableRenameNum}`);
 	}
 
-	private GetVariablesFromGoalList(goalListParam: PrologGoal[]): Set<IVariable> {
-		const result = new Set<IVariable>();
+	private GetVariablesFromGoalList(goalListParam: PrologGoal[]): IImmutableSet<IVariable> {
+		const result = createSet<IVariable>();
 
 		// console.log('goalListParam is', typeof goalListParam, goalListParam);
 
@@ -2052,9 +2052,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// );
 
 			// See the program F2.16.txt for a test of the cut.
-			const newVariablesToAvoid = this.GetVariablesFromGoalList(newClause.Rhs);
-
-			newVariablesToAvoid.unionInPlace(variablesToAvoid);
+			const newVariablesToAvoid = this.GetVariablesFromGoalList(newClause.Rhs).union(
+				variablesToAvoid
+			);
 
 			// ThAW 2014/03/06 : We want to support cuts in goal disjunctions and if/then/else constructs.
 			const cutDetector = new CutDetector();

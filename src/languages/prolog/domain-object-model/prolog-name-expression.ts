@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-name-expression.ts
 
-import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
+import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { LanguageSelector } from 'thaw-lexical-analyzer';
 
@@ -140,7 +140,7 @@ export abstract class PrologNameExpression /* implements IPrologExpression */ {
 	//     }
 
 	public FindBindingVariables(): IImmutableSet<IVariable> {
-		const result = new Set<IVariable>();
+		const result = createSet<IVariable>();
 
 		for (const expr of this.ExpressionList) {
 			result.unionInPlace(expr.FindBindingVariables());

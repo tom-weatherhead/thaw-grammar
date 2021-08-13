@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-variable.ts
 
-import { IImmutableSet, Set } from 'thaw-common-utilities.ts';
+import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
@@ -67,7 +67,7 @@ class PrologVariable implements /* IEqualityComparable, IPrologExpression, */ IV
 
 		// return Set.createFromArray(this.IsNonBinding ? [] : [this]);
 
-		const result = new Set<IVariable>();
+		const result = createSet<IVariable>();
 
 		if (!this.IsNonBinding) {
 			result.add(this);

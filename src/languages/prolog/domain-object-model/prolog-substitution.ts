@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-substitution.ts
 
-import { Set } from 'thaw-common-utilities.ts';
+import { createSet } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 
@@ -133,7 +133,7 @@ class PrologSubstitution implements ISubstitution {
 
 		// #if SUBSTITUTION_COMPOSITION_VERIFICATION
 		// According to Kamin, we should ensure that no member of newSub.SubstitutionList.Keys appears in newSub.SubstitutionList.Values .
-		const variablesInValues = new Set<string>();
+		const variablesInValues = createSet<string>();
 
 		for (const value of newSub.SubstitutionList.values()) {
 			// variablesInValues.unionInPlace(value.FindBindingVariables());
