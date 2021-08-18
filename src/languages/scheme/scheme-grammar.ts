@@ -1098,8 +1098,8 @@ export class SchemeGrammar extends GrammarBase {
 		}
 	}
 
-	public tokenToSymbol(token: Token): number {
-		// Returns Symbol
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	public tokenToSymbol(token: Token): Symbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {

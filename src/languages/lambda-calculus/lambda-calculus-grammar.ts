@@ -18,9 +18,9 @@ import { ParserSelector } from '../../common/parser-selectors';
 import { Production } from '../../common/production';
 import { Symbol } from '../../common/symbol';
 
-// export interface ILCValue {}
-// export class LCLambdaExpression {} // TODO: Name it 'LCLambdaExpression' or 'LCFunction' ?
-// export class LCFunctionCall {}
+import { LCFunctionCall } from './domain-object-model/call';
+import { LCLambdaExpression } from './domain-object-model/lambda-expression';
+import { ILCExpression, LCVariable } from './domain-object-model/variable';
 
 // From https://opendsa.cs.vt.edu/ODSA/Books/PL/html/Syntax.html :
 //
@@ -127,13 +127,13 @@ export class LambdaCalculusGrammar extends GrammarBase {
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
 		// console.log(`LISPGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
-		throw new Error('LambdaCalculusGrammar.executeSemanticAction() : Not yet implemented');
+		// throw new Error('LambdaCalculusGrammar.executeSemanticAction() : Not yet implemented');
 
-		// let name: Name;
-		// let variable: Variable<ISExpression>;
+		let name: Name;
+		let variable: LCVariable;
 		// let variableList: VariableList<ISExpression>;
-		// let expression: IExpression<ISExpression>;
-		// let expression2: IExpression<ISExpression>;
+		let expression: ILCExpression;
+		let expression2: ILCExpression;
 		// let expression3: IExpression<ISExpression>;
 		// let expressionList: ExpressionList<ISExpression>;
 		// let sexpression: ISExpression;
@@ -141,43 +141,41 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		// let tail: ISExpression;
 		// let varExprList: [Variable<ISExpression>, IExpression<ISExpression>][];
 		// let exprPairList: [IExpression<ISExpression>, IExpression<ISExpression>][];
-		//
-		// switch (action) {
-		// 	case '#variable':
-		// 		name = semanticStack.pop() as Name;
-		// 		semanticStack.push(new Variable<ILCValue>(name.value, name.line, name.column));
-		// 		break;
-		//
-		// 	case '#lambdaExpression':
-		// 		expression = semanticStack.pop() as IExpression<ILCValue>; // The function's body
-		// 		variable = semanticStack.pop() as Variable<ILCValue>; // The function's formal argument list
-		// 		name = semanticStack.pop() as Name; // The function name
-		// 		semanticStack.push(
-		// 			// new LambdaExpression<ILCValue>([variable], expression)
-		// 			new LCLambdaExpression(variable, expression)
-		// 		); // Add line and column?
-		// 		break;
-		//
-		// 	case  '#functionCall': // '#operatorUsage':
-		// 		expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
-		// 		name = semanticStack.pop() as Name;
-		// 		semanticStack.push(new LCFunctionCall(name, expressionList));
-		// 		break;
-		//
-		// 	default:
-		// 		throw new GrammarException(`Unrecognized semantic action: ${action}`);
-		// }
+
+		switch (action) {
+			case '#variable':
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new LCVariable(name.value)); //, name.line, name.column
+				break;
+
+			case '#lambdaExpression':
+				expression = semanticStack.pop() as ILCExpression; // The function's body
+				variable = semanticStack.pop() as LCVariable; // The function's formal argument list
+				name = semanticStack.pop() as Name; // The function name
+				semanticStack.push(
+					// new LambdaExpression<ILCValue>([variable], expression)
+					new LCLambdaExpression(variable, expression)
+				); // Add line and column?
+				break;
+
+			case '#functionCall': // '#operatorUsage':
+				expression2 = semanticStack.pop() as ILCExpression;
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(new LCFunctionCall(expression, expression2));
+				break;
+
+			default:
+				throw new GrammarException(`Unrecognized semantic action: ${action}`);
+		}
 	}
 
-	public tokenToSymbol(token: Token): number {
-		// Returns Symbol
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	public tokenToSymbol(token: Token): Symbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
 				return Symbol.terminalEOF;
-			// case LexicalState.tokenStrLit:
-			// 	return Symbol.terminalStringLiteral;
 			// case LexicalState.tokenIdent: return Symbol.terminalID;
 			case LexicalState.tokenLeftBracket:
 				return Symbol.terminalLeftBracket;

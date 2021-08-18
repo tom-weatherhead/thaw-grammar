@@ -619,8 +619,6 @@ export class PrologGrammar extends GrammarBase {
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	public tokenToSymbol(token: Token): Symbol {
-		// Returns Symbol
-
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
