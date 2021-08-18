@@ -7,6 +7,7 @@ import { Chapter1Grammar } from '../languages/chapter1/chapter1-grammar';
 import { CluGrammar } from '../languages/clu/clu-grammar';
 import { InferenceGrammar } from '../languages/inference/inference-grammar';
 import { JSONGrammar } from '../languages/json/json-grammar';
+import { LambdaCalculusGrammar } from '../languages/lambda-calculus/lambda-calculus-grammar';
 import { LISPGrammar } from '../languages/lisp/lisp-grammar';
 import { MicroGrammar } from '../languages/micro/micro-grammar';
 import { MinimalLanguageGrammar } from '../languages/minimal/minimal-language-grammar';
@@ -57,6 +58,9 @@ export function createGrammar(ls: LanguageSelector): IGrammar {
 
 		case LanguageSelector.JSON:
 			return new JSONGrammar();
+
+		case LanguageSelector.LambdaCalculus:
+			return new LambdaCalculusGrammar();
 
 		default:
 			throw new ArgumentException(

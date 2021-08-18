@@ -164,5 +164,7 @@ export enum Symbol {
 
 	// EcstaSKI non-terminals
 	nonterminalLambdaExpression,
-	nonterminalLetStatement
+	nonterminalLetStatement,
+
+	nonterminalFunctionCall
 }

@@ -3,12 +3,10 @@
 'use strict';
 
 import {
+	createSet,
 	// IEqualityComparable,
-	isIEqualityComparable,
-	Set
+	isIEqualityComparable
 } from 'thaw-common-utilities.ts';
-
-// import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import {
 	createGrammar,
@@ -119,8 +117,8 @@ test('Find PrologVariable in Set test', () => {
 	// const grammar = createGrammar(LanguageSelector.Prolog);
 	// const grammar = createGrammar(LanguageSelector.Prolog2);
 	// const globalInfo = new PrologGlobalInfo();
-	const setWith = new Set<IVariable>();
-	const setWithout = new Set<IVariable>();
+	const setWith = createSet<IVariable>();
+	const setWithout = createSet<IVariable>();
 	const variable = createVariable('A');
 
 	setWith.add(createVariable('B'));
