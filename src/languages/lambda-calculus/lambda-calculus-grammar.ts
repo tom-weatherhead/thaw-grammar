@@ -4,13 +4,8 @@ import { Stack } from 'thaw-common-utilities.ts';
 
 import { LexicalState, Token } from 'thaw-lexical-analyzer';
 
-// import { ExpressionList } from '../../common/domain-object-model/expression-list';
-// import { IExpression } from '../../common/domain-object-model/iexpression';
 import { Name } from '../../common/domain-object-model/name';
-// import { Variable } from '../../common/domain-object-model/variable';
-// import { VariableList } from '../../common/domain-object-model/variable-list';
 
-// import { ArgumentException } from '../../common/exceptions/argument-exception';
 import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase } from '../../common/grammar-base';
@@ -123,41 +118,24 @@ export class LambdaCalculusGrammar extends GrammarBase {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
-		// console.log(`LISPGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
-
-		// throw new Error('LambdaCalculusGrammar.executeSemanticAction() : Not yet implemented');
-
 		let name: Name;
 		let variable: LCVariable;
-		// let variableList: VariableList<ISExpression>;
 		let expression: ILCExpression;
 		let expression2: ILCExpression;
-		// let expression3: IExpression<ISExpression>;
-		// let expressionList: ExpressionList<ISExpression>;
-		// let sexpression: ISExpression;
-		// let head: ISExpression;
-		// let tail: ISExpression;
-		// let varExprList: [Variable<ISExpression>, IExpression<ISExpression>][];
-		// let exprPairList: [IExpression<ISExpression>, IExpression<ISExpression>][];
 
 		switch (action) {
 			case '#variable':
 				name = semanticStack.pop() as Name;
-				// console.log('LC: Creating variable named', name.value);
 				semanticStack.push(new LCVariable(name.value)); //, name.line, name.column
 				break;
 
 			case '#lambdaExpression':
 				expression = semanticStack.pop() as ILCExpression; // The function's body
 				variable = semanticStack.pop() as LCVariable; // The function's formal argument list
-				// name = semanticStack.pop() as Name; // The function name
-				semanticStack.push(
-					// new LambdaExpression<ILCValue>([variable], expression)
-					new LCLambdaExpression(variable, expression)
-				); // Add line and column?
+				semanticStack.push(new LCLambdaExpression(variable, expression)); // Add line and column?
 				break;
 
-			case '#functionCall': // '#operatorUsage':
+			case '#functionCall':
 				expression2 = semanticStack.pop() as ILCExpression;
 				expression = semanticStack.pop() as ILCExpression;
 				semanticStack.push(new LCFunctionCall(expression, expression2));
