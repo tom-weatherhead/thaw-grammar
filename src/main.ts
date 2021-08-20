@@ -72,3 +72,6 @@ export {
 	isIVariable,
 	IVariable
 } from './languages/prolog/domain-object-model/interfaces/ivariable';
+
+// The Lambda Calculus
+export { ILCExpression } from './languages/lambda-calculus/domain-object-model/variable';

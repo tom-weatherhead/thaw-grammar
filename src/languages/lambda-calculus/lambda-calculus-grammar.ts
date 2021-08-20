@@ -87,12 +87,10 @@ export class LambdaCalculusGrammar extends GrammarBase {
 			new Production(
 				Symbol.nonterminalLambdaExpression,
 				[
-					// Symbol.terminalLeftBracket,
 					Symbol.terminalFn,
 					Symbol.nonterminalVariable,
 					Symbol.terminalDot,
 					Symbol.nonterminalExpression,
-					// Symbol.terminalRightBracket,
 					'#lambdaExpression'
 				],
 				7
@@ -145,13 +143,14 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		switch (action) {
 			case '#variable':
 				name = semanticStack.pop() as Name;
+				// console.log('LC: Creating variable named', name.value);
 				semanticStack.push(new LCVariable(name.value)); //, name.line, name.column
 				break;
 
 			case '#lambdaExpression':
 				expression = semanticStack.pop() as ILCExpression; // The function's body
 				variable = semanticStack.pop() as LCVariable; // The function's formal argument list
-				name = semanticStack.pop() as Name; // The function name
+				// name = semanticStack.pop() as Name; // The function name
 				semanticStack.push(
 					// new LambdaExpression<ILCValue>([variable], expression)
 					new LCLambdaExpression(variable, expression)
@@ -181,12 +180,19 @@ export class LambdaCalculusGrammar extends GrammarBase {
 				return Symbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
 				return Symbol.terminalRightBracket;
+			case LexicalState.tokenGreekLetterLambda:
+				return Symbol.terminalFn;
+			case LexicalState.tokenDot:
+				return Symbol.terminalDot;
 
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
 					case '.':
 						return Symbol.terminalDot; // We could modify the tokenizer to generate TokenType.T_Dot in this case, to obviate this line.
 					case 'λ':
+						console.log(
+							'LexicalState.tokenIdent λ being converted to Symbol.terminalFn'
+						);
 						return Symbol.terminalFn;
 					default:
 						return Symbol.terminalID;
