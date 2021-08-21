@@ -13,9 +13,11 @@ import { ParserSelector } from '../../common/parser-selectors';
 import { Production } from '../../common/production';
 import { Symbol } from '../../common/symbol';
 
+import { ILCExpression } from './domain-object-model/interfaces/expression';
+
 import { LCFunctionCall } from './domain-object-model/call';
 import { LCLambdaExpression } from './domain-object-model/lambda-expression';
-import { ILCExpression, LCVariable } from './domain-object-model/variable';
+import { LCVariable } from './domain-object-model/variable';
 
 // From https://opendsa.cs.vt.edu/ODSA/Books/PL/html/Syntax.html :
 //

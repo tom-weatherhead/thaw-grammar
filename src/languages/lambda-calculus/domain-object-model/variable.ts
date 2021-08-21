@@ -1,33 +1,31 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/domain-object-model/variable.ts
 
 // ISet
-import { createSet, IImmutableSet, IStringifiable } from 'thaw-common-utilities.ts';
+import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
-export interface ILCExpression extends IStringifiable {
-	containsVariableNamed(name: string): boolean;
-	containsBoundVariableNamed(name: string): boolean;
-	// containsUnboundVariableNamed(name: string): boolean;
-	renameBoundVariable(newName: string, oldName: string): ILCExpression;
-	substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression;
-	betaReduce(generateNewVariableName: () => string): ILCExpression;
-	getSetOfAllVariableNames(): IImmutableSet<string>;
-}
+import {
+	ILCExpression,
+	ILCSubstitution,
+	ILCUnifiable,
+	ILCVariable,
+	isLCVariable,
+	typenameLCVariable
+} from './interfaces/expression';
 
-/* eslint-disable @typescript-eslint/no-empty-interface */
-export interface ILCValue extends ILCExpression {}
+import { createSubstitution } from './substitution';
 
-const typenameLCVariable = 'LCVariable';
+// export const typenameLCVariable = 'LCVariable';
+//
+// export function isLCVariable(obj: unknown): obj is LCVariable {
+// 	const otherLCVariable = obj as ILCExpression;
+//
+// 	return (
+// 		typeof otherLCVariable !== 'undefined' && otherLCVariable.typename === typenameLCVariable
+// 	);
+// }
 
-export function isLCVariable(obj: unknown): obj is LCVariable {
-	const otherLCVariable = obj as LCVariable;
-
-	return (
-		typeof otherLCVariable !== 'undefined' && otherLCVariable.typename === typenameLCVariable
-	);
-}
-
-export class LCVariable implements ILCExpression {
-	public readonly typename = typenameLCVariable;
+export class LCVariable implements ILCVariable {
+	public readonly typename: string = typenameLCVariable;
 
 	constructor(public readonly name: string) {
 		// if (this.name.length !== 1) {
@@ -59,7 +57,54 @@ export class LCVariable implements ILCExpression {
 		return this.name;
 	}
 
+	public equals(obj: unknown): boolean {
+		const otherVar = obj as LCVariable;
+
+		// We can compare the Name members with == because Name is a string.
+		return (
+			// typeof otherVar !== 'undefined' &&
+			// otherVar instanceof PrologVariable &&
+			isLCVariable(otherVar) && this.name === otherVar.name
+		);
+	}
+
 	public getSetOfAllVariableNames(): IImmutableSet<string> {
 		return createSet([this.name]);
+	}
+
+	public applySubstitution(substitution: ILCSubstitution): ILCExpression {
+		// const value = substitution.SubstitutionList.get(this.name);
+		//
+		// if (typeof value !== 'undefined') {
+		// 	return value;
+		// }
+		//
+		// return this;
+
+		return ifDefinedThenElse(substitution.SubstitutionList.get(this.name), this);
+	}
+
+	public unify(other: ILCUnifiable): ILCSubstitution | undefined {
+		const otherExpr = other as ILCExpression;
+		// const otherVariable = otherExpr as LCVariable;
+
+		if (
+			this.equals(otherExpr) // ||
+			// this.isNonBinding ||
+			// 2014/03/13 : Don't add the binding { X = _ } to any substitution.
+			// But what about a binding such as { X = foo(_) } ?
+			// (isLCVariable(other) && otherExpr.isNonBinding)
+		) {
+			return createSubstitution();
+		} else if (
+			// [PrologClause.name, PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
+			// [PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
+			otherExpr.containsVariableNamed(this.name)
+		) {
+			// This is the "occurs" check.
+			return undefined; // This PrologVariable and the IPrologExpression are not unifiable.
+		} else {
+			return createSubstitution(this.name, otherExpr);
+		}
 	}
 }

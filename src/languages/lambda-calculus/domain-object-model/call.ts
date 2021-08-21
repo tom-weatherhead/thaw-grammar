@@ -2,11 +2,31 @@
 
 import { IImmutableSet } from 'thaw-common-utilities.ts';
 
+import {
+	ILCExpression,
+	ILCSubstitution,
+	ILCUnifiable,
+	isLCVariable
+} from './interfaces/expression';
+
 import { isLCLambdaExpression, LCLambdaExpression } from './lambda-expression';
 
-import { ILCExpression } from './variable';
+// import { isLCVariable } from './variable';
+
+const typenameLCFunctionCall = 'LCFunctionCall';
+
+export function isLCFunctionCall(obj: unknown): obj is LCFunctionCall {
+	const otherLCFunctionCall = obj as LCFunctionCall;
+
+	return (
+		typeof otherLCFunctionCall !== 'undefined' &&
+		otherLCFunctionCall.typename === typenameLCFunctionCall
+	);
+}
 
 export class LCFunctionCall implements ILCExpression {
+	public readonly typename: string = typenameLCFunctionCall;
+
 	constructor(public readonly callee: ILCExpression, public readonly arg: ILCExpression) {}
 
 	public containsVariableNamed(name: string): boolean {
@@ -122,5 +142,32 @@ export class LCFunctionCall implements ILCExpression {
 
 	public getSetOfAllVariableNames(): IImmutableSet<string> {
 		return this.callee.getSetOfAllVariableNames().union(this.arg.getSetOfAllVariableNames());
+	}
+
+	public applySubstitution(substitution: ILCSubstitution): ILCExpression {
+		return new LCFunctionCall(
+			this.callee.applySubstitution(substitution),
+			this.arg.applySubstitution(substitution)
+		);
+	}
+
+	public unify(other: ILCUnifiable): ILCSubstitution | undefined {
+		if (isLCVariable(other)) {
+			return other.unify(this);
+		} else if (!isLCFunctionCall(other)) {
+			return undefined;
+		}
+
+		const otherLCFunctionCall = other as LCFunctionCall;
+		const unifier1 = this.callee.unify(otherLCFunctionCall.callee);
+
+		if (typeof unifier1 === 'undefined') {
+			return undefined;
+		}
+
+		const argA = this.arg.applySubstitution(unifier1);
+		const argB = otherLCFunctionCall.arg.applySubstitution(unifier1);
+
+		return argA.unify(argB);
 	}
 }
