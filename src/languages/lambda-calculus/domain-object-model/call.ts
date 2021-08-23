@@ -55,15 +55,15 @@ export class LCFunctionCall implements ILCExpression {
 	}
 
 	public betaReduce(generateNewVariableName: () => string): ILCExpression {
-		console.log(`LCFunctionCall.betaReduce() : Unevaluated callee is ${this.callee}`);
-		console.log(`LCFunctionCall.betaReduce() : Unevaluated actual parameter is ${this.arg}`);
+		// console.log(`LCFunctionCall.betaReduce() : Unevaluated callee is ${this.callee}`);
+		// console.log(`LCFunctionCall.betaReduce() : Unevaluated actual parameter is ${this.arg}`);
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
 		// const evaluatedCallee = this.callee; // Temp hack: No evaluation
 		const evaluatedCallee = this.callee.betaReduce(generateNewVariableName);
 
-		console.log(`LCFunctionCall.betaReduce() : evaluatedCallee is ${evaluatedCallee}`);
+		// console.log(`LCFunctionCall.betaReduce() : evaluatedCallee is ${evaluatedCallee}`);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			const result = new LCFunctionCall(
@@ -71,9 +71,9 @@ export class LCFunctionCall implements ILCExpression {
 				this.arg.betaReduce(generateNewVariableName)
 			);
 
-			console.log(
-				`LCFunctionCall.betaReduce() : evaluatedCallee is not an LCLambdaExpression; returning ${result}`
-			);
+			// console.log(
+			// 	`LCFunctionCall.betaReduce() : evaluatedCallee is not an LCLambdaExpression; returning ${result}`
+			// );
 
 			return result;
 		}
@@ -81,8 +81,8 @@ export class LCFunctionCall implements ILCExpression {
 		// Next, substitute this.arg in for the arg in the evaluated callee.
 		let lambdaExpression = evaluatedCallee as LCLambdaExpression;
 
-		console.log(`The call's callee is: ${lambdaExpression}`);
-		console.log(`The call's actual parameter is: ${this.arg}`);
+		// console.log(`The call's callee is: ${lambdaExpression}`);
+		// console.log(`The call's actual parameter is: ${this.arg}`);
 
 		// return lambdaExpression.body
 		// 	.substituteForUnboundVariable(lambdaExpression.arg.name, this.arg)
@@ -96,7 +96,7 @@ export class LCFunctionCall implements ILCExpression {
 		//   - If v occurs as a bound variable in the callee, then:
 		//     - Generate a new variable name w that does not occur in the callee;
 		//     - In the callee, replace all bound occurrences of v with w.
-		console.log("Names of variables in the call's actual parameter:", argVarNames);
+		// console.log("Names of variables in the call's actual parameter:", argVarNames);
 
 		for (const name of argVarNames) {
 			if (lambdaExpression.containsBoundVariableNamed(name)) {
@@ -106,13 +106,13 @@ export class LCFunctionCall implements ILCExpression {
 					generatedVarName = generateNewVariableName();
 				} while (lambdaExpression.containsVariableNamed(generatedVarName));
 
-				console.log(`1) Old lambdaExpression: ${lambdaExpression}`);
-				console.log(`2) Replacing ${name} with ${generatedVarName}...`);
+				// console.log(`1) Old lambdaExpression: ${lambdaExpression}`);
+				// console.log(`2) Replacing ${name} with ${generatedVarName}...`);
 				lambdaExpression = lambdaExpression.renameBoundVariable(
 					generatedVarName,
 					name
 				) as LCLambdaExpression;
-				console.log(`3) New lambdaExpression: ${lambdaExpression}`);
+				// console.log(`3) New lambdaExpression: ${lambdaExpression}`);
 			}
 		}
 
@@ -125,13 +125,13 @@ export class LCFunctionCall implements ILCExpression {
 			this.arg
 		);
 
-		console.log(
-			`LCFunctionCall.betaReduce() : Replaced ${lambdaExpression.arg.name} with ${this.arg}; bodyAfterSubst is ${bodyAfterSubst}`
-		);
+		// console.log(
+		// 	`LCFunctionCall.betaReduce() : Replaced ${lambdaExpression.arg.name} with ${this.arg}; bodyAfterSubst is ${bodyAfterSubst}`
+		// );
 
 		const afterBeta = bodyAfterSubst.betaReduce(generateNewVariableName);
 
-		console.log(`LCFunctionCall.betaReduce() : After beta: ${afterBeta}`);
+		// console.log(`LCFunctionCall.betaReduce() : After beta: ${afterBeta}`);
 
 		return afterBeta;
 	}

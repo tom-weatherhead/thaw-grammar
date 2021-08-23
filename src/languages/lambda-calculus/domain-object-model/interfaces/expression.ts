@@ -7,7 +7,7 @@ export interface ISubstitution<T> {
 	readonly SubstitutionList: Map<string, T>;
 
 	length: number;
-	// isOneToOne: boolean;
+	isOneToOne: boolean;
 
 	toString(): string;
 	compose(otherSub: ISubstitution<T>): ISubstitution<T>;
@@ -49,7 +49,7 @@ export interface ILCVariable extends IEqualityComparable, ILCExpression {
 	readonly name: string;
 }
 
-// ****
+// **** These are not interfaces; they should be moved elsewhere ****
 
 export const typenameLCVariable = 'LCVariable';
 
@@ -59,4 +59,10 @@ export function isLCVariable(obj: unknown): obj is ILCVariable {
 	return (
 		typeof otherLCVariable !== 'undefined' && otherLCVariable.typename === typenameLCVariable
 	);
+}
+
+export function areIsomorphic<T>(expr1: IUnifiable<T>, expr2: IUnifiable<T>): boolean {
+	const unifyingSubstitution = expr1.unify(expr2);
+
+	return typeof unifyingSubstitution !== 'undefined' && unifyingSubstitution.isOneToOne;
 }

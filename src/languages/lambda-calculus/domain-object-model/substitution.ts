@@ -147,21 +147,23 @@ class LCSubstitution implements ILCSubstitution {
 	// 	return result;
 	// }
 
-	// public get isOneToOne(): boolean {
-	// 	const values: PrologVariable[] = [];
+	public get isOneToOne(): boolean {
+		// const values: PrologVariable[] = [];
+		//
+		// for (const value of this.SubstitutionList.values()) {
+		// 	const vv = value as PrologVariable;
+		//
+		// 	if (typeof vv === 'undefined') {
+		// 		return false;
+		// 	}
+		//
+		// 	values.push(vv);
+		// }
+		//
+		// return values.length === Array.from(this.SubstitutionList.keys()).length;
 
-	// 	for (const value of this.SubstitutionList.values()) {
-	// 		const vv = value as PrologVariable;
-
-	// 		if (typeof vv === 'undefined') {
-	// 			return false;
-	// 		}
-
-	// 		values.push(vv);
-	// 	}
-
-	// 	return values.length === Array.from(this.SubstitutionList.keys()).length;
-	// }
+		return Array.from(this.SubstitutionList.values()).every(isLCVariable);
+	}
 }
 
 export function createSubstitution(

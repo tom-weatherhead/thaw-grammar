@@ -37,10 +37,12 @@ export class LCVariable implements ILCVariable {
 		return name === this.name;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public containsBoundVariableNamed(name: string): boolean {
 		return false;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
 		return this;
 	}
@@ -49,6 +51,7 @@ export class LCVariable implements ILCVariable {
 		return name === this.name ? value : this;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public betaReduce(generateNewVariableName: () => string): ILCExpression {
 		return this;
 	}
