@@ -1,6 +1,11 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/domain-object-model/interfaces/expression.ts
 
-import { IEqualityComparable, IImmutableSet, IStringifiable } from 'thaw-common-utilities.ts';
+import {
+	createSet,
+	IEqualityComparable,
+	IImmutableSet,
+	IStringifiable
+} from 'thaw-common-utilities.ts';
 
 // Type T is the language's expression type.
 export interface ISubstitution<T> {
@@ -61,8 +66,25 @@ export function isLCVariable(obj: unknown): obj is ILCVariable {
 	);
 }
 
-export function areIsomorphic<T>(expr1: IUnifiable<T>, expr2: IUnifiable<T>): boolean {
+export function areIsomorphic(
+	expr1: IUnifiable<ILCExpression>,
+	expr2: IUnifiable<ILCExpression>
+): boolean {
 	const unifyingSubstitution = expr1.unify(expr2);
 
-	return typeof unifyingSubstitution !== 'undefined' && unifyingSubstitution.isOneToOne;
+	// TODO: We may want to check and ensure that no variable names are repeated.
+
+	// return typeof unifyingSubstitution !== 'undefined' && unifyingSubstitution.isOneToOne;
+
+	if (typeof unifyingSubstitution === 'undefined' || !unifyingSubstitution.isOneToOne) {
+		return false;
+	}
+
+	const keyNames = Array.from(unifyingSubstitution.SubstitutionList.keys());
+	const valueNames = Array.from(unifyingSubstitution.SubstitutionList.values()).map(
+		(v) => (v as ILCVariable).name
+	);
+	const s = createSet(keyNames.concat(valueNames));
+
+	return s.size === 2 * keyNames.length;
 }
