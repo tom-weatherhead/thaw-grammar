@@ -178,8 +178,6 @@ test('PrologGlobalInfo instanceof test', () => {
 	expect(isIVariable(variable)).toBeTruthy();
 });
 
-/* eslint-disable @typescript-eslint/ban-types */
-
 test('Prolog type guard test', () => {
 	const p = createProduction(
 		GrammarSymbol.nonterminalStart,
@@ -200,5 +198,3 @@ test('Prolog type guard test', () => {
 	// expect(isProduction(p)).toBeTruthy();
 	expect(p.equals(p)).toBeTruthy();
 });
-
-/* eslint-enable @typescript-eslint/ban-types */

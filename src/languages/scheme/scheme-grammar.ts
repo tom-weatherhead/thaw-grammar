@@ -15,8 +15,6 @@
 // VarExprList -> Lambda
 // BracketedExpression -> call/cc Expression
 
-// import { Stack } from 'thaw-common-utilities.ts';
-
 import {
 	GrammarSymbol,
 	IToken,
@@ -1206,7 +1204,6 @@ export class SchemeGrammar extends GrammarBase {
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 

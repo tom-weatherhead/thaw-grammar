@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/prolog-grammar.ts
 
-// import { Stack } from 'thaw-common-utilities.ts';
-
 import {
 	GrammarSymbol,
 	IToken,
@@ -11,15 +9,11 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-// import { LanguageSelector, LexicalState, Token } from 'thaw-lexical-analyzer';
-
 import { ArgumentException } from '../../common/exceptions/argument-exception';
 import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase } from '../../common/grammar-base';
-// import { ParserSelector } from '../../common/parser-selectors';
 import { createProduction } from '../../common/production';
-// import { Symbol } from '../../common/symbol';
 
 import { createFunctorExpressionFromGoal } from './utilities';
 
@@ -489,7 +483,6 @@ export class PrologGrammar extends GrammarBase {
 		return [ParserSelector.LL1];
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		const gs = LanguageSelector.Prolog2;
 
@@ -658,7 +651,6 @@ export class PrologGrammar extends GrammarBase {
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	public tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
@@ -791,9 +783,7 @@ export class PrologGrammar extends GrammarBase {
 	}
 
 	public pushTokenOntoSemanticStack(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: SemanticStackType,
-		// eslint-disable-next-line @typescript-eslint/ban-types
 		tokenAsSymbol: GrammarSymbol,
 		token: IToken
 	): void {
