@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/main.ts
 
-export { LanguageSelector } from 'thaw-lexical-analyzer';
+// export { LanguageSelector } from 'thaw-lexical-analyzer';
 
 // Exceptions
 export { ArgumentException } from './common/exceptions/argument-exception';
@@ -22,10 +22,10 @@ export { Variable } from './common/domain-object-model/variable';
 // Other common stuff
 export { GrammarBase } from './common/grammar-base';
 export { createGrammar } from './common/grammar-factory';
-export { IGrammar } from './common/igrammar';
-export { ParserSelector } from './common/parser-selectors';
-export { Production } from './common/production';
-export { Symbol } from './common/symbol';
+// export { IGrammar } from './common/igrammar';
+// export { ParserSelector } from './common/parser-selectors';
+export { createProduction } from './common/production';
+// export { Symbol } from './common/symbol';
 
 // My (ThAW's) minimal language
 export { MinimalLanguageGlobalInfo } from './languages/minimal/domain-object-model/global-info';

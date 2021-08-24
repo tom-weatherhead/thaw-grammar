@@ -1,16 +1,24 @@
 // tom-weatherhead/thaw-grammar/src/languages/micro/micro-grammar.ts
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
-import { Token } from 'thaw-lexical-analyzer';
+import {
+	GrammarSymbol,
+	IToken,
+	// LexicalState,
+	ParserSelector,
+	SemanticStackType
+} from 'thaw-interpreter-types';
+
+// import { Token } from 'thaw-lexical-analyzer';
 
 import { GrammarBase } from '../../common/grammar-base';
-import { ParserSelector } from '../../common/parser-selectors';
-import { Symbol } from '../../common/symbol';
+// import { ParserSelector } from '../../common/parser-selectors';
+// import { Symbol } from '../../common/symbol';
 
 export class MicroGrammar extends GrammarBase {
 	constructor() {
-		super(Symbol.nonterminalStart);
+		super(GrammarSymbol.nonterminalStart);
 
 		// ...
 	}
@@ -19,25 +27,23 @@ export class MicroGrammar extends GrammarBase {
 		return 'Micro';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public tokenToSymbol(token: Token): number {
-		// Returns Symbol
-		return Symbol.UndefinedSymbol;
+	public tokenToSymbol(token: IToken): GrammarSymbol {
+		return GrammarSymbol.UndefinedSymbol;
 	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public pushTokenOntoSemanticStack(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
-		tokenAsSymbol: number,
-		token: Token
+		semanticStack: SemanticStackType,
+		tokenAsSymbol: GrammarSymbol,
+		token: IToken
 	): void {}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

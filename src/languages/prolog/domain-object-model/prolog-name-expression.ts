@@ -2,7 +2,7 @@
 
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
-import { LanguageSelector } from 'thaw-lexical-analyzer';
+import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';

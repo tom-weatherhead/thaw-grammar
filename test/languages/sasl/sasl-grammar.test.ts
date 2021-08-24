@@ -2,7 +2,9 @@
 
 'use strict';
 
-import { createGrammar, LanguageSelector } from '../../..';
+import { LanguageSelector } from 'thaw-interpreter-types';
+
+import { createGrammar } from '../../..';
 
 test('SASLGrammar instance creation test', () => {
 	// Arrange

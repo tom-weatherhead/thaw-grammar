@@ -1,6 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/common/grammar-factory.ts
 
-import { LanguageSelector } from 'thaw-lexical-analyzer';
+import { IGrammar, LanguageSelector } from 'thaw-interpreter-types';
+
+// import { LanguageSelector } from 'thaw-lexical-analyzer';
 
 import { APLGrammar } from '../languages/apl/apl-grammar';
 import { Chapter1Grammar } from '../languages/chapter1/chapter1-grammar';
@@ -18,7 +20,7 @@ import { SmalltalkGrammar } from '../languages/smalltalk/smalltalk-grammar';
 
 import { ArgumentException } from './exceptions/argument-exception';
 
-import { IGrammar } from './igrammar';
+// import { IGrammar } from './igrammar';
 
 export function createGrammar(ls: LanguageSelector): IGrammar {
 	switch (ls) {

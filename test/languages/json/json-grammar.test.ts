@@ -2,7 +2,9 @@
 
 'use strict';
 
-import { createGrammar, LanguageSelector } from '../../..';
+import { LanguageSelector } from 'thaw-interpreter-types';
+
+import { createGrammar } from '../../..';
 
 test('JSONGrammar instance creation test', () => {
 	// Arrange

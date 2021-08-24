@@ -1,18 +1,27 @@
 // tom-weatherhead/thaw-grammar/src/languages/clu/clu-grammar.ts
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
-import { Token } from 'thaw-lexical-analyzer';
+import {
+	GrammarSymbol,
+	IToken,
+	// LanguageSelector,
+	// LexicalState,
+	ParserSelector,
+	SemanticStackType
+} from 'thaw-interpreter-types';
+
+// import { Token } from 'thaw-lexical-analyzer';
 
 import { GrammarBase } from '../../common/grammar-base';
-import { ParserSelector } from '../../common/parser-selectors';
-import { Symbol } from '../../common/symbol';
+// import { ParserSelector } from '../../common/parser-selectors';
+// import { Symbol } from '../../common/symbol';
 
 export class CluGrammar extends GrammarBase {
 	// The CLU grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
 
 	constructor() {
-		super(Symbol.nonterminalStart);
+		super(GrammarSymbol.nonterminalStart);
 
 		// ...
 	}
@@ -26,20 +35,20 @@ export class CluGrammar extends GrammarBase {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {}
+	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public tokenToSymbol(token: Token): number {
+	public tokenToSymbol(token: IToken): number {
 		// Returns Symbol
-		return Symbol.UndefinedSymbol;
+		return GrammarSymbol.UndefinedSymbol;
 	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public pushTokenOntoSemanticStack(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
+		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,
-		token: Token
+		token: IToken
 	): void {}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

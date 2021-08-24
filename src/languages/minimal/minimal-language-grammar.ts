@@ -3,9 +3,15 @@
 // A minimal grammar that supports the input: (+ 2 3)
 // I.e. Tokens: LeftBracket, Plus, IntegerLiteral_2, IntegerLiteral_3, RightBracket, EOF.
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
-import { LexicalState, Token } from 'thaw-lexical-analyzer';
+import {
+	GrammarSymbol,
+	IToken,
+	LexicalState,
+	ParserSelector,
+	SemanticStackType
+} from 'thaw-interpreter-types';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
@@ -14,68 +20,80 @@ import { Name } from '../../common/domain-object-model/name';
 import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase } from '../../common/grammar-base';
-import { ParserSelector } from '../../common/parser-selectors';
-import { Production } from '../../common/production';
+// import { ParserSelector } from '../../common/parser-selectors';
+import { createProduction } from '../../common/production';
 
-import { Symbol } from '../../common/symbol';
+// import { Symbol } from '../../common/symbol';
 
 import { IntegerLiteral } from './domain-object-model/integer-literal';
 import { OperatorUsage } from './domain-object-model/operator-usage';
 
 export class MinimalLanguageGrammar extends GrammarBase {
 	constructor() {
-		super(Symbol.nonterminalStart);
+		super(GrammarSymbol.nonterminalStart);
 
-		this.terminals.push(Symbol.terminalLeftBracket);
-		this.terminals.push(Symbol.terminalRightBracket);
-		this.terminals.push(Symbol.terminalPlus);
-		this.terminals.push(Symbol.terminalIntegerLiteral);
-		this.terminals.push(Symbol.terminalEOF);
+		this.terminals.push(GrammarSymbol.terminalLeftBracket);
+		this.terminals.push(GrammarSymbol.terminalRightBracket);
+		this.terminals.push(GrammarSymbol.terminalPlus);
+		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
+		this.terminals.push(GrammarSymbol.terminalEOF);
 
-		this.nonTerminals.push(Symbol.nonterminalStart);
-		this.nonTerminals.push(Symbol.nonterminalExpression);
-		this.nonTerminals.push(Symbol.nonterminalBracketedExpression);
-		this.nonTerminals.push(Symbol.nonterminalExpressionList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalStart,
-				[Symbol.nonterminalExpression, Symbol.terminalEOF],
+			createProduction(
+				GrammarSymbol.nonterminalStart,
+				[GrammarSymbol.nonterminalExpression, GrammarSymbol.terminalEOF],
 				1
 			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.terminalIntegerLiteral], 2)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.terminalIntegerLiteral],
+				2
+			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
 				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalBracketedExpression,
-					Symbol.terminalRightBracket
+					GrammarSymbol.terminalLeftBracket,
+					GrammarSymbol.nonterminalBracketedExpression,
+					GrammarSymbol.terminalRightBracket
 				],
 				3
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
-				[Symbol.terminalPlus, Symbol.nonterminalExpressionList, '#operatorUsage'],
+			createProduction(
+				GrammarSymbol.nonterminalBracketedExpression,
+				[
+					GrammarSymbol.terminalPlus,
+					GrammarSymbol.nonterminalExpressionList,
+					'#operatorUsage'
+				],
 				4
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[Symbol.nonterminalExpression, Symbol.nonterminalExpressionList, '#expressionList'],
+			createProduction(
+				GrammarSymbol.nonterminalExpressionList,
+				[
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpressionList,
+					'#expressionList'
+				],
 				5
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[Symbol.Lambda, '#emptyExpressionList'],
+			createProduction(
+				GrammarSymbol.nonterminalExpressionList,
+				[GrammarSymbol.Lambda, '#emptyExpressionList'],
 				6
 			)
 		);
@@ -86,12 +104,12 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		return 'The minimal language';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
+	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		// console.log(`MinimalLanguageGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
 		let name: Name;
@@ -121,21 +139,21 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		}
 	}
 
-	public tokenToSymbol(token: Token): number {
+	public tokenToSymbol(token: IToken): number {
 		// Returns Symbol
 		// const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
-				return Symbol.terminalEOF;
+				return GrammarSymbol.terminalEOF;
 			case LexicalState.tokenIntLit:
-				return Symbol.terminalIntegerLiteral;
+				return GrammarSymbol.terminalIntegerLiteral;
 			case LexicalState.tokenLeftBracket:
-				return Symbol.terminalLeftBracket;
+				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
-				return Symbol.terminalRightBracket;
+				return GrammarSymbol.terminalRightBracket;
 			case LexicalState.tokenPlus:
-				return Symbol.terminalPlus;
+				return GrammarSymbol.terminalPlus;
 
 			default:
 				break;
@@ -150,26 +168,26 @@ export class MinimalLanguageGrammar extends GrammarBase {
 
 	public pushTokenOntoSemanticStack(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
+		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,
-		token: Token
+		token: IToken
 	): void {
 		switch (tokenAsSymbol) {
-			case Symbol.terminalIntegerLiteral:
+			case GrammarSymbol.terminalIntegerLiteral:
 				// console.log(`Pushing IntegerLiteral ${token.tokenValue as number} onto the semanticStack`);
 				semanticStack.push(new IntegerLiteral(token.tokenValue));
 				break;
 
-			case Symbol.terminalPlus:
+			case GrammarSymbol.terminalPlus:
 				// console.log(`Pushing Name '${token.tokenValue as string}' onto the semanticStack`);
 				semanticStack.push(
 					new Name(token.tokenValue as string, token.line, token.column /*, false */)
 				);
 				break;
 
-			case Symbol.terminalLeftBracket:
-			case Symbol.terminalRightBracket:
-			case Symbol.terminalEOF:
+			case GrammarSymbol.terminalLeftBracket:
+			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalEOF:
 				break;
 
 			default:

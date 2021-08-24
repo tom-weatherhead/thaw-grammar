@@ -1,8 +1,14 @@
 // tom-weatherhead/thaw-grammar/src/languages/sasl/sasl-grammar.ts
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
-import { LexicalState, Token } from 'thaw-lexical-analyzer';
+import {
+	GrammarSymbol,
+	IToken,
+	LexicalState,
+	ParserSelector,
+	SemanticStackType
+} from 'thaw-interpreter-types';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
@@ -13,9 +19,9 @@ import { VariableList } from '../../common/domain-object-model/variable-list';
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
-import { ParserSelector } from '../../common/parser-selectors';
-import { Production } from '../../common/production';
-import { Symbol } from '../../common/symbol';
+// import { ParserSelector } from '../../common/parser-selectors';
+import { createProduction } from '../../common/production';
+// import { Symbol } from '../../common/symbol';
 
 import { ISExpression } from '../../languages/lisp/domain-object-model/isexpression';
 
@@ -64,8 +70,12 @@ export class SASLGrammar extends SchemeGrammar {
 		// 		70
 		// 	)
 		// );
-		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalIf], 71));
-		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalCond], 72));
+		this.productions.push(
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalIf], 71)
+		);
+		this.productions.push(
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCond], 72)
+		);
 		// ...
 	}
 
@@ -77,8 +87,7 @@ export class SASLGrammar extends SchemeGrammar {
 		return [ParserSelector.LL1];
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public override executeSemanticAction(semanticStack: Stack<any>, action: string): void {
+	public override executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;
 		let expression: IExpression<ISExpression>;
 
@@ -110,8 +119,7 @@ export class SASLGrammar extends SchemeGrammar {
 		}
 	}
 
-	public override tokenToSymbol(token: Token): number {
-		// Returns Symbol
+	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString = `${token.tokenValue}`;
 
 		switch (token.tokenType) {
@@ -123,7 +131,7 @@ export class SASLGrammar extends SchemeGrammar {
 					case 'rplaca':
 					case 'rplacd':
 					case 'define-macro':
-						return Symbol.terminalID;
+						return GrammarSymbol.terminalID;
 
 					default:
 						break;
@@ -139,16 +147,15 @@ export class SASLGrammar extends SchemeGrammar {
 	}
 
 	public override pushTokenOntoSemanticStack(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
-		tokenAsSymbol: number,
-		token: Token
+		semanticStack: SemanticStackType,
+		tokenAsSymbol: GrammarSymbol,
+		token: IToken
 	): void {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case Symbol.terminalIf:
-			case Symbol.terminalCond:
+			case GrammarSymbol.terminalIf:
+			case GrammarSymbol.terminalCond:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
 

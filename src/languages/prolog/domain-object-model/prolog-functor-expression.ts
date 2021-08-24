@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/prolog-functor-expression.ts
 
-import { LanguageSelector } from 'thaw-lexical-analyzer';
+import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';

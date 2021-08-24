@@ -8,6 +8,8 @@ import {
 	isIEqualityComparable
 } from 'thaw-common-utilities.ts';
 
+import { GrammarSymbol, LanguageSelector } from 'thaw-interpreter-types';
+
 import {
 	createGrammar,
 	createVariable,
@@ -16,16 +18,14 @@ import {
 	isIVariable,
 	// isProduction,
 	IVariable,
-	LanguageSelector,
-	Production,
+	createProduction,
 	// PrologFunctor,
 	PrologFunctorExpression,
 	PrologGlobalInfo,
 	PrologGoal,
-	PrologIntegerLiteral,
+	PrologIntegerLiteral
 	// PrologPredicate,
 	// PrologVariable,
-	Symbol
 } from '../../..';
 
 // test('deepEquals test', () => {
@@ -181,9 +181,9 @@ test('PrologGlobalInfo instanceof test', () => {
 /* eslint-disable @typescript-eslint/ban-types */
 
 test('Prolog type guard test', () => {
-	const p = new Production(
-		Symbol.nonterminalStart,
-		[Symbol.nonterminalExpression, Symbol.terminalEOF, '#action'],
+	const p = createProduction(
+		GrammarSymbol.nonterminalStart,
+		[GrammarSymbol.nonterminalExpression, GrammarSymbol.terminalEOF, '#action'],
 		1337
 	);
 

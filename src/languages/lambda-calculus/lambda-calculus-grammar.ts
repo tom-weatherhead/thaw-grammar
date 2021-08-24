@@ -1,17 +1,25 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/lambda-calculus-grammar.ts
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
-import { LexicalState, Token } from 'thaw-lexical-analyzer';
+import {
+	GrammarSymbol,
+	IToken,
+	LexicalState,
+	ParserSelector,
+	SemanticStackType
+} from 'thaw-interpreter-types';
+
+// import { LexicalState, Token } from 'thaw-lexical-analyzer';
 
 import { Name } from '../../common/domain-object-model/name';
 
 import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase } from '../../common/grammar-base';
-import { ParserSelector } from '../../common/parser-selectors';
-import { Production } from '../../common/production';
-import { Symbol } from '../../common/symbol';
+// import { ParserSelector } from '../../common/parser-selectors';
+import { createProduction } from '../../common/production';
+// import { Symbol } from '../../common/symbol';
 
 import { ILCExpression } from './domain-object-model/interfaces/expression';
 
@@ -29,65 +37,85 @@ import { LCVariable } from './domain-object-model/variable';
 
 export class LambdaCalculusGrammar extends GrammarBase {
 	constructor() {
-		super(Symbol.nonterminalStart);
+		super(GrammarSymbol.nonterminalStart);
 
-		this.terminals.push(Symbol.terminalLeftBracket);
-		this.terminals.push(Symbol.terminalRightBracket);
-		this.terminals.push(Symbol.terminalID);
-		this.terminals.push(Symbol.terminalFn); // === 'λ'
-		this.terminals.push(Symbol.terminalDot);
-		this.terminals.push(Symbol.terminalEOF);
+		this.terminals.push(GrammarSymbol.terminalLeftBracket);
+		this.terminals.push(GrammarSymbol.terminalRightBracket);
+		this.terminals.push(GrammarSymbol.terminalID);
+		this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
+		this.terminals.push(GrammarSymbol.terminalDot);
+		this.terminals.push(GrammarSymbol.terminalEOF);
 
-		this.nonTerminals.push(Symbol.nonterminalStart);
-		this.nonTerminals.push(Symbol.nonterminalInput);
-		this.nonTerminals.push(Symbol.nonterminalExpression);
-		this.nonTerminals.push(Symbol.nonterminalVariable);
-		this.nonTerminals.push(Symbol.nonterminalLambdaExpression);
-		this.nonTerminals.push(Symbol.nonterminalFunctionCall);
+		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
+		this.nonTerminals.push(GrammarSymbol.nonterminalInput);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
+		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
 
 		// This initial production needed to be added: Start -> Input EOF
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalStart,
-				[Symbol.nonterminalInput, Symbol.terminalEOF],
+			createProduction(
+				GrammarSymbol.nonterminalStart,
+				[GrammarSymbol.nonterminalInput, GrammarSymbol.terminalEOF],
 				1
 			)
 		);
 
 		// Input -> Expression
 		this.productions.push(
-			new Production(Symbol.nonterminalInput, [Symbol.nonterminalExpression], 2)
+			createProduction(
+				GrammarSymbol.nonterminalInput,
+				[GrammarSymbol.nonterminalExpression],
+				2
+			)
 		);
 
 		// Expression -> Variable
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalVariable], 3)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.nonterminalVariable],
+				3
+			)
 		);
 
 		// Expression -> Lambda Expression
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalLambdaExpression], 4)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.nonterminalLambdaExpression],
+				4
+			)
 		);
 
 		// Expression -> Function Call
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalFunctionCall], 5)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.nonterminalFunctionCall],
+				5
+			)
 		);
 
 		// Variable -> Name
 		this.productions.push(
-			new Production(Symbol.nonterminalVariable, [Symbol.terminalID, '#variable'], 6)
+			createProduction(
+				GrammarSymbol.nonterminalVariable,
+				[GrammarSymbol.terminalID, '#variable'],
+				6
+			)
 		);
 
 		// Lambda Expression -> λ Variable . Expression
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalLambdaExpression,
+			createProduction(
+				GrammarSymbol.nonterminalLambdaExpression,
 				[
-					Symbol.terminalFn,
-					Symbol.nonterminalVariable,
-					Symbol.terminalDot,
-					Symbol.nonterminalExpression,
+					GrammarSymbol.terminalFn,
+					GrammarSymbol.nonterminalVariable,
+					GrammarSymbol.terminalDot,
+					GrammarSymbol.nonterminalExpression,
 					'#lambdaExpression'
 				],
 				7
@@ -96,13 +124,13 @@ export class LambdaCalculusGrammar extends GrammarBase {
 
 		// Function Call -> ( Expression Expression )
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalFunctionCall,
+			createProduction(
+				GrammarSymbol.nonterminalFunctionCall,
 				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
-					Symbol.terminalRightBracket,
+					GrammarSymbol.terminalLeftBracket,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.terminalRightBracket,
 					'#functionCall'
 				],
 				8
@@ -114,12 +142,11 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		return 'The Lambda Calculus';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
+	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;
 		let variable: LCVariable;
 		let expression: ILCExpression;
@@ -148,34 +175,33 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	public tokenToSymbol(token: Token): Symbol {
+	public tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
-				return Symbol.terminalEOF;
-			// case LexicalState.tokenIdent: return Symbol.terminalID;
+				return GrammarSymbol.terminalEOF;
+			// case LexicalState.tokenIdent: return GrammarSymbol.terminalID;
 			case LexicalState.tokenLeftBracket:
-				return Symbol.terminalLeftBracket;
+				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
-				return Symbol.terminalRightBracket;
+				return GrammarSymbol.terminalRightBracket;
 			case LexicalState.tokenGreekLetterLambda:
-				return Symbol.terminalFn;
+				return GrammarSymbol.terminalFn;
 			case LexicalState.tokenDot:
-				return Symbol.terminalDot;
+				return GrammarSymbol.terminalDot;
 
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
 					case '.':
-						return Symbol.terminalDot; // We could modify the tokenizer to generate TokenType.T_Dot in this case, to obviate this line.
+						return GrammarSymbol.terminalDot; // We could modify the tokenizer to generate TokenType.T_Dot in this case, to obviate this line.
 					case 'λ':
 						console.log(
 							'LexicalState.tokenIdent λ being converted to Symbol.terminalFn'
 						);
-						return Symbol.terminalFn;
+						return GrammarSymbol.terminalFn;
 					default:
-						return Symbol.terminalID;
+						return GrammarSymbol.terminalID;
 				}
 
 			default:
@@ -192,28 +218,27 @@ export class LambdaCalculusGrammar extends GrammarBase {
 	}
 
 	public pushTokenOntoSemanticStack(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
-		tokenAsSymbol: number,
-		token: Token
+		semanticStack: SemanticStackType,
+		tokenAsSymbol: GrammarSymbol,
+		token: IToken
 	): void {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case Symbol.terminalID:
+			case GrammarSymbol.terminalID:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
 
-			case Symbol.terminalLeftBracket:
-			case Symbol.terminalRightBracket:
-			case Symbol.terminalFn:
-			case Symbol.terminalDot:
-			case Symbol.terminalEOF:
+			case GrammarSymbol.terminalLeftBracket:
+			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalFn:
+			case GrammarSymbol.terminalDot:
+			case GrammarSymbol.terminalEOF:
 				break;
 
 			default:
 				throw new GrammarException(
-					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${Symbol[tokenAsSymbol]} (${tokenAsSymbol})`,
+					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
 					token.line,
 					token.column
 				);

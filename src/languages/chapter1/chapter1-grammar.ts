@@ -1,8 +1,16 @@
 // tom-weatherhead/thaw-grammar/src/languages/chapter1/chapter1-grammar.ts
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
-import { LexicalState, Token } from 'thaw-lexical-analyzer';
+import {
+	GrammarSymbol,
+	IToken,
+	LexicalState,
+	ParserSelector,
+	SemanticStackType
+} from 'thaw-interpreter-types';
+
+// import { LexicalState, Token } from 'thaw-lexical-analyzer';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
@@ -19,10 +27,10 @@ import { WhileUsage } from '../../common/domain-object-model/while-usage';
 import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase } from '../../common/grammar-base';
-import { ParserSelector } from '../../common/parser-selectors';
-import { Production } from '../../common/production';
+// import { ParserSelector } from '../../common/parser-selectors';
+import { createProduction } from '../../common/production';
 
-import { Symbol } from '../../common/symbol';
+// import { Symbol } from '../../common/symbol';
 
 import { IntegerLiteral } from './domain-object-model/integer-literal';
 import { Chapter1OperatorUsage } from './domain-object-model/operator-usage';
@@ -31,43 +39,43 @@ export class Chapter1Grammar extends GrammarBase {
 	// The grammar from Chapter 1 of Kamin's book: "Programming Languages: An Interpreter-Based Approach" (?)
 
 	constructor() {
-		super(Symbol.nonterminalStart);
+		super(GrammarSymbol.nonterminalStart);
 
-		this.terminals.push(Symbol.terminalLeftBracket);
-		this.terminals.push(Symbol.terminalRightBracket);
-		this.terminals.push(Symbol.terminalDefine);
-		this.terminals.push(Symbol.terminalIf);
-		this.terminals.push(Symbol.terminalWhile);
-		this.terminals.push(Symbol.terminalSet);
-		this.terminals.push(Symbol.terminalBegin);
-		this.terminals.push(Symbol.terminalPlus);
-		this.terminals.push(Symbol.terminalMinus);
-		this.terminals.push(Symbol.terminalMultiply);
-		this.terminals.push(Symbol.terminalDivide);
-		this.terminals.push(Symbol.terminalEquals);
-		this.terminals.push(Symbol.terminalLessThan);
-		this.terminals.push(Symbol.terminalGreaterThan);
-		this.terminals.push(Symbol.terminalPrint);
-		this.terminals.push(Symbol.terminalID);
-		this.terminals.push(Symbol.terminalIntegerLiteral);
-		this.terminals.push(Symbol.terminalRandom);
-		this.terminals.push(Symbol.terminalThrow);
-		this.terminals.push(Symbol.terminalEOF);
+		this.terminals.push(GrammarSymbol.terminalLeftBracket);
+		this.terminals.push(GrammarSymbol.terminalRightBracket);
+		this.terminals.push(GrammarSymbol.terminalDefine);
+		this.terminals.push(GrammarSymbol.terminalIf);
+		this.terminals.push(GrammarSymbol.terminalWhile);
+		this.terminals.push(GrammarSymbol.terminalSet);
+		this.terminals.push(GrammarSymbol.terminalBegin);
+		this.terminals.push(GrammarSymbol.terminalPlus);
+		this.terminals.push(GrammarSymbol.terminalMinus);
+		this.terminals.push(GrammarSymbol.terminalMultiply);
+		this.terminals.push(GrammarSymbol.terminalDivide);
+		this.terminals.push(GrammarSymbol.terminalEquals);
+		this.terminals.push(GrammarSymbol.terminalLessThan);
+		this.terminals.push(GrammarSymbol.terminalGreaterThan);
+		this.terminals.push(GrammarSymbol.terminalPrint);
+		this.terminals.push(GrammarSymbol.terminalID);
+		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
+		this.terminals.push(GrammarSymbol.terminalRandom);
+		this.terminals.push(GrammarSymbol.terminalThrow);
+		this.terminals.push(GrammarSymbol.terminalEOF);
 
-		this.nonTerminals.push(Symbol.nonterminalStart);
-		this.nonTerminals.push(Symbol.nonterminalInput);
-		this.nonTerminals.push(Symbol.nonterminalExpression);
-		this.nonTerminals.push(Symbol.nonterminalFunDef);
-		this.nonTerminals.push(Symbol.nonterminalFunction);
-		this.nonTerminals.push(Symbol.nonterminalArgList);
-		this.nonTerminals.push(Symbol.nonterminalVariableList);
-		this.nonTerminals.push(Symbol.nonterminalVariable);
-		this.nonTerminals.push(Symbol.nonterminalValue);
-		this.nonTerminals.push(Symbol.nonterminalBracketedExpression);
-		this.nonTerminals.push(Symbol.nonterminalExpressionList);
-		this.nonTerminals.push(Symbol.nonterminalOptr);
-		this.nonTerminals.push(Symbol.nonterminalValueOp);
-		this.nonTerminals.push(Symbol.nonterminalBracketedEntity);
+		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
+		this.nonTerminals.push(GrammarSymbol.nonterminalInput);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalFunDef);
+		this.nonTerminals.push(GrammarSymbol.nonterminalFunction);
+		this.nonTerminals.push(GrammarSymbol.nonterminalArgList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVariableList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
+		this.nonTerminals.push(GrammarSymbol.nonterminalValue);
+		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
+		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
+		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedEntity);
 
 		// From Chapter 1 of Kamin:
 		// Input -> Expression
@@ -105,197 +113,241 @@ export class Chapter1Grammar extends GrammarBase {
 		// We prevent function definitions from being considered as expressions.
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalStart,
-				[Symbol.nonterminalInput, Symbol.terminalEOF],
+			createProduction(
+				GrammarSymbol.nonterminalStart,
+				[GrammarSymbol.nonterminalInput, GrammarSymbol.terminalEOF],
 				1
 			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalInput, [Symbol.nonterminalValue], 2)
+			createProduction(GrammarSymbol.nonterminalInput, [GrammarSymbol.nonterminalValue], 2)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalInput,
+			createProduction(
+				GrammarSymbol.nonterminalInput,
 				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalBracketedEntity,
-					Symbol.terminalRightBracket
+					GrammarSymbol.terminalLeftBracket,
+					GrammarSymbol.nonterminalBracketedEntity,
+					GrammarSymbol.terminalRightBracket
 				],
 				3
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedEntity,
-				[Symbol.nonterminalBracketedExpression],
+			createProduction(
+				GrammarSymbol.nonterminalBracketedEntity,
+				[GrammarSymbol.nonterminalBracketedExpression],
 				4
 			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalBracketedEntity, [Symbol.nonterminalFunDef], 5)
+			createProduction(
+				GrammarSymbol.nonterminalBracketedEntity,
+				[GrammarSymbol.nonterminalFunDef],
+				5
+			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalFunDef,
+			createProduction(
+				GrammarSymbol.nonterminalFunDef,
 				[
-					Symbol.terminalDefine,
-					Symbol.nonterminalFunction,
-					Symbol.nonterminalArgList,
-					Symbol.nonterminalExpression,
+					GrammarSymbol.terminalDefine,
+					GrammarSymbol.nonterminalFunction,
+					GrammarSymbol.nonterminalArgList,
+					GrammarSymbol.nonterminalExpression,
 					'#functionDefinition'
 				],
 				6
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalArgList,
+			createProduction(
+				GrammarSymbol.nonterminalArgList,
 				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalVariableList,
-					Symbol.terminalRightBracket
+					GrammarSymbol.terminalLeftBracket,
+					GrammarSymbol.nonterminalVariableList,
+					GrammarSymbol.terminalRightBracket
 				],
 				7
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalVariableList,
-				[Symbol.nonterminalVariable, Symbol.nonterminalVariableList, '#variableList'],
+			createProduction(
+				GrammarSymbol.nonterminalVariableList,
+				[
+					GrammarSymbol.nonterminalVariable,
+					GrammarSymbol.nonterminalVariableList,
+					'#variableList'
+				],
 				8
 			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalVariableList, [Symbol.Lambda, '#emptyVariableList'], 9)
+			createProduction(
+				GrammarSymbol.nonterminalVariableList,
+				[GrammarSymbol.Lambda, '#emptyVariableList'],
+				9
+			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalValue], 10)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.nonterminalValue],
+				10
+			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalVariable], 11)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.nonterminalVariable],
+				11
+			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpression,
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
 				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalBracketedExpression,
-					Symbol.terminalRightBracket
+					GrammarSymbol.terminalLeftBracket,
+					GrammarSymbol.nonterminalBracketedExpression,
+					GrammarSymbol.terminalRightBracket
 				],
 				12
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
+			createProduction(
+				GrammarSymbol.nonterminalBracketedExpression,
 				[
-					Symbol.terminalIf,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
+					GrammarSymbol.terminalIf,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpression,
 					'#if'
 				],
 				13
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
+			createProduction(
+				GrammarSymbol.nonterminalBracketedExpression,
 				[
-					Symbol.terminalWhile,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpression,
+					GrammarSymbol.terminalWhile,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpression,
 					'#while'
 				],
 				14
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
+			createProduction(
+				GrammarSymbol.nonterminalBracketedExpression,
 				[
-					Symbol.terminalSet,
-					Symbol.nonterminalVariable,
-					Symbol.nonterminalExpression,
+					GrammarSymbol.terminalSet,
+					GrammarSymbol.nonterminalVariable,
+					GrammarSymbol.nonterminalExpression,
 					'#set'
 				],
 				15
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
+			createProduction(
+				GrammarSymbol.nonterminalBracketedExpression,
 				[
-					Symbol.terminalBegin,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionList,
+					GrammarSymbol.terminalBegin,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpressionList,
 					'#begin'
 				],
 				16
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalBracketedExpression,
-				[Symbol.nonterminalOptr, Symbol.nonterminalExpressionList, '#operatorUsage'],
+			createProduction(
+				GrammarSymbol.nonterminalBracketedExpression,
+				[
+					GrammarSymbol.nonterminalOptr,
+					GrammarSymbol.nonterminalExpressionList,
+					'#operatorUsage'
+				],
 				17
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[Symbol.nonterminalExpression, Symbol.nonterminalExpressionList, '#expressionList'],
+			createProduction(
+				GrammarSymbol.nonterminalExpressionList,
+				[
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpressionList,
+					'#expressionList'
+				],
 				18
 			)
 		);
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionList,
-				[Symbol.Lambda, '#emptyExpressionList'],
+			createProduction(
+				GrammarSymbol.nonterminalExpressionList,
+				[GrammarSymbol.Lambda, '#emptyExpressionList'],
 				19
 			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalOptr, [Symbol.nonterminalFunction], 20)
+			createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalFunction], 20)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalOptr, [Symbol.nonterminalValueOp], 21)
+			createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalValueOp], 21)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalValue, [Symbol.terminalIntegerLiteral], 22)
-		);
-		this.productions.push(new Production(Symbol.nonterminalValueOp, [Symbol.terminalPlus], 23));
-		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalMinus], 24)
-		);
-		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalMultiply], 25)
+			createProduction(
+				GrammarSymbol.nonterminalValue,
+				[GrammarSymbol.terminalIntegerLiteral],
+				22
+			)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalDivide], 26)
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPlus], 23)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalEquals], 27)
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMinus], 24)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalLessThan], 28)
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMultiply], 25)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalGreaterThan], 29)
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalDivide], 26)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalPrint], 30)
-		);
-		this.productions.push(new Production(Symbol.nonterminalFunction, [Symbol.terminalID], 31));
-		this.productions.push(
-			new Production(Symbol.nonterminalVariable, [Symbol.terminalID, '#variable'], 32)
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalEquals], 27)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalRandom], 33)
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLessThan], 28)
 		);
 		this.productions.push(
-			new Production(Symbol.nonterminalValueOp, [Symbol.terminalThrow], 34)
+			createProduction(
+				GrammarSymbol.nonterminalValueOp,
+				[GrammarSymbol.terminalGreaterThan],
+				29
+			)
+		);
+		this.productions.push(
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPrint], 30)
+		);
+		this.productions.push(
+			createProduction(GrammarSymbol.nonterminalFunction, [GrammarSymbol.terminalID], 31)
+		);
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalVariable,
+				[GrammarSymbol.terminalID, '#variable'],
+				32
+			)
+		);
+		this.productions.push(
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalRandom], 33)
+		);
+		this.productions.push(
+			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalThrow], 34)
 		);
 	}
 
@@ -303,12 +355,11 @@ export class Chapter1Grammar extends GrammarBase {
 		return 'Chapter 1';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
+	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		// console.log(`Chapter1Grammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
 		let name: Name;
@@ -390,56 +441,55 @@ export class Chapter1Grammar extends GrammarBase {
 		}
 	}
 
-	public tokenToSymbol(token: Token): number {
-		// Returns Symbol
+	public tokenToSymbol(token: IToken): GrammarSymbol {
 		// const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
-				return Symbol.terminalEOF;
+				return GrammarSymbol.terminalEOF;
 			case LexicalState.tokenIntLit:
-				return Symbol.terminalIntegerLiteral;
+				return GrammarSymbol.terminalIntegerLiteral;
 			case LexicalState.tokenFltLit:
-				return Symbol.terminalFloatLiteral;
+				return GrammarSymbol.terminalFloatLiteral;
 			case LexicalState.tokenStrLit:
-				return Symbol.terminalStringLiteral;
+				return GrammarSymbol.terminalStringLiteral;
 			case LexicalState.tokenLeftBracket:
-				return Symbol.terminalLeftBracket;
+				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
-				return Symbol.terminalRightBracket;
+				return GrammarSymbol.terminalRightBracket;
 			case LexicalState.tokenPlus:
-				return Symbol.terminalPlus;
+				return GrammarSymbol.terminalPlus;
 			case LexicalState.tokenMinus:
-				return Symbol.terminalMinus;
+				return GrammarSymbol.terminalMinus;
 			case LexicalState.tokenMult:
-				return Symbol.terminalMultiply;
+				return GrammarSymbol.terminalMultiply;
 			case LexicalState.tokenDiv:
-				return Symbol.terminalDivide;
+				return GrammarSymbol.terminalDivide;
 			case LexicalState.tokenEqual:
-				return Symbol.terminalEquals;
+				return GrammarSymbol.terminalEquals;
 			case LexicalState.tokenLess:
-				return Symbol.terminalLessThan;
+				return GrammarSymbol.terminalLessThan;
 			case LexicalState.tokenGreater:
-				return Symbol.terminalGreaterThan;
+				return GrammarSymbol.terminalGreaterThan;
 
 			case LexicalState.tokenIdent:
 				switch (token.tokenValue as string) {
 					case 'define':
-						return Symbol.terminalDefine;
+						return GrammarSymbol.terminalDefine;
 					case 'if':
-						return Symbol.terminalIf;
+						return GrammarSymbol.terminalIf;
 					case 'while':
-						return Symbol.terminalWhile;
+						return GrammarSymbol.terminalWhile;
 					case 'set':
-						return Symbol.terminalSet;
+						return GrammarSymbol.terminalSet;
 					case 'begin':
-						return Symbol.terminalBegin;
+						return GrammarSymbol.terminalBegin;
 					case 'print':
-						return Symbol.terminalPrint;
-					// case 'random': return Symbol.terminalRandom;
-					// case 'throw': return Symbol.terminalThrow;
+						return GrammarSymbol.terminalPrint;
+					// case 'random': return GrammarSymbol.terminalRandom;
+					// case 'throw': return GrammarSymbol.terminalThrow;
 					default:
-						return Symbol.terminalID;
+						return GrammarSymbol.terminalID;
 				}
 
 			// break;
@@ -456,45 +506,44 @@ export class Chapter1Grammar extends GrammarBase {
 	}
 
 	public pushTokenOntoSemanticStack(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
-		tokenAsSymbol: number,
-		token: Token
+		semanticStack: SemanticStackType,
+		tokenAsSymbol: GrammarSymbol,
+		token: IToken
 	): void {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case Symbol.terminalID:
-			case Symbol.terminalPrint:
-			case Symbol.terminalPlus:
-			case Symbol.terminalMinus:
-			case Symbol.terminalMultiply:
-			case Symbol.terminalDivide:
-			case Symbol.terminalEquals:
-			case Symbol.terminalLessThan:
-			case Symbol.terminalGreaterThan:
-			case Symbol.terminalRandom:
-			case Symbol.terminalThrow:
+			case GrammarSymbol.terminalID:
+			case GrammarSymbol.terminalPrint:
+			case GrammarSymbol.terminalPlus:
+			case GrammarSymbol.terminalMinus:
+			case GrammarSymbol.terminalMultiply:
+			case GrammarSymbol.terminalDivide:
+			case GrammarSymbol.terminalEquals:
+			case GrammarSymbol.terminalLessThan:
+			case GrammarSymbol.terminalGreaterThan:
+			case GrammarSymbol.terminalRandom:
+			case GrammarSymbol.terminalThrow:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
 
-			case Symbol.terminalIntegerLiteral:
+			case GrammarSymbol.terminalIntegerLiteral:
 				semanticStack.push(new IntegerLiteral(value, token.line, token.column));
 				break;
 
-			case Symbol.terminalLeftBracket:
-			case Symbol.terminalRightBracket:
-			case Symbol.terminalDefine:
-			case Symbol.terminalIf:
-			case Symbol.terminalWhile:
-			case Symbol.terminalSet:
-			case Symbol.terminalBegin:
-			case Symbol.terminalEOF:
+			case GrammarSymbol.terminalLeftBracket:
+			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalDefine:
+			case GrammarSymbol.terminalIf:
+			case GrammarSymbol.terminalWhile:
+			case GrammarSymbol.terminalSet:
+			case GrammarSymbol.terminalBegin:
+			case GrammarSymbol.terminalEOF:
 				break;
 
 			default:
 				throw new GrammarException(
-					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${Symbol[tokenAsSymbol]} ${tokenAsSymbol}`,
+					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} ${tokenAsSymbol}`,
 					token.line,
 					token.column
 				);

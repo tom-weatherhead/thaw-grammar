@@ -1,16 +1,25 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/prolog-grammar.ts
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
-import { LanguageSelector, LexicalState, Token } from 'thaw-lexical-analyzer';
+import {
+	GrammarSymbol,
+	IToken,
+	LanguageSelector,
+	LexicalState,
+	ParserSelector,
+	SemanticStackType
+} from 'thaw-interpreter-types';
+
+// import { LanguageSelector, LexicalState, Token } from 'thaw-lexical-analyzer';
 
 import { ArgumentException } from '../../common/exceptions/argument-exception';
 import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase } from '../../common/grammar-base';
-import { ParserSelector } from '../../common/parser-selectors';
-import { Production } from '../../common/production';
-import { Symbol } from '../../common/symbol';
+// import { ParserSelector } from '../../common/parser-selectors';
+import { createProduction } from '../../common/production';
+// import { Symbol } from '../../common/symbol';
 
 import { createFunctorExpressionFromGoal } from './utilities';
 
@@ -40,28 +49,28 @@ import { IPrologExpression } from './domain-object-model/interfaces/iprolog-expr
 
 export class PrologGrammar extends GrammarBase {
 	constructor() {
-		super(Symbol.nonterminalStart);
+		super(GrammarSymbol.nonterminalStart);
 
 		// Terminals:
 
-		this.terminals.push(Symbol.terminalDot);
-		this.terminals.push(Symbol.terminalComma);
-		// this.terminals.push(Symbol.terminalSemicolon);
-		this.terminals.push(Symbol.terminalLeftBracket);
-		this.terminals.push(Symbol.terminalRightBracket);
-		this.terminals.push(Symbol.terminalLeftSquareBracket);
-		this.terminals.push(Symbol.terminalRightSquareBracket);
-		this.terminals.push(Symbol.terminalNameBeginningWithCapital);
-		this.terminals.push(Symbol.terminalNameNotBeginningWithCapital);
-		this.terminals.push(Symbol.terminalFrom);
-		this.terminals.push(Symbol.terminalInferPred);
-		this.terminals.push(Symbol.terminalIntegerLiteral);
-		this.terminals.push(Symbol.terminalOrBar);
-		this.terminals.push(Symbol.terminalNotSymbol);
-		this.terminals.push(Symbol.terminalIs);
-		// this.terminals.push(Symbol.terminal);
+		this.terminals.push(GrammarSymbol.terminalDot);
+		this.terminals.push(GrammarSymbol.terminalComma);
+		// this.terminals.push(GrammarSymbol.terminalSemicolon);
+		this.terminals.push(GrammarSymbol.terminalLeftBracket);
+		this.terminals.push(GrammarSymbol.terminalRightBracket);
+		this.terminals.push(GrammarSymbol.terminalLeftSquareBracket);
+		this.terminals.push(GrammarSymbol.terminalRightSquareBracket);
+		this.terminals.push(GrammarSymbol.terminalNameBeginningWithCapital);
+		this.terminals.push(GrammarSymbol.terminalNameNotBeginningWithCapital);
+		this.terminals.push(GrammarSymbol.terminalFrom);
+		this.terminals.push(GrammarSymbol.terminalInferPred);
+		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
+		this.terminals.push(GrammarSymbol.terminalOrBar);
+		this.terminals.push(GrammarSymbol.terminalNotSymbol);
+		this.terminals.push(GrammarSymbol.terminalIs);
+		// this.terminals.push(GrammarSymbol.terminal);
 
-		this.terminals.push(Symbol.terminalEOF);
+		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		// Not yet added:
 		// // From PrologGrammar2
@@ -75,32 +84,32 @@ export class PrologGrammar extends GrammarBase {
 		// Symbol.T_FloatLiteral, Symbol.T_Caret
 		// });
 
-		this.nonTerminals.push(Symbol.nonterminalStart);
-		this.nonTerminals.push(Symbol.nonterminalInput);
-		this.nonTerminals.push(Symbol.nonterminalClause);
-		this.nonTerminals.push(Symbol.nonterminalQuery);
-		this.nonTerminals.push(Symbol.nonterminalExpression);
-		// this.nonTerminals.push(Symbol.nonterminalExpressionList);
-		this.nonTerminals.push(Symbol.nonterminalGoal);
-		// this.nonTerminals.push(Symbol.nonterminalLHSGoal);
-		this.nonTerminals.push(Symbol.nonterminalClauseTail);
-		// this.nonTerminals.push(Symbol.nonterminalLHSGoalTail);
-		// this.nonTerminals.push(Symbol.nonterminalFunctor);
-		// this.nonTerminals.push(Symbol.nonterminalFunctorParameters);
+		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
+		this.nonTerminals.push(GrammarSymbol.nonterminalInput);
+		this.nonTerminals.push(GrammarSymbol.nonterminalClause);
+		this.nonTerminals.push(GrammarSymbol.nonterminalQuery);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalGoal);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalLHSGoal);
+		this.nonTerminals.push(GrammarSymbol.nonterminalClauseTail);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalLHSGoalTail);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalFunctor);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalFunctorParameters);
 		// this.nonTerminals.push(
-		// 	Symbol.nonterminalGoalWithPossibleDisjunctiveTail
+		// 	GrammarSymbol.nonterminalGoalWithPossibleDisjunctiveTail
 		// );
-		this.nonTerminals.push(Symbol.nonterminalGoalList);
-		// this.nonTerminals.push(Symbol.nonterminalPossibleDisjunctiveTail);
-		this.nonTerminals.push(Symbol.nonterminalVariable);
-		this.nonTerminals.push(Symbol.nonterminalList);
-		this.nonTerminals.push(Symbol.nonterminalListContents);
-		this.nonTerminals.push(Symbol.nonterminalListContentsTail);
-		this.nonTerminals.push(Symbol.nonterminalGoalListTail);
-		this.nonTerminals.push(Symbol.nonterminalFunctorExpression);
-		this.nonTerminals.push(Symbol.nonterminalTailOfGoalOrFunctorExpression);
-		this.nonTerminals.push(Symbol.nonterminalExpressionListTail);
-		// this.nonTerminals.push(Symbol.nonterminal);
+		this.nonTerminals.push(GrammarSymbol.nonterminalGoalList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalPossibleDisjunctiveTail);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
+		this.nonTerminals.push(GrammarSymbol.nonterminalList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalListContents);
+		this.nonTerminals.push(GrammarSymbol.nonterminalListContentsTail);
+		this.nonTerminals.push(GrammarSymbol.nonterminalGoalListTail);
+		this.nonTerminals.push(GrammarSymbol.nonterminalFunctorExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionListTail);
+		// this.nonTerminals.push(GrammarSymbol.nonterminal);
 
 		// Non-Terminals:
 
@@ -135,39 +144,47 @@ export class PrologGrammar extends GrammarBase {
 
 		// 1: Start -> Input Dot EOF
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalStart,
-				[Symbol.nonterminalInput, Symbol.terminalDot, Symbol.terminalEOF],
+			createProduction(
+				GrammarSymbol.nonterminalStart,
+				[
+					GrammarSymbol.nonterminalInput,
+					GrammarSymbol.terminalDot,
+					GrammarSymbol.terminalEOF
+				],
 				1
 			)
 		);
 
 		// 2: Input -> Clause
 		this.productions.push(
-			new Production(Symbol.nonterminalInput, [Symbol.nonterminalClause, '#createClause'], 2)
+			createProduction(
+				GrammarSymbol.nonterminalInput,
+				[GrammarSymbol.nonterminalClause, '#createClause'],
+				2
+			)
 		);
 
 		// 3: Input -> Query
 		this.productions.push(
-			new Production(Symbol.nonterminalInput, [Symbol.nonterminalQuery], 3)
+			createProduction(GrammarSymbol.nonterminalInput, [GrammarSymbol.nonterminalQuery], 3)
 		);
 
 		// 4: Clause -> LHSGoal ClauseTail
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalClause,
-				[Symbol.nonterminalGoal, Symbol.nonterminalClauseTail],
+			createProduction(
+				GrammarSymbol.nonterminalClause,
+				[GrammarSymbol.nonterminalGoal, GrammarSymbol.nonterminalClauseTail],
 				4
 			)
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalQuery,
+			createProduction(
+				GrammarSymbol.nonterminalQuery,
 				[
-					Symbol.terminalInferPred,
-					Symbol.nonterminalGoal,
-					Symbol.nonterminalGoalListTail,
+					GrammarSymbol.terminalInferPred,
+					GrammarSymbol.nonterminalGoal,
+					GrammarSymbol.nonterminalGoalListTail,
 					'#consGoalList'
 				],
 				5
@@ -175,12 +192,12 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalClauseTail,
+			createProduction(
+				GrammarSymbol.nonterminalClauseTail,
 				[
-					Symbol.terminalFrom,
-					Symbol.nonterminalGoal,
-					Symbol.nonterminalGoalListTail,
+					GrammarSymbol.terminalFrom,
+					GrammarSymbol.nonterminalGoal,
+					GrammarSymbol.nonterminalGoalListTail,
 					'#consGoalList'
 				],
 				6
@@ -188,16 +205,20 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(Symbol.nonterminalClauseTail, [Symbol.Lambda, '#createEmptyGoalList'], 7)
+			createProduction(
+				GrammarSymbol.nonterminalClauseTail,
+				[GrammarSymbol.Lambda, '#createEmptyGoalList'],
+				7
+			)
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalGoalListTail,
+			createProduction(
+				GrammarSymbol.nonterminalGoalListTail,
 				[
-					Symbol.terminalComma,
-					Symbol.nonterminalGoal,
-					Symbol.nonterminalGoalListTail,
+					GrammarSymbol.terminalComma,
+					GrammarSymbol.nonterminalGoal,
+					GrammarSymbol.nonterminalGoalListTail,
 					'#consGoalList'
 				],
 				8
@@ -205,20 +226,20 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalGoalListTail,
-				[Symbol.Lambda, '#createEmptyGoalList'],
+			createProduction(
+				GrammarSymbol.nonterminalGoalListTail,
+				[GrammarSymbol.Lambda, '#createEmptyGoalList'],
 				9
 			)
 		);
 
 		// Goal -> NameNotBeginningWithCapital TailOfGoalOrFunctorExpr
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalGoal,
+			createProduction(
+				GrammarSymbol.nonterminalGoal,
 				[
-					Symbol.terminalNameNotBeginningWithCapital,
-					Symbol.nonterminalTailOfGoalOrFunctorExpression,
+					GrammarSymbol.terminalNameNotBeginningWithCapital,
+					GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression,
 					'#createGoal'
 				],
 				10
@@ -227,22 +248,22 @@ export class PrologGrammar extends GrammarBase {
 
 		// TailOfGoalOrFunctorExpr -> Lambda
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalTailOfGoalOrFunctorExpression,
-				[Symbol.Lambda, '#createEmptyExpressionList'],
+			createProduction(
+				GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression,
+				[GrammarSymbol.Lambda, '#createEmptyExpressionList'],
 				11
 			)
 		);
 
 		// TailOfGoalOrFunctorExpr -> ( ExprList )
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalTailOfGoalOrFunctorExpression,
+			createProduction(
+				GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression,
 				[
-					Symbol.terminalLeftBracket,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionListTail,
-					Symbol.terminalRightBracket,
+					GrammarSymbol.terminalLeftBracket,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpressionListTail,
+					GrammarSymbol.terminalRightBracket,
 					'#consExpressionList'
 				],
 				12
@@ -251,21 +272,21 @@ export class PrologGrammar extends GrammarBase {
 
 		// ExprListTail -> Lambda
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionListTail,
-				[Symbol.Lambda, '#createEmptyExpressionList'],
+			createProduction(
+				GrammarSymbol.nonterminalExpressionListTail,
+				[GrammarSymbol.Lambda, '#createEmptyExpressionList'],
 				15
 			)
 		);
 
 		// ExprListTail -> , Expr ExprListTail
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalExpressionListTail,
+			createProduction(
+				GrammarSymbol.nonterminalExpressionListTail,
 				[
-					Symbol.terminalComma,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalExpressionListTail,
+					GrammarSymbol.terminalComma,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpressionListTail,
 					'#consExpressionList'
 				],
 				16
@@ -274,35 +295,47 @@ export class PrologGrammar extends GrammarBase {
 
 		// Expr -> IntegerLiteral
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.terminalIntegerLiteral], 17)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.terminalIntegerLiteral],
+				17
+			)
 		);
 
 		// Expr -> Variable
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalVariable], 18)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.nonterminalVariable],
+				18
+			)
 		);
 
 		// Expr -> FunctorExpr
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalFunctorExpression], 19)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.nonterminalFunctorExpression],
+				19
+			)
 		);
 
 		// Variable -> NameBeginningWithCapital
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalVariable,
-				[Symbol.terminalNameBeginningWithCapital, '#createVariable'],
+			createProduction(
+				GrammarSymbol.nonterminalVariable,
+				[GrammarSymbol.terminalNameBeginningWithCapital, '#createVariable'],
 				20
 			)
 		);
 
 		// FunctorExpr -> NameNotBeginningWithCapital TailOfGoalOrFunctorExpr
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalFunctorExpression,
+			createProduction(
+				GrammarSymbol.nonterminalFunctorExpression,
 				[
-					Symbol.terminalNameNotBeginningWithCapital,
-					Symbol.nonterminalTailOfGoalOrFunctorExpression,
+					GrammarSymbol.terminalNameNotBeginningWithCapital,
+					GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression,
 					'#createFunctorExpression'
 				],
 				21
@@ -311,31 +344,39 @@ export class PrologGrammar extends GrammarBase {
 
 		// Lists.
 		this.productions.push(
-			new Production(Symbol.nonterminalExpression, [Symbol.nonterminalList], 22)
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[GrammarSymbol.nonterminalList],
+				22
+			)
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalList,
+			createProduction(
+				GrammarSymbol.nonterminalList,
 				[
-					Symbol.terminalLeftSquareBracket,
-					Symbol.nonterminalListContents,
-					Symbol.terminalRightSquareBracket
+					GrammarSymbol.terminalLeftSquareBracket,
+					GrammarSymbol.nonterminalListContents,
+					GrammarSymbol.terminalRightSquareBracket
 				],
 				23
 			)
 		);
 
 		this.productions.push(
-			new Production(Symbol.nonterminalListContents, [Symbol.Lambda, '#createNilFunctor'], 24)
+			createProduction(
+				GrammarSymbol.nonterminalListContents,
+				[GrammarSymbol.Lambda, '#createNilFunctor'],
+				24
+			)
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContents,
+			createProduction(
+				GrammarSymbol.nonterminalListContents,
 				[
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalListContentsTail,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalListContentsTail,
 					'#createConsFunctor'
 				],
 				25
@@ -343,20 +384,20 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContentsTail,
-				[Symbol.Lambda, '#createNilFunctor'],
+			createProduction(
+				GrammarSymbol.nonterminalListContentsTail,
+				[GrammarSymbol.Lambda, '#createNilFunctor'],
 				26
 			)
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContentsTail,
+			createProduction(
+				GrammarSymbol.nonterminalListContentsTail,
 				[
-					Symbol.terminalComma,
-					Symbol.nonterminalExpression,
-					Symbol.nonterminalListContentsTail,
+					GrammarSymbol.terminalComma,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalListContentsTail,
 					'#createConsFunctor'
 				],
 				27
@@ -364,29 +405,29 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalListContentsTail,
-				[Symbol.terminalOrBar, Symbol.nonterminalExpression],
+			createProduction(
+				GrammarSymbol.nonterminalListContentsTail,
+				[GrammarSymbol.terminalOrBar, GrammarSymbol.nonterminalExpression],
 				28
 			)
 		);
 
 		// // Not symbol: \+
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalGoal,
-				[Symbol.terminalNotSymbol, Symbol.nonterminalGoal, '#not'],
+			createProduction(
+				GrammarSymbol.nonterminalGoal,
+				[GrammarSymbol.terminalNotSymbol, GrammarSymbol.nonterminalGoal, '#not'],
 				29
 			)
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalGoal,
+			createProduction(
+				GrammarSymbol.nonterminalGoal,
 				[
-					Symbol.nonterminalVariable,
-					Symbol.terminalIs,
-					Symbol.nonterminalExpression,
+					GrammarSymbol.nonterminalVariable,
+					GrammarSymbol.terminalIs,
+					GrammarSymbol.nonterminalExpression,
 					'#createGoal_Is'
 				],
 				30
@@ -394,12 +435,12 @@ export class PrologGrammar extends GrammarBase {
 		);
 
 		this.productions.push(
-			new Production(
-				Symbol.nonterminalGoal,
+			createProduction(
+				GrammarSymbol.nonterminalGoal,
 				[
-					Symbol.terminalIntegerLiteral,
-					Symbol.terminalIs,
-					Symbol.nonterminalExpression,
+					GrammarSymbol.terminalIntegerLiteral,
+					GrammarSymbol.terminalIs,
+					GrammarSymbol.nonterminalExpression,
 					'#createGoal_Is'
 				],
 				31
@@ -449,7 +490,7 @@ export class PrologGrammar extends GrammarBase {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {
+	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		const gs = LanguageSelector.Prolog2;
 
 		let str: string;
@@ -618,21 +659,21 @@ export class PrologGrammar extends GrammarBase {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	public tokenToSymbol(token: Token): Symbol {
+	public tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
-				return Symbol.terminalEOF;
+				return GrammarSymbol.terminalEOF;
 			case LexicalState.tokenIdent:
 			case LexicalState.tokenExclamation: // The cut.
 				switch (tokenValueAsString) {
 					case '?-':
-						return Symbol.terminalInferPred;
+						return GrammarSymbol.terminalInferPred;
 					case ':-':
-						return Symbol.terminalFrom;
+						return GrammarSymbol.terminalFrom;
 					case 'is':
-						return Symbol.terminalIs;
+						return GrammarSymbol.terminalIs;
 					// case "+": return Symbol.T_Plus;
 					// case "-": return Symbol.T_Minus;
 					// case "*": return Symbol.T_Multiply;
@@ -643,7 +684,7 @@ export class PrologGrammar extends GrammarBase {
 					// case "=<": return Symbol.T_LessEqual; // Not <=.  See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
 					// case ">=": return Symbol.T_GreaterEqual;
 					case '\\+':
-						return Symbol.terminalNotSymbol;
+						return GrammarSymbol.terminalNotSymbol;
 					// case "->": return Symbol.T_IfThen;
 					// case ":": return Symbol.T_Colon;
 					// case "=": return Symbol.T_Assign;   // Unifiable
@@ -677,42 +718,42 @@ export class PrologGrammar extends GrammarBase {
 				if (firstChar.toLowerCase() === firstChar && !tokenValueAsString.startsWith('_')) {
 					// This case includes non-binding variables (i.e. variable names that start with _)
 					// as well as tokenExclamation (the cut).
-					return Symbol.terminalNameNotBeginningWithCapital;
+					return GrammarSymbol.terminalNameNotBeginningWithCapital;
 				} else {
-					return Symbol.terminalNameBeginningWithCapital;
+					return GrammarSymbol.terminalNameBeginningWithCapital;
 				}
 
 			case LexicalState.tokenIntLit:
-				return Symbol.terminalIntegerLiteral;
+				return GrammarSymbol.terminalIntegerLiteral;
 
 			// HACK version 2 : ThAW 2020-01-06 : The value in an IntegerLiteral can be int or float.
 			// In the future, we will need to properly support FloatLiterals
 			// and distinguish them from IntegerLiterals.
 			// case LexicalState.tokenFltLit: return Symbol.terminalFloatLiteral;
 			case LexicalState.tokenFltLit:
-				return Symbol.terminalIntegerLiteral;
+				return GrammarSymbol.terminalIntegerLiteral;
 
 			case LexicalState.tokenStrLit:
-				return Symbol.terminalStringLiteral;
+				return GrammarSymbol.terminalStringLiteral;
 			// case LexicalState.tokenIdent: return Symbol.terminalID;
 			case LexicalState.tokenLeftBracket:
-				return Symbol.terminalLeftBracket;
+				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
-				return Symbol.terminalRightBracket;
+				return GrammarSymbol.terminalRightBracket;
 			case LexicalState.tokenLeftSquareBracket:
-				return Symbol.terminalLeftSquareBracket;
+				return GrammarSymbol.terminalLeftSquareBracket;
 			case LexicalState.tokenRightSquareBracket:
-				return Symbol.terminalRightSquareBracket;
+				return GrammarSymbol.terminalRightSquareBracket;
 			case LexicalState.tokenComma:
-				return Symbol.terminalComma;
+				return GrammarSymbol.terminalComma;
 			case LexicalState.tokenDot:
-				return Symbol.terminalDot;
+				return GrammarSymbol.terminalDot;
 			case LexicalState.tokenSemicolon:
-				return Symbol.terminalSemicolon;
+				return GrammarSymbol.terminalSemicolon;
 			case LexicalState.tokenOrBar:
-				return Symbol.terminalOrBar;
+				return GrammarSymbol.terminalOrBar;
 			case LexicalState.tokenBackslashPlus:
-				return Symbol.terminalNotSymbol;
+				return GrammarSymbol.terminalNotSymbol;
 
 			// case TokenType.T_StrLit2: return Symbol.T_NameNotBeginningWithCapital; // The contents of a single-quoted string.
 			// case TokenType.T_LeftCurlyBrace: return Symbol.T_LeftCurlyBrace;
@@ -751,26 +792,26 @@ export class PrologGrammar extends GrammarBase {
 
 	public pushTokenOntoSemanticStack(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
+		semanticStack: SemanticStackType,
 		// eslint-disable-next-line @typescript-eslint/ban-types
-		tokenAsSymbol: Symbol,
-		token: Token
+		tokenAsSymbol: GrammarSymbol,
+		token: IToken
 	): void {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case Symbol.terminalIntegerLiteral:
+			case GrammarSymbol.terminalIntegerLiteral:
 				// semanticStack.push(new PrologIntegerLiteral(value as number));
 				semanticStack.push(new PrologIntegerLiteral(token.getValueAsNumber()));
 				break;
 
-			case Symbol.terminalFloatLiteral:
+			case GrammarSymbol.terminalFloatLiteral:
 				// semanticStack.push(new PrologFloatLiteral(value as number));
 				semanticStack.push(new PrologFloatLiteral(token.getValueAsNumber()));
 				break;
 
-			case Symbol.terminalNameBeginningWithCapital:
-			case Symbol.terminalNameNotBeginningWithCapital:
+			case GrammarSymbol.terminalNameBeginningWithCapital:
+			case GrammarSymbol.terminalNameNotBeginningWithCapital:
 				// case Symbol.terminalIs:
 
 				if (typeof value !== 'string') {

@@ -1,54 +1,59 @@
 // tom-weatherhead/thaw-grammar/src/common/production.ts
 
-import { IEqualityComparable } from 'thaw-common-utilities.ts';
+// import { IEqualityComparable } from 'thaw-common-utilities.ts';
 
-import { Symbol } from './symbol';
+import {
+	GrammarSymbol,
+	IProduction,
+	// isProduction,
+	ProductionRhsElementType
+} from 'thaw-interpreter-types';
 
-/* eslint-disable @typescript-eslint/ban-types */
-
-export type ProductionRhsElementType = Symbol | string;
+// export type ProductionRhsElementType = Symbol | string;
 
 // A user-defined type guard. See e.g. https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
 
-export function isProduction(obj: unknown): obj is Production {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const aaaargh = obj as any;
+// export
+function isProduction(obj: unknown): obj is IProduction {
+	const aaaargh = obj as IProduction;
 	const lhs = aaaargh.lhs;
 	const rhs = aaaargh.rhs;
-	const num = aaaargh.num;
+	// const num = aaaargh.num;
 
 	return (
 		typeof lhs !== 'undefined' &&
 		typeof lhs === 'number' &&
 		typeof rhs !== 'undefined' &&
 		rhs instanceof Array &&
-		rhs.every(
-			(element: unknown) => typeof element === 'number' || typeof element === 'string'
-		) &&
-		typeof num !== 'undefined' &&
-		typeof num === 'number'
+		rhs.every((element: unknown) => typeof element === 'number' || typeof element === 'string') // &&
+		// typeof num !== 'undefined' &&
+		// typeof num === 'number'
 	);
 }
 
-export class Production implements IEqualityComparable {
-	public lhs: Symbol;
-	public rhs: ProductionRhsElementType[];
-	private readonly num: number;
+class Production implements IProduction {
+	// public lhs: GrammarSymbol;
+	// public rhs: ProductionRhsElementType[];
+	// private readonly num: number;
 
-	constructor(l: Symbol, r: ProductionRhsElementType[], n = 0) {
-		this.lhs = l;
-		this.rhs = r;
-		this.num = n;
+	constructor(
+		public readonly lhs: GrammarSymbol,
+		public readonly rhs: ProductionRhsElementType[],
+		private readonly num: number
+	) {
+		// this.lhs = l;
+		// this.rhs = r;
+		// this.num = n;
 	}
 
 	public toString(): string {
-		const lhsAsString: string = Symbol[this.lhs];
+		const lhsAsString: string = GrammarSymbol[this.lhs];
 		const rhsAsString: string = this.rhs
 			.map((s: ProductionRhsElementType) => {
 				if (typeof s === 'string') {
 					return s;
 				} else {
-					return Symbol[s];
+					return GrammarSymbol[s];
 				}
 			})
 			.join(' ');
@@ -56,9 +61,8 @@ export class Production implements IEqualityComparable {
 		return `${this.num}: ${lhsAsString} -> ${rhsAsString}`;
 	}
 
-	// public equals(otherProduction: Production): boolean {
 	public equals(other: unknown): boolean {
-		const otherProduction = other as Production;
+		const otherProduction = other as IProduction;
 
 		if (
 			// typeof otherProduction === 'undefined' ||
@@ -81,21 +85,28 @@ export class Production implements IEqualityComparable {
 		return true;
 	}
 
-	public RHSWithNoSemanticActions(): Symbol[] {
+	public getRHSWithNoSemanticActions(): GrammarSymbol[] {
 		return this.rhs
 			.filter((s: ProductionRhsElementType) => typeof s !== 'string')
-			.map((s: ProductionRhsElementType) => s as Symbol);
+			.map((s: ProductionRhsElementType) => s as GrammarSymbol);
 	}
 
-	public StripOutSemanticActions(): Production {
-		return new Production(this.lhs, this.RHSWithNoSemanticActions(), this.num);
+	public stripOutSemanticActions(): IProduction {
+		return new Production(this.lhs, this.getRHSWithNoSemanticActions(), this.num);
 	}
 
-	public ContainsSymbol(symbol: Symbol): boolean {
+	public containsSymbol(symbol: GrammarSymbol): boolean {
 		return (
 			this.lhs === symbol ||
-			this.rhs.find((s: ProductionRhsElementType) => s === symbol) !== undefined
+			typeof this.rhs.find((s: ProductionRhsElementType) => s === symbol) !== 'undefined'
 		);
 	}
 }
-/* eslint-enable @typescript-eslint/ban-types */
+
+export function createProduction(
+	lhs: GrammarSymbol,
+	rhs: ProductionRhsElementType[],
+	num = 0
+): IProduction {
+	return new Production(lhs, rhs, num);
+}

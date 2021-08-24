@@ -1,11 +1,20 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/smalltalk-grammar.ts
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
 import {
+	GrammarSymbol,
+	IToken,
+	// LanguageSelector,
 	// LexicalState,
-	Token
-} from 'thaw-lexical-analyzer';
+	ParserSelector,
+	SemanticStackType
+} from 'thaw-interpreter-types';
+
+// import {
+// 	// LexicalState,
+// 	Token
+// } from 'thaw-lexical-analyzer';
 
 // import { ExpressionList }  from '../../common/domain-object-model/expression-list';
 // import { IExpression }  from '../../common/domain-object-model/iexpression';
@@ -27,15 +36,15 @@ import {
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase } from '../../common/grammar-base';
-import { ParserSelector } from '../../common/parser-selectors';
-// import { Production }  from '../../common/production';
-import { Symbol } from '../../common/symbol';
+// import { ParserSelector } from '../../common/parser-selectors';
+// import { createProduction }  from '../../common/production';
+// import { Symbol } from '../../common/symbol';
 
 export class SmalltalkGrammar extends GrammarBase {
 	// The Scheme grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
 
 	constructor() {
-		super(Symbol.nonterminalStart);
+		super(GrammarSymbol.nonterminalStart);
 
 		// ...
 	}
@@ -50,21 +59,21 @@ export class SmalltalkGrammar extends GrammarBase {
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public executeSemanticAction(semanticStack: Stack<any>, action: string): void {}
+	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public tokenToSymbol(token: Token): number {
+	public tokenToSymbol(token: IToken): number {
 		// Returns Symbol
-		return Symbol.UndefinedSymbol;
+		return GrammarSymbol.UndefinedSymbol;
 	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public pushTokenOntoSemanticStack(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
+		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,
-		token: Token
+		token: IToken
 	): void {}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

@@ -1,14 +1,23 @@
 // tom-weatherhead/thaw-grammar/src/common/grammar-base.ts
 
-import { Stack } from 'thaw-common-utilities.ts';
+// import { Stack } from 'thaw-common-utilities.ts';
 
-import { Token } from 'thaw-lexical-analyzer';
+import {
+	GrammarSymbol,
+	IGrammar,
+	IProduction,
+	IToken,
+	ProductionRhsElementType,
+	SemanticStackType
+} from 'thaw-interpreter-types';
+
+// import { Token } from 'thaw-lexical-analyzer';
 
 import { GrammarException } from './exceptions/grammar-exception';
 
-import { IGrammar } from './igrammar';
-import { Production } from './production';
-import { Symbol } from './symbol';
+// import { IGrammar } from './igrammar';
+import { createProduction } from './production';
+// import { Symbol } from './symbol';
 
 // TODO? :
 // export abstract class GrammarBase<T> implements IGrammar { ... }
@@ -21,7 +30,7 @@ export abstract class GrammarBase implements IGrammar {
 	public readonly terminals: number[] = [];
 	public readonly nonTerminals: number[] = [];
 	public readonly startSymbol: number;
-	public readonly productions: Production[] = [];
+	public readonly productions: IProduction[] = [];
 
 	protected constructor(startSymbol: number) {
 		this.startSymbol = startSymbol;
@@ -32,9 +41,9 @@ export abstract class GrammarBase implements IGrammar {
 	public abstract get selectorsOfCompatibleParsers(): number[]; // This is a 'get' accessor.
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public abstract executeSemanticAction(semanticStack: Stack<any>, action: string): void;
+	public abstract executeSemanticAction(semanticStack: SemanticStackType, action: string): void;
 
-	public abstract tokenToSymbol(token: Token): number;
+	public abstract tokenToSymbol(token: IToken): number;
 	// public tokenToSymbol(token: Token): number { // returns Symbol
 
 	// 	switch (token.tokenType)
@@ -65,24 +74,22 @@ export abstract class GrammarBase implements IGrammar {
 	// }
 
 	public abstract pushTokenOntoSemanticStack(
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		semanticStack: Stack<any>,
+		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,
-		token: Token
+		token: IToken
 	): void;
 
-	public findStartingProduction(): Production {
-		const results: Production[] = [];
+	public findStartingProduction(): IProduction {
+		const results: IProduction[] = [];
 
-		// this.productions.for Each((p: Production) => {
 		for (const p of this.productions) {
 			if (p.lhs === this.startSymbol) {
-				const p2 = p.StripOutSemanticActions();
+				const p2 = p.stripOutSemanticActions();
 
 				if (p2.rhs.length > 0) {
 					const lastObject = p2.rhs[p2.rhs.length - 1];
 
-					if (lastObject === Symbol.terminalEOF) {
+					if (lastObject === GrammarSymbol.terminalEOF) {
 						results.push(p2);
 					}
 				}
@@ -103,7 +110,7 @@ export abstract class GrammarBase implements IGrammar {
 	// }
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	protected addProduction(lhs: number, rhs: any[], n = 0): void {
-		this.productions.push(new Production(lhs, rhs, n));
+	protected addProduction(lhs: GrammarSymbol, rhs: ProductionRhsElementType[], n = 0): void {
+		this.productions.push(createProduction(lhs, rhs, n));
 	}
 }
