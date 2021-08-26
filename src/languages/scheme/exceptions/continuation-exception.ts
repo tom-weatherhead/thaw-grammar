@@ -1,8 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/exceptions/continuation-exception.ts
 
-'use strict';
-
-import { ExceptionBase } from '../../../common/exceptions/exception-base';
+import { ExceptionBase } from 'thaw-interpreter-core';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 

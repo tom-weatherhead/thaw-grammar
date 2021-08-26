@@ -10,6 +10,8 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
+import { createProduction } from 'thaw-interpreter-core';
+
 // import { LexicalState, Token } from 'thaw-lexical-analyzer';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
@@ -24,11 +26,11 @@ import { IfUsage } from '../../common/domain-object-model/if-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
-import { GrammarException } from '../../common/exceptions/grammar-exception';
+// import { GrammarException } from '../../common/exceptions/grammar-exception';
 
-import { GrammarBase } from '../../common/grammar-base';
+import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 // import { ParserSelector } from '../../common/parser-selectors';
-import { createProduction } from '../../common/production';
+// import { createProduction } from '../../common/production';
 
 // import { Symbol } from '../../common/symbol';
 

@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/lambda-calculus-grammar.ts
 
-// import { Stack } from 'thaw-common-utilities.ts';
-
 import {
 	GrammarSymbol,
 	IToken,
@@ -10,16 +8,13 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-// import { LexicalState, Token } from 'thaw-lexical-analyzer';
+import { createProduction } from 'thaw-interpreter-core';
 
 import { Name } from '../../common/domain-object-model/name';
 
-import { GrammarException } from '../../common/exceptions/grammar-exception';
+// import { GrammarException } from '../../common/exceptions/grammar-exception';
 
-import { GrammarBase } from '../../common/grammar-base';
-// import { ParserSelector } from '../../common/parser-selectors';
-import { createProduction } from '../../common/production';
-// import { Symbol } from '../../common/symbol';
+import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
 import { ILCExpression } from './domain-object-model/interfaces/expression';
 

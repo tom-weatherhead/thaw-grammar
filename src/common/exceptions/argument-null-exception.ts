@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/exceptions/argument-null-exception.ts
 
-import { ExceptionBase } from './exception-base';
+import { ExceptionBase } from 'thaw-interpreter-core';
 
 export class ArgumentNullException extends ExceptionBase {
 	public readonly argumentName: string;

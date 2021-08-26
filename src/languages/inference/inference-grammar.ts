@@ -12,7 +12,7 @@ import {
 
 // import { Token } from 'thaw-lexical-analyzer';
 
-import { GrammarBase } from '../../common/grammar-base';
+import { GrammarBase } from 'thaw-interpreter-core';
 // import { ParserSelector } from '../../common/parser-selectors';
 // import { Symbol } from '../../common/symbol';
 

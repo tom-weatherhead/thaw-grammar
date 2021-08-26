@@ -4,8 +4,8 @@
 export { ArgumentException } from './common/exceptions/argument-exception';
 export { ArgumentNullException } from './common/exceptions/argument-null-exception';
 export { EvaluationException } from './common/exceptions/evaluation-exception';
-export { ExceptionBase } from './common/exceptions/exception-base';
-export { GrammarException } from './common/exceptions/grammar-exception';
+// export { ExceptionBase } from './common/exceptions/exception-base';
+// export { GrammarException } from './common/exceptions/grammar-exception';
 export { KeyNotFoundException } from './common/exceptions/key-not-found-exception';
 export { NotImplementedException } from './common/exceptions/not-implemented-exception';
 
@@ -18,9 +18,9 @@ export { IGlobalInfo } from './common/domain-object-model/iglobal-info';
 export { Variable } from './common/domain-object-model/variable';
 
 // Other common stuff
-export { GrammarBase } from './common/grammar-base';
+// export { GrammarBase } from './common/grammar-base';
 export { createGrammar } from './common/grammar-factory';
-export { createProduction } from './common/production';
+// export { createProduction } from './common/production';
 
 // My (ThAW's) minimal language
 export { MinimalLanguageGlobalInfo } from './languages/minimal/domain-object-model/global-info';

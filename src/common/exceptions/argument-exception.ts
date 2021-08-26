@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/exceptions/argument-exception.ts
 
-import { ExceptionBase } from './exception-base';
+import { ExceptionBase } from 'thaw-interpreter-core';
 
 export class ArgumentException extends ExceptionBase {
 	public readonly argumentName: string;

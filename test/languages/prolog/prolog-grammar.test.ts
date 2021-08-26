@@ -10,6 +10,8 @@ import {
 
 import { GrammarSymbol, LanguageSelector } from 'thaw-interpreter-types';
 
+import { createProduction } from 'thaw-interpreter-core';
+
 import {
 	createGrammar,
 	createVariable,
@@ -18,7 +20,7 @@ import {
 	isIVariable,
 	// isProduction,
 	IVariable,
-	createProduction,
+	// createProduction,
 	// PrologFunctor,
 	PrologFunctorExpression,
 	PrologGlobalInfo,

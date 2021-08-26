@@ -35,7 +35,7 @@ import {
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
-import { GrammarBase } from '../../common/grammar-base';
+import { GrammarBase } from 'thaw-interpreter-core';
 // import { ParserSelector } from '../../common/parser-selectors';
 // import { createProduction }  from '../../common/production';
 // import { Symbol } from '../../common/symbol';

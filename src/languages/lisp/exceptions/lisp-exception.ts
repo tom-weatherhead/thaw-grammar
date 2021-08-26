@@ -1,8 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/exceptions/lisp-exception.ts
 
-'use strict';
-
-import { ExceptionBase } from '../../../common/exceptions/exception-base';
+import { ExceptionBase } from 'thaw-interpreter-core';
 
 export class LISPException extends ExceptionBase {
 	constructor(message: string, line: number, column: number) {

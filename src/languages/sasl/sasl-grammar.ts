@@ -10,6 +10,8 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
+import { createProduction } from 'thaw-interpreter-core';
+
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
 import { Name } from '../../common/domain-object-model/name';
@@ -20,7 +22,7 @@ import { VariableList } from '../../common/domain-object-model/variable-list';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 // import { ParserSelector } from '../../common/parser-selectors';
-import { createProduction } from '../../common/production';
+// import { createProduction } from '../../common/production';
 // import { Symbol } from '../../common/symbol';
 
 import { ISExpression } from '../../languages/lisp/domain-object-model/isexpression';

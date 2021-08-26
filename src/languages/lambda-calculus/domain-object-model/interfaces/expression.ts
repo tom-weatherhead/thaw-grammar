@@ -1,7 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/domain-object-model/interfaces/expression.ts
 
 import {
-	createSet,
+	// createSet,
 	IEqualityComparable,
 	IImmutableSet,
 	IStringifiable
@@ -28,7 +28,7 @@ export interface ISubstitutable<T> {
 
 export interface IUnifiable<T> extends ISubstitutable<T> {
 	unify(other: IUnifiable<T>): ISubstitution<T> | undefined;
-	// isIsomorphicTo(other: IUnifiable<T>): boolean;
+	isIsomorphicTo(other: IUnifiable<T>): boolean;
 }
 
 export type ILCUnifiable = IUnifiable<ILCExpression>;
@@ -66,25 +66,20 @@ export function isLCVariable(obj: unknown): obj is ILCVariable {
 	);
 }
 
-export function areIsomorphic(
-	expr1: IUnifiable<ILCExpression>,
-	expr2: IUnifiable<ILCExpression>
-): boolean {
+export function areIsomorphic<T>(expr1: IUnifiable<T>, expr2: IUnifiable<T>): boolean {
 	const unifyingSubstitution = expr1.unify(expr2);
 
-	// TODO: We may want to check and ensure that no variable names are repeated.
+	return typeof unifyingSubstitution !== 'undefined' && unifyingSubstitution.isOneToOne;
 
-	// return typeof unifyingSubstitution !== 'undefined' && unifyingSubstitution.isOneToOne;
-
-	if (typeof unifyingSubstitution === 'undefined' || !unifyingSubstitution.isOneToOne) {
-		return false;
-	}
-
-	const keyNames = Array.from(unifyingSubstitution.SubstitutionList.keys());
-	const valueNames = Array.from(unifyingSubstitution.SubstitutionList.values()).map(
-		(v) => (v as ILCVariable).name
-	);
-	const s = createSet(keyNames.concat(valueNames));
-
-	return s.size === 2 * keyNames.length;
+	// if (typeof unifyingSubstitution === 'undefined' || !unifyingSubstitution.isOneToOne) {
+	// 	return false;
+	// }
+	//
+	// const keyNames = Array.from(unifyingSubstitution.SubstitutionList.keys());
+	// const valueNames = Array.from(unifyingSubstitution.SubstitutionList.values()).map(
+	// 	(v) => (v as ILCVariable).name
+	// );
+	// const s = createSet(keyNames.concat(valueNames));
+	//
+	// return s.size === 2 * keyNames.length;
 }

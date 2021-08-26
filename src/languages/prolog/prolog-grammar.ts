@@ -9,11 +9,13 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { ArgumentException } from '../../common/exceptions/argument-exception';
-import { GrammarException } from '../../common/exceptions/grammar-exception';
+import { createProduction } from 'thaw-interpreter-core';
 
-import { GrammarBase } from '../../common/grammar-base';
-import { createProduction } from '../../common/production';
+import { ArgumentException } from '../../common/exceptions/argument-exception';
+// import { GrammarException } from '../../common/exceptions/grammar-exception';
+
+import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
+// import { createProduction } from '../../common/production';
 
 import { createFunctorExpressionFromGoal } from './utilities';
 

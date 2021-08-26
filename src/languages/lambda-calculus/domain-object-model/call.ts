@@ -3,6 +3,7 @@
 import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
+	areIsomorphic,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -10,8 +11,6 @@ import {
 } from './interfaces/expression';
 
 import { isLCLambdaExpression, LCLambdaExpression } from './lambda-expression';
-
-// import { isLCVariable } from './variable';
 
 const typenameLCFunctionCall = 'LCFunctionCall';
 
@@ -169,5 +168,9 @@ export class LCFunctionCall implements ILCExpression {
 		const argB = otherLCFunctionCall.arg.applySubstitution(unifier1);
 
 		return argA.unify(argB);
+	}
+
+	public isIsomorphicTo(other: ILCExpression): boolean {
+		return areIsomorphic(this, other);
 	}
 }

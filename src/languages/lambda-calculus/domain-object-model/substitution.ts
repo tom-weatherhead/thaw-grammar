@@ -2,18 +2,10 @@
 
 import { createSet } from 'thaw-common-utilities.ts';
 
-// import { IPrologExpression } from './interfaces/iprolog-expression';
-//
-// import { ISubstitution } from './interfaces/isubstitution';
-//
-// import { isIVariable, IVariable } from './interfaces/ivariable';
-
 // 2021-07-13: Warning: Circular dependency: caused by reference to prolog-variable.ts :
 // prolog-substitution.js -> prolog-variable.js -> prolog-substitution.js
 
-import { ILCSubstitution, ILCExpression, isLCVariable } from './interfaces/expression';
-
-// import { isLCVariable } from './variable';
+import { ILCSubstitution, ILCExpression, ILCVariable, isLCVariable } from './interfaces/expression';
 
 class LCSubstitution implements ILCSubstitution {
 	public readonly SubstitutionList = new Map<string, ILCExpression>();
@@ -148,21 +140,17 @@ class LCSubstitution implements ILCSubstitution {
 	// }
 
 	public get isOneToOne(): boolean {
-		// const values: PrologVariable[] = [];
-		//
-		// for (const value of this.SubstitutionList.values()) {
-		// 	const vv = value as PrologVariable;
-		//
-		// 	if (typeof vv === 'undefined') {
-		// 		return false;
-		// 	}
-		//
-		// 	values.push(vv);
-		// }
-		//
-		// return values.length === Array.from(this.SubstitutionList.keys()).length;
+		if (!Array.from(this.SubstitutionList.values()).every(isLCVariable)) {
+			return false;
+		}
 
-		return Array.from(this.SubstitutionList.values()).every(isLCVariable);
+		const keyNames = Array.from(this.SubstitutionList.keys());
+		const valueNames = Array.from(this.SubstitutionList.values()).map(
+			(v) => (v as ILCVariable).name
+		);
+		const s = createSet(keyNames.concat(valueNames));
+
+		return s.size === 2 * keyNames.length;
 	}
 }
 
