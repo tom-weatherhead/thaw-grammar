@@ -8,11 +8,7 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { createProduction } from 'thaw-interpreter-core';
-
 import { Name } from '../../common/domain-object-model/name';
-
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
@@ -42,95 +38,60 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
-		this.nonTerminals.push(GrammarSymbol.nonterminalInput);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalInput);
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
 		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
 
 		// This initial production needed to be added: Start -> Input EOF
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalStart,
-				[GrammarSymbol.nonterminalInput, GrammarSymbol.terminalEOF],
-				1
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalStart, [
+			// GrammarSymbol.nonterminalInput,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalEOF
+		]);
 
 		// Input -> Expression
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalInput,
-				[GrammarSymbol.nonterminalExpression],
-				2
-			)
-		);
+		// this.addProduction(GrammarSymbol.nonterminalInput, [GrammarSymbol.nonterminalExpression]);
 
 		// Expression -> Variable
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalExpression,
-				[GrammarSymbol.nonterminalVariable],
-				3
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.nonterminalVariable
+		]);
 
 		// Expression -> Lambda Expression
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalExpression,
-				[GrammarSymbol.nonterminalLambdaExpression],
-				4
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.nonterminalLambdaExpression
+		]);
 
 		// Expression -> Function Call
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalExpression,
-				[GrammarSymbol.nonterminalFunctionCall],
-				5
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.nonterminalFunctionCall
+		]);
 
 		// Variable -> Name
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalVariable,
-				[GrammarSymbol.terminalID, '#variable'],
-				6
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalVariable, [
+			GrammarSymbol.terminalID,
+			'#variable'
+		]);
 
 		// Lambda Expression -> λ Variable . Expression
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalLambdaExpression,
-				[
-					GrammarSymbol.terminalFn,
-					GrammarSymbol.nonterminalVariable,
-					GrammarSymbol.terminalDot,
-					GrammarSymbol.nonterminalExpression,
-					'#lambdaExpression'
-				],
-				7
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalLambdaExpression, [
+			GrammarSymbol.terminalFn,
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.terminalDot,
+			GrammarSymbol.nonterminalExpression,
+			'#lambdaExpression'
+		]);
 
 		// Function Call -> ( Expression Expression )
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalFunctionCall,
-				[
-					GrammarSymbol.terminalLeftBracket,
-					GrammarSymbol.nonterminalExpression,
-					GrammarSymbol.nonterminalExpression,
-					GrammarSymbol.terminalRightBracket,
-					'#functionCall'
-				],
-				8
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalFunctionCall, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			'#functionCall'
+		]);
 	}
 
 	public get languageName(): string {
@@ -171,12 +132,11 @@ export class LambdaCalculusGrammar extends GrammarBase {
 	}
 
 	public tokenToSymbol(token: IToken): GrammarSymbol {
-		const tokenValueAsString: string = token.tokenValue as string;
+		// const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
 				return GrammarSymbol.terminalEOF;
-			// case LexicalState.tokenIdent: return GrammarSymbol.terminalID;
 			case LexicalState.tokenLeftBracket:
 				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
@@ -187,29 +147,28 @@ export class LambdaCalculusGrammar extends GrammarBase {
 				return GrammarSymbol.terminalDot;
 
 			case LexicalState.tokenIdent:
-				switch (tokenValueAsString) {
-					case '.':
-						return GrammarSymbol.terminalDot; // We could modify the tokenizer to generate TokenType.T_Dot in this case, to obviate this line.
-					case 'λ':
-						console.log(
-							'LexicalState.tokenIdent λ being converted to Symbol.terminalFn'
-						);
-						return GrammarSymbol.terminalFn;
-					default:
-						return GrammarSymbol.terminalID;
-				}
+				// switch (tokenValueAsString) {
+				// 	case '.':
+				// 		return GrammarSymbol.terminalDot; // We could modify the tokenizer to generate TokenType.T_Dot in this case, to obviate this line.
+				// 	case 'λ':
+				// 		console.log(
+				// 			'LexicalState.tokenIdent λ being converted to Symbol.terminalFn'
+				// 		);
+				// 		return GrammarSymbol.terminalFn;
+				// 	default:
+				// 		return GrammarSymbol.terminalID;
+				// }
+				return GrammarSymbol.terminalID;
 
 			default:
-				break;
+				throw new GrammarException(
+					`No grammar symbol matches token ${token.tokenType} ${
+						LexicalState[token.tokenType]
+					} (value '${token.tokenValue}')`,
+					token.line,
+					token.column
+				);
 		}
-
-		throw new GrammarException(
-			`No grammar symbol matches token ${token.tokenType} ${
-				LexicalState[token.tokenType]
-			} (value '${token.tokenValue}')`,
-			token.line,
-			token.column
-		);
 	}
 
 	public pushTokenOntoSemanticStack(
