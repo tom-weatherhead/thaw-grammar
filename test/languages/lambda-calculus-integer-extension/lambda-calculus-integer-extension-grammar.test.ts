@@ -6,7 +6,7 @@ import { LanguageSelector, LexicalAnalyzerSelector, ParserSelector } from 'thaw-
 
 import { createTokenizer } from 'thaw-lexical-analyzer';
 
-import { createGrammar } from '../../..';
+import { createGrammar, ILCExpression, isLCIntegerLiteral, LCIntegerLiteral } from '../../..';
 
 import { createParser, SyntaxException } from 'thaw-parser';
 
@@ -52,4 +52,37 @@ test('LambdaCalculusIntegerExtensionGrammar recognize test', () => {
 
 	f('1');
 	f('[+ 2 3]');
+});
+
+function getParseFunction(): (str: string) => ILCExpression {
+	const grammar = createGrammar(ls);
+	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	const parser = createParser(ParserSelector.LL1, grammar);
+
+	return (str: string) => parser.parse(tokenizer.tokenize(str)) as ILCExpression;
+}
+
+test('LambdaCalculusIntegerExtensionGrammar parse test', () => {
+	// Arrange
+	const f = getParseFunction();
+
+	expect(f('x')).toBeTruthy();
+	expect(f('(x y)')).toBeTruthy();
+	expect(f('λx.x')).toBeTruthy();
+	expect(f('(λx.x y)')).toBeTruthy();
+});
+
+// function createVariableNameGenerator(): () => string {
+// 	let n = 0;
+//
+// 	return () => `v${++n}`;
+// }
+
+test('LambdaCalculusIntegerExtensionGrammar integer test', () => {
+	const f = getParseFunction();
+	const seven = f('7');
+
+	expect(`${seven}`).toBe('7');
+	expect(isLCIntegerLiteral(seven)).toBeTruthy();
+	expect((seven as LCIntegerLiteral).value).toBe(7);
 });

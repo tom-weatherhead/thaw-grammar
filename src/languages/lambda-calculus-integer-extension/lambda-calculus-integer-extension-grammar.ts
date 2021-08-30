@@ -38,8 +38,8 @@ import { LCLambdaExpression } from '../lambda-calculus/domain-object-model/lambd
 import { LCVariable } from '../lambda-calculus/domain-object-model/variable';
 
 // import { ILCIntegerExpression /*, IntegerLiteral */ } from './domain-object-model/integer-literal';
-import { IntegerLiteral } from './domain-object-model/integer-literal';
-// import { PrimitiveOperator } from './domain-object-model/primitive-operator';
+import { LCIntegerLiteral } from './domain-object-model/integer-literal';
+import { LCPrimitiveOperator } from './domain-object-model/primitive-operator';
 
 // Inherited productions:
 
@@ -72,6 +72,9 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalLeftSquareBracket);
 		this.terminals.push(GrammarSymbol.terminalRightSquareBracket);
 		this.terminals.push(GrammarSymbol.terminalPlus);
+		this.terminals.push(GrammarSymbol.terminalMinus);
+		this.terminals.push(GrammarSymbol.terminalMultiply);
+		this.terminals.push(GrammarSymbol.terminalEquals);
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
@@ -149,7 +152,6 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 		// binaryintop -> +
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalPlus]);
 
-		/*
 		// binaryintop -> -
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalMinus]);
 
@@ -168,7 +170,6 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 
 		// binaryintop -> =
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalEquals]);
-		 */
 	}
 
 	public get languageName(): string {
@@ -203,6 +204,13 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 				semanticStack.push(new LCFunctionCall(expression, expression2));
 				break;
 
+			case '#integerOperator':
+				expression2 = semanticStack.pop() as ILCExpression;
+				expression = semanticStack.pop() as ILCExpression;
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new LCPrimitiveOperator(name.value, expression, expression2)); //, name.line, name.column
+				break;
+
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
@@ -230,6 +238,12 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 				return GrammarSymbol.terminalDot;
 			case LexicalState.tokenPlus:
 				return GrammarSymbol.terminalPlus;
+			case LexicalState.tokenMinus:
+				return GrammarSymbol.terminalMinus;
+			case LexicalState.tokenMult:
+				return GrammarSymbol.terminalMultiply;
+			case LexicalState.tokenEqual:
+				return GrammarSymbol.terminalEquals;
 
 			case LexicalState.tokenIdent:
 				// switch (tokenValueAsString) {
@@ -269,7 +283,7 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 				break;
 
 			case GrammarSymbol.terminalIntegerLiteral:
-				semanticStack.push(new IntegerLiteral(value));
+				semanticStack.push(new LCIntegerLiteral(value));
 				break;
 
 			case GrammarSymbol.terminalLeftBracket:
@@ -279,6 +293,9 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 			case GrammarSymbol.terminalFn:
 			case GrammarSymbol.terminalDot:
 			case GrammarSymbol.terminalPlus:
+			case GrammarSymbol.terminalMinus:
+			case GrammarSymbol.terminalMultiply:
+			case GrammarSymbol.terminalEquals:
 			case GrammarSymbol.terminalEOF:
 				break;
 

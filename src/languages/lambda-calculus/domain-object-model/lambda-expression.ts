@@ -83,6 +83,10 @@ export class LCLambdaExpression implements ILCValue {
 		return new LCLambdaExpression(this.arg, this.body.betaReduce(generateNewVariableName));
 	}
 
+	public deltaReduce(): ILCExpression {
+		return this;
+	}
+
 	public etaReduce(): ILCExpression {
 		// λx.(f x) eta-reduces to f iff x does not occur unbound in f.
 

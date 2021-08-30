@@ -60,6 +60,10 @@ export class LCVariable implements ILCVariable {
 		return this;
 	}
 
+	public deltaReduce(): ILCExpression {
+		return this;
+	}
+
 	public etaReduce(): ILCExpression {
 		return this;
 	}

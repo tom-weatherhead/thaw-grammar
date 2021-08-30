@@ -1,24 +1,23 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-integer-extension/domain-object-model/integer-literal.ts
 
-import {
-	// createSet,
-	// IEqualityComparable,
-	// IImmutableSet,
-	IStringifiable
-} from 'thaw-common-utilities.ts';
+import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
-import { LCLambdaExpression } from '../../lambda-calculus/domain-object-model/lambda-expression';
+import {
+	ILCExpression,
+	ISubstitution,
+	IUnifiable
+} from '../../lambda-calculus/domain-object-model/interfaces/expression';
 
-export interface ILCIntegerExpression extends IStringifiable {
-	evaluate(arg1: number, arg2: number): number | LCLambdaExpression;
-}
+// export interface ILCIntegerExpression extends ILCExpression {
+// 	deltaReduce(): ILCExpression; // number | LCLambdaExpression;
+// }
 
-const typenameIntegerLiteral = 'IntegerLiteral';
+const typenameIntegerLiteral = 'LCIntegerLiteral';
 
-export function isIntegerLiteral(obj: unknown): obj is IntegerLiteral {
-	const otherIntegerLiteral = obj as IntegerLiteral;
+export function isLCIntegerLiteral(obj: unknown): obj is LCIntegerLiteral {
+	const otherIntegerLiteral = obj as LCIntegerLiteral;
 
 	return (
 		typeof otherIntegerLiteral !== 'undefined' &&
@@ -26,7 +25,7 @@ export function isIntegerLiteral(obj: unknown): obj is IntegerLiteral {
 	);
 }
 
-export class IntegerLiteral implements ILCIntegerExpression {
+export class LCIntegerLiteral implements ILCExpression {
 	public readonly typename = typenameIntegerLiteral;
 	public readonly value: number;
 
@@ -62,8 +61,56 @@ export class IntegerLiteral implements ILCIntegerExpression {
 		return `${this.value}`;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public evaluate(arg1: number, arg2: number): number | LCLambdaExpression {
-		return this.value;
+	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
+		return this;
+	}
+
+	public unify(other: IUnifiable<ILCExpression>): ISubstitution<ILCExpression> | undefined {
+		return undefined; // TODO FIXME
+	}
+
+	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
+		return false; // TODO FIXME
+	}
+
+	public containsVariableNamed(name: string): boolean {
+		return false;
+	}
+
+	public containsBoundVariableNamed(name: string): boolean {
+		return false;
+	}
+
+	public containsUnboundVariableNamed(
+		name: string,
+		boundVariableNames: IImmutableSet<string>
+	): boolean {
+		return false;
+	}
+
+	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
+		// Alpha-conversion
+
+		return this;
+	}
+
+	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
+		return this;
+	}
+
+	public betaReduce(generateNewVariableName: () => string): ILCExpression {
+		return this;
+	}
+
+	public deltaReduce(): ILCExpression {
+		return this;
+	}
+
+	public etaReduce(): ILCExpression {
+		return this;
+	}
+
+	public getSetOfAllVariableNames(): IImmutableSet<string> {
+		return createSet<string>();
 	}
 }

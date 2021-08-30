@@ -66,3 +66,5 @@ export {
 
 // The Lambda Calculus
 export * from './languages/lambda-calculus/domain-object-model/interfaces/expression';
+
+export * from './languages/lambda-calculus-integer-extension/domain-object-model/integer-literal';

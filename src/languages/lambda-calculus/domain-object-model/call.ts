@@ -167,6 +167,10 @@ export class LCFunctionCall implements ILCExpression {
 		return afterBeta;
 	}
 
+	public deltaReduce(): ILCExpression {
+		return this;
+	}
+
 	public etaReduce(): ILCExpression {
 		return this;
 	}

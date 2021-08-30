@@ -42,10 +42,11 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 	containsUnboundVariableNamed(name: string, boundVariableNames: IImmutableSet<string>): boolean;
 	renameBoundVariable(newName: string, oldName: string): ILCExpression; // Alpha-conversion
 	substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression;
-	betaReduce(generateNewVariableName: () => string): ILCExpression;
-	etaReduce(): ILCExpression;
 	getSetOfAllVariableNames(): IImmutableSet<string>;
 	// applySubstitution(substitution: ILCSubstitution): ILCExpression;
+	betaReduce(generateNewVariableName: () => string): ILCExpression;
+	deltaReduce(): ILCExpression;
+	etaReduce(): ILCExpression;
 }
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
