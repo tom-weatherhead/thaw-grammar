@@ -75,6 +75,7 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalMinus);
 		this.terminals.push(GrammarSymbol.terminalMultiply);
 		this.terminals.push(GrammarSymbol.terminalEquals);
+		this.terminals.push(GrammarSymbol.terminalIf);
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
@@ -170,6 +171,19 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 
 		// binaryintop -> =
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalEquals]);
+
+		// Handling 'if':
+		// 'if a then b else c' translates to '((a b) c)', where a is a fn that takes 2 args.
+		// In fact, a is either TRUE or FALSE, where:
+		// TRUE := λx.λy.x
+		// FALSE := λx.λy.y
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.terminalIf,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#if'
+		]);
 	}
 
 	public get languageName(): string {
@@ -185,6 +199,7 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 		let variable: LCVariable;
 		let expression: ILCExpression;
 		let expression2: ILCExpression;
+		let expression3: ILCExpression;
 
 		switch (action) {
 			case '#variable':
@@ -211,13 +226,23 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 				semanticStack.push(new LCPrimitiveOperator(name.value, expression, expression2)); //, name.line, name.column
 				break;
 
+			case '#if':
+				// throw new GrammarException(`Unimplemented semantic action: ${action}`);
+				expression3 = semanticStack.pop() as ILCExpression;
+				expression2 = semanticStack.pop() as ILCExpression;
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(
+					new LCFunctionCall(new LCFunctionCall(expression, expression2), expression3)
+				);
+				break;
+
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
 	}
 
 	public tokenToSymbol(token: IToken): GrammarSymbol {
-		// const tokenValueAsString: string = token.tokenValue as string;
+		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
@@ -246,18 +271,20 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 				return GrammarSymbol.terminalEquals;
 
 			case LexicalState.tokenIdent:
-				// switch (tokenValueAsString) {
-				// 	case '.':
-				// 		return GrammarSymbol.terminalDot; // We could modify the tokenizer to generate TokenType.T_Dot in this case, to obviate this line.
-				// 	case 'λ':
-				// 		console.log(
-				// 			'LexicalState.tokenIdent λ being converted to Symbol.terminalFn'
-				// 		);
-				// 		return GrammarSymbol.terminalFn;
-				// 	default:
-				// 		return GrammarSymbol.terminalID;
-				// }
-				return GrammarSymbol.terminalID;
+				switch (tokenValueAsString) {
+					case 'if':
+						return GrammarSymbol.terminalIf;
+					// 	case '.':
+					// 		return GrammarSymbol.terminalDot; // We could modify the tokenizer to generate TokenType.T_Dot in this case, to obviate this line.
+					// 	case 'λ':
+					// 		console.log(
+					// 			'LexicalState.tokenIdent λ being converted to Symbol.terminalFn'
+					// 		);
+					// 		return GrammarSymbol.terminalFn;
+					default:
+						return GrammarSymbol.terminalID;
+				}
+			// return GrammarSymbol.terminalID;
 
 			default:
 				throw new GrammarException(
@@ -296,6 +323,7 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 			case GrammarSymbol.terminalRightSquareBracket:
 			case GrammarSymbol.terminalFn:
 			case GrammarSymbol.terminalDot:
+			case GrammarSymbol.terminalIf:
 			case GrammarSymbol.terminalEOF:
 				break;
 
