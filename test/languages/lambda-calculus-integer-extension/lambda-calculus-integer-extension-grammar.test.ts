@@ -86,3 +86,12 @@ test('LambdaCalculusIntegerExtensionGrammar integer test', () => {
 	expect(isLCIntegerLiteral(seven)).toBeTruthy();
 	expect((seven as LCIntegerLiteral).value).toBe(7);
 });
+
+test('LambdaCalculusIntegerExtensionGrammar integer addition test', () => {
+	const f = getParseFunction();
+	const eight = f('[+ 3 5]').deltaReduce();
+
+	expect(`${eight}`).toBe('8');
+	expect(isLCIntegerLiteral(eight)).toBeTruthy();
+	expect((eight as LCIntegerLiteral).value).toBe(8);
+});

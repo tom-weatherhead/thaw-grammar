@@ -279,6 +279,10 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 
 		switch (tokenAsSymbol) {
 			case GrammarSymbol.terminalID:
+			case GrammarSymbol.terminalPlus:
+			case GrammarSymbol.terminalMinus:
+			case GrammarSymbol.terminalMultiply:
+			case GrammarSymbol.terminalEquals:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
 
@@ -292,10 +296,6 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 			case GrammarSymbol.terminalRightSquareBracket:
 			case GrammarSymbol.terminalFn:
 			case GrammarSymbol.terminalDot:
-			case GrammarSymbol.terminalPlus:
-			case GrammarSymbol.terminalMinus:
-			case GrammarSymbol.terminalMultiply:
-			case GrammarSymbol.terminalEquals:
 			case GrammarSymbol.terminalEOF:
 				break;
 
