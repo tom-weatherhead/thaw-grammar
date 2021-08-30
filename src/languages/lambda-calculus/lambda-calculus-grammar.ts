@@ -27,7 +27,7 @@ import { LCVariable } from './domain-object-model/variable';
 // 		| ( < λexp > < λexp > )
 
 export class LambdaCalculusGrammar extends GrammarBase {
-	constructor(isIntegerExtension = false) {
+	constructor() {
 		super(GrammarSymbol.nonterminalStart);
 
 		this.terminals.push(GrammarSymbol.terminalLeftBracket);
@@ -54,12 +54,10 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		// Input -> Expression
 		// this.addProduction(GrammarSymbol.nonterminalInput, [GrammarSymbol.nonterminalExpression]);
 
-		if (!isIntegerExtension) {
-			// Expression -> Variable
-			this.addProduction(GrammarSymbol.nonterminalExpression, [
-				GrammarSymbol.nonterminalVariable
-			]);
-		}
+		// Expression -> Variable
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.nonterminalVariable
+		]);
 
 		// Expression -> Lambda Expression
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
