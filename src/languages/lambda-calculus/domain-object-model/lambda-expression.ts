@@ -11,6 +11,8 @@ import {
 	isLCVariable
 } from './interfaces/expression';
 
+import { isLCFunctionCall } from './call';
+
 import { LCVariable } from './variable';
 
 // 'let x = e1 in e2;' can be expressed as '(λx.e2 e1)'
@@ -33,12 +35,26 @@ export class LCLambdaExpression implements ILCValue {
 
 	constructor(public readonly arg: LCVariable, public readonly body: ILCExpression) {}
 
+	public toString(): string {
+		return `λ${this.arg}.${this.body}`;
+	}
+
 	public containsVariableNamed(name: string): boolean {
 		return this.arg.containsVariableNamed(name) || this.body.containsVariableNamed(name);
 	}
 
 	public containsBoundVariableNamed(name: string): boolean {
 		return this.arg.name === name || this.body.containsBoundVariableNamed(name);
+	}
+
+	public containsUnboundVariableNamed(
+		name: string,
+		boundVariableNames: IImmutableSet<string>
+	): boolean {
+		return this.body.containsUnboundVariableNamed(
+			name,
+			boundVariableNames.union(createSet([...this.arg.name]))
+		);
 	}
 
 	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
@@ -67,8 +83,19 @@ export class LCLambdaExpression implements ILCValue {
 		return new LCLambdaExpression(this.arg, this.body.betaReduce(generateNewVariableName));
 	}
 
-	public toString(): string {
-		return `λ${this.arg}.${this.body}`;
+	public etaReduce(): ILCExpression {
+		// λx.(f x) eta-reduces to f iff x does not occur unbound in f.
+
+		if (
+			isLCFunctionCall(this.body) &&
+			isLCVariable(this.body.arg) &&
+			this.body.arg.name === this.arg.name &&
+			!this.body.callee.containsUnboundVariableNamed(this.arg.name, createSet<string>())
+		) {
+			return this.body.callee.etaReduce();
+		}
+
+		return this;
 	}
 
 	public getSetOfAllVariableNames(): IImmutableSet<string> {

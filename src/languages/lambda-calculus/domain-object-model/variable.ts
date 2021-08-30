@@ -19,6 +19,17 @@ export class LCVariable implements ILCVariable {
 
 	constructor(public readonly name: string) {}
 
+	public toString(): string {
+		return this.name;
+	}
+
+	public equals(obj: unknown): boolean {
+		const otherVar = obj as LCVariable;
+
+		// We can compare the Name members with == because Name is a string.
+		return isLCVariable(otherVar) && this.name === otherVar.name;
+	}
+
 	public containsVariableNamed(name: string): boolean {
 		return name === this.name;
 	}
@@ -26,6 +37,13 @@ export class LCVariable implements ILCVariable {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public containsBoundVariableNamed(name: string): boolean {
 		return false;
+	}
+
+	public containsUnboundVariableNamed(
+		name: string,
+		boundVariableNames: IImmutableSet<string>
+	): boolean {
+		return name === this.name && !boundVariableNames.contains(name);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,15 +60,8 @@ export class LCVariable implements ILCVariable {
 		return this;
 	}
 
-	public toString(): string {
-		return this.name;
-	}
-
-	public equals(obj: unknown): boolean {
-		const otherVar = obj as LCVariable;
-
-		// We can compare the Name members with == because Name is a string.
-		return isLCVariable(otherVar) && this.name === otherVar.name;
+	public etaReduce(): ILCExpression {
+		return this;
 	}
 
 	public getSetOfAllVariableNames(): IImmutableSet<string> {

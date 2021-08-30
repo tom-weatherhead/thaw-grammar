@@ -1,5 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/domain-object-model/call.ts
 
+// Call === Function Call === Application (Invocation) of Function
+
 import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
@@ -28,6 +30,10 @@ export class LCFunctionCall implements ILCExpression {
 
 	constructor(public readonly callee: ILCExpression, public readonly arg: ILCExpression) {}
 
+	public toString(): string {
+		return `(${this.callee} ${this.arg})`;
+	}
+
 	public containsVariableNamed(name: string): boolean {
 		return this.callee.containsVariableNamed(name) || this.arg.containsVariableNamed(name);
 	}
@@ -38,6 +44,18 @@ export class LCFunctionCall implements ILCExpression {
 			this.arg.containsBoundVariableNamed(name)
 		);
 	}
+
+	public containsUnboundVariableNamed(
+		name: string,
+		boundVariableNames: IImmutableSet<string>
+	): boolean {
+		return (
+			this.callee.containsUnboundVariableNamed(name, boundVariableNames) ||
+			this.arg.containsUnboundVariableNamed(name, boundVariableNames)
+		);
+	}
+
+	// Alpha-conversion:
 
 	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
 		return new LCFunctionCall(
@@ -52,6 +70,20 @@ export class LCFunctionCall implements ILCExpression {
 			this.arg.substituteForUnboundVariable(name, value)
 		);
 	}
+
+	// Alpha-conversion is the renaming of bound variables
+	// (λx.M[x]) → (λy.M[y]) 	α-conversion 	Renaming the bound variables in the expression. Used to avoid name collisions.
+
+	// Beta-reduction is substitution
+	// ((λx.M) E) → (M[x := E]) 	β-reduction 	Replacing the bound variables with the argument expression in the body of the abstraction.
+
+	// Eta-reduction is ???
+	//
+	// η-reduction expresses the idea of extensionality, which in this context is that two functions are the same if and only if they give the same result for all arguments. η-reduction converts between λx.f x and f whenever x does not appear free in f.
+	//
+	// E.g. In Javascript, x => abs(x) eta-reduces to abs. See also https://wiki.haskell.org/Eta_conversion
+	//
+	// η-reduction can be seen to be the same as the concept of local completeness in natural deduction, via the Curry–Howard isomorphism.
 
 	public betaReduce(generateNewVariableName: () => string): ILCExpression {
 		// console.log(`LCFunctionCall.betaReduce() : Unevaluated callee is ${this.callee}`);
@@ -135,8 +167,8 @@ export class LCFunctionCall implements ILCExpression {
 		return afterBeta;
 	}
 
-	public toString(): string {
-		return `(${this.callee} ${this.arg})`;
+	public etaReduce(): ILCExpression {
+		return this;
 	}
 
 	public getSetOfAllVariableNames(): IImmutableSet<string> {
