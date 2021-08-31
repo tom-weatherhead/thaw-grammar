@@ -143,10 +143,15 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator test', () => {
 	expect(f(strG)).toBeTruthy();
 
 	const strFactorial0 = `((${strCombinatorY} ${strG}) 0)`;
-	// const strFactorial1 = `((${strCombinatorY} ${strG}) 1)`;
+	const strFactorial1 = `((${strCombinatorY} ${strG}) 1)`;
 	const strFactorial5 = `((${strCombinatorY} ${strG}) 5)`;
 
 	const actualResult0 = f(strFactorial0).betaReduce(
+		BetaReductionStrategy.CallByName,
+		variableNameGenerator,
+		10
+	);
+	const actualResult1 = f(strFactorial1).betaReduce(
 		BetaReductionStrategy.CallByName,
 		variableNameGenerator,
 		10
@@ -163,6 +168,11 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator test', () => {
 	);
 
 	console.log(
+		`LambdaCalculusIntegerExtensionGrammar Y combinator test : actualResult1 is ${actualResult1};`,
+		actualResult1
+	);
+
+	console.log(
 		`LambdaCalculusIntegerExtensionGrammar Y combinator test : actualResult5 is ${actualResult5};`,
 		actualResult5
 	);
@@ -170,6 +180,10 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator test', () => {
 	expect(actualResult0).toBeTruthy();
 	expect(isLCIntegerLiteral(actualResult0)).toBeTruthy();
 	expect((actualResult0 as LCIntegerLiteral).value).toBe(1);
+
+	expect(actualResult1).toBeTruthy();
+	expect(isLCIntegerLiteral(actualResult1)).toBeTruthy();
+	expect((actualResult1 as LCIntegerLiteral).value).toBe(1);
 
 	expect(actualResult5).toBeTruthy();
 	// expect(isLCIntegerLiteral(actualResult5)).toBeTruthy();
