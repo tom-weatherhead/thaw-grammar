@@ -67,4 +67,10 @@ export {
 // The Lambda Calculus
 export * from './languages/lambda-calculus/domain-object-model/interfaces/expression';
 
+export * from './languages/lambda-calculus/domain-object-model/call';
+export * from './languages/lambda-calculus/domain-object-model/lambda-expression';
+
+// The Lambda Calculus with Integer Extensions
 export * from './languages/lambda-calculus-integer-extension/domain-object-model/integer-literal';
+
+export * from './languages/lambda-calculus-integer-extension/domain-object-model/primitive-operator';

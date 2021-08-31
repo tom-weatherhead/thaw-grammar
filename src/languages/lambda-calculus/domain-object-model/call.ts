@@ -86,6 +86,60 @@ export class LCFunctionCall implements ILCExpression {
 	//
 	// η-reduction can be seen to be the same as the concept of local completeness in natural deduction, via the Curry–Howard isomorphism.
 
+	// private
+	public betaReduceCore(
+		lambdaExpression: LCLambdaExpression,
+		arg: ILCExpression,
+		generateNewVariableName: () => string
+	): ILCExpression {
+		// Rename variables as necessary (alpha reduction)
+		// My idea for an algorithm:
+		// 1) Build a set of all (unbound?) variables in the body;
+		const argVarNames = arg.getSetOfAllVariableNames().toArray();
+		// 2) for each var v in the set:
+		//   - If v occurs as a bound variable in the callee, then:
+		//     - Generate a new variable name w that does not occur in the callee;
+		//     - In the callee, replace all bound occurrences of v with w.
+		// console.log("Names of variables in the call's actual parameter:", argVarNames);
+
+		for (const name of argVarNames) {
+			if (lambdaExpression.containsBoundVariableNamed(name)) {
+				let generatedVarName: string;
+
+				do {
+					generatedVarName = generateNewVariableName();
+				} while (lambdaExpression.containsVariableNamed(generatedVarName));
+
+				// console.log(`1) Old lambdaExpression: ${lambdaExpression}`);
+				// console.log(`2) Replacing ${name} with ${generatedVarName}...`);
+				lambdaExpression = lambdaExpression.renameBoundVariable(
+					generatedVarName,
+					name
+				) as LCLambdaExpression;
+				// console.log(`3) New lambdaExpression: ${lambdaExpression}`);
+			}
+		}
+
+		const lambdaExpressionBody = lambdaExpression.body;
+
+		console.log(
+			`LCFunctionCall.betaReduceCore() : lambdaExpressionBody is ${lambdaExpressionBody};`,
+			lambdaExpressionBody
+		);
+		// console.log('LCFunctionCall.betaReduceCore() : arg is', arg);
+
+		const bodyAfterSubst = lambdaExpressionBody.substituteForUnboundVariable(
+			lambdaExpression.arg.name,
+			arg
+		);
+
+		console.log(
+			`LCFunctionCall.betaReduceCore() : Replaced ${lambdaExpression.arg.name} with ${this.arg}; bodyAfterSubst is ${bodyAfterSubst}`
+		);
+
+		return bodyAfterSubst;
+	}
+
 	private betaReduceCallByName(
 		generateNewVariableName: () => string,
 		maxDepth: number
@@ -123,8 +177,12 @@ export class LCFunctionCall implements ILCExpression {
 
 		// ****
 
-		// console.log(`LCFunctionCall.betaReduce() : Unevaluated callee is ${this.callee}`);
-		// console.log(`LCFunctionCall.betaReduce() : Unevaluated actual parameter is ${this.arg}`);
+		// console.log(
+		// 	`LCFunctionCall.betaReduce(maxDepth = ${maxDepth}) : Unevaluated callee is ${this.callee}`
+		// );
+		// console.log(
+		// 	`LCFunctionCall.betaReduce(maxDepth = ${maxDepth}) : Unevaluated actual parameter is ${this.arg}`
+		// );
 
 		if (maxDepth <= 0) {
 			return this;
@@ -137,7 +195,9 @@ export class LCFunctionCall implements ILCExpression {
 			.deltaReduce()
 			.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, maxDepth - 1);
 
-		// console.log(`LCFunctionCall.betaReduce() : evaluatedCallee is ${evaluatedCallee}`);
+		// console.log(
+		// 	`LCFunctionCall.betaReduce(maxDepth = ${maxDepth}) : evaluatedCallee is ${evaluatedCallee}`
+		// );
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			const result = new LCFunctionCall(
@@ -165,7 +225,7 @@ export class LCFunctionCall implements ILCExpression {
 		// e := evaluatedCallee.body
 
 		// Next, substitute this.arg in for the arg in the evaluated callee.
-		let lambdaExpression = evaluatedCallee as LCLambdaExpression;
+		// let lambdaExpression = evaluatedCallee as LCLambdaExpression;
 
 		// console.log(`The call's callee is: ${lambdaExpression}`);
 		// console.log(`The call's actual parameter is: ${this.arg}`);
@@ -174,46 +234,11 @@ export class LCFunctionCall implements ILCExpression {
 		// 	.substituteForUnboundVariable(lambdaExpression.arg.name, this.arg)
 		// 	.betaReduce();
 
-		// TODO: Rename variables as necessary (alpha reduction)
-		// My idea for an algorithm:
-		// 1) Build a set of all (unbound?) variables in the body;
-		const argVarNames = this.arg.getSetOfAllVariableNames().toArray();
-		// 2) for each var v in the set:
-		//   - If v occurs as a bound variable in the callee, then:
-		//     - Generate a new variable name w that does not occur in the callee;
-		//     - In the callee, replace all bound occurrences of v with w.
-		// console.log("Names of variables in the call's actual parameter:", argVarNames);
-
-		for (const name of argVarNames) {
-			if (lambdaExpression.containsBoundVariableNamed(name)) {
-				let generatedVarName: string;
-
-				do {
-					generatedVarName = generateNewVariableName();
-				} while (lambdaExpression.containsVariableNamed(generatedVarName));
-
-				// console.log(`1) Old lambdaExpression: ${lambdaExpression}`);
-				// console.log(`2) Replacing ${name} with ${generatedVarName}...`);
-				lambdaExpression = lambdaExpression.renameBoundVariable(
-					generatedVarName,
-					name
-				) as LCLambdaExpression;
-				// console.log(`3) New lambdaExpression: ${lambdaExpression}`);
-			}
-		}
-
-		const lambdaExpressionBody = lambdaExpression.body;
-
-		// console.log('LCFunctionCall.betaReduce() : lambdaExpressionBody is', lambdaExpressionBody);
-
-		const bodyAfterSubst = lambdaExpressionBody.substituteForUnboundVariable(
-			lambdaExpression.arg.name,
-			this.arg
+		const bodyAfterSubst = this.betaReduceCore(
+			evaluatedCallee,
+			this.arg,
+			generateNewVariableName
 		);
-
-		// console.log(
-		// 	`LCFunctionCall.betaReduce() : Replaced ${lambdaExpression.arg.name} with ${this.arg}; bodyAfterSubst is ${bodyAfterSubst}`
-		// );
 
 		const afterBeta = bodyAfterSubst
 			.deltaReduce()

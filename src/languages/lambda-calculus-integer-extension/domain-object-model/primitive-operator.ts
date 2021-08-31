@@ -55,7 +55,7 @@ export class LCPrimitiveOperator implements ILCExpression {
 	}
 
 	public toString(): string {
-		return `[${this.name} ${this.leftChild} ${this.rightChild}] `;
+		return `[${this.name} ${this.leftChild} ${this.rightChild}]`;
 	}
 
 	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
