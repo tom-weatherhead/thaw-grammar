@@ -10,8 +10,15 @@ import { createGrammar, ILCExpression, isLCIntegerLiteral, LCIntegerLiteral } fr
 
 import { createParser, SyntaxException } from 'thaw-parser';
 
-// const ls = LanguageSelector.LambdaCalculus;
 const ls = LanguageSelector.LambdaCalculusIntegerExtension;
+
+const strTrue = 'λx.λy.x'; // This is identical to the K combinator
+const strFalse = 'λx.λy.y';
+
+const strCombinatorI = 'λx.x';
+const strCombinatorK = 'λx.λy.x';
+const strCombinatorS = 'λx.λy.λz.((x z) (y z))';
+const strCombinatorY = 'λg.(λx.(g (x x)) λx.(g (x x)))';
 
 test('LambdaCalculusIntegerExtensionGrammar instance creation test', () => {
 	// Arrange
@@ -52,6 +59,14 @@ test('LambdaCalculusIntegerExtensionGrammar recognize test', () => {
 
 	f('1');
 	f('[+ 2 3]');
+
+	f(strTrue);
+	f(strFalse);
+
+	f(strCombinatorI);
+	f(strCombinatorK);
+	f(strCombinatorS);
+	f(strCombinatorY);
 });
 
 function getParseFunction(): (str: string) => ILCExpression {
@@ -72,11 +87,11 @@ test('LambdaCalculusIntegerExtensionGrammar parse test', () => {
 	expect(f('(λx.x y)')).toBeTruthy();
 });
 
-// function createVariableNameGenerator(): () => string {
-// 	let n = 0;
-//
-// 	return () => `v${++n}`;
-// }
+function createVariableNameGenerator(): () => string {
+	let n = 0;
+
+	return () => `v${++n}`;
+}
 
 test('LambdaCalculusIntegerExtensionGrammar integer test', () => {
 	const f = getParseFunction();
@@ -94,4 +109,28 @@ test('LambdaCalculusIntegerExtensionGrammar integer addition test', () => {
 	expect(`${eight}`).toBe('8');
 	expect(isLCIntegerLiteral(eight)).toBeTruthy();
 	expect((eight as LCIntegerLiteral).value).toBe(8);
+});
+
+test('LambdaCalculusIntegerExtensionGrammar if test', () => {
+	const f = getParseFunction();
+	const variableNameGenerator = createVariableNameGenerator();
+
+	const actualResult1 = f('if [= 0 0] 7 13').deltaReduce().betaReduce(variableNameGenerator);
+	const actualResult2 = f('if [= 0 1] 7 13').deltaReduce().betaReduce(variableNameGenerator);
+
+	expect(isLCIntegerLiteral(actualResult1)).toBeTruthy();
+	expect(isLCIntegerLiteral(actualResult2)).toBeTruthy();
+	expect((actualResult1 as LCIntegerLiteral).value).toBe(7);
+	expect((actualResult2 as LCIntegerLiteral).value).toBe(13);
+});
+
+test('LambdaCalculusIntegerExtensionGrammar Y combinator test', () => {
+	const f = getParseFunction();
+	const strG = 'λr.λn.if [= n 0] 1 [* n (r [- n 1])]';
+
+	expect(f(strG)).toBeTruthy();
+
+	const strFactorial5 = `((${strCombinatorY} ${strG}) 5)`;
+
+	expect(f(strFactorial5)).toBeTruthy();
 });

@@ -84,7 +84,7 @@ export class LCLambdaExpression implements ILCValue {
 	}
 
 	public deltaReduce(): ILCExpression {
-		return this;
+		return new LCLambdaExpression(this.arg, this.body.deltaReduce());
 	}
 
 	public etaReduce(): ILCExpression {

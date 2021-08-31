@@ -168,7 +168,7 @@ export class LCFunctionCall implements ILCExpression {
 	}
 
 	public deltaReduce(): ILCExpression {
-		return this;
+		return new LCFunctionCall(this.callee.deltaReduce(), this.arg.deltaReduce());
 	}
 
 	public etaReduce(): ILCExpression {
