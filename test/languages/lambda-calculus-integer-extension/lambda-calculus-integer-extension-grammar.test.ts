@@ -342,11 +342,24 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 
 	console.log(`Y combinator pre-test 1: actualResult14 is: ${actualResult14};`, actualResult14);
 
-	// actualResult14 is: 1
+	// actualResult8.rightChild === actualResult14 === 1
 
 	expect(actualResult14).toBeTruthy();
 	expect(isLCIntegerLiteral(actualResult14)).toBeTruthy();
 	expect((actualResult14 as LCIntegerLiteral).value).toBe(1);
+
+	const f15 = new LCPrimitiveOperator(
+		actualResult8.name,
+		actualResult8.leftChild,
+		actualResult14
+	);
+	const actualResult15 = f15.deltaReduce();
+
+	console.log(`Y combinator pre-test 1: actualResult15 is: ${actualResult15};`, actualResult15);
+
+	expect(actualResult15).toBeTruthy();
+	expect(isLCIntegerLiteral(actualResult15)).toBeTruthy();
+	expect((actualResult15 as LCIntegerLiteral).value).toBe(1);
 
 	// Thus 1! === 1
 });
