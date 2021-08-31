@@ -7,6 +7,16 @@ import {
 	IStringifiable
 } from 'thaw-common-utilities.ts';
 
+export enum BetaReductionStrategy {
+	CallByName,
+	NormalOrder,
+	CallByValue,
+	ApplicativeOrder,
+	HybridApplicativeOrder,
+	HeadSpine,
+	HybridNormalOrder
+}
+
 // Type T is the language's expression type.
 export interface ISubstitution<T> {
 	readonly SubstitutionList: Map<string, T>;
@@ -44,7 +54,11 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 	substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression;
 	getSetOfAllVariableNames(): IImmutableSet<string>;
 	// applySubstitution(substitution: ILCSubstitution): ILCExpression;
-	betaReduce(generateNewVariableName: () => string): ILCExpression;
+	betaReduce(
+		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression;
 	deltaReduce(): ILCExpression;
 	etaReduce(): ILCExpression;
 }

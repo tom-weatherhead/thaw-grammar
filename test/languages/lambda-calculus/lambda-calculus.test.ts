@@ -46,9 +46,15 @@ import { LanguageSelector, LexicalAnalyzerSelector, ParserSelector } from 'thaw-
 
 import { createTokenizer } from 'thaw-lexical-analyzer';
 
-import { areIsomorphic, createGrammar, ILCExpression, ILCVariable } from '../../..';
-
 import { createParser, SyntaxException } from 'thaw-parser';
+
+import {
+	areIsomorphic,
+	BetaReductionStrategy,
+	createGrammar,
+	ILCExpression,
+	ILCVariable
+} from '../../..';
 
 const ls = LanguageSelector.LambdaCalculus;
 
@@ -124,7 +130,11 @@ test('LambdaCalculus beta-reduction test 1', () => {
 	const f = getParseFunction();
 
 	const expr = f('(λx.x y)');
-	const reducedExpr = expr.betaReduce(generateNewVariableName);
+	const reducedExpr = expr.betaReduce(
+		BetaReductionStrategy.CallByName,
+		generateNewVariableName,
+		10
+	);
 
 	expect(expr).toBeTruthy();
 	expect(reducedExpr).toBeTruthy();
@@ -144,7 +154,11 @@ test('LambdaCalculus beta-reduction test 2', () => {
 
 	expect(expr).toBeTruthy();
 
-	const reducedExpr = expr.betaReduce(generateNewVariableName);
+	const reducedExpr = expr.betaReduce(
+		BetaReductionStrategy.CallByName,
+		generateNewVariableName,
+		10
+	);
 
 	expect(reducedExpr).toBeTruthy();
 	expect(reducedExpr.toString()).toBe('λx.x');
@@ -159,7 +173,11 @@ test('LambdaCalculus beta-reduction test 3', () => {
 
 	expect(expr).toBeTruthy();
 
-	const reducedExpr = expr.betaReduce(generateNewVariableName);
+	const reducedExpr = expr.betaReduce(
+		BetaReductionStrategy.CallByName,
+		generateNewVariableName,
+		10
+	);
 
 	expect(reducedExpr).toBeTruthy();
 	expect(reducedExpr.toString()).toBe('h');
@@ -219,11 +237,15 @@ test('LambdaCalculus Church Numerals test 1', () => {
 	const two = f(strTwoSrc);
 	const three = f(strThreeSrc);
 
-	const oneActual = one.betaReduce(generateNewVariableName);
+	const oneActual = one.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, 10);
 	const strOneActual = oneActual.toString();
-	const twoActual = two.betaReduce(generateNewVariableName);
+	const twoActual = two.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, 10);
 	const strTwoActual = twoActual.toString();
-	const threeActual = three.betaReduce(generateNewVariableName);
+	const threeActual = three.betaReduce(
+		BetaReductionStrategy.CallByName,
+		generateNewVariableName,
+		10
+	);
 	const strThreeActual = threeActual.toString();
 
 	// Assert

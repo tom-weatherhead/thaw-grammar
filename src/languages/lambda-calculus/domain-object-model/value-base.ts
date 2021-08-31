@@ -2,25 +2,17 @@
 
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+// import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
-import { ILCExpression, ISubstitution, IUnifiable } from './interfaces/expression';
-
-// const typenameIntegerLiteral = 'IntegerLiteral';
-//
-// export function isIntegerLiteral(obj: unknown): obj is IntegerLiteral {
-// 	const otherIntegerLiteral = obj as IntegerLiteral;
-//
-// 	return (
-// 		typeof otherIntegerLiteral !== 'undefined' &&
-// 		otherIntegerLiteral.typename === typenameIntegerLiteral
-// 	);
-// }
+import {
+	areIsomorphic,
+	BetaReductionStrategy,
+	ILCExpression,
+	ISubstitution,
+	IUnifiable
+} from './interfaces/expression';
 
 export abstract class LCValueBase implements ILCExpression {
-	// public readonly typename = typenameIntegerLiteral;
-	// public readonly value: number;
-
 	constructor(public readonly typename: string) {}
 
 	public abstract toString(): string;
@@ -34,7 +26,7 @@ export abstract class LCValueBase implements ILCExpression {
 	}
 
 	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
-		return false; // TODO FIXME
+		return areIsomorphic(this, other);
 	}
 
 	public containsVariableNamed(name: string): boolean {
@@ -66,7 +58,11 @@ export abstract class LCValueBase implements ILCExpression {
 		return createSet<string>();
 	}
 
-	public betaReduce(generateNewVariableName: () => string): ILCExpression {
+	public betaReduce(
+		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
 		return this;
 	}
 

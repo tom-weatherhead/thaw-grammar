@@ -4,6 +4,7 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
 	areIsomorphic,
+	BetaReductionStrategy,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -79,8 +80,15 @@ export class LCLambdaExpression implements ILCValue {
 			: new LCLambdaExpression(this.arg, this.body.substituteForUnboundVariable(name, value));
 	}
 
-	public betaReduce(generateNewVariableName: () => string): ILCExpression {
-		return new LCLambdaExpression(this.arg, this.body.betaReduce(generateNewVariableName));
+	public betaReduce(
+		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		return new LCLambdaExpression(
+			this.arg,
+			this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
+		);
 	}
 
 	public deltaReduce(): ILCExpression {

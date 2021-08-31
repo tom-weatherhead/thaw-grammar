@@ -5,14 +5,15 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
 import {
+	areIsomorphic,
+	BetaReductionStrategy,
 	ILCExpression,
+	isLCVariable,
 	ISubstitution,
 	IUnifiable
 } from '../../lambda-calculus/domain-object-model/interfaces/expression';
 
-// export interface ILCIntegerExpression extends ILCExpression {
-// 	deltaReduce(): ILCExpression; // number | LCLambdaExpression;
-// }
+import { createSubstitution } from '../../lambda-calculus/domain-object-model/substitution';
 
 const typenameIntegerLiteral = 'LCIntegerLiteral';
 
@@ -61,16 +62,30 @@ export class LCIntegerLiteral implements ILCExpression {
 		return `${this.value}`;
 	}
 
+	public equals(obj: unknown): boolean {
+		const otherIntegerLiteral = obj as LCIntegerLiteral;
+
+		return isLCIntegerLiteral(otherIntegerLiteral) && this.value === otherIntegerLiteral.value;
+	}
+
 	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
 		return this;
 	}
 
 	public unify(other: IUnifiable<ILCExpression>): ISubstitution<ILCExpression> | undefined {
-		return undefined; // TODO FIXME
+		const otherExpr = other as ILCExpression;
+
+		if (this.equals(otherExpr)) {
+			return createSubstitution();
+		} else if (isLCVariable(otherExpr)) {
+			return otherExpr.unify(this);
+		} else {
+			return undefined;
+		}
 	}
 
 	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
-		return false; // TODO FIXME
+		return areIsomorphic(this, other);
 	}
 
 	public containsVariableNamed(name: string): boolean {
@@ -88,17 +103,25 @@ export class LCIntegerLiteral implements ILCExpression {
 		return false;
 	}
 
+	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
+		return this;
+	}
+
+	public getSetOfAllVariableNames(): IImmutableSet<string> {
+		return createSet<string>();
+	}
+
 	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
 		// Alpha-conversion
 
 		return this;
 	}
 
-	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
-		return this;
-	}
-
-	public betaReduce(generateNewVariableName: () => string): ILCExpression {
+	public betaReduce(
+		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
 		return this;
 	}
 
@@ -108,9 +131,5 @@ export class LCIntegerLiteral implements ILCExpression {
 
 	public etaReduce(): ILCExpression {
 		return this;
-	}
-
-	public getSetOfAllVariableNames(): IImmutableSet<string> {
-		return createSet<string>();
 	}
 }

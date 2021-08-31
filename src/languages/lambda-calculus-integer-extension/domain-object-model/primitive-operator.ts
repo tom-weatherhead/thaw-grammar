@@ -1,8 +1,10 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-integer-extension/domain-object-model/primitive-operator.ts
 
-import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
+import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
+	areIsomorphic,
+	BetaReductionStrategy,
 	ILCExpression,
 	ISubstitution,
 	IUnifiable
@@ -56,6 +58,88 @@ export class LCPrimitiveOperator implements ILCExpression {
 		return `[${this.name} ${this.leftChild} ${this.rightChild}] `;
 	}
 
+	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
+		return new LCPrimitiveOperator(
+			this.name,
+			this.leftChild.applySubstitution(substitution),
+			this.rightChild.applySubstitution(substitution)
+		);
+	}
+
+	public unify(other: IUnifiable<ILCExpression>): ISubstitution<ILCExpression> | undefined {
+		if (!isPrimitiveOperator(other) || other.name !== this.name) {
+			return undefined;
+		}
+
+		const u1 = this.leftChild.unify(other.leftChild);
+
+		if (typeof u1 === 'undefined') {
+			return undefined;
+		}
+
+		// return undefined; // TODO FIXME
+
+		return this.rightChild.applySubstitution(u1).unify(other.rightChild.applySubstitution(u1));
+	}
+
+	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
+		return areIsomorphic(this, other);
+	}
+
+	public containsVariableNamed(name: string): boolean {
+		return (
+			this.leftChild.containsVariableNamed(name) ||
+			this.rightChild.containsVariableNamed(name)
+		);
+	}
+
+	public containsBoundVariableNamed(name: string): boolean {
+		return (
+			this.leftChild.containsBoundVariableNamed(name) ||
+			this.rightChild.containsBoundVariableNamed(name)
+		);
+	}
+
+	public containsUnboundVariableNamed(
+		name: string,
+		boundVariableNames: IImmutableSet<string>
+	): boolean {
+		return (
+			this.leftChild.containsUnboundVariableNamed(name, boundVariableNames) ||
+			this.rightChild.containsUnboundVariableNamed(name, boundVariableNames)
+		);
+	}
+
+	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
+		return new LCPrimitiveOperator(
+			this.name,
+			this.leftChild.substituteForUnboundVariable(name, value),
+			this.rightChild.substituteForUnboundVariable(name, value)
+		);
+	}
+
+	public getSetOfAllVariableNames(): IImmutableSet<string> {
+		// return createSet<string>();
+
+		return this.leftChild
+			.getSetOfAllVariableNames()
+			.union(this.rightChild.getSetOfAllVariableNames());
+	}
+
+	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
+		// Alpha-conversion
+
+		return this;
+	}
+
+	public betaReduce(
+		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		return this;
+	}
+
 	// Delta-reduction? See Kamin p. 194.
 
 	public deltaReduce(): ILCExpression {
@@ -87,52 +171,7 @@ export class LCPrimitiveOperator implements ILCExpression {
 		}
 	}
 
-	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
-		return this;
-	}
-
-	public unify(other: IUnifiable<ILCExpression>): ISubstitution<ILCExpression> | undefined {
-		return undefined; // TODO FIXME
-	}
-
-	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
-		return false; // TODO FIXME
-	}
-
-	public containsVariableNamed(name: string): boolean {
-		return false;
-	}
-
-	public containsBoundVariableNamed(name: string): boolean {
-		return false;
-	}
-
-	public containsUnboundVariableNamed(
-		name: string,
-		boundVariableNames: IImmutableSet<string>
-	): boolean {
-		return false;
-	}
-
-	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
-		// Alpha-conversion
-
-		return this;
-	}
-
-	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
-		return this;
-	}
-
-	public betaReduce(generateNewVariableName: () => string): ILCExpression {
-		return this;
-	}
-
 	public etaReduce(): ILCExpression {
 		return this;
-	}
-
-	public getSetOfAllVariableNames(): IImmutableSet<string> {
-		return createSet<string>();
 	}
 }

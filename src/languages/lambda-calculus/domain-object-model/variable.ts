@@ -4,6 +4,7 @@ import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utiliti
 
 import {
 	areIsomorphic,
+	BetaReductionStrategy,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -56,7 +57,11 @@ export class LCVariable implements ILCVariable {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public betaReduce(generateNewVariableName: () => string): ILCExpression {
+	public betaReduce(
+		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
 		return this;
 	}
 
