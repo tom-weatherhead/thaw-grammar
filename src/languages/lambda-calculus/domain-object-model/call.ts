@@ -122,10 +122,10 @@ export class LCFunctionCall implements ILCExpression {
 
 		const lambdaExpressionBody = lambdaExpression.body;
 
-		console.log(
-			`LCFunctionCall.betaReduceCore() : lambdaExpressionBody is ${lambdaExpressionBody};`,
-			lambdaExpressionBody
-		);
+		// console.log(
+		// 	`LCFunctionCall.betaReduceCore() : lambdaExpressionBody is ${lambdaExpressionBody};`,
+		// 	lambdaExpressionBody
+		// );
 		// console.log('LCFunctionCall.betaReduceCore() : arg is', arg);
 
 		const bodyAfterSubst = lambdaExpressionBody.substituteForUnboundVariable(
@@ -133,9 +133,9 @@ export class LCFunctionCall implements ILCExpression {
 			arg
 		);
 
-		console.log(
-			`LCFunctionCall.betaReduceCore() : Replaced ${lambdaExpression.arg.name} with ${this.arg}; bodyAfterSubst is ${bodyAfterSubst}`
-		);
+		// console.log(
+		// 	`LCFunctionCall.betaReduceCore() : Replaced ${lambdaExpression.arg.name} with ${this.arg}; bodyAfterSubst is ${bodyAfterSubst}`
+		// );
 
 		return bodyAfterSubst;
 	}

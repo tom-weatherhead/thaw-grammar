@@ -11,6 +11,7 @@ import {
 	createGrammar,
 	ILCExpression,
 	isLCIntegerLiteral,
+	// isLCPrimitiveOperator,
 	LCFunctionCall,
 	LCIntegerLiteral,
 	LCLambdaExpression,
@@ -155,6 +156,152 @@ test('LambdaCalculusIntegerExtensionGrammar if test', () => {
 	expect((actualResult2 as LCIntegerLiteral).value).toBe(13);
 });
 
+function yCombinatorPretest1Reducer(
+	actualResult2: LCFunctionCall,
+	variableNameGenerator: () => string
+): LCIntegerLiteral {
+	// const actualResult2 = actualResult1.betaReduce(
+	// 	BetaReductionStrategy.CallByName,
+	// 	variableNameGenerator,
+	// 	2
+	// ) as LCFunctionCall;
+
+	console.log(`Y combinator pre-test 1: actualResult2 is: ${actualResult2};`, actualResult2);
+
+	// LCFunctionCall.betaReduceCore() : lambdaExpressionBody is (λx.(g (x x)) λx.(g (x x)))
+
+	// LCFunctionCall.betaReduceCore() : Replaced g with:
+	// λr.λn.(([= n 0]  1) [* n (r [- n 1] )] );
+	// bodyAfterSubst is (λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x)))
+
+	// actualResult2 is: ((λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x))) 1)
+
+	// expect(actualResult2).toBeTruthy();
+
+	const f3 = (actualResult2 as LCFunctionCall).callee as LCFunctionCall;
+
+	console.log(`Y combinator pre-test 1: f3 is: ${f3};`, f3);
+
+	// f3 is: (λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)))
+
+	// Compare f9 vs. f3:
+	// const f9 = (actualResult8.rightChild as LCFunctionCall).callee as LCFunctionCall;
+
+	// const actualResult3 = f3.betaReduce(BetaReductionStrategy.CallByName, variableNameGenerator, 1);
+	//
+	// console.log(`Y combinator pre-test 1: actualResult3 is: ${actualResult3};`, actualResult3);
+
+	// actualResult3 is: (λv2.λv3.(([= v3 0]  1) [* v3 (v2 [- v3 1] )] ) (λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x))))
+
+	const actualResult3a = f3.betaReduceCore(
+		f3.callee as LCLambdaExpression,
+		f3.arg,
+		variableNameGenerator
+	) as LCFunctionCall;
+
+	console.log(`Y combinator pre-test 1: actualResult3a is: ${actualResult3a};`, actualResult3a);
+
+	// actualResult3a is: (λv2.λv3.(([= v3 0]  1) [* v3 (v2 [- v3 1] )] ) (λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x))))
+
+	// lambdaExpressionBody is (λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x))
+
+	// Replaced x with λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x))
+
+	// actualResult3a is: (λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x))))
+
+	const actualResult4 = actualResult3a.betaReduceCore(
+		actualResult3a.callee as LCLambdaExpression,
+		actualResult3a.arg,
+		variableNameGenerator
+	) as LCLambdaExpression;
+
+	console.log(`Y combinator pre-test 1: actualResult4 is: ${actualResult4};`, actualResult4);
+	console.log(
+		`Y combinator pre-test 1: actualResult2.arg is: ${actualResult2.arg};`,
+		actualResult2.arg
+	);
+
+	// actualResult4 is: λn.(([= n 0] 1) [* n ((λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x))) [- n 1])])
+
+	const actualResult5 = actualResult4.body.substituteForUnboundVariable(
+		actualResult4.arg.name,
+		actualResult2.arg
+	);
+
+	console.log(`Y combinator pre-test 1: actualResult5 is: ${actualResult5};`, actualResult5);
+
+	// actualResult5 is: (([= 1 0] 1) [* 1 ((λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x))) [- 1 1])])
+
+	const actualResult6 = actualResult5.deltaReduce() as LCFunctionCall;
+
+	console.log(`Y combinator pre-test 1: actualResult6 is: ${actualResult6};`, actualResult6);
+
+	// actualResult6 is: ((λx.λy.y 1) [* 1 ((λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x))) 0)])
+
+	const actualResult7 = actualResult6.callee.betaReduce(
+		BetaReductionStrategy.CallByName,
+		variableNameGenerator,
+		10
+	);
+
+	console.log(`Y combinator pre-test 1: actualResult7 is: ${actualResult7};`, actualResult7);
+
+	// actualResult7 is: λy.y
+
+	const actualResult8 = actualResult6.betaReduceCore(
+		actualResult7 as LCLambdaExpression,
+		actualResult6.arg,
+		variableNameGenerator
+	) as LCIntegerLiteral | LCPrimitiveOperator;
+
+	console.log(`Y combinator pre-test 1: actualResult8 is: ${actualResult8};`, actualResult8);
+
+	// actualResult8 is: [* 1 ((λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x))) 0)]
+
+	// vs. actualResult2 is: ((λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x))) 1)
+
+	let finalResult: LCIntegerLiteral;
+
+	if (isLCIntegerLiteral(actualResult8)) {
+		finalResult = actualResult8;
+	} else {
+		// Compare f9 vs. f3
+		// const f9 = (actualResult8.rightChild as LCFunctionCall).callee as LCFunctionCall;
+		const f9 = actualResult8.rightChild as LCFunctionCall;
+
+		const actualResult9 = yCombinatorPretest1Reducer(f9, variableNameGenerator);
+
+		if (!isLCIntegerLiteral(actualResult9)) {
+			throw new Error('yCombinatorPretest1Reducer returned a non-LCIntegerLiteral');
+		}
+
+		// finalResult = actualResult9;
+
+		// TODO: Replace actualResult14 with actualResult9
+
+		// actualResult8.rightChild === actualResult14 === 1
+
+		// expect(actualResult9).toBeTruthy();
+		// expect(isLCIntegerLiteral(actualResult9)).toBeTruthy();
+		// expect((actualResult9 as LCIntegerLiteral).value).toBe(1);
+
+		const f15 = new LCPrimitiveOperator(
+			actualResult8.name,
+			actualResult8.leftChild,
+			actualResult9
+		);
+		const actualResult15 = f15.deltaReduce();
+
+		if (!isLCIntegerLiteral(actualResult15)) {
+			throw new Error('yCombinatorPretest1Reducer: actualResult15 is a non-LCIntegerLiteral');
+		}
+
+		finalResult = actualResult15;
+	}
+
+	return finalResult;
+}
+
 test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 	const f = getParseFunction();
 	const variableNameGenerator = createVariableNameGenerator();
@@ -163,7 +310,10 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 
 	expect(f(strG)).toBeTruthy();
 
-	const strFactorial1 = `((${strCombinatorY} ${strG}) 1)`;
+	const n = 1;
+	const nFactorial = 1;
+
+	const strFactorial1 = `((${strCombinatorY} ${strG}) ${n})`;
 
 	const actualResult1 = f(strFactorial1);
 
@@ -192,6 +342,7 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 
 	console.log(`Y combinator pre-test 1: actualResult2 is: ${actualResult2};`, actualResult2);
 
+	/*
 	// LCFunctionCall.betaReduceCore() : lambdaExpressionBody is (λx.(g (x x)) λx.(g (x x)))
 
 	// LCFunctionCall.betaReduceCore() : Replaced g with:
@@ -333,6 +484,7 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 	console.log(`Y combinator pre-test 1: actualResult13 is: ${actualResult13};`, actualResult13);
 
 	// actualResult13 is: λy.1
+	// vs. actualResult7 is: λy.y
 
 	const actualResult14 = actualResult12.betaReduceCore(
 		actualResult13 as LCLambdaExpression,
@@ -354,12 +506,17 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 		actualResult14
 	);
 	const actualResult15 = f15.deltaReduce();
+	 */
+
+	const actualResult15 = yCombinatorPretest1Reducer(actualResult2, variableNameGenerator);
 
 	console.log(`Y combinator pre-test 1: actualResult15 is: ${actualResult15};`, actualResult15);
 
+	// actualResult15 === 1
+
 	expect(actualResult15).toBeTruthy();
 	expect(isLCIntegerLiteral(actualResult15)).toBeTruthy();
-	expect((actualResult15 as LCIntegerLiteral).value).toBe(1);
+	expect((actualResult15 as LCIntegerLiteral).value).toBe(nFactorial);
 
 	// Thus 1! === 1
 });
