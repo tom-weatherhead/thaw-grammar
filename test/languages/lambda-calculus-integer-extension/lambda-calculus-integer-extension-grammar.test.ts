@@ -310,8 +310,23 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 
 	expect(f(strG)).toBeTruthy();
 
-	const n = 1;
-	const nFactorial = 1;
+	// const n = 0;
+	// const nFactorial = 1;
+
+	// const n = 1;
+	// const nFactorial = 1;
+
+	// const n = 2;
+	// const nFactorial = 2;
+
+	// const n = 3;
+	// const nFactorial = 6;
+
+	// const n = 4;
+	// const nFactorial = 24;
+
+	const n = 5;
+	const nFactorial = 120;
 
 	const strFactorial1 = `((${strCombinatorY} ${strG}) ${n})`;
 
