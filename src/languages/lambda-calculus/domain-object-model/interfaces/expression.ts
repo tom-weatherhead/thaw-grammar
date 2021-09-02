@@ -50,17 +50,27 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 	containsVariableNamed(name: string): boolean;
 	containsBoundVariableNamed(name: string): boolean;
 	containsUnboundVariableNamed(name: string, boundVariableNames: IImmutableSet<string>): boolean;
-	renameBoundVariable(newName: string, oldName: string): ILCExpression; // Alpha-conversion
 	substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression;
 	getSetOfAllVariableNames(): IImmutableSet<string>;
 	// applySubstitution(substitution: ILCSubstitution): ILCExpression;
+
+	// α-conversion
+	renameBoundVariable(newName: string, oldName: string): ILCExpression; // Alpha-conversion
+
+	// β-reduction
 	betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression;
+
+	// δ-reduction
 	deltaReduce(): ILCExpression;
+
+	// η-reduction
 	etaReduce(): ILCExpression;
+
+	// κ-reduction is the reduction of the SKI combinators (?)
 }
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
