@@ -1,4 +1,4 @@
-// tom-weatherhead/thaw-parser/test/lambda-calculus.test.ts
+// tom-weatherhead/thaw-grammar/test/languages/lambda-calculus/lambda-calculus.test.ts
 
 // From https://opendsa.cs.vt.edu/ODSA/Books/PL/html/ChurchNumerals.html :
 

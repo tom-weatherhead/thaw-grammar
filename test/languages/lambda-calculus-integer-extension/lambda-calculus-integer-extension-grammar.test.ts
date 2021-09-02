@@ -1,4 +1,4 @@
-//
+// tom-weatherhead/thaw-grammar/test/languages/lambda-calculus-integer-extension/lambda-calculus-integer-extension.test.ts
 
 'use strict';
 
@@ -68,7 +68,7 @@ test('LambdaCalculusIntegerExtensionGrammar recognize test', () => {
 	expect(() => f('(x y')).toThrow(SyntaxException);
 
 	f('1');
-	f('[+ 2 3]');
+	f('(+ 2 3)');
 
 	f(strTrue);
 	f(strFalse);
@@ -114,7 +114,7 @@ test('LambdaCalculusIntegerExtensionGrammar integer test', () => {
 
 test('LambdaCalculusIntegerExtensionGrammar integer addition test', () => {
 	const f = getParseFunction();
-	const eight = f('[+ 3 5]').deltaReduce();
+	const eight = f('(+ 3 5)').deltaReduce();
 
 	expect(`${eight}`).toBe('8');
 	expect(isLCIntegerLiteral(eight)).toBeTruthy();
@@ -123,7 +123,7 @@ test('LambdaCalculusIntegerExtensionGrammar integer addition test', () => {
 
 test('LambdaCalculusIntegerExtensionGrammar integer subtraction test', () => {
 	const f = getParseFunction();
-	const three = f('[- 8 5]').deltaReduce();
+	const three = f('(- 8 5)').deltaReduce();
 
 	expect(`${three}`).toBe('3');
 	expect(isLCIntegerLiteral(three)).toBeTruthy();
@@ -132,7 +132,7 @@ test('LambdaCalculusIntegerExtensionGrammar integer subtraction test', () => {
 
 test('LambdaCalculusIntegerExtensionGrammar integer multiplication test', () => {
 	const f = getParseFunction();
-	const ninetyOne = f('[* 7 13]').deltaReduce();
+	const ninetyOne = f('(* 7 13)').deltaReduce();
 
 	expect(`${ninetyOne}`).toBe('91');
 	expect(isLCIntegerLiteral(ninetyOne)).toBeTruthy();
@@ -143,10 +143,10 @@ test('LambdaCalculusIntegerExtensionGrammar if test', () => {
 	const f = getParseFunction();
 	const variableNameGenerator = createVariableNameGenerator();
 
-	const actualResult1 = f('if [= 0 0] 7 13')
+	const actualResult1 = f('if (= 0 0) 7 13')
 		.deltaReduce()
 		.betaReduce(BetaReductionStrategy.CallByName, variableNameGenerator, 10);
-	const actualResult2 = f('if [= 0 1] 7 13')
+	const actualResult2 = f('if (= 0 1) 7 13')
 		.deltaReduce()
 		.betaReduce(BetaReductionStrategy.CallByName, variableNameGenerator, 10);
 
@@ -306,7 +306,7 @@ function yCombinatorPretest1ReducerLauncher(n: number): LCIntegerLiteral {
 	const f = getParseFunction();
 	const variableNameGenerator = createVariableNameGenerator();
 
-	const strG = 'λr.λn.if [= n 0] 1 [* n (r [- n 1])]';
+	const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
 
 	const strFactorial1 = `((${strCombinatorY} ${strG}) ${n})`;
 
@@ -325,7 +325,7 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 	const f = getParseFunction();
 	const variableNameGenerator = createVariableNameGenerator();
 
-	const strG = 'λr.λn.if [= n 0] 1 [* n (r [- n 1])]';
+	const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
 
 	expect(f(strG)).toBeTruthy();
 

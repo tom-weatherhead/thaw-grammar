@@ -1,24 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-integer-extension/lambda-calculus-integer-extension-grammar.ts
 
-// import {
-// 	// GrammarSymbol,
-// 	// IToken,
-// 	// LexicalState,
-// 	SemanticStackType
-// } from 'thaw-interpreter-types';
-//
-// import { Name } from '../../common/domain-object-model/name';
-
-// import { GrammarException } from 'thaw-interpreter-core';
-
-// import { LambdaCalculusGrammar } from '../lambda-calculus/lambda-calculus-grammar';
-
-// import { ILCExpression } from '../lambda-calculus/domain-object-model/interfaces/expression';
-//
-// import { LCFunctionCall } from '../lambda-calculus/domain-object-model/call';
-// import { LCLambdaExpression } from '../lambda-calculus/domain-object-model/lambda-expression';
-// import { LCVariable } from '../lambda-calculus/domain-object-model/variable';
-
 import {
 	GrammarSymbol,
 	IToken,
@@ -37,7 +18,6 @@ import { LCFunctionCall } from '../lambda-calculus/domain-object-model/call';
 import { LCLambdaExpression } from '../lambda-calculus/domain-object-model/lambda-expression';
 import { LCVariable } from '../lambda-calculus/domain-object-model/variable';
 
-// import { ILCIntegerExpression /*, IntegerLiteral */ } from './domain-object-model/integer-literal';
 import { LCIntegerLiteral } from './domain-object-model/integer-literal';
 import { LCPrimitiveOperator } from './domain-object-model/primitive-operator';
 
@@ -52,7 +32,7 @@ import { LCPrimitiveOperator } from './domain-object-model/primitive-operator';
 // λexp -> intexpr
 // intexpr -> intliteral
 // intexpr -> var
-// intexpr -> [ binaryintop intexpr intexpr ]
+// intexpr -> ( binaryintop intexpr intexpr )
 // binaryintop -> +
 // binaryintop -> -
 // binaryintop -> *
@@ -81,6 +61,7 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
 		// this.nonTerminals.push(GrammarSymbol.nonterminalInput);
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
 		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
@@ -107,8 +88,14 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 		]);
 
 		// Expression -> Function Call
+		// this.addProduction(GrammarSymbol.nonterminalExpression, [
+		// 	GrammarSymbol.nonterminalFunctionCall
+		// ]);
+
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
-			GrammarSymbol.nonterminalFunctionCall
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalBracketedExpression,
+			GrammarSymbol.terminalRightBracket
 		]);
 
 		// Variable -> Name
@@ -126,12 +113,16 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 			'#lambdaExpression'
 		]);
 
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.nonterminalFunctionCall
+		]);
+
 		// Function Call -> ( Expression Expression )
 		this.addProduction(GrammarSymbol.nonterminalFunctionCall, [
-			GrammarSymbol.terminalLeftBracket,
+			// GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.nonterminalExpression,
-			GrammarSymbol.terminalRightBracket,
+			// GrammarSymbol.terminalRightBracket,
 			'#functionCall'
 		]);
 
@@ -140,13 +131,13 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 			GrammarSymbol.terminalIntegerLiteral
 		]);
 
-		// intexpr -> [ binaryintop intexpr intexpr ]
-		this.addProduction(GrammarSymbol.nonterminalExpression, [
-			GrammarSymbol.terminalLeftSquareBracket,
+		// intexpr -> ( binaryintop intexpr intexpr )
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			// GrammarSymbol.terminalLeftSquareBracket,
 			GrammarSymbol.nonterminalOptr,
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.nonterminalExpression,
-			GrammarSymbol.terminalRightSquareBracket,
+			// GrammarSymbol.terminalRightSquareBracket,
 			'#integerOperator'
 		]);
 
