@@ -91,12 +91,23 @@ export class LCVariable implements ILCVariable {
 			// But what about a binding such as { X = foo(_) } ?
 			// (isLCVariable(other) && otherExpr.isNonBinding)
 		) {
+			console.log(`${this} and ${otherExpr} are identical; they unify trivially.`);
+
 			return createSubstitution();
 		} else if (otherExpr.containsVariableNamed(this.name)) {
 			// This is the 'occurs' check.
+
+			console.log(`${otherExpr} contains ${this} (the 'occurs' check); they fail to unify.`);
+
 			return undefined; // This Variable and the Expression are not unifiable.
 		} else {
-			return createSubstitution(this.name, otherExpr);
+			// return createSubstitution(this.name, otherExpr);
+
+			const result = createSubstitution(this.name, otherExpr);
+
+			console.log(`Constructing the unifier ${result}`);
+
+			return result;
 		}
 	}
 

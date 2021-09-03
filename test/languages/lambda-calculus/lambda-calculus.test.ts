@@ -6,11 +6,11 @@
 //
 // FALSE = λx.λy.y
 //
-// AND = λp.λq.((pq) FALSE)
+// IF = λb.λx.λy.((b x) y)
+//
+// AND = λp.λq.((p q) FALSE)
 //
 // OR = λp.λq.(((IF p) TRUE) q)
-//
-// IF = λb.λx.λy.((b x) y)
 //
 // To encode the non-negative integers, Church used the following encoding:
 //
@@ -200,7 +200,7 @@ test('LambdaCalculus expression unification test 1', () => {
 	expect(areIsomorphic(expr1, expr2)).toBe(true);
 });
 
-test('LambdaCalculus Church Numerals test 1', () => {
+test('LambdaCalculus Church Numerals Successor Test 1', () => {
 	// Arrange
 
 	// To encode the non-negative integers, Church used the following encoding:
@@ -256,4 +256,109 @@ test('LambdaCalculus Church Numerals test 1', () => {
 	expect(areIsomorphic(oneActual, f(strOneExpected))).toBe(true);
 	expect(areIsomorphic(twoActual, f(strTwoExpected))).toBe(true);
 	expect(areIsomorphic(threeActual, f(strThreeExpected))).toBe(true);
+});
+
+test('LambdaCalculus Church Numerals Predecessor Test 1', () => {
+	expect(0).toBe(0);
+
+	// We add a Church encoding for an operation that computes the predecessor of a Church numeral n:
+	//
+	// PRED = λn.λf.λx.(((nλg.λh.(h(gf)))λu.x)λu.u)
+});
+
+test('LambdaCalculus Church Numerals And Test 1', () => {
+	expect(0).toBe(0);
+
+	// AND = λp.λq.((p q) FALSE)
+
+	const strFalse = 'λx.λy.y';
+});
+
+test('LambdaCalculus Church Numerals Or Test 1', () => {
+	expect(0).toBe(0);
+
+	// IF = λb.λx.λy.((b x) y)
+	//
+	// OR = λp.λq.(((IF p) TRUE) q)
+
+	const strTrue = 'λx.λy.x';
+});
+
+test('LambdaCalculus Church Numerals Multiplication Test 1', () => {
+	expect(0).toBe(0);
+
+	// MULT = λm.λn.λf.(m(nf))
+});
+
+test('LambdaCalculus Church Numerals isZero Test 1', () => {
+	expect(0).toBe(0);
+
+	// And finally, we add an operation to test for zero, which can be used in the if-then-else you identified in the previous practice problem (see above).
+	//
+	// ISZERO = λn.((n λx.FALSE) TRUE)
+
+	// const f = getParseFunction();
+	//
+	// const expr = f('(λx.x y)');
+	// const reducedExpr = expr.betaReduce(
+	// 	BetaReductionStrategy.CallByName,
+	// 	generateNewVariableName,
+	// 	10
+	// );
+
+	// Arrange
+	const strTrue = 'λx.λy.x';
+	const strFalse = 'λx.λy.y';
+	const strIsZero = `λn.((n λx.${strFalse}) ${strTrue})`;
+
+	const strZero = 'λf.λx.x';
+	const strOne = 'λf.λx.(f x)';
+	const strTwo = 'λf.λx.(f (f x))';
+
+	const f = getParseFunction();
+	const generateNewVariableName = createVariableNameGenerator();
+
+	// Act
+	const tt = f(strTrue);
+	const ff = f(strFalse);
+	const exprIsZeroZero = f(`(${strIsZero} ${strZero})`).betaReduce(
+		BetaReductionStrategy.CallByName,
+		generateNewVariableName,
+		10
+	);
+	const exprIsOneZero = f(`(${strIsZero} ${strOne})`).betaReduce(
+		BetaReductionStrategy.CallByName,
+		generateNewVariableName,
+		10
+	);
+	const exprIsTwoZero = f(`(${strIsZero} ${strTwo})`).betaReduce(
+		BetaReductionStrategy.CallByName,
+		generateNewVariableName,
+		10
+	);
+
+	console.log(`exprIsZeroZero: ${exprIsZeroZero}`);
+	console.log(`exprIsOneZero: ${exprIsOneZero}`);
+	console.log(`exprIsTwoZero: ${exprIsTwoZero}`);
+
+	console.log(`TRUE: ${tt}`);
+	console.log(`FALSE: ${ff}`);
+
+	const s1 = exprIsZeroZero.unify(tt);
+	const s2 = exprIsZeroZero.unify(ff);
+
+	console.log(`exprIsZeroZero.unify(TRUE): ${s1}`);
+	console.log(`exprIsZeroZero.unify(FALSE): ${s2}`);
+
+	// BUG in unify() : λv1.λy.v1 unify λx.λy.x = [] ???
+
+	// Assert
+	expect(exprIsZeroZero.isIsomorphicTo(tt)).toBe(true);
+	expect(exprIsZeroZero.isIsomorphicTo(ff)).toBe(false);
+
+	expect(exprIsOneZero.isIsomorphicTo(tt)).toBe(false);
+	expect(exprIsOneZero.isIsomorphicTo(ff)).toBe(true);
+
+	expect(exprIsTwoZero.isIsomorphicTo(tt)).toBe(false);
+	expect(exprIsTwoZero.isIsomorphicTo(ff)).toBe(true);
 });

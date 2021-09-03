@@ -288,6 +288,10 @@ export class LCFunctionCall implements ILCExpression {
 		if (isLCVariable(other)) {
 			return other.unify(this);
 		} else if (!isLCFunctionCall(other)) {
+			console.log(
+				`${other} is neither a FunctionCall nor a Variable; it fails to unify with ${this}`
+			);
+
 			return undefined;
 		}
 
@@ -301,7 +305,15 @@ export class LCFunctionCall implements ILCExpression {
 		const argA = this.arg.applySubstitution(unifier1);
 		const argB = otherLCFunctionCall.arg.applySubstitution(unifier1);
 
-		return argA.unify(argB);
+		// return argA.unify(argB);
+
+		const unifier2 = argA.unify(argB);
+
+		if (typeof unifier2 === 'undefined') {
+			return undefined;
+		}
+
+		return unifier1.compose(unifier2);
 	}
 
 	public isIsomorphicTo(other: ILCExpression): boolean {

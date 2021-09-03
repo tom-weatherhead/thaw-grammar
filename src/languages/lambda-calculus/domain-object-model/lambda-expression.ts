@@ -133,20 +133,60 @@ export class LCLambdaExpression implements ILCValue {
 		if (isLCVariable(other)) {
 			return other.unify(this);
 		} else if (!isLCLambdaExpression(other)) {
+			console.log(
+				`${other} is neither a LambdaExpression nor a Variable; it fails to unify with ${this}`
+			);
+
 			return undefined;
 		}
 
+		console.log(`LCLambdaExpression.unify() : Trying to unify ${this} with ${other} ...`);
+
 		const otherLCLambdaExpression = other as LCLambdaExpression;
+
+		console.log(
+			`LCLambdaExpression.unify() : Trying to unify ${this.arg} with ${otherLCLambdaExpression.arg} ...`
+		);
+
 		const unifier1 = this.arg.unify(otherLCLambdaExpression.arg);
 
 		if (typeof unifier1 === 'undefined') {
+			console.log(
+				`LCLambdaExpression.unify() : Failed to unify ${this.arg} with ${otherLCLambdaExpression.arg}`
+			);
+
 			return undefined;
 		}
+
+		console.log(
+			`LCLambdaExpression.unify() : The unifier of ${this.arg} and ${otherLCLambdaExpression.arg} is: ${unifier1}`
+		);
 
 		const bodyA = this.body.applySubstitution(unifier1);
 		const bodyB = otherLCLambdaExpression.body.applySubstitution(unifier1);
 
-		return bodyA.unify(bodyB);
+		console.log(`LCLambdaExpression.unify() : bodyA is: ${bodyA}`);
+		console.log(`LCLambdaExpression.unify() : bodyB is: ${bodyB}`);
+
+		const unifier2 = bodyA.unify(bodyB);
+
+		if (typeof unifier2 === 'undefined') {
+			console.log(`LCLambdaExpression.unify() : Failed to unify ${bodyA} with ${bodyB}`);
+
+			return undefined;
+		}
+
+		console.log(
+			`LCLambdaExpression.unify() : The unifier of ${bodyA} and ${bodyB} is: ${unifier2}`
+		);
+
+		const compositeSubstitution = unifier1.compose(unifier2);
+
+		console.log(
+			`LCLambdaExpression.unify() : The composition of ${unifier1} and ${unifier2} is: ${compositeSubstitution}`
+		);
+
+		return compositeSubstitution;
 	}
 
 	public isIsomorphicTo(other: ILCExpression): boolean {

@@ -166,7 +166,7 @@ function yCombinatorPretest1Reducer(
 	// 	2
 	// ) as LCFunctionCall;
 
-	console.log(`Y combinator pre-test 1: actualResult2 is: ${actualResult2};`, actualResult2);
+	// console.log(`Y combinator pre-test 1: actualResult2 is: ${actualResult2};`, actualResult2);
 
 	// LCFunctionCall.betaReduceCore() : lambdaExpressionBody is (λx.(g (x x)) λx.(g (x x)))
 
@@ -180,7 +180,7 @@ function yCombinatorPretest1Reducer(
 
 	const f3 = (actualResult2 as LCFunctionCall).callee as LCFunctionCall;
 
-	console.log(`Y combinator pre-test 1: f3 is: ${f3};`, f3);
+	// console.log(`Y combinator pre-test 1: f3 is: ${f3};`, f3);
 
 	// f3 is: (λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)))
 
@@ -199,7 +199,7 @@ function yCombinatorPretest1Reducer(
 		variableNameGenerator
 	) as LCFunctionCall;
 
-	console.log(`Y combinator pre-test 1: actualResult3a is: ${actualResult3a};`, actualResult3a);
+	// console.log(`Y combinator pre-test 1: actualResult3a is: ${actualResult3a};`, actualResult3a);
 
 	// actualResult3a is: (λv2.λv3.(([= v3 0]  1) [* v3 (v2 [- v3 1] )] ) (λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x)) λx.(λr.λn.(([= n 0]  1) [* n (r [- n 1] )] ) (x x))))
 
@@ -215,11 +215,11 @@ function yCombinatorPretest1Reducer(
 		variableNameGenerator
 	) as LCLambdaExpression;
 
-	console.log(`Y combinator pre-test 1: actualResult4 is: ${actualResult4};`, actualResult4);
-	console.log(
-		`Y combinator pre-test 1: actualResult2.arg is: ${actualResult2.arg};`,
-		actualResult2.arg
-	);
+	// console.log(`Y combinator pre-test 1: actualResult4 is: ${actualResult4};`, actualResult4);
+	// console.log(
+	// 	`Y combinator pre-test 1: actualResult2.arg is: ${actualResult2.arg};`,
+	// 	actualResult2.arg
+	// );
 
 	// actualResult4 is: λn.(([= n 0] 1) [* n ((λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x))) [- n 1])])
 
@@ -228,13 +228,13 @@ function yCombinatorPretest1Reducer(
 		actualResult2.arg
 	);
 
-	console.log(`Y combinator pre-test 1: actualResult5 is: ${actualResult5};`, actualResult5);
+	// console.log(`Y combinator pre-test 1: actualResult5 is: ${actualResult5};`, actualResult5);
 
 	// actualResult5 is: (([= 1 0] 1) [* 1 ((λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x))) [- 1 1])])
 
 	const actualResult6 = actualResult5.deltaReduce() as LCFunctionCall;
 
-	console.log(`Y combinator pre-test 1: actualResult6 is: ${actualResult6};`, actualResult6);
+	// console.log(`Y combinator pre-test 1: actualResult6 is: ${actualResult6};`, actualResult6);
 
 	// actualResult6 is: ((λx.λy.y 1) [* 1 ((λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x))) 0)])
 
@@ -244,7 +244,7 @@ function yCombinatorPretest1Reducer(
 		10
 	);
 
-	console.log(`Y combinator pre-test 1: actualResult7 is: ${actualResult7};`, actualResult7);
+	// console.log(`Y combinator pre-test 1: actualResult7 is: ${actualResult7};`, actualResult7);
 
 	// actualResult7 is: λy.y
 
@@ -254,7 +254,7 @@ function yCombinatorPretest1Reducer(
 		variableNameGenerator
 	) as LCIntegerLiteral | LCPrimitiveOperator;
 
-	console.log(`Y combinator pre-test 1: actualResult8 is: ${actualResult8};`, actualResult8);
+	// console.log(`Y combinator pre-test 1: actualResult8 is: ${actualResult8};`, actualResult8);
 
 	// actualResult8 is: [* 1 ((λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x)) λx.(λr.λn.(([= n 0] 1) [* n (r [- n 1])]) (x x))) 0)]
 
@@ -351,7 +351,7 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 
 	const actualResult1 = f(strFactorial1);
 
-	console.log(`Y combinator pre-test 1: actualResult1 is: ${actualResult1};`, actualResult1);
+	// console.log(`Y combinator pre-test 1: actualResult1 is: ${actualResult1};`, actualResult1);
 
 	// actualResult1 is:
 	//	(
@@ -374,13 +374,13 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 		2
 	) as LCFunctionCall;
 
-	console.log(`Y combinator pre-test 1: actualResult2 is: ${actualResult2};`, actualResult2);
+	// console.log(`Y combinator pre-test 1: actualResult2 is: ${actualResult2};`, actualResult2);
 
 	// ****
 
 	const actualResult15 = yCombinatorPretest1Reducer(actualResult2, variableNameGenerator);
 
-	console.log(`Y combinator pre-test 1: actualResult15 is: ${actualResult15};`, actualResult15);
+	// console.log(`Y combinator pre-test 1: actualResult15 is: ${actualResult15};`, actualResult15);
 
 	// actualResult15 === 1
 
