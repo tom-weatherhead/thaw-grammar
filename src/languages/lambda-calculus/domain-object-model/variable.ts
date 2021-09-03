@@ -81,7 +81,20 @@ export class LCVariable implements ILCVariable {
 		return ifDefinedThenElse(substitution.SubstitutionList.get(this.name), this);
 	}
 
-	public unify(other: ILCUnifiable): ILCSubstitution | undefined {
+	public unify(
+		other: ILCUnifiable,
+		variablesInOriginalExpr1Param?: IImmutableSet<string>,
+		variablesInOriginalExpr2Param?: IImmutableSet<string>
+	): ILCSubstitution | undefined {
+		// const variablesInOriginalExpr1 =
+		// 	typeof variablesInOriginalExpr1Param !== 'undefined'
+		// 		? variablesInOriginalExpr1Param
+		// 		: this.getSetOfAllVariableNames();
+		const variablesInOriginalExpr2 =
+			typeof variablesInOriginalExpr2Param !== 'undefined'
+				? variablesInOriginalExpr2Param
+				: (other as ILCExpression).getSetOfAllVariableNames();
+
 		const otherExpr = other as ILCExpression;
 
 		if (
@@ -91,13 +104,14 @@ export class LCVariable implements ILCVariable {
 			// But what about a binding such as { X = foo(_) } ?
 			// (isLCVariable(other) && otherExpr.isNonBinding)
 		) {
-			console.log(`${this} and ${otherExpr} are identical; they unify trivially.`);
+			// console.log(`${this} and ${otherExpr} are identical; they unify trivially.`);
 
 			return createSubstitution();
-		} else if (otherExpr.containsVariableNamed(this.name)) {
+			// } else if (otherExpr.containsVariableNamed(this.name)) {
+		} else if (variablesInOriginalExpr2.contains(this.name)) {
 			// This is the 'occurs' check.
 
-			console.log(`${otherExpr} contains ${this} (the 'occurs' check); they fail to unify.`);
+			// console.log(`${otherExpr} contains ${this} (the 'occurs' check); they fail to unify.`);
 
 			return undefined; // This Variable and the Expression are not unifiable.
 		} else {
@@ -105,7 +119,7 @@ export class LCVariable implements ILCVariable {
 
 			const result = createSubstitution(this.name, otherExpr);
 
-			console.log(`Constructing the unifier ${result}`);
+			// console.log(`Constructing the unifier ${result}`);
 
 			return result;
 		}

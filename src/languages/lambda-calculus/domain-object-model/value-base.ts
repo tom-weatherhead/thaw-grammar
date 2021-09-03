@@ -21,7 +21,11 @@ export abstract class LCValueBase implements ILCExpression {
 		return this;
 	}
 
-	public unify(other: IUnifiable<ILCExpression>): ISubstitution<ILCExpression> | undefined {
+	public unify(
+		other: IUnifiable<ILCExpression>,
+		variablesInOriginalExpr1Param?: IImmutableSet<string>,
+		variablesInOriginalExpr2Param?: IImmutableSet<string>
+	): ISubstitution<ILCExpression> | undefined {
 		return undefined; // TODO FIXME
 	}
 

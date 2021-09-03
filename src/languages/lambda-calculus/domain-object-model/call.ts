@@ -284,19 +284,36 @@ export class LCFunctionCall implements ILCExpression {
 		);
 	}
 
-	public unify(other: ILCUnifiable): ILCSubstitution | undefined {
+	public unify(
+		other: ILCUnifiable,
+		variablesInOriginalExpr1Param?: IImmutableSet<string>,
+		variablesInOriginalExpr2Param?: IImmutableSet<string>
+	): ILCSubstitution | undefined {
+		const variablesInOriginalExpr1 =
+			typeof variablesInOriginalExpr1Param !== 'undefined'
+				? variablesInOriginalExpr1Param
+				: this.getSetOfAllVariableNames();
+		const variablesInOriginalExpr2 =
+			typeof variablesInOriginalExpr2Param !== 'undefined'
+				? variablesInOriginalExpr2Param
+				: (other as ILCExpression).getSetOfAllVariableNames();
+
 		if (isLCVariable(other)) {
-			return other.unify(this);
+			return other.unify(this, variablesInOriginalExpr2, variablesInOriginalExpr1);
 		} else if (!isLCFunctionCall(other)) {
-			console.log(
-				`${other} is neither a FunctionCall nor a Variable; it fails to unify with ${this}`
-			);
+			// console.log(
+			// 	`${other} is neither a FunctionCall nor a Variable; it fails to unify with ${this}`
+			// );
 
 			return undefined;
 		}
 
 		const otherLCFunctionCall = other as LCFunctionCall;
-		const unifier1 = this.callee.unify(otherLCFunctionCall.callee);
+		const unifier1 = this.callee.unify(
+			otherLCFunctionCall.callee,
+			variablesInOriginalExpr1,
+			variablesInOriginalExpr2
+		);
 
 		if (typeof unifier1 === 'undefined') {
 			return undefined;
@@ -307,7 +324,7 @@ export class LCFunctionCall implements ILCExpression {
 
 		// return argA.unify(argB);
 
-		const unifier2 = argA.unify(argB);
+		const unifier2 = argA.unify(argB, variablesInOriginalExpr1, variablesInOriginalExpr2);
 
 		if (typeof unifier2 === 'undefined') {
 			return undefined;

@@ -120,11 +120,12 @@ function getfb(fparam?: (str: string) => ILCExpression): (s: string) => ILCExpre
 	const generateNewVariableName = createVariableNameGenerator();
 	const f = typeof fparam !== 'undefined' ? fparam : getParseFunction();
 	const maxBetaReductionDepth = 10;
-	const fb = (s: string): ILCExpression => f(s).betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		maxBetaReductionDepth
-	);
+	const fb = (s: string): ILCExpression =>
+		f(s).betaReduce(
+			BetaReductionStrategy.CallByName,
+			generateNewVariableName,
+			maxBetaReductionDepth
+		);
 
 	return fb;
 }
@@ -343,8 +344,24 @@ test('LambdaCalculus Church Numerals And Test 1', () => {
 	const tAndt = fb(`((${strAnd} ${strTrue}) ${strTrue})`);
 
 	// Assert
-	// expect(areIsomorphic(ff, tt)).toBe(false);	// Fails. TODO: Debug.
-	// expect(areIsomorphic(tt, ff)).toBe(false);	// Fails. TODO: Debug.
+
+	console.log(`ff is ${ff}`);
+	console.log(`tt is ${tt}`);
+
+	const u1 = ff.unify(tt);
+
+	console.log(`ff.unify(tt) is ${u1}`);
+
+	// ff is λx.λy.y
+	// tt is λx.λy.x
+	// ff.unify(tt) is [y -> x]
+	// WRONG: We cannot replace y with x in either λx.λy.y or λx.λy.x because
+	// x already occurs in each.
+	// We need to expand our 'occurs' check to check both entire expressions,
+	// not just the parts of the two expressions that have not yet been unified.
+
+	expect(areIsomorphic(ff, tt)).toBe(false);	// Fails. TODO: Debug.
+	expect(areIsomorphic(tt, ff)).toBe(false);	// Fails. TODO: Debug.
 	expect(areIsomorphic(ff, ff)).toBe(true);
 	expect(areIsomorphic(tt, tt)).toBe(true);
 
@@ -355,9 +372,9 @@ test('LambdaCalculus Church Numerals And Test 1', () => {
 	expect(areIsomorphic(fAndt, tt)).toBe(false);
 
 	expect(areIsomorphic(tAndf, ff)).toBe(true);
-	// expect(areIsomorphic(tAndf, tt)).toBe(false);	// Fails. TODO: Debug.
+	expect(areIsomorphic(tAndf, tt)).toBe(false);	// Fails. TODO: Debug.
 
-	// expect(areIsomorphic(tAndt, ff)).toBe(false);	// Fails. TODO: Debug.
+	expect(areIsomorphic(tAndt, ff)).toBe(false);	// Fails. TODO: Debug.
 	expect(areIsomorphic(tAndt, tt)).toBe(true);
 });
 
@@ -413,18 +430,18 @@ test('LambdaCalculus Church Numerals isZero Test 1', () => {
 	const exprIsOneZero = fb(`(${strIsZero} ${strOne})`);
 	const exprIsTwoZero = fb(`(${strIsZero} ${strTwo})`);
 
-	console.log(`exprIsZeroZero: ${exprIsZeroZero}`);
-	console.log(`exprIsOneZero: ${exprIsOneZero}`);
-	console.log(`exprIsTwoZero: ${exprIsTwoZero}`);
+	// console.log(`exprIsZeroZero: ${exprIsZeroZero}`);
+	// console.log(`exprIsOneZero: ${exprIsOneZero}`);
+	// console.log(`exprIsTwoZero: ${exprIsTwoZero}`);
+	//
+	// console.log(`TRUE: ${tt}`);
+	// console.log(`FALSE: ${ff}`);
+	//
+	// const s1 = exprIsZeroZero.unify(tt);
+	// const s2 = exprIsZeroZero.unify(ff);
 
-	console.log(`TRUE: ${tt}`);
-	console.log(`FALSE: ${ff}`);
-
-	const s1 = exprIsZeroZero.unify(tt);
-	const s2 = exprIsZeroZero.unify(ff);
-
-	console.log(`exprIsZeroZero.unify(TRUE): ${s1}`);
-	console.log(`exprIsZeroZero.unify(FALSE): ${s2}`);
+	// console.log(`exprIsZeroZero.unify(TRUE): ${s1}`);
+	// console.log(`exprIsZeroZero.unify(FALSE): ${s2}`);
 
 	// Assert
 	expect(exprIsZeroZero.isIsomorphicTo(tt)).toBe(true);

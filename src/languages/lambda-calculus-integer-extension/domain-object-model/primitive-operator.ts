@@ -66,12 +66,29 @@ export class LCPrimitiveOperator implements ILCExpression {
 		);
 	}
 
-	public unify(other: IUnifiable<ILCExpression>): ISubstitution<ILCExpression> | undefined {
+	public unify(
+		other: IUnifiable<ILCExpression>,
+		variablesInOriginalExpr1Param?: IImmutableSet<string>,
+		variablesInOriginalExpr2Param?: IImmutableSet<string>
+	): ISubstitution<ILCExpression> | undefined {
 		if (!isPrimitiveOperator(other) || other.name !== this.name) {
 			return undefined;
 		}
 
-		const u1 = this.leftChild.unify(other.leftChild);
+		const variablesInOriginalExpr1 =
+			typeof variablesInOriginalExpr1Param !== 'undefined'
+				? variablesInOriginalExpr1Param
+				: this.getSetOfAllVariableNames();
+		const variablesInOriginalExpr2 =
+			typeof variablesInOriginalExpr2Param !== 'undefined'
+				? variablesInOriginalExpr2Param
+				: (other as ILCExpression).getSetOfAllVariableNames();
+
+		const u1 = this.leftChild.unify(
+			other.leftChild,
+			variablesInOriginalExpr1,
+			variablesInOriginalExpr2
+		);
 
 		if (typeof u1 === 'undefined') {
 			return undefined;
@@ -79,7 +96,13 @@ export class LCPrimitiveOperator implements ILCExpression {
 
 		// return undefined; // TODO FIXME
 
-		return this.rightChild.applySubstitution(u1).unify(other.rightChild.applySubstitution(u1));
+		return this.rightChild
+			.applySubstitution(u1)
+			.unify(
+				other.rightChild.applySubstitution(u1),
+				variablesInOriginalExpr1,
+				variablesInOriginalExpr2
+			);
 	}
 
 	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {

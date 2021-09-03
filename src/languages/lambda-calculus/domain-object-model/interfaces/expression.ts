@@ -37,7 +37,14 @@ export interface ISubstitutable<T> {
 }
 
 export interface IUnifiable<T> extends ISubstitutable<T> {
-	unify(other: IUnifiable<T>): ISubstitution<T> | undefined;
+	unify(
+		other: IUnifiable<T>,
+		// TODO: Implement this:
+		// I.e. if x is in this, and y is in other, then we don't want to
+		// a unifier to replace x with y if y is in variablesInOriginalExpr1.
+		variablesInOriginalExpr1?: IImmutableSet<string>,
+		variablesInOriginalExpr2?: IImmutableSet<string>
+	): ISubstitution<T> | undefined;
 	isIsomorphicTo(other: IUnifiable<T>): boolean;
 }
 
@@ -93,7 +100,10 @@ export function isLCVariable(obj: unknown): obj is ILCVariable {
 }
 
 export function areIsomorphic<T>(expr1: IUnifiable<T>, expr2: IUnifiable<T>): boolean {
-	const unifyingSubstitution = expr1.unify(expr2);
+	const unifyingSubstitution = expr1.unify(
+		expr2 // ,
+		// expr1.getSetOfAllVariableNames().union(expr2.getSetOfAllVariableNames())
+	);
 
 	return typeof unifyingSubstitution !== 'undefined' && unifyingSubstitution.isOneToOne;
 

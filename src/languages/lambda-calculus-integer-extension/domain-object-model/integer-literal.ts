@@ -72,13 +72,26 @@ export class LCIntegerLiteral implements ILCExpression {
 		return this;
 	}
 
-	public unify(other: IUnifiable<ILCExpression>): ISubstitution<ILCExpression> | undefined {
+	public unify(
+		other: IUnifiable<ILCExpression>,
+		variablesInOriginalExpr1Param?: IImmutableSet<string>,
+		variablesInOriginalExpr2Param?: IImmutableSet<string>
+	): ISubstitution<ILCExpression> | undefined {
+		const variablesInOriginalExpr1 =
+			typeof variablesInOriginalExpr1Param !== 'undefined'
+				? variablesInOriginalExpr1Param
+				: this.getSetOfAllVariableNames();
+		const variablesInOriginalExpr2 =
+			typeof variablesInOriginalExpr2Param !== 'undefined'
+				? variablesInOriginalExpr2Param
+				: (other as ILCExpression).getSetOfAllVariableNames();
+
 		const otherExpr = other as ILCExpression;
 
 		if (this.equals(otherExpr)) {
 			return createSubstitution();
 		} else if (isLCVariable(otherExpr)) {
-			return otherExpr.unify(this);
+			return otherExpr.unify(this, variablesInOriginalExpr2, variablesInOriginalExpr1);
 		} else {
 			return undefined;
 		}
