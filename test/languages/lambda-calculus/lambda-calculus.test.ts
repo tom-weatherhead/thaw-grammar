@@ -116,6 +116,19 @@ function createVariableNameGenerator(): () => string {
 	return () => `v${++n}`;
 }
 
+function getfb(fparam?: (str: string) => ILCExpression): (s: string) => ILCExpression {
+	const generateNewVariableName = createVariableNameGenerator();
+	const f = typeof fparam !== 'undefined' ? fparam : getParseFunction();
+	const maxBetaReductionDepth = 10;
+	const fb = (s: string): ILCExpression => f(s).betaReduce(
+		BetaReductionStrategy.CallByName,
+		generateNewVariableName,
+		maxBetaReductionDepth
+	);
+
+	return fb;
+}
+
 test('LambdaCalculus Variable Name Generator test', () => {
 	const generateNewVariableName = createVariableNameGenerator();
 
@@ -126,17 +139,19 @@ test('LambdaCalculus Variable Name Generator test', () => {
 
 test('LambdaCalculus beta-reduction test 1', () => {
 	// Arrange
-	const generateNewVariableName = createVariableNameGenerator();
-	const f = getParseFunction();
+	// const generateNewVariableName = createVariableNameGenerator();
+	// const f = getParseFunction();
+	const fb = getfb();
 
-	const expr = f('(λx.x y)');
-	const reducedExpr = expr.betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		10
-	);
+	// const expr = f('(λx.x y)');
+	// const reducedExpr = expr.betaReduce(
+	// 	BetaReductionStrategy.CallByName,
+	// 	generateNewVariableName,
+	// 	10
+	// );
+	const reducedExpr = fb('(λx.x y)');
 
-	expect(expr).toBeTruthy();
+	// expect(expr).toBeTruthy();
 	expect(reducedExpr).toBeTruthy();
 
 	const variableName = (reducedExpr as ILCVariable).name;
@@ -147,18 +162,20 @@ test('LambdaCalculus beta-reduction test 1', () => {
 
 test('LambdaCalculus beta-reduction test 2', () => {
 	// Arrange
-	const generateNewVariableName = createVariableNameGenerator();
-	const f = getParseFunction();
+	// const generateNewVariableName = createVariableNameGenerator();
+	// const f = getParseFunction();
+	const fb = getfb();
 
-	const expr = f('(λf.λx.x g)');
-
-	expect(expr).toBeTruthy();
-
-	const reducedExpr = expr.betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		10
-	);
+	// const expr = f('(λf.λx.x g)');
+	//
+	// expect(expr).toBeTruthy();
+	//
+	// const reducedExpr = expr.betaReduce(
+	// 	BetaReductionStrategy.CallByName,
+	// 	generateNewVariableName,
+	// 	10
+	// );
+	const reducedExpr = fb('(λf.λx.x g)');
 
 	expect(reducedExpr).toBeTruthy();
 	expect(reducedExpr.toString()).toBe('λx.x');
@@ -166,18 +183,20 @@ test('LambdaCalculus beta-reduction test 2', () => {
 
 test('LambdaCalculus beta-reduction test 3', () => {
 	// Arrange
-	const generateNewVariableName = createVariableNameGenerator();
-	const f = getParseFunction();
+	// const generateNewVariableName = createVariableNameGenerator();
+	// const f = getParseFunction();
+	const fb = getfb();
 
-	const expr = f('((λf.λx.x g) h)');
-
-	expect(expr).toBeTruthy();
-
-	const reducedExpr = expr.betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		10
-	);
+	// const expr = f('((λf.λx.x g) h)');
+	//
+	// expect(expr).toBeTruthy();
+	//
+	// const reducedExpr = expr.betaReduce(
+	// 	BetaReductionStrategy.CallByName,
+	// 	generateNewVariableName,
+	// 	10
+	// );
+	const reducedExpr = fb('((λf.λx.x g) h)');
 
 	expect(reducedExpr).toBeTruthy();
 	expect(reducedExpr.toString()).toBe('h');
@@ -226,26 +245,30 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 	const strThreeExpected = 'λv5.λv6.(v5 (v5 (v5 v6)))';
 	const strThreeSrc = `(${strSucc} ${strTwoExpected1})`;
 
-	const generateNewVariableName = createVariableNameGenerator();
+	// const generateNewVariableName = createVariableNameGenerator();
 	const f = getParseFunction();
+	const fb = getfb(f);
 
 	// Act
 
 	// const zero = f(strZero);
 	// const succ = f(strSucc);
-	const one = f(strOneSrc);
-	const two = f(strTwoSrc);
-	const three = f(strThreeSrc);
+	// const one = f(strOneSrc);
+	// const two = f(strTwoSrc);
+	// const three = f(strThreeSrc);
 
-	const oneActual = one.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, 10);
+	// const oneActual = one.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, 10);
+	const oneActual = fb(strOneSrc);
 	const strOneActual = oneActual.toString();
-	const twoActual = two.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, 10);
+	// const twoActual = two.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, 10);
+	const twoActual = fb(strTwoSrc);
 	const strTwoActual = twoActual.toString();
-	const threeActual = three.betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		10
-	);
+	// const threeActual = three.betaReduce(
+	// 	BetaReductionStrategy.CallByName,
+	// 	generateNewVariableName,
+	// 	10
+	// );
+	const threeActual = fb(strThreeSrc);
 	const strThreeActual = threeActual.toString();
 
 	// Assert
@@ -261,17 +284,51 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 test('LambdaCalculus Church Numerals Predecessor Test 1', () => {
 	expect(0).toBe(0);
 
+	// Arrange
+
 	// We add a Church encoding for an operation that computes the predecessor of a Church numeral n:
 	//
-	// PRED = λn.λf.λx.(((nλg.λh.(h(gf)))λu.x)λu.u)
+	const strPred = 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)';
+
+	const strZero = 'λf.λx.x';
+	const strOne = 'λf.λx.(f x)';
+	const strTwo = 'λf.λx.(f (f x))';
+	const strThree = 'λf.λx.(f (f (f x)))';
+
+	// const generateNewVariableName = createVariableNameGenerator();
+	const f = getParseFunction();
+	// const maxBetaReductionDepth = 10;
+	// const fb = (s: string): ILCExpression => f(s).betaReduce(
+	// 	BetaReductionStrategy.CallByName,
+	// 	generateNewVariableName,
+	// 	maxBetaReductionDepth
+	// );
+	const fb = getfb(f);
+
+	// Act
+	const zeroExpected = f(strZero);
+	const oneExpected = f(strOne);
+	const twoExpected = f(strTwo);
+
+	const twoActual = fb(`(${strPred} ${strThree})`);
+	const oneActual = fb(`(${strPred} ${strTwo})`);
+	const zeroActual = fb(`(${strPred} ${strOne})`);
+
+	// Assert
+	expect(areIsomorphic(twoActual, twoExpected)).toBe(true);
+	expect(areIsomorphic(oneActual, oneExpected)).toBe(true);
+	expect(areIsomorphic(zeroActual, zeroExpected)).toBe(true);
 });
 
 test('LambdaCalculus Church Numerals And Test 1', () => {
 	expect(0).toBe(0);
 
-	// AND = λp.λq.((p q) FALSE)
-
+	// Arrange
+	const strTrue = 'λx.λy.x';
 	const strFalse = 'λx.λy.y';
+
+	// AND = λp.λq.((p q) FALSE)
+	const strAnd = `λp.λq.((p q) ${strFalse})`;
 });
 
 test('LambdaCalculus Church Numerals Or Test 1', () => {
@@ -316,26 +373,15 @@ test('LambdaCalculus Church Numerals isZero Test 1', () => {
 	const strTwo = 'λf.λx.(f (f x))';
 
 	const f = getParseFunction();
-	const generateNewVariableName = createVariableNameGenerator();
+	// const generateNewVariableName = createVariableNameGenerator();
+	const fb = getfb(f);
 
 	// Act
 	const tt = f(strTrue);
 	const ff = f(strFalse);
-	const exprIsZeroZero = f(`(${strIsZero} ${strZero})`).betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		10
-	);
-	const exprIsOneZero = f(`(${strIsZero} ${strOne})`).betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		10
-	);
-	const exprIsTwoZero = f(`(${strIsZero} ${strTwo})`).betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		10
-	);
+	const exprIsZeroZero = fb(`(${strIsZero} ${strZero})`);
+	const exprIsOneZero = fb(`(${strIsZero} ${strOne})`);
+	const exprIsTwoZero = fb(`(${strIsZero} ${strTwo})`);
 
 	console.log(`exprIsZeroZero: ${exprIsZeroZero}`);
 	console.log(`exprIsOneZero: ${exprIsOneZero}`);
@@ -349,8 +395,6 @@ test('LambdaCalculus Church Numerals isZero Test 1', () => {
 
 	console.log(`exprIsZeroZero.unify(TRUE): ${s1}`);
 	console.log(`exprIsZeroZero.unify(FALSE): ${s2}`);
-
-	// BUG in unify() : λv1.λy.v1 unify λx.λy.x = [] ???
 
 	// Assert
 	expect(exprIsZeroZero.isIsomorphicTo(tt)).toBe(true);
