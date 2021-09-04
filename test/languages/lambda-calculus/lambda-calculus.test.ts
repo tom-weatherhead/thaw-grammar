@@ -388,27 +388,56 @@ test('LambdaCalculus Church Numerals Or Test 1', () => {
 	const strTrue = 'λx.λy.x';
 });
 
-test('LambdaCalculus Church Numerals Multiplication Test 1', () => {
-	expect(0).toBe(0);
+test('LambdaCalculus Church Numerals Addition Test 1', () => {
+	// Addition and multiplication can be encoded as curried functions:
+	//
+	// PLUS = λm.λn.λf.λx.((n f) ((m f) x))
 
-	// MULT = λm.λn.λf.(m(nf))
+	// Arrange
+	const strTwo = 'λf.λx.(f (f x))';
+	const strThree = 'λf.λx.(f (f (f x)))';
+	const strFive = 'λf.λx.(f (f (f (f (f x)))))';
+
+	const strPlus = 'λm.λn.λf.λx.((n f) ((m f) x))';
+
+	const f = getParseFunction();
+	const fb = getfb(f);
+
+	const expectedResult = f(strFive);
+
+	// Act
+	const actualResult = fb(`((${strPlus} ${strTwo}) ${strThree})`);
+
+	// Assert
+	expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
+});
+
+test('LambdaCalculus Church Numerals Multiplication Test 1', () => {
+	// MULT = λm.λn.λf.(m (n f))
+
+	// Arrange
+	const strTwo = 'λf.λx.(f (f x))';
+	const strThree = 'λf.λx.(f (f (f x)))';
+	const strSix = 'λf.λx.(f (f (f (f (f (f x))))))';
+
+	const strMult = 'λm.λn.λf.(m (n f))';
+
+	const f = getParseFunction();
+	const fb = getfb(f);
+
+	const expectedResult = f(strSix);
+
+	// Act
+	const actualResult = fb(`((${strMult} ${strTwo}) ${strThree})`);
+
+	// Assert
+	expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
 });
 
 test('LambdaCalculus Church Numerals isZero Test 1', () => {
-	expect(0).toBe(0);
-
 	// And finally, we add an operation to test for zero, which can be used in the if-then-else you identified in the previous practice problem (see above).
 	//
 	// ISZERO = λn.((n λx.FALSE) TRUE)
-
-	// const f = getParseFunction();
-	//
-	// const expr = f('(λx.x y)');
-	// const reducedExpr = expr.betaReduce(
-	// 	BetaReductionStrategy.CallByName,
-	// 	generateNewVariableName,
-	// 	10
-	// );
 
 	// Arrange
 	const strTrue = 'λx.λy.x';
@@ -420,7 +449,6 @@ test('LambdaCalculus Church Numerals isZero Test 1', () => {
 	const strTwo = 'λf.λx.(f (f x))';
 
 	const f = getParseFunction();
-	// const generateNewVariableName = createVariableNameGenerator();
 	const fb = getfb(f);
 
 	// Act
@@ -429,19 +457,6 @@ test('LambdaCalculus Church Numerals isZero Test 1', () => {
 	const exprIsZeroZero = fb(`(${strIsZero} ${strZero})`);
 	const exprIsOneZero = fb(`(${strIsZero} ${strOne})`);
 	const exprIsTwoZero = fb(`(${strIsZero} ${strTwo})`);
-
-	// console.log(`exprIsZeroZero: ${exprIsZeroZero}`);
-	// console.log(`exprIsOneZero: ${exprIsOneZero}`);
-	// console.log(`exprIsTwoZero: ${exprIsTwoZero}`);
-	//
-	// console.log(`TRUE: ${tt}`);
-	// console.log(`FALSE: ${ff}`);
-	//
-	// const s1 = exprIsZeroZero.unify(tt);
-	// const s2 = exprIsZeroZero.unify(ff);
-
-	// console.log(`exprIsZeroZero.unify(TRUE): ${s1}`);
-	// console.log(`exprIsZeroZero.unify(FALSE): ${s2}`);
 
 	// Assert
 	expect(exprIsZeroZero.isIsomorphicTo(tt)).toBe(true);
