@@ -52,8 +52,15 @@ import {
 	areIsomorphic,
 	BetaReductionStrategy,
 	createGrammar,
+	// createMapOfLCExprNamesToExprs,
+	createVariableNameGenerator,
+	// getfb1,
+	// getfb2,
+	// getParseFunction,
 	ILCExpression,
 	ILCVariable
+	// , mapCombinatorNamesToStrings
+	// , mapLCExprNamesToStrings
 } from '../../..';
 
 const ls = LanguageSelector.LambdaCalculus;
@@ -110,11 +117,11 @@ test('LambdaCalculus parse test', () => {
 	expect(f('(λx.x y)')).toBeTruthy();
 });
 
-function createVariableNameGenerator(): () => string {
-	let n = 0;
-
-	return () => `v${++n}`;
-}
+// function createVariableNameGenerator(): () => string {
+// 	let n = 0;
+//
+// 	return () => `v${++n}`;
+// }
 
 function getfb(fparam?: (str: string) => ILCExpression): (s: string) => ILCExpression {
 	const generateNewVariableName = createVariableNameGenerator();

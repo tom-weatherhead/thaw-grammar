@@ -15,8 +15,20 @@ import {
 	LCFunctionCall,
 	LCIntegerLiteral,
 	LCLambdaExpression,
-	LCPrimitiveOperator
+	LCPrimitiveOperator,
+	mapCombinatorNamesToStrings
 } from '../../..';
+
+// import {
+// 	areIsomorphic,
+// 	// createMapOfLCExprNamesToExprs,
+// 	createVariableNameGenerator,
+// 	// getfb1,
+// 	// getfb2,
+// 	// getParseFunction,
+// 	ILCVariable
+// 	// , mapLCExprNamesToStrings
+// } from '../../..';
 
 import { createParser, SyntaxException } from 'thaw-parser';
 
@@ -28,7 +40,8 @@ const strFalse = 'λx.λy.y';
 const strCombinatorI = 'λx.x';
 const strCombinatorK = 'λx.λy.x';
 const strCombinatorS = 'λx.λy.λz.((x z) (y z))';
-const strCombinatorY = 'λg.(λx.(g (x x)) λx.(g (x x)))';
+// const strCombinatorY = 'λg.(λx.(g (x x)) λx.(g (x x)))';
+const strCombinatorY = mapCombinatorNamesToStrings.get('Y');
 
 test('LambdaCalculusIntegerExtensionGrammar instance creation test', () => {
 	// Arrange
@@ -76,7 +89,11 @@ test('LambdaCalculusIntegerExtensionGrammar recognize test', () => {
 	f(strCombinatorI);
 	f(strCombinatorK);
 	f(strCombinatorS);
-	f(strCombinatorY);
+	expect(strCombinatorY).toBeDefined();
+
+	if (typeof strCombinatorY !== 'undefined') {
+		f(strCombinatorY);
+	}
 });
 
 function getParseFunction(): (str: string) => ILCExpression {
@@ -308,6 +325,12 @@ function yCombinatorPretest1ReducerLauncher(n: number): LCIntegerLiteral {
 
 	const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
 
+	expect(strCombinatorY).toBeDefined();
+
+	if (typeof strCombinatorY === 'undefined') {
+		throw new Error('strCombinatorY is undefined');
+	}
+
 	const strFactorial1 = `((${strCombinatorY} ${strG}) ${n})`;
 
 	const actualResult1 = f(strFactorial1);
@@ -346,6 +369,12 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 1', () => {
 
 	const n = 5;
 	const nFactorial = 120;
+
+	expect(strCombinatorY).toBeDefined();
+
+	if (typeof strCombinatorY === 'undefined') {
+		throw new Error('strCombinatorY is undefined');
+	}
 
 	const strFactorial1 = `((${strCombinatorY} ${strG}) ${n})`;
 
