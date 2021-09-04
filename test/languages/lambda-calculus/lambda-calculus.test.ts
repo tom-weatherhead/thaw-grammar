@@ -140,19 +140,9 @@ test('LambdaCalculus Variable Name Generator test', () => {
 
 test('LambdaCalculus beta-reduction test 1', () => {
 	// Arrange
-	// const generateNewVariableName = createVariableNameGenerator();
-	// const f = getParseFunction();
 	const fb = getfb();
-
-	// const expr = f('(λx.x y)');
-	// const reducedExpr = expr.betaReduce(
-	// 	BetaReductionStrategy.CallByName,
-	// 	generateNewVariableName,
-	// 	10
-	// );
 	const reducedExpr = fb('(λx.x y)');
 
-	// expect(expr).toBeTruthy();
 	expect(reducedExpr).toBeTruthy();
 
 	const variableName = (reducedExpr as ILCVariable).name;
@@ -163,19 +153,7 @@ test('LambdaCalculus beta-reduction test 1', () => {
 
 test('LambdaCalculus beta-reduction test 2', () => {
 	// Arrange
-	// const generateNewVariableName = createVariableNameGenerator();
-	// const f = getParseFunction();
 	const fb = getfb();
-
-	// const expr = f('(λf.λx.x g)');
-	//
-	// expect(expr).toBeTruthy();
-	//
-	// const reducedExpr = expr.betaReduce(
-	// 	BetaReductionStrategy.CallByName,
-	// 	generateNewVariableName,
-	// 	10
-	// );
 	const reducedExpr = fb('(λf.λx.x g)');
 
 	expect(reducedExpr).toBeTruthy();
@@ -184,19 +162,7 @@ test('LambdaCalculus beta-reduction test 2', () => {
 
 test('LambdaCalculus beta-reduction test 3', () => {
 	// Arrange
-	// const generateNewVariableName = createVariableNameGenerator();
-	// const f = getParseFunction();
 	const fb = getfb();
-
-	// const expr = f('((λf.λx.x g) h)');
-	//
-	// expect(expr).toBeTruthy();
-	//
-	// const reducedExpr = expr.betaReduce(
-	// 	BetaReductionStrategy.CallByName,
-	// 	generateNewVariableName,
-	// 	10
-	// );
 	const reducedExpr = fb('((λf.λx.x g) h)');
 
 	expect(reducedExpr).toBeTruthy();
@@ -224,8 +190,6 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 	// Arrange
 
 	// To encode the non-negative integers, Church used the following encoding:
-
-	// ZERO = λf.λ x.x
 	const strZero = 'λf.λx.x';
 
 	// A successor function SUCC = λn.λf.λx.(f((nf)x))
@@ -242,33 +206,17 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 	const strTwoSrc = `(${strSucc} ${strOneExpected1})`;
 
 	// THREE = (SUCC TWO) = λf.λ x.(f(f(fx)))
-	// const strThreeExpected1 = 'λf.λx.(f (f (f x)))';
 	const strThreeExpected = 'λv5.λv6.(v5 (v5 (v5 v6)))';
 	const strThreeSrc = `(${strSucc} ${strTwoExpected1})`;
 
-	// const generateNewVariableName = createVariableNameGenerator();
 	const f = getParseFunction();
 	const fb = getfb(f);
 
 	// Act
-
-	// const zero = f(strZero);
-	// const succ = f(strSucc);
-	// const one = f(strOneSrc);
-	// const two = f(strTwoSrc);
-	// const three = f(strThreeSrc);
-
-	// const oneActual = one.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, 10);
 	const oneActual = fb(strOneSrc);
 	const strOneActual = oneActual.toString();
-	// const twoActual = two.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, 10);
 	const twoActual = fb(strTwoSrc);
 	const strTwoActual = twoActual.toString();
-	// const threeActual = three.betaReduce(
-	// 	BetaReductionStrategy.CallByName,
-	// 	generateNewVariableName,
-	// 	10
-	// );
 	const threeActual = fb(strThreeSrc);
 	const strThreeActual = threeActual.toString();
 
@@ -283,12 +231,9 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 });
 
 test('LambdaCalculus Church Numerals Predecessor Test 1', () => {
-	expect(0).toBe(0);
-
 	// Arrange
 
 	// We add a Church encoding for an operation that computes the predecessor of a Church numeral n:
-	//
 	const strPred = 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)';
 
 	const strZero = 'λf.λx.x';
@@ -296,14 +241,7 @@ test('LambdaCalculus Church Numerals Predecessor Test 1', () => {
 	const strTwo = 'λf.λx.(f (f x))';
 	const strThree = 'λf.λx.(f (f (f x)))';
 
-	// const generateNewVariableName = createVariableNameGenerator();
 	const f = getParseFunction();
-	// const maxBetaReductionDepth = 10;
-	// const fb = (s: string): ILCExpression => f(s).betaReduce(
-	// 	BetaReductionStrategy.CallByName,
-	// 	generateNewVariableName,
-	// 	maxBetaReductionDepth
-	// );
 	const fb = getfb(f);
 
 	// Act
@@ -322,8 +260,6 @@ test('LambdaCalculus Church Numerals Predecessor Test 1', () => {
 });
 
 test('LambdaCalculus Church Numerals And Test 1', () => {
-	expect(0).toBe(0);
-
 	// Arrange
 	const strTrue = 'λx.λy.x';
 	const strFalse = 'λx.λy.y';
@@ -345,12 +281,12 @@ test('LambdaCalculus Church Numerals And Test 1', () => {
 
 	// Assert
 
-	console.log(`ff is ${ff}`);
-	console.log(`tt is ${tt}`);
-
-	const u1 = ff.unify(tt);
-
-	console.log(`ff.unify(tt) is ${u1}`);
+	// console.log(`ff is ${ff}`);
+	// console.log(`tt is ${tt}`);
+	//
+	// const u1 = ff.unify(tt);
+	//
+	// console.log(`ff.unify(tt) is ${u1}`);
 
 	// ff is λx.λy.y
 	// tt is λx.λy.x
@@ -360,8 +296,8 @@ test('LambdaCalculus Church Numerals And Test 1', () => {
 	// We need to expand our 'occurs' check to check both entire expressions,
 	// not just the parts of the two expressions that have not yet been unified.
 
-	expect(areIsomorphic(ff, tt)).toBe(false);	// Fails. TODO: Debug.
-	expect(areIsomorphic(tt, ff)).toBe(false);	// Fails. TODO: Debug.
+	expect(areIsomorphic(ff, tt)).toBe(false);
+	expect(areIsomorphic(tt, ff)).toBe(false);
 	expect(areIsomorphic(ff, ff)).toBe(true);
 	expect(areIsomorphic(tt, tt)).toBe(true);
 
@@ -372,20 +308,70 @@ test('LambdaCalculus Church Numerals And Test 1', () => {
 	expect(areIsomorphic(fAndt, tt)).toBe(false);
 
 	expect(areIsomorphic(tAndf, ff)).toBe(true);
-	expect(areIsomorphic(tAndf, tt)).toBe(false);	// Fails. TODO: Debug.
+	expect(areIsomorphic(tAndf, tt)).toBe(false);
 
-	expect(areIsomorphic(tAndt, ff)).toBe(false);	// Fails. TODO: Debug.
+	expect(areIsomorphic(tAndt, ff)).toBe(false);
 	expect(areIsomorphic(tAndt, tt)).toBe(true);
 });
 
 test('LambdaCalculus Church Numerals Or Test 1', () => {
 	expect(0).toBe(0);
 
-	// IF = λb.λx.λy.((b x) y)
-	//
-	// OR = λp.λq.(((IF p) TRUE) q)
-
+	// Arrange
 	const strTrue = 'λx.λy.x';
+	const strFalse = 'λx.λy.y';
+
+	// IF = λb.λx.λy.((b x) y)
+	const strIf = 'λb.λx.λy.((b x) y)';
+
+	// OR = λp.λq.(((IF p) TRUE) q)
+	const strOr = `λp.λq.(((${strIf} p) ${strTrue}) q)`;
+
+	const f = getParseFunction();
+	const fb = getfb(f);
+
+	const tt = f(strTrue);
+	const ff = f(strFalse);
+
+	// Act
+	const fOrf = fb(`((${strOr} ${strFalse}) ${strFalse})`);
+	const fOrt = fb(`((${strOr} ${strFalse}) ${strTrue})`);
+	const tOrf = fb(`((${strOr} ${strTrue}) ${strFalse})`);
+	const tOrt = fb(`((${strOr} ${strTrue}) ${strTrue})`);
+
+	// Assert
+
+	// console.log(`ff is ${ff}`);
+	// console.log(`tt is ${tt}`);
+	//
+	// const u1 = ff.unify(tt);
+	//
+	// console.log(`ff.unify(tt) is ${u1}`);
+
+	// ff is λx.λy.y
+	// tt is λx.λy.x
+	// ff.unify(tt) is [y -> x]
+	// WRONG: We cannot replace y with x in either λx.λy.y or λx.λy.x because
+	// x already occurs in each.
+	// We need to expand our 'occurs' check to check both entire expressions,
+	// not just the parts of the two expressions that have not yet been unified.
+
+	expect(areIsomorphic(ff, tt)).toBe(false);
+	expect(areIsomorphic(tt, ff)).toBe(false);
+	expect(areIsomorphic(ff, ff)).toBe(true);
+	expect(areIsomorphic(tt, tt)).toBe(true);
+
+	expect(areIsomorphic(fOrf, ff)).toBe(true);
+	expect(areIsomorphic(fOrf, tt)).toBe(false);
+
+	expect(areIsomorphic(fOrt, ff)).toBe(false);
+	expect(areIsomorphic(fOrt, tt)).toBe(true);
+
+	expect(areIsomorphic(tOrf, ff)).toBe(false);
+	expect(areIsomorphic(tOrf, tt)).toBe(true);
+
+	expect(areIsomorphic(tOrt, ff)).toBe(false);
+	expect(areIsomorphic(tOrt, tt)).toBe(true);
 });
 
 test('LambdaCalculus Church Numerals Addition Test 1', () => {

@@ -65,6 +65,8 @@ export {
 } from './languages/prolog/domain-object-model/interfaces/ivariable';
 
 // The Lambda Calculus
+export * from './languages/lambda-calculus/utilities';
+
 export * from './languages/lambda-calculus/domain-object-model/interfaces/expression';
 
 export * from './languages/lambda-calculus/domain-object-model/call';
