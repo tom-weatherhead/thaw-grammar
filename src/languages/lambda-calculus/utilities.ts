@@ -1,5 +1,11 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/utilities.ts
 
+import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
+
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
+import { BetaReductionStrategy, ILCExpression } from './domain-object-model/interfaces/expression';
+
 const strTrue = 'λx.λy.x';
 const strFalse = 'λx.λy.y';
 
@@ -33,7 +39,64 @@ mapLCExprNamesToStrings.set('add', 'λm.λn.λf.λx.((n f) ((m f) x))');
 mapLCExprNamesToStrings.set('multiply', 'λm.λn.λf.(m (n f))');
 // mapLCExprNamesToStrings.set('', '');
 
-// export const mapCombinatorNamesToStrings = new Map<string, string>();
-//
-// mapCombinatorNamesToStrings.set('I', 'λx.x');
+export const mapCombinatorNamesToStrings = new Map<string, string>();
+
+mapCombinatorNamesToStrings.set('I', 'λx.x');
+mapCombinatorNamesToStrings.set('K', 'λx.λy.x'); // === strTrue
+mapCombinatorNamesToStrings.set('S', 'λa.λb.λc.((a c) (b c))');
+// Y is a fixed-point combinator; it is used to implement recursion.
+mapCombinatorNamesToStrings.set('Y', 'λa.(λb.(a (b b)) λb.(a (b b)))');
 // mapCombinatorNamesToStrings.set('', '');
+
+// const ls = LanguageSelector.LambdaCalculus;
+
+export function getParseFunction(
+	tokenizer: ITokenizer,
+	parser: IParser
+): (str: string) => ILCExpression {
+	// const grammar = createGrammar(ls);
+	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	// const parser = createParser(ParserSelector.LL1, grammar);
+
+	return (str: string) => parser.parse(tokenizer.tokenize(str)) as ILCExpression;
+}
+
+export function createVariableNameGenerator(): () => string {
+	let n = 0;
+
+	return () => `v${++n}`;
+}
+
+export function getfb1(
+	f: (str: string) => ILCExpression,
+	options: {
+		readonly maxBetaReductionDepth?: number;
+		readonly betaReductionStrategy?: BetaReductionStrategy;
+	} = {}
+): (s: string) => ILCExpression {
+	const generateNewVariableName = createVariableNameGenerator();
+	const fb = (s: string): ILCExpression =>
+		f(s).betaReduce(
+			ifDefinedThenElse(options.betaReductionStrategy, BetaReductionStrategy.CallByName),
+			generateNewVariableName,
+			ifDefinedThenElse(options.maxBetaReductionDepth, 10)
+		);
+
+	return fb;
+}
+
+export function getfb2(tokenizer: ITokenizer, parser: IParser): (s: string) => ILCExpression {
+	return getfb1(getParseFunction(tokenizer, parser));
+}
+
+export function createMapOfLCExprNamesToExprs(
+	fb: (s: string) => ILCExpression
+): Map<string, ILCExpression> {
+	const mapLCExprNamesToExprs = new Map<string, ILCExpression>();
+
+	for (const [key, value] of Object.entries(mapLCExprNamesToStrings)) {
+		mapLCExprNamesToExprs.set(key, fb(value));
+	}
+
+	return mapLCExprNamesToExprs;
+}
