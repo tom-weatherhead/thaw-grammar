@@ -55,7 +55,7 @@ export class LCPrimitiveOperator implements ILCExpression {
 	}
 
 	public toString(): string {
-		return `[${this.name} ${this.leftChild} ${this.rightChild}]`;
+		return `(${this.name} ${this.leftChild} ${this.rightChild})`;
 	}
 
 	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
@@ -160,7 +160,12 @@ export class LCPrimitiveOperator implements ILCExpression {
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression {
-		return this;
+		// return this;
+
+		const l = this.leftChild.betaReduce(strategy, generateNewVariableName, maxDepth - 1);
+		const r = this.rightChild.betaReduce(strategy, generateNewVariableName, maxDepth - 1);
+
+		return new LCPrimitiveOperator(this.name, l, r).deltaReduce();
 	}
 
 	// Delta-reduction? See Kamin p. 194.

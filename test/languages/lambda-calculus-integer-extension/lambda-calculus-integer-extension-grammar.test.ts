@@ -9,6 +9,7 @@ import { createTokenizer } from 'thaw-lexical-analyzer';
 import {
 	BetaReductionStrategy,
 	createGrammar,
+	getfb2,
 	ILCExpression,
 	isLCIntegerLiteral,
 	// isLCPrimitiveOperator,
@@ -16,7 +17,8 @@ import {
 	LCIntegerLiteral,
 	LCLambdaExpression,
 	LCPrimitiveOperator,
-	mapCombinatorNamesToStrings
+	mapCombinatorNamesToStrings,
+	mapLCExprNamesToStrings
 } from '../../..';
 
 // import {
@@ -55,7 +57,6 @@ test('LambdaCalculusIntegerExtensionGrammar instance creation test', () => {
 test('LambdaCalculusIntegerExtensionGrammar recognize test', () => {
 	// Arrange
 	const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
 	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
 	const parser = createParser(ParserSelector.LL1, grammar);
 
@@ -453,58 +454,23 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 2', () => {
 	expect((actualResult5 as LCIntegerLiteral).value).toBe(120);
 });
 
-// test('LambdaCalculusIntegerExtensionGrammar Y combinator full test', () => {
-// 	const f = getParseFunction();
-// 	const variableNameGenerator = createVariableNameGenerator();
-//
-// 	const strG = 'λr.λn.if [= n 0] 1 [* n (r [- n 1])]';
-//
-// 	expect(f(strG)).toBeTruthy();
-//
-// 	const strFactorial0 = `((${strCombinatorY} ${strG}) 0)`;
-// 	const strFactorial1 = `((${strCombinatorY} ${strG}) 1)`;
-// 	const strFactorial5 = `((${strCombinatorY} ${strG}) 5)`;
-//
-// 	const actualResult0 = f(strFactorial0).betaReduce(
-// 		BetaReductionStrategy.CallByName,
-// 		variableNameGenerator,
-// 		10
-// 	);
-// 	const actualResult1 = f(strFactorial1).betaReduce(
-// 		BetaReductionStrategy.CallByName,
-// 		variableNameGenerator,
-// 		10
-// 	);
-// 	const actualResult5 = f(strFactorial5).betaReduce(
-// 		BetaReductionStrategy.CallByName,
-// 		variableNameGenerator,
-// 		10
-// 	);
-//
-// 	console.log(
-// 		`LambdaCalculusIntegerExtensionGrammar Y combinator test : actualResult0 is ${actualResult0};`,
-// 		actualResult0
-// 	);
-//
-// 	console.log(
-// 		`LambdaCalculusIntegerExtensionGrammar Y combinator test : actualResult1 is ${actualResult1};`,
-// 		actualResult1
-// 	);
-//
-// 	console.log(
-// 		`LambdaCalculusIntegerExtensionGrammar Y combinator test : actualResult5 is ${actualResult5};`,
-// 		actualResult5
-// 	);
-//
-// 	expect(actualResult0).toBeTruthy();
-// 	expect(isLCIntegerLiteral(actualResult0)).toBeTruthy();
-// 	expect((actualResult0 as LCIntegerLiteral).value).toBe(1);
-//
-// 	expect(actualResult1).toBeTruthy();
-// 	// expect(isLCIntegerLiteral(actualResult1)).toBeTruthy();
-// 	// expect((actualResult1 as LCIntegerLiteral).value).toBe(1);
-//
-// 	expect(actualResult5).toBeTruthy();
-// 	// expect(isLCIntegerLiteral(actualResult5)).toBeTruthy();
-// 	// expect((actualResult5 as LCIntegerLiteral).value).toBe(120);
-// });
+test('LambdaCalculusIntegerExtensionGrammar Church numerals x 10 test', () => {
+	const limit = 10;
+	const grammar = createGrammar(ls);
+	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	const parser = createParser(ParserSelector.LL1, grammar);
+	const fb = getfb2(tokenizer, parser, { maxBetaReductionDepth: limit + 3 });
+
+	for (let i = 0; i < limit; i++) {
+		const expectedResult = i;
+		const iChurchExpr = mapLCExprNamesToStrings.get(`${i}`);
+		const iChurchExprAsInt = `((${iChurchExpr} λn.(+ n 1)) 0)`;
+		const actualResult = fb(iChurchExprAsInt);
+
+		console.log(`${i}: ${iChurchExpr} -> ${actualResult}`);
+
+		expect(actualResult).toBeTruthy();
+		expect(isLCIntegerLiteral(actualResult)).toBeTruthy();
+		expect((actualResult as LCIntegerLiteral).value).toBe(expectedResult);
+	}
+});

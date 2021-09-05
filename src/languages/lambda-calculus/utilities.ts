@@ -85,8 +85,15 @@ export function getfb1(
 	return fb;
 }
 
-export function getfb2(tokenizer: ITokenizer, parser: IParser): (s: string) => ILCExpression {
-	return getfb1(getParseFunction(tokenizer, parser));
+export function getfb2(
+	tokenizer: ITokenizer,
+	parser: IParser,
+	options: {
+		readonly maxBetaReductionDepth?: number;
+		readonly betaReductionStrategy?: BetaReductionStrategy;
+	} = {}
+): (s: string) => ILCExpression {
+	return getfb1(getParseFunction(tokenizer, parser), options);
 }
 
 export function createMapOfLCExprNamesToExprs(
