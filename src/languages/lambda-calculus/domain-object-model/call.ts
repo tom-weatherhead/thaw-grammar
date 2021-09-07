@@ -7,7 +7,7 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
-	ILCBetaReductionOptions,
+	// ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -330,7 +330,7 @@ export class LCFunctionCall implements ILCExpression {
 		// - Demonstrating Lambda Calculus Reduction : https://www.cs.cornell.edu/courses/cs6110/2014sp/Handouts/Sestoft.pdf
 		//
 		// 7 Reduction Strategies and Reduction Functions
-		// 7.x Call-by-Value Reduction...
+		// 7.3 Call-by-Value Reduction to Weak Normal Form
 		//
 		// In Standard ML: (?)
 		//
@@ -391,29 +391,18 @@ export class LCFunctionCall implements ILCExpression {
 			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
 	}
 
-	// private betaReduceCallByValue(
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression {
-	// 	if (maxDepth <= 0 || !isLCLambdaExpression(this.callee)) {
-	// 		return this;
-	// 	}
-	//
-	// 	const reducedArg = this.arg.betaReduce(
-	// 		BetaReductionStrategy.CallByValue,
-	// 		generateNewVariableName,
-	// 		maxDepth - 1
-	// 	);
-	//
-	// 	// Note here that the callee is not reduced before betaReduceCore is called.
-	// 	const result = this.betaReduceCore(this.callee, reducedArg, generateNewVariableName);
-	//
-	// 	return result.betaReduce(
-	// 		BetaReductionStrategy.CallByValue,
-	// 		generateNewVariableName,
-	// 		maxDepth - 1
-	// 	);
-	// }
+	// 7.4 Applicative Order Reduction to Normal Form
+	/// applicative - leftmost innermost; the most eager strategy; unfit for recursion combinators
+
+	// 7.5 Hybrid Applicative Order Reduction to Normal Form
+	/// hybrid applicative - a mix between `CBV` (call-by-value) and `APP` (applicative)
+	/// strategies; usually the fastest-reducing normalizing strategy
+
+	// 7.6 Head Spine Reduction to Head Normal Form
+	/// head spine - leftmost outermost, abstractions reduced only in head position
+
+	// 7.7 Hybrid Normal Order Reduction to Normal Form
+	/// hybrid normal - a mix between `HSP` (head spine) and `NOR` (normal) strategies
 
 	public betaReduce(
 		strategy: BetaReductionStrategy,
@@ -437,52 +426,52 @@ export class LCFunctionCall implements ILCExpression {
 		}
 	}
 
-	public betaReduceV2(
-		options: ILCBetaReductionOptions,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
-		if (maxDepth <= 0) {
-			return this;
-		}
-
-		// const callee: ILCExpression = this.callee;
-
-		if (!options.reduceChildrenBeforeParents && isLCLambdaExpression(this.callee)) {
-			// Reduce parent before child(ren). Callee is a Lambda expression.
-			return this.betaReduceCore(this.callee, this.arg, generateNewVariableName);
-		}
-
-		// Reduce child(ren)
-		let reducedLeftChild = this.callee;
-		let reducedRightChild = this.arg;
-
-		if (options.reduceLeftmostChildFirst || options.reduceRecessiveChild) {
-			reducedLeftChild = reducedLeftChild.betaReduceV2(
-				options,
-				generateNewVariableName,
-				maxDepth - 1
-			);
-		}
-
-		if (!options.reduceLeftmostChildFirst || options.reduceRecessiveChild) {
-			reducedRightChild = reducedLeftChild.betaReduceV2(
-				options,
-				generateNewVariableName,
-				maxDepth - 1
-			);
-		}
-
-		const reducedCall = new LCFunctionCall(reducedLeftChild, reducedRightChild);
-
-		if (options.reduceChildrenBeforeParents && options.reduceRecessiveParentOrChild) {
-			// Reduce parent after child(ren).
-			// TODO: Should we call betaReduceCore (as above) instead of betaReduceV2 (as below)?
-			return reducedCall.betaReduceV2(options, generateNewVariableName, maxDepth - 1);
-		}
-
-		return this;
-	}
+	// public betaReduceV2(
+	// 	options: ILCBetaReductionOptions,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression {
+	// 	if (maxDepth <= 0) {
+	// 		return this;
+	// 	}
+	//
+	// 	// const callee: ILCExpression = this.callee;
+	//
+	// 	if (!options.reduceChildrenBeforeParents && isLCLambdaExpression(this.callee)) {
+	// 		// Reduce parent before child(ren). Callee is a Lambda expression.
+	// 		return this.betaReduceCore(this.callee, this.arg, generateNewVariableName);
+	// 	}
+	//
+	// 	// Reduce child(ren)
+	// 	let reducedLeftChild = this.callee;
+	// 	let reducedRightChild = this.arg;
+	//
+	// 	if (options.reduceLeftmostChildFirst || options.reduceRecessiveChild) {
+	// 		reducedLeftChild = reducedLeftChild.betaReduceV2(
+	// 			options,
+	// 			generateNewVariableName,
+	// 			maxDepth - 1
+	// 		);
+	// 	}
+	//
+	// 	if (!options.reduceLeftmostChildFirst || options.reduceRecessiveChild) {
+	// 		reducedRightChild = reducedLeftChild.betaReduceV2(
+	// 			options,
+	// 			generateNewVariableName,
+	// 			maxDepth - 1
+	// 		);
+	// 	}
+	//
+	// 	const reducedCall = new LCFunctionCall(reducedLeftChild, reducedRightChild);
+	//
+	// 	if (options.reduceChildrenBeforeParents && options.reduceRecessiveParentOrChild) {
+	// 		// Reduce parent after child(ren).
+	// 		// TODO: Should we call betaReduceCore (as above) instead of betaReduceV2 (as below)?
+	// 		return reducedCall.betaReduceV2(options, generateNewVariableName, maxDepth - 1);
+	// 	}
+	//
+	// 	return this;
+	// }
 
 	public deltaReduce(): ILCExpression {
 		return new LCFunctionCall(this.callee.deltaReduce(), this.arg.deltaReduce());

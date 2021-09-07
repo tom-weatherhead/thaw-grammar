@@ -44,13 +44,13 @@ export interface IUnifiable<T> extends ISubstitutable<T> {
 
 export type ILCUnifiable = IUnifiable<ILCExpression>;
 
-export interface ILCBetaReductionOptions {
-	readonly reduceLeftmostChildFirst: boolean;
-	readonly reduceRecessiveChild: boolean; // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
-
-	readonly reduceChildrenBeforeParents: boolean;
-	readonly reduceRecessiveParentOrChild: boolean; // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
-}
+// export interface ILCBetaReductionOptions {
+// 	readonly reduceLeftmostChildFirst: boolean;
+// 	readonly reduceRecessiveChild: boolean; // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
+//
+// 	readonly reduceChildrenBeforeParents: boolean;
+// 	readonly reduceRecessiveParentOrChild: boolean; // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
+// }
 
 // An LCExpressionMapKey is a reference to an expression value in the map.
 export type LCExpressionMapKey = number;
@@ -85,11 +85,11 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression;
-	betaReduceV2(
-		options: ILCBetaReductionOptions,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression;
+	// betaReduceV2(
+	// 	options: ILCBetaReductionOptions,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression;
 
 	// δ-reduction for extended Lambda calculus; e.g. ((+ 2) 3) δ-> 5
 	deltaReduce(): ILCExpression;

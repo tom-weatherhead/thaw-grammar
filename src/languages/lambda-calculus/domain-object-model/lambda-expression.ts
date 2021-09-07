@@ -5,7 +5,7 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
-	ILCBetaReductionOptions,
+	// ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -127,24 +127,24 @@ export class LCLambdaExpression implements ILCValue {
 		}
 	}
 
-	public betaReduceV2(
-		options: ILCBetaReductionOptions,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
-		if (maxDepth <= 0) {
-			return this;
-		}
-
-		if (options.reduceChildrenBeforeParents || !options.reduceRecessiveParentOrChild) {
-			return new LCLambdaExpression(
-				this.arg,
-				this.body.betaReduceV2(options, generateNewVariableName, maxDepth - 1)
-			);
-		} else {
-			return this;
-		}
-	}
+	// public betaReduceV2(
+	// 	options: ILCBetaReductionOptions,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression {
+	// 	if (maxDepth <= 0) {
+	// 		return this;
+	// 	}
+	//
+	// 	if (options.reduceChildrenBeforeParents || !options.reduceRecessiveParentOrChild) {
+	// 		return new LCLambdaExpression(
+	// 			this.arg,
+	// 			this.body.betaReduceV2(options, generateNewVariableName, maxDepth - 1)
+	// 		);
+	// 	} else {
+	// 		return this;
+	// 	}
+	// }
 
 	public deltaReduce(): ILCExpression {
 		return new LCLambdaExpression(this.arg, this.body.deltaReduce());

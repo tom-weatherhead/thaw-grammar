@@ -462,168 +462,168 @@ test('LambdaCalculus Church Numerals isZero Test 1', () => {
 	expect(exprIsTwoZero.isIsomorphicTo(ff)).toBe(true);
 });
 
-function intToBoolArray(n: number, minResultLength = 4): boolean[] {
-	if (Number.isNaN(n) || n < 0 || Math.round(n) !== n) {
-		throw new Error(`intToBoolArray(n) : Bad n ${n}`);
-	}
-
-	let i = 0;
-	let twoToThePowerOfi = 2;
-	const result: boolean[] = [];
-
-	while (n > 0 || i < minResultLength) {
-		const remainder = n % twoToThePowerOfi;
-
-		result.push(remainder !== 0);
-		n -= remainder;
-		i++;
-		twoToThePowerOfi *= 2;
-	}
-
-	return result;
-}
-
-test('LambdaCalculusGrammar bit testing via modulus test 1', () => {
-	expect(intToBoolArray(0)).toStrictEqual([false, false, false, false]);
-	expect(intToBoolArray(1)).toStrictEqual([true, false, false, false]);
-	expect(intToBoolArray(2)).toStrictEqual([false, true, false, false]);
-	expect(intToBoolArray(3)).toStrictEqual([true, true, false, false]);
-	expect(intToBoolArray(4)).toStrictEqual([false, false, true, false]);
-	expect(intToBoolArray(5)).toStrictEqual([true, false, true, false]);
-	expect(intToBoolArray(6)).toStrictEqual([false, true, true, false]);
-	expect(intToBoolArray(7)).toStrictEqual([true, true, true, false]);
-	expect(intToBoolArray(8)).toStrictEqual([false, false, false, true]);
-	expect(intToBoolArray(15)).toStrictEqual([true, true, true, true]);
-});
-
-test('LambdaCalculusGrammar Y combinator test 1', () => {
-	// const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
-
-	// Rewrite strG as pure λ-calculus:
-
-	// Arrange
-	const f = getParseFunction();
-	const strTrue = 'λx.λy.x';
-	const strFalse = 'λx.λy.y';
-	const strIf = 'λb.λx.λy.((b x) y)';
-	const strOne = 'λf.λx.(f x)';
-	const strTwo = 'λf.λx.(f (f x))';
-	const strThree = 'λf.λx.(f (f (f x)))';
-	const strSix = 'λf.λx.(f (f (f (f (f (f x))))))';
-	const strIsZero = `λn.((n λx.${strFalse}) ${strTrue})`;
-	const strMult = 'λm.λn.λf.(m (n f))';
-	const strPredecessor = 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)';
-
-	const strG = `λr.λn.(((${strIf} (${strIsZero} n)) ${strOne}) ((${strMult} n) (r (${strPredecessor} n))))`;
-
-	const strYCombinator = 'λa.(λb.(a (b b)) λb.(a (b b)))';
-
-	// ((* 2) 3) is isomorphic to 6 via the CallByName strategy only:
-	// const expr = `((${strMult} ${strTwo}) ${strThree})`;
-
-	// This Y combinator test succeeds via the CallByName strategy only:
-	const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
-
-	// const expectedResult = strSix;
-
-	expect(f(expr)).toBeDefined();
-
-	// Act
-	// Beta-reduce, presumably. Using with strategy and max depth?
-	// const actualResult = expr.reduce(); // TODO: Try expr.betaReduceV2(...);
-
-	// With maxBetaReductionDepth = 100 :
-	// F F F F -> Terminates without fully reducing
-	// T F F F -> Terminates without fully reducing
-	// F T F F -> Terminates without fully reducing
-	// T T F F -> Terminates without fully reducing
-
-	// F T T T -> No
-	// T T T T -> No
-	const generateNewVariableName = createVariableNameGenerator();
-	const maxBetaReductionDepth = 100;
-
-	const expectedResult = f(strSix);
-
-	// console.log(`Y combinator test 1: expr before reduction is ${fexpr}`);
-	// console.log(`Y combinator test 1: expr.isBetaReducible() is ${fexpr.isBetaReducible()}`);
-
-	const successes: number[] = [];
-
-	for (let i = 0; i < 16; i++) {
-		const ba = intToBoolArray(i, 4);
-		const betaReductionOptions = {
-			reduceLeftmostChildFirst: ba[0],
-			reduceRecessiveChild: ba[1], // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
-			reduceChildrenBeforeParents: ba[2],
-			reduceRecessiveParentOrChild: ba[3] // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
-		};
-
-		const fexpr = f(expr);
-		const actualResult = fexpr.betaReduceV2(
-			betaReductionOptions,
-			generateNewVariableName,
-			maxBetaReductionDepth
-		);
-
-		// console.log(`Y combinator test 1: actualResult is ${actualResult}`);
-
-		const isSuccess = actualResult.isIsomorphicTo(expectedResult);
-
-		// console.log(`Y combinator test 1: actualResult is isomorphic to 6? ${isSuccess}`);
-
-		if (isSuccess) {
-			successes.push(i);
-		}
-	}
-
-	// if (
-	// 	f(expr)
-	// 		.betaReduce(
-	// 			BetaReductionStrategy.CallByName,
-	// 			generateNewVariableName,
-	// 			maxBetaReductionDepth
-	// 		)
-	// 		.isIsomorphicTo(expectedResult)
-	// ) {
-	// 	successes.push(101);
-	// }
-
-	// if (
-	// 	f(expr)
-	// 		.betaReduce(
-	// 			BetaReductionStrategy.NormalOrder,
-	// 			generateNewVariableName,
-	// 			maxBetaReductionDepth
-	// 		)
-	// 		.isIsomorphicTo(expectedResult)
-	// ) {
-	// 	successes.push(102);
-	// }
-
-	// if (
-	// 	f(expr)
-	// 		.betaReduce(
-	// 			BetaReductionStrategy.CallByValue,
-	// 			generateNewVariableName,
-	// 			maxBetaReductionDepth
-	// 		)
-	// 		.isIsomorphicTo(expectedResult)
-	// ) {
-	// 	successes.push(103);
-	// }
-
-	console.log('Y combinator test 1: successes:', successes);
-
-	// expect(successes.length > 0).toBe(true);
-	expect(successes.length).toBe(0);	// TODO: Find a strategy that works.
-
-	// Assert
-	// console.log(`strPredecessor is ${strPredecessor}`);
-	// expect(f(strPredecessor)).toBeDefined();
-	// console.log(`strG is ${strG}`);
-	// expect(f(strG)).toBeDefined();
-	// console.log(`expr is ${expr}`);
-
-	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
-});
+// function intToBoolArray(n: number, minResultLength = 4): boolean[] {
+// 	if (Number.isNaN(n) || n < 0 || Math.round(n) !== n) {
+// 		throw new Error(`intToBoolArray(n) : Bad n ${n}`);
+// 	}
+//
+// 	let i = 0;
+// 	let twoToThePowerOfi = 2;
+// 	const result: boolean[] = [];
+//
+// 	while (n > 0 || i < minResultLength) {
+// 		const remainder = n % twoToThePowerOfi;
+//
+// 		result.push(remainder !== 0);
+// 		n -= remainder;
+// 		i++;
+// 		twoToThePowerOfi *= 2;
+// 	}
+//
+// 	return result;
+// }
+//
+// test('LambdaCalculusGrammar bit testing via modulus test 1', () => {
+// 	expect(intToBoolArray(0)).toStrictEqual([false, false, false, false]);
+// 	expect(intToBoolArray(1)).toStrictEqual([true, false, false, false]);
+// 	expect(intToBoolArray(2)).toStrictEqual([false, true, false, false]);
+// 	expect(intToBoolArray(3)).toStrictEqual([true, true, false, false]);
+// 	expect(intToBoolArray(4)).toStrictEqual([false, false, true, false]);
+// 	expect(intToBoolArray(5)).toStrictEqual([true, false, true, false]);
+// 	expect(intToBoolArray(6)).toStrictEqual([false, true, true, false]);
+// 	expect(intToBoolArray(7)).toStrictEqual([true, true, true, false]);
+// 	expect(intToBoolArray(8)).toStrictEqual([false, false, false, true]);
+// 	expect(intToBoolArray(15)).toStrictEqual([true, true, true, true]);
+// });
+//
+// test('LambdaCalculusGrammar Y combinator test 1', () => {
+// 	// const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
+//
+// 	// Rewrite strG as pure λ-calculus:
+//
+// 	// Arrange
+// 	const f = getParseFunction();
+// 	const strTrue = 'λx.λy.x';
+// 	const strFalse = 'λx.λy.y';
+// 	const strIf = 'λb.λx.λy.((b x) y)';
+// 	const strOne = 'λf.λx.(f x)';
+// 	const strTwo = 'λf.λx.(f (f x))';
+// 	const strThree = 'λf.λx.(f (f (f x)))';
+// 	const strSix = 'λf.λx.(f (f (f (f (f (f x))))))';
+// 	const strIsZero = `λn.((n λx.${strFalse}) ${strTrue})`;
+// 	const strMult = 'λm.λn.λf.(m (n f))';
+// 	const strPredecessor = 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)';
+//
+// 	const strG = `λr.λn.(((${strIf} (${strIsZero} n)) ${strOne}) ((${strMult} n) (r (${strPredecessor} n))))`;
+//
+// 	const strYCombinator = 'λa.(λb.(a (b b)) λb.(a (b b)))';
+//
+// 	// ((* 2) 3) is isomorphic to 6 via the CallByName strategy only:
+// 	// const expr = `((${strMult} ${strTwo}) ${strThree})`;
+//
+// 	// This Y combinator test succeeds via the CallByName strategy only:
+// 	const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
+//
+// 	// const expectedResult = strSix;
+//
+// 	expect(f(expr)).toBeDefined();
+//
+// 	// Act
+// 	// Beta-reduce, presumably. Using with strategy and max depth?
+// 	// const actualResult = expr.reduce(); // TODO: Try expr.betaReduceV2(...);
+//
+// 	// With maxBetaReductionDepth = 100 :
+// 	// F F F F -> Terminates without fully reducing
+// 	// T F F F -> Terminates without fully reducing
+// 	// F T F F -> Terminates without fully reducing
+// 	// T T F F -> Terminates without fully reducing
+//
+// 	// F T T T -> No
+// 	// T T T T -> No
+// 	const generateNewVariableName = createVariableNameGenerator();
+// 	const maxBetaReductionDepth = 100;
+//
+// 	const expectedResult = f(strSix);
+//
+// 	// console.log(`Y combinator test 1: expr before reduction is ${fexpr}`);
+// 	// console.log(`Y combinator test 1: expr.isBetaReducible() is ${fexpr.isBetaReducible()}`);
+//
+// 	const successes: number[] = [];
+//
+// 	// for (let i = 0; i < 16; i++) {
+// 	// 	const ba = intToBoolArray(i, 4);
+// 	// 	const betaReductionOptions = {
+// 	// 		reduceLeftmostChildFirst: ba[0],
+// 	// 		reduceRecessiveChild: ba[1], // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
+// 	// 		reduceChildrenBeforeParents: ba[2],
+// 	// 		reduceRecessiveParentOrChild: ba[3] // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
+// 	// 	};
+// 	//
+// 	// 	const fexpr = f(expr);
+// 	// 	const actualResult = fexpr.betaReduceV2(
+// 	// 		betaReductionOptions,
+// 	// 		generateNewVariableName,
+// 	// 		maxBetaReductionDepth
+// 	// 	);
+// 	//
+// 	// 	// console.log(`Y combinator test 1: actualResult is ${actualResult}`);
+// 	//
+// 	// 	const isSuccess = actualResult.isIsomorphicTo(expectedResult);
+// 	//
+// 	// 	// console.log(`Y combinator test 1: actualResult is isomorphic to 6? ${isSuccess}`);
+// 	//
+// 	// 	if (isSuccess) {
+// 	// 		successes.push(i);
+// 	// 	}
+// 	// }
+//
+// 	// if (
+// 	// 	f(expr)
+// 	// 		.betaReduce(
+// 	// 			BetaReductionStrategy.CallByName,
+// 	// 			generateNewVariableName,
+// 	// 			maxBetaReductionDepth
+// 	// 		)
+// 	// 		.isIsomorphicTo(expectedResult)
+// 	// ) {
+// 	// 	successes.push(101);
+// 	// }
+//
+// 	// if (
+// 	// 	f(expr)
+// 	// 		.betaReduce(
+// 	// 			BetaReductionStrategy.NormalOrder,
+// 	// 			generateNewVariableName,
+// 	// 			maxBetaReductionDepth
+// 	// 		)
+// 	// 		.isIsomorphicTo(expectedResult)
+// 	// ) {
+// 	// 	successes.push(102);
+// 	// }
+//
+// 	// if (
+// 	// 	f(expr)
+// 	// 		.betaReduce(
+// 	// 			BetaReductionStrategy.CallByValue,
+// 	// 			generateNewVariableName,
+// 	// 			maxBetaReductionDepth
+// 	// 		)
+// 	// 		.isIsomorphicTo(expectedResult)
+// 	// ) {
+// 	// 	successes.push(103);
+// 	// }
+//
+// 	console.log('Y combinator test 1: successes:', successes);
+//
+// 	// expect(successes.length > 0).toBe(true);
+// 	expect(successes.length).toBe(0); // TODO: Find a strategy that works.
+//
+// 	// Assert
+// 	// console.log(`strPredecessor is ${strPredecessor}`);
+// 	// expect(f(strPredecessor)).toBeDefined();
+// 	// console.log(`strG is ${strG}`);
+// 	// expect(f(strG)).toBeDefined();
+// 	// console.log(`expr is ${expr}`);
+//
+// 	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
+// });

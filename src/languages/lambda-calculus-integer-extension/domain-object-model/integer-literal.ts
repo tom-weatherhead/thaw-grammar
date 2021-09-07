@@ -7,7 +7,7 @@ import { ArgumentException } from '../../../common/exceptions/argument-exception
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
-	ILCBetaReductionOptions,
+	// ILCBetaReductionOptions,
 	ILCExpression,
 	isLCVariable,
 	ISubstitution,
@@ -145,13 +145,13 @@ export class LCIntegerLiteral implements ILCExpression {
 		return this;
 	}
 
-	public betaReduceV2(
-		options: ILCBetaReductionOptions,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
-		return this;
-	}
+	// public betaReduceV2(
+	// 	options: ILCBetaReductionOptions,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression {
+	// 	return this;
+	// }
 
 	public deltaReduce(): ILCExpression {
 		return this;

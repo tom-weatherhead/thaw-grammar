@@ -5,7 +5,7 @@ import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utiliti
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
-	ILCBetaReductionOptions,
+	// ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -72,13 +72,13 @@ export class LCVariable implements ILCVariable {
 		return this;
 	}
 
-	public betaReduceV2(
-		options: ILCBetaReductionOptions,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
-		return this;
-	}
+	// public betaReduceV2(
+	// 	options: ILCBetaReductionOptions,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression {
+	// 	return this;
+	// }
 
 	public deltaReduce(): ILCExpression {
 		return this;
