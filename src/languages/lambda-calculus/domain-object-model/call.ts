@@ -109,10 +109,15 @@ export class LCFunctionCall implements ILCExpression {
 
 		// const argVarNames = arg.getSetOfAllVariableNames().toArray();
 
+		// I.e. Create an array of the names of all unbound variables in arg:
 		const argVarNames = arg
 			.getSetOfAllVariableNames()
 			.toArray()
 			.filter((name: string) => arg.containsUnboundVariableNamed(name, createSet<string>()));
+
+		// If we set argVarNames = [] so that we don't rename any variables,
+		// the unit testing appears to never terminate.
+		// const argVarNames: string[] = [];
 
 		// 2) for each var v in the set:
 		//   - If v occurs as a bound variable in the callee, then:
