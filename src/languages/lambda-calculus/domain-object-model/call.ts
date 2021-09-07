@@ -201,6 +201,7 @@ export class LCFunctionCall implements ILCExpression {
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
 		const evaluatedCallee = this.callee
+			.etaReduce()
 			.deltaReduce()
 			.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, maxDepth - 1);
 
@@ -209,12 +210,12 @@ export class LCFunctionCall implements ILCExpression {
 				evaluatedCallee,
 				// Note: Simply using 'this.arg' as the second argument fails.
 				this.arg
-				// .deltaReduce()
-				// .betaReduce(
-				// 	BetaReductionStrategy.CallByName,
-				// 	generateNewVariableName,
-				// 	maxDepth - 1
-				// )
+					.deltaReduce()
+					.betaReduce(
+						BetaReductionStrategy.CallByName,
+						generateNewVariableName,
+						maxDepth - 1
+					)
 			);
 
 			return result;
@@ -394,15 +395,233 @@ export class LCFunctionCall implements ILCExpression {
 	// 7.4 Applicative Order Reduction to Normal Form
 	/// applicative - leftmost innermost; the most eager strategy; unfit for recursion combinators
 
+	private betaReduceApplicativeOrder(
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		// In Rust:
+		//
+		// fn beta_app(&mut self, limit: usize, count: &mut usize) {
+		//     if limit != 0 && *count == limit {
+		//         return;
+		//     }
+		//
+		//     match *self {
+		//         Abs(ref mut abstracted) => abstracted.beta_app(limit, count),
+		//         App(_) => {
+		//             self.lhs_mut().unwrap().beta_app(limit, count);
+		//             self.rhs_mut().unwrap().beta_app(limit, count);
+		//
+		//             if self.is_reducible(limit, *count) {
+		//                 self.eval(count);
+		//                 self.beta_app(limit, count);
+		//             }
+		//         }
+		//         _ => (),
+		//     }
+		// }
+
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
+		// then return.
+		const evaluatedCallee = this.callee
+			.deltaReduce()
+			.betaReduce(
+				BetaReductionStrategy.ApplicativeOrder,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+		const evaluatedArg = this.arg
+			.deltaReduce()
+			.betaReduce(
+				BetaReductionStrategy.ApplicativeOrder,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+
+		if (!isLCLambdaExpression(evaluatedCallee)) {
+			return new LCFunctionCall(evaluatedCallee, evaluatedArg);
+		}
+
+		// Next, substitute evaluatedArg in for the arg in the evaluated callee.
+
+		// return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
+		return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
+			.deltaReduce()
+			.betaReduce(
+				BetaReductionStrategy.ApplicativeOrder,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+
+		// return this; // TODO: Write a real implementation.
+	}
+
 	// 7.5 Hybrid Applicative Order Reduction to Normal Form
 	/// hybrid applicative - a mix between `CBV` (call-by-value) and `APP` (applicative)
 	/// strategies; usually the fastest-reducing normalizing strategy
 
+	private betaReduceHybridApplicativeOrder(
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		// In Rust:
+		//
+		// fn beta_hap(&mut self, limit: usize, count: &mut usize) {
+		//     if limit != 0 && *count == limit {
+		//         return;
+		//     }
+		//
+		//     match *self {
+		//         Abs(ref mut abstracted) => abstracted.beta_hap(limit, count),
+		//         App(_) => {
+		//             self.lhs_mut().unwrap().beta_cbv(limit, count);
+		//             self.rhs_mut().unwrap().beta_hap(limit, count);
+		//
+		//             if self.is_reducible(limit, *count) {
+		//                 self.eval(count);
+		//                 self.beta_hap(limit, count);
+		//             } else {
+		//                 self.lhs_mut().unwrap().beta_hap(limit, count);
+		//             }
+		//         }
+		//         _ => (),
+		//     }
+		// }
+
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		return this; // TODO: Write a real implementation.
+	}
+
 	// 7.6 Head Spine Reduction to Head Normal Form
 	/// head spine - leftmost outermost, abstractions reduced only in head position
 
+	private betaReduceHeadSpine(
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		// In Rust:
+		//
+		// fn beta_hsp(&mut self, limit: usize, count: &mut usize) {
+		//     if limit != 0 && *count == limit {
+		//         return;
+		//     }
+		//
+		//     match *self {
+		//         Abs(ref mut abstracted) => abstracted.beta_hsp(limit, count),
+		//         App(_) => {
+		//             self.lhs_mut().unwrap().beta_hsp(limit, count);
+		//
+		//             if self.is_reducible(limit, *count) {
+		//                 self.eval(count);
+		//                 self.beta_hsp(limit, count)
+		//             }
+		//         }
+		//         _ => (),
+		//     }
+		// }
+
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		return this; // TODO: Write a real implementation.
+	}
+
 	// 7.7 Hybrid Normal Order Reduction to Normal Form
 	/// hybrid normal - a mix between `HSP` (head spine) and `NOR` (normal) strategies
+
+	private betaReduceHybridNormalOrder(
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		// In Rust:
+		//
+		// fn beta_hno(&mut self, limit: usize, count: &mut usize) {
+		//     if limit != 0 && *count == limit {
+		//         return;
+		//     }
+		//
+		//     match *self {
+		//         Abs(ref mut abstracted) => abstracted.beta_hno(limit, count),
+		//         App(_) => {
+		//             self.lhs_mut().unwrap().beta_hsp(limit, count);
+		//
+		//             if self.is_reducible(limit, *count) {
+		//                 self.eval(count);
+		//                 self.beta_hno(limit, count)
+		//             } else {
+		//                 self.lhs_mut().unwrap().beta_hno(limit, count);
+		//                 self.rhs_mut().unwrap().beta_hno(limit, count);
+		//             }
+		//         }
+		//         _ => (),
+		//     }
+		// }
+
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		return this; // TODO: Write a real implementation.
+	}
+
+	private betaReduceThAWHackForYCombinator(
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
+		// then return.
+		const evaluatedCallee = this.callee
+			.etaReduce()
+			.deltaReduce()
+			.betaReduce(
+				BetaReductionStrategy.ThAWHackForYCombinator,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+
+		if (!isLCLambdaExpression(evaluatedCallee)) {
+			const result = new LCFunctionCall(
+				evaluatedCallee,
+				// Note: Simply using 'this.arg' as the second argument fails.
+				this.arg
+					.deltaReduce()
+					.betaReduce(
+						BetaReductionStrategy.ThAWHackForYCombinator,
+						generateNewVariableName,
+						maxDepth - 1
+					)
+			);
+
+			return result;
+		}
+
+		// case cbn e1 of
+		// Lam (x, e) => cbn (subst e2 (Lam(x, e)))
+		// x := evaluatedCallee.arg
+		// e := evaluatedCallee.body
+
+		// Next, substitute this.arg in for the arg in the evaluated callee.
+
+		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
+			.deltaReduce()
+			.betaReduce(
+				BetaReductionStrategy.ThAWHackForYCombinator,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+	}
 
 	public betaReduce(
 		strategy: BetaReductionStrategy,
@@ -418,6 +637,21 @@ export class LCFunctionCall implements ILCExpression {
 
 			case BetaReductionStrategy.CallByValue:
 				return this.betaReduceCallByValue(generateNewVariableName, maxDepth);
+
+			case BetaReductionStrategy.ApplicativeOrder:
+				return this.betaReduceApplicativeOrder(generateNewVariableName, maxDepth);
+
+			case BetaReductionStrategy.HybridApplicativeOrder:
+				return this.betaReduceHybridApplicativeOrder(generateNewVariableName, maxDepth);
+
+			case BetaReductionStrategy.HeadSpine:
+				return this.betaReduceHeadSpine(generateNewVariableName, maxDepth);
+
+			case BetaReductionStrategy.HybridNormalOrder:
+				return this.betaReduceHybridNormalOrder(generateNewVariableName, maxDepth);
+
+			case BetaReductionStrategy.ThAWHackForYCombinator:
+				return this.betaReduceThAWHackForYCombinator(generateNewVariableName, maxDepth);
 
 			default:
 				throw new Error(

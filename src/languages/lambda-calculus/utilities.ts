@@ -6,6 +6,8 @@ import { IParser, ITokenizer } from 'thaw-interpreter-types';
 
 import { BetaReductionStrategy, ILCExpression } from './domain-object-model/interfaces/expression';
 
+export const defaultMaxBetaReductionDepth = 100;
+
 const strTrue = 'λx.λy.x';
 const strFalse = 'λx.λy.y';
 
@@ -79,7 +81,7 @@ export function getfb1(
 		f(s).betaReduce(
 			ifDefinedThenElse(options.betaReductionStrategy, BetaReductionStrategy.NormalOrder),
 			generateNewVariableName,
-			ifDefinedThenElse(options.maxBetaReductionDepth, 10)
+			ifDefinedThenElse(options.maxBetaReductionDepth, defaultMaxBetaReductionDepth)
 		);
 
 	return fb;

@@ -112,20 +112,29 @@ export class LCLambdaExpression implements ILCValue {
 
 		switch (strategy) {
 			case BetaReductionStrategy.CallByName:
-				return redex;
-			// return new LCLambdaExpression(
-			// 	this.arg,
-			// 	this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
-			// );
+				return redex; // Use this for real CallByName semantics.
 
 			case BetaReductionStrategy.NormalOrder:
 				return new LCLambdaExpression(
 					redex.arg,
-					redex.body.betaReduce(strategy, generateNewVariableName, maxDepth)
+					redex.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
 				);
 
 			case BetaReductionStrategy.CallByValue:
 				return redex;
+
+			case BetaReductionStrategy.ApplicativeOrder:
+				return new LCLambdaExpression(
+					redex.arg,
+					redex.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
+				);
+
+			case BetaReductionStrategy.ThAWHackForYCombinator:
+				// ThAW hack 2021-09-07 :
+				return new LCLambdaExpression(
+					redex.arg,
+					redex.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
+				);
 
 			default:
 				throw new Error(

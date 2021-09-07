@@ -9,7 +9,8 @@ export enum BetaReductionStrategy {
 	ApplicativeOrder,
 	HybridApplicativeOrder,
 	HeadSpine,
-	HybridNormalOrder
+	HybridNormalOrder,
+	ThAWHackForYCombinator
 }
 
 // Type T is the language's expression type.
