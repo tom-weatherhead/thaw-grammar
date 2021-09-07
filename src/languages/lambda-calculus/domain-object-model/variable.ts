@@ -5,6 +5,7 @@ import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utiliti
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
+	ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -14,6 +15,8 @@ import {
 } from './interfaces/expression';
 
 import { createSubstitution } from './substitution';
+
+// All variables are irreducible.
 
 export class LCVariable implements ILCVariable {
 	public readonly typename: string = typenameLCVariable;
@@ -63,6 +66,14 @@ export class LCVariable implements ILCVariable {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public betaReduce(
 		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		return this;
+	}
+
+	public betaReduceV2(
+		options: ILCBetaReductionOptions,
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression {

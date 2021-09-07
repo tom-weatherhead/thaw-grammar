@@ -1,11 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/domain-object-model/interfaces/expression.ts
 
-import {
-	// createSet,
-	IEqualityComparable,
-	IImmutableSet,
-	IStringifiable
-} from 'thaw-common-utilities.ts';
+import { IEqualityComparable, IImmutableSet, IStringifiable } from 'thaw-common-utilities.ts';
 
 export enum BetaReductionStrategy {
 	CallByName,
@@ -39,7 +34,6 @@ export interface ISubstitutable<T> {
 export interface IUnifiable<T> extends ISubstitutable<T> {
 	unify(
 		other: IUnifiable<T>,
-		// TODO: Implement this:
 		// I.e. if x is in this, and y is in other, then we don't want to
 		// a unifier to replace x with y if y is in variablesInOriginalExpr1.
 		variablesInOriginalExpr1?: IImmutableSet<string>,
@@ -50,9 +44,28 @@ export interface IUnifiable<T> extends ISubstitutable<T> {
 
 export type ILCUnifiable = IUnifiable<ILCExpression>;
 
+export interface ILCBetaReductionOptions {
+	readonly reduceLeftmostChildFirst: boolean;
+	readonly reduceRecessiveChild: boolean; // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
+
+	readonly reduceChildrenBeforeParents: boolean;
+	readonly reduceRecessiveParentOrChild: boolean; // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
+}
+
+// An LCExpressionMapKey is a reference to an expression value in the map.
+export type LCExpressionMapKey = number;
+// export type LCExpressionMapKey = string;
+
+export type LCExpressionMapType = Map<LCExpressionMapKey, ILCExpression>;
+
 // ISubstitutable<ILCExpression>,
 export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression> {
 	readonly typename: string;
+	// readonly mapKey: LCExpressionMapKey;
+	// So whenever this expression is reduced, call:
+	// expressionMap.set(this.mapKey, reducedExpr);
+	// This by-reference paradigm should enable lazy evaluation (?)
+	// as well as avoiding repeated evaluations of copies of the same expression.
 
 	containsVariableNamed(name: string): boolean;
 	containsBoundVariableNamed(name: string): boolean;
@@ -68,6 +81,11 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 	isBetaReducible(): boolean;
 	betaReduce(
 		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression;
+	betaReduceV2(
+		options: ILCBetaReductionOptions,
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression;

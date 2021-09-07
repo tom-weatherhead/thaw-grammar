@@ -7,6 +7,7 @@ import { IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
+	ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -30,6 +31,7 @@ export class LCFunctionCall implements ILCExpression {
 	public readonly typename: string = typenameLCFunctionCall;
 
 	constructor(public readonly callee: ILCExpression, public readonly arg: ILCExpression) {}
+	// constructor(public readonly callee: LCExpressionMapKey, public readonly arg: LCExpressionMapKey) {}
 
 	public toString(): string {
 		return `(${this.callee} ${this.arg})`;
@@ -87,7 +89,12 @@ export class LCFunctionCall implements ILCExpression {
 	// η-reduction can be seen to be the same as the concept of local completeness in natural deduction, via the Curry–Howard isomorphism.
 
 	public isBetaReducible(): boolean {
-		return this.callee.isBetaReducible() || this.arg.isBetaReducible();
+		return (
+			isLCLambdaExpression(this.callee) ||
+			this.callee.isBetaReducible() ||
+			this.arg.isBetaReducible()
+		);
+		// return this.callee.isBetaReducible() || this.arg.isBetaReducible();
 	}
 
 	// private
@@ -295,6 +302,53 @@ export class LCFunctionCall implements ILCExpression {
 					`LCFunctionCall.betaReduce() : Unsupported BetaReductionStrategy ${BetaReductionStrategy[strategy]}`
 				);
 		}
+	}
+
+	public betaReduceV2(
+		options: ILCBetaReductionOptions,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		// const callee: ILCExpression = this.callee;
+
+		if (!options.reduceChildrenBeforeParents && isLCLambdaExpression(this.callee)) {
+			// Reduce parent before child(ren). Callee is a Lambda expression.
+			return this.betaReduceCore(this.callee, this.arg, generateNewVariableName);
+		}
+
+		// Reduce child(ren)
+		let reducedLeftChild = this.callee;
+		let reducedRightChild = this.arg;
+
+		if (options.reduceLeftmostChildFirst || options.reduceRecessiveChild) {
+			reducedLeftChild = reducedLeftChild.betaReduceV2(
+				options,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+		}
+
+		if (!options.reduceLeftmostChildFirst || options.reduceRecessiveChild) {
+			reducedRightChild = reducedLeftChild.betaReduceV2(
+				options,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+		}
+
+		const reducedCall = new LCFunctionCall(reducedLeftChild, reducedRightChild);
+
+		if (options.reduceChildrenBeforeParents && options.reduceRecessiveParentOrChild) {
+			// Reduce parent after child(ren).
+			// TODO: Should we call betaReduceCore (as above) instead of betaReduceV2 (as below)?
+			return reducedCall.betaReduceV2(options, generateNewVariableName, maxDepth - 1);
+		}
+
+		return this;
 	}
 
 	public deltaReduce(): ILCExpression {

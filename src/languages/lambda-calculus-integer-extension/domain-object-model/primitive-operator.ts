@@ -5,6 +5,7 @@ import { IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
+	ILCBetaReductionOptions,
 	ILCExpression,
 	ISubstitution,
 	IUnifiable
@@ -43,6 +44,11 @@ export class LCPrimitiveOperator implements ILCExpression {
 	public readonly typename = typenamePrimitiveOperator;
 	// private readonly numArgs = 2;
 
+	// constructor(
+	// 	public readonly name: string,
+	// 	public readonly leftChild: LCExpressionMapKey,
+	// 	public readonly rightChild: LCExpressionMapKey
+	// ) {
 	constructor(
 		public readonly name: string,
 		public readonly leftChild: ILCExpression,
@@ -170,6 +176,14 @@ export class LCPrimitiveOperator implements ILCExpression {
 		const r = this.rightChild.betaReduce(strategy, generateNewVariableName, maxDepth - 1);
 
 		return new LCPrimitiveOperator(this.name, l, r).deltaReduce();
+	}
+
+	public betaReduceV2(
+		options: ILCBetaReductionOptions,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		return this;
 	}
 
 	// Delta-reduction? See Kamin p. 194.

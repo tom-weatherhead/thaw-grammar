@@ -7,6 +7,7 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
+	ILCBetaReductionOptions,
 	ILCExpression,
 	ISubstitution,
 	IUnifiable
@@ -68,6 +69,14 @@ export abstract class LCValueBase implements ILCExpression {
 
 	public betaReduce(
 		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		return this;
+	}
+
+	public betaReduceV2(
+		options: ILCBetaReductionOptions,
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression {

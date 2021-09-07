@@ -1,5 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/lambda-calculus-grammar.ts
 
+// Glossary:
+// A 'redex' is a reducible expression
+
 import {
 	GrammarSymbol,
 	IToken,

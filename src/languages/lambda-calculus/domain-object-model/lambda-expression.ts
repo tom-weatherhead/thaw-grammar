@@ -5,6 +5,7 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
+	ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -35,6 +36,7 @@ export class LCLambdaExpression implements ILCValue {
 	public readonly typename: string = typenameLCLambdaExpression;
 
 	constructor(public readonly arg: LCVariable, public readonly body: ILCExpression) {}
+	// constructor(public readonly arg: LCVariable, public readonly body: LCExpressionMapKey) {}
 
 	public toString(): string {
 		return `λ${this.arg}.${this.body}`;
@@ -105,17 +107,36 @@ export class LCLambdaExpression implements ILCValue {
 		// 	case BetaReductionStrategy.CallByName:
 		// 		return this;
 		//
-		// 		case BetaReductionStrategy.CallByValue:
-		// 			return new LCLambdaExpression(
-		// 				this.arg,
-		// 				this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
-		// 			);
+		// 	case BetaReductionStrategy.CallByValue:
+		// 		return new LCLambdaExpression(
+		// 			this.arg,
+		// 			this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
+		// 		);
 		//
 		// 	default:
 		// 		throw new Error(
 		// 			`LCLambdaExpression.betaReduce() : Unsupported BetaReductionStrategy ${BetaReductionStrategy[strategy]}`
 		// 		);
 		// }
+	}
+
+	public betaReduceV2(
+		options: ILCBetaReductionOptions,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		if (options.reduceChildrenBeforeParents || !options.reduceRecessiveParentOrChild) {
+			return new LCLambdaExpression(
+				this.arg,
+				this.body.betaReduceV2(options, generateNewVariableName, maxDepth - 1)
+			);
+		} else {
+			return this;
+		}
 	}
 
 	public deltaReduce(): ILCExpression {

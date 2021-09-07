@@ -7,6 +7,7 @@ import { ArgumentException } from '../../../common/exceptions/argument-exception
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
+	ILCBetaReductionOptions,
 	ILCExpression,
 	isLCVariable,
 	ISubstitution,
@@ -25,6 +26,8 @@ export function isLCIntegerLiteral(obj: unknown): obj is LCIntegerLiteral {
 		otherIntegerLiteral.typename === typenameIntegerLiteral
 	);
 }
+
+// All integer literals are irreducible.
 
 export class LCIntegerLiteral implements ILCExpression {
 	public readonly typename = typenameIntegerLiteral;
@@ -136,6 +139,14 @@ export class LCIntegerLiteral implements ILCExpression {
 
 	public betaReduce(
 		strategy: BetaReductionStrategy,
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		return this;
+	}
+
+	public betaReduceV2(
+		options: ILCBetaReductionOptions,
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression {
