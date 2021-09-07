@@ -77,7 +77,7 @@ export function getfb1(
 	const generateNewVariableName = createVariableNameGenerator();
 	const fb = (s: string): ILCExpression =>
 		f(s).betaReduce(
-			ifDefinedThenElse(options.betaReductionStrategy, BetaReductionStrategy.CallByName),
+			ifDefinedThenElse(options.betaReductionStrategy, BetaReductionStrategy.NormalOrder),
 			generateNewVariableName,
 			ifDefinedThenElse(options.maxBetaReductionDepth, 10)
 		);

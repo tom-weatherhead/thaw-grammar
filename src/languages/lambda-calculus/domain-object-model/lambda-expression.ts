@@ -96,28 +96,35 @@ export class LCLambdaExpression implements ILCValue {
 		}
 
 		// This is call-by-value, is it not? :
-		return new LCLambdaExpression(
-			this.arg,
-			this.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
-		);
+		// return new LCLambdaExpression(
+		// 	this.arg,
+		// 	this.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
+		// );
 
 		// TODO? : Replace with:
 
-		// switch (strategy) {
-		// 	case BetaReductionStrategy.CallByName:
-		// 		return this;
-		//
-		// 	case BetaReductionStrategy.CallByValue:
-		// 		return new LCLambdaExpression(
-		// 			this.arg,
-		// 			this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
-		// 		);
-		//
-		// 	default:
-		// 		throw new Error(
-		// 			`LCLambdaExpression.betaReduce() : Unsupported BetaReductionStrategy ${BetaReductionStrategy[strategy]}`
-		// 		);
-		// }
+		switch (strategy) {
+			case BetaReductionStrategy.CallByName:
+				return this;
+			// return new LCLambdaExpression(
+			// 	this.arg,
+			// 	this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
+			// );
+
+			case BetaReductionStrategy.NormalOrder:
+				return new LCLambdaExpression(
+					this.arg,
+					this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
+				);
+
+			case BetaReductionStrategy.CallByValue:
+				return this;
+
+			default:
+				throw new Error(
+					`LCLambdaExpression.betaReduce() : Unsupported BetaReductionStrategy ${BetaReductionStrategy[strategy]}`
+				);
+		}
 	}
 
 	public betaReduceV2(

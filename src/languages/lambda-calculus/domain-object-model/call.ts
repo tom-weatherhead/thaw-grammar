@@ -125,6 +125,10 @@ export class LCFunctionCall implements ILCExpression {
 		//     - In the callee, replace all bound occurrences of v with w.
 		// console.log("Names of variables in the call's actual parameter:", argVarNames);
 
+		// The variable renaming here prevents unbound variables in arg from becoming
+		// unintentionally bound when the substitution (into the Lambda expression's body)
+		// is performed.
+
 		for (const name of argVarNames) {
 			if (lambdaExpression.containsBoundVariableNamed(name)) {
 				let generatedVarName: string;
@@ -133,35 +137,25 @@ export class LCFunctionCall implements ILCExpression {
 					generatedVarName = generateNewVariableName();
 				} while (lambdaExpression.containsVariableNamed(generatedVarName));
 
-				// console.log(`1) Old lambdaExpression: ${lambdaExpression}`);
-				// console.log(`2) Replacing ${name} with ${generatedVarName}...`);
+				// α-conversion :
 				lambdaExpression = lambdaExpression.renameBoundVariable(
 					generatedVarName,
 					name
 				) as LCLambdaExpression;
-				// console.log(`3) New lambdaExpression: ${lambdaExpression}`);
 			}
 		}
 
-		const lambdaExpressionBody = lambdaExpression.body;
+		// const lambdaExpressionBody = lambdaExpression.body;
 
-		// console.log(
-		// 	`LCFunctionCall.betaReduceCore() : lambdaExpressionBody is ${lambdaExpressionBody};`,
-		// 	lambdaExpressionBody
-		// );
-		// console.log('LCFunctionCall.betaReduceCore() : arg is', arg);
+		// Substitution:
+		// Replace all unbound occurrences of Lambda expression's formal parameter
+		// (lambdaExpression.arg) in the Lambda expression's body (lambdaExpression.body)
+		// with an actual parameter (arg) :
 
-		const bodyAfterSubst = lambdaExpressionBody.substituteForUnboundVariable(
-			lambdaExpression.arg.name,
-			arg
-		);
-
-		// console.log(
-		// 	`LCFunctionCall.betaReduceCore() : Replaced ${lambdaExpression.arg.name} with ${this.arg}; bodyAfterSubst is ${bodyAfterSubst}`
-		// );
-
-		return bodyAfterSubst;
+		return lambdaExpression.body.substituteForUnboundVariable(lambdaExpression.arg.name, arg);
 	}
+
+	/// call-by-name - leftmost outermost, no reductions inside abstractions
 
 	private betaReduceCallByName(
 		generateNewVariableName: () => string,
@@ -200,44 +194,28 @@ export class LCFunctionCall implements ILCExpression {
 
 		// ****
 
-		// console.log(
-		// 	`LCFunctionCall.betaReduce(maxDepth = ${maxDepth}) : Unevaluated callee is ${this.callee}`
-		// );
-		// console.log(
-		// 	`LCFunctionCall.betaReduce(maxDepth = ${maxDepth}) : Unevaluated actual parameter is ${this.arg}`
-		// );
-
 		if (maxDepth <= 0) {
 			return this;
 		}
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
-		// const evaluatedCallee = this.callee; // Temp hack: No evaluation
 		const evaluatedCallee = this.callee
 			.deltaReduce()
 			.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, maxDepth - 1);
 
-		// console.log(
-		// 	`LCFunctionCall.betaReduce(maxDepth = ${maxDepth}) : evaluatedCallee is ${evaluatedCallee}`
-		// );
-
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			const result = new LCFunctionCall(
 				evaluatedCallee,
+				// Note: Simply using 'this.arg' as the second argument fails.
 				this.arg
-					.deltaReduce()
-					.betaReduce(
-						BetaReductionStrategy.CallByName,
-						generateNewVariableName,
-						maxDepth - 1
-					)
-				// this.arg
+				// .deltaReduce()
+				// .betaReduce(
+				// 	BetaReductionStrategy.CallByName,
+				// 	generateNewVariableName,
+				// 	maxDepth - 1
+				// )
 			);
-
-			// console.log(
-			// 	`LCFunctionCall.betaReduce() : evaluatedCallee is not an LCLambdaExpression; returning ${result}`
-			// );
 
 			return result;
 		}
@@ -248,54 +226,194 @@ export class LCFunctionCall implements ILCExpression {
 		// e := evaluatedCallee.body
 
 		// Next, substitute this.arg in for the arg in the evaluated callee.
-		// let lambdaExpression = evaluatedCallee as LCLambdaExpression;
 
-		// console.log(`The call's callee is: ${lambdaExpression}`);
-		// console.log(`The call's actual parameter is: ${this.arg}`);
-
-		// return lambdaExpression.body
-		// 	.substituteForUnboundVariable(lambdaExpression.arg.name, this.arg)
-		// 	.betaReduce();
-
-		const bodyAfterSubst = this.betaReduceCore(
-			evaluatedCallee,
-			this.arg,
-			generateNewVariableName
-		);
-
-		const afterBeta = bodyAfterSubst
+		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
 			.deltaReduce()
 			.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, maxDepth - 1);
-
-		// console.log(`LCFunctionCall.betaReduce() : After beta: ${afterBeta}`);
-
-		return afterBeta;
 	}
+
+	/// normal - leftmost outermost; the most popular reduction strategy
+
+	private betaReduceNormalOrder(
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		// - Demonstrating Lambda Calculus Reduction : https://www.cs.cornell.edu/courses/cs6110/2014sp/Handouts/Sestoft.pdf
+		//
+		// 7 Reduction Strategies and Reduction Functions
+		// 7.2 Normal Order Reduction to Normal Form
+		//
+		// In Standard ML:
+		//
+		// fun nor (Var x) = Var x
+		//   | nor (Lam (x, e)) = Lam(x, nor e) // See our lambda-expression.ts
+		//   | nor (App(e1, e2)) =
+		//     case nor e1 of // ThAW: Was case cbn e1 of
+		//       Lam(x, e) => nor (subst e2 (Lam(x, e)))
+		//       | e1’ => let val e1’’ = nor e1’ in App(e1’’, nor e2) end
+		//
+		// In Rust:
+		//
+		// fn beta_nor(&mut self, limit: usize, count: &mut usize) {
+		//     if limit != 0 && *count == limit {
+		//         return;
+		//     }
+		//
+		//     match *self {
+		//         Abs(ref mut abstracted) => abstracted.beta_nor(limit, count),
+		//         App(_) => {
+		//             self.lhs_mut().unwrap().beta_cbn(limit, count);
+		//
+		//             if self.is_reducible(limit, *count) {
+		//                 self.eval(count);
+		//                 self.beta_nor(limit, count);
+		//             } else {
+		//                 self.lhs_mut().unwrap().beta_nor(limit, count);
+		//                 self.rhs_mut().unwrap().beta_nor(limit, count);
+		//             }
+		//         }
+		//         _ => (),
+		//     }
+		// }
+
+		// ****
+
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
+		// then return.
+		const evaluatedCallee = this.callee
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.NormalOrder, generateNewVariableName, maxDepth - 1);
+
+		if (!isLCLambdaExpression(evaluatedCallee)) {
+			// The result is App(e1’’, nor e2),
+			// where e1’’ = nor e1’ = ...
+			// and e1’ = nor e1 = evaluatedCallee
+			// and e1 = this.callee
+			const result = new LCFunctionCall(
+				evaluatedCallee
+					.deltaReduce()
+					.betaReduce(
+						BetaReductionStrategy.NormalOrder,
+						generateNewVariableName,
+						maxDepth - 1
+					),
+				// Note: Simply using 'this.arg' as the second argument fails.
+				this.arg
+					.deltaReduce()
+					.betaReduce(
+						BetaReductionStrategy.NormalOrder,
+						generateNewVariableName,
+						maxDepth - 1
+					)
+			);
+
+			return result;
+		}
+
+		// Next, substitute this.arg in for the arg in the evaluated callee.
+
+		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.NormalOrder, generateNewVariableName, maxDepth - 1);
+	}
+
+	/// call-by-value - leftmost innermost, no reductions inside abstractions
 
 	private betaReduceCallByValue(
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression {
-		// return this; // TODO: Write the real implementation.
+		// - Demonstrating Lambda Calculus Reduction : https://www.cs.cornell.edu/courses/cs6110/2014sp/Handouts/Sestoft.pdf
+		//
+		// 7 Reduction Strategies and Reduction Functions
+		// 7.x Call-by-Value Reduction...
+		//
+		// In Standard ML: (?)
+		//
+		// fun cbv (Var x) = Var x
+		// 	| cbv (Lam(x, e)) = Lam(x, e)
+		// 	| cbv (App(e1, e2)) =
+		// 		case cbv e1 of
+		// 			Lam (x, e) => cbv (subst (cbv e2) (Lam(x, e)))
+		// 			| e1’ => App(e1’, (cbv e2))
+		//
+		// In Rust:
+		//
+		// fn beta_cbv(&mut self, limit: usize, count: &mut usize) {
+		//     if limit != 0 && *count == limit {
+		//         return;
+		//     }
+		//
+		//     if let App(_) = *self {
+		//         self.lhs_mut().unwrap().beta_cbv(limit, count);
+		//         self.rhs_mut().unwrap().beta_cbv(limit, count);
+		//
+		//         if self.is_reducible(limit, *count) {
+		//             self.eval(count);
+		//             self.beta_cbv(limit, count);
+		//         }
+		//     }
+		// }
 
-		if (maxDepth <= 0 || !isLCLambdaExpression(this.callee)) {
+		// ****
+
+		if (maxDepth <= 0) {
 			return this;
 		}
 
-		const reducedArg = this.arg.betaReduce(
-			BetaReductionStrategy.CallByValue,
-			generateNewVariableName,
-			maxDepth - 1
-		);
+		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
+		// then return.
+		const evaluatedCallee = this.callee
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
+		const evaluatedArg = this.arg
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
 
-		const result = this.betaReduceCore(this.callee, reducedArg, generateNewVariableName);
+		if (!isLCLambdaExpression(evaluatedCallee)) {
+			return new LCFunctionCall(evaluatedCallee, evaluatedArg);
+		}
 
-		return result.betaReduce(
-			BetaReductionStrategy.CallByValue,
-			generateNewVariableName,
-			maxDepth - 1
-		);
+		// case cbv e1 of
+		// Lam (x, e) => cbv (subst (cbv e2) (Lam(x, e)))
+		// x := evaluatedCallee.arg
+		// e := evaluatedCallee.body
+
+		// Next, substitute evaluatedArg in for the arg in the evaluated callee.
+
+		// return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
+		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
 	}
+
+	// private betaReduceCallByValue(
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression {
+	// 	if (maxDepth <= 0 || !isLCLambdaExpression(this.callee)) {
+	// 		return this;
+	// 	}
+	//
+	// 	const reducedArg = this.arg.betaReduce(
+	// 		BetaReductionStrategy.CallByValue,
+	// 		generateNewVariableName,
+	// 		maxDepth - 1
+	// 	);
+	//
+	// 	// Note here that the callee is not reduced before betaReduceCore is called.
+	// 	const result = this.betaReduceCore(this.callee, reducedArg, generateNewVariableName);
+	//
+	// 	return result.betaReduce(
+	// 		BetaReductionStrategy.CallByValue,
+	// 		generateNewVariableName,
+	// 		maxDepth - 1
+	// 	);
+	// }
 
 	public betaReduce(
 		strategy: BetaReductionStrategy,
@@ -305,6 +423,9 @@ export class LCFunctionCall implements ILCExpression {
 		switch (strategy) {
 			case BetaReductionStrategy.CallByName:
 				return this.betaReduceCallByName(generateNewVariableName, maxDepth);
+
+			case BetaReductionStrategy.NormalOrder:
+				return this.betaReduceNormalOrder(generateNewVariableName, maxDepth);
 
 			case BetaReductionStrategy.CallByValue:
 				return this.betaReduceCallByValue(generateNewVariableName, maxDepth);

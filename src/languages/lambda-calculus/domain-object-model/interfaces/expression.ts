@@ -72,6 +72,7 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 	containsUnboundVariableNamed(name: string, boundVariableNames: IImmutableSet<string>): boolean;
 	substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression;
 	getSetOfAllVariableNames(): IImmutableSet<string>;
+	// TODO? : getArrayOfAllUnboundVariableNames(): string[];
 	// applySubstitution(substitution: ILCSubstitution): ILCExpression;
 
 	// α-conversion
