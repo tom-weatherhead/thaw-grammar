@@ -478,6 +478,12 @@ export class LCFunctionCall implements ILCExpression {
 	}
 
 	public etaReduce(): ILCExpression {
+		// if (!isLCLambdaExpression(this.callee) || !this.callee.isEtaReducible()) {
+		// 	return this;
+		// }
+		//
+		// return this.callee.body.etaReduce();
+
 		return this;
 	}
 

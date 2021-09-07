@@ -103,9 +103,16 @@ export class LCLambdaExpression implements ILCValue {
 
 		// TODO? : Replace with:
 
+		// 'redex' means 'reducible expression'.
+		const redex = this.etaReduce();
+
+		if (!isLCLambdaExpression(redex)) {
+			return redex.betaReduce(strategy, generateNewVariableName, maxDepth);
+		}
+
 		switch (strategy) {
 			case BetaReductionStrategy.CallByName:
-				return this;
+				return redex;
 			// return new LCLambdaExpression(
 			// 	this.arg,
 			// 	this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
@@ -113,12 +120,12 @@ export class LCLambdaExpression implements ILCValue {
 
 			case BetaReductionStrategy.NormalOrder:
 				return new LCLambdaExpression(
-					this.arg,
-					this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
+					redex.arg,
+					redex.body.betaReduce(strategy, generateNewVariableName, maxDepth)
 				);
 
 			case BetaReductionStrategy.CallByValue:
-				return this;
+				return redex;
 
 			default:
 				throw new Error(
@@ -149,6 +156,10 @@ export class LCLambdaExpression implements ILCValue {
 	public deltaReduce(): ILCExpression {
 		return new LCLambdaExpression(this.arg, this.body.deltaReduce());
 	}
+
+	// public isEtaReducible(): boolean {
+	// 	return !this.body.containsUnboundVariableNamed(this.arg.name, createSet<string>());
+	// }
 
 	public etaReduce(): ILCExpression {
 		// λx.(f x) eta-reduces to f iff x does not occur unbound in f.
