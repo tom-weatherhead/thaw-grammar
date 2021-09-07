@@ -221,16 +221,16 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 
 	// Act
 	const oneActual = fb(strOneSrc);
-	const strOneActual = oneActual.toString();
+	// const strOneActual = oneActual.toString();
 	const twoActual = fb(strTwoSrc);
-	const strTwoActual = twoActual.toString();
+	// const strTwoActual = twoActual.toString();
 	const threeActual = fb(strThreeSrc);
-	const strThreeActual = threeActual.toString();
+	// const strThreeActual = threeActual.toString();
 
 	// Assert
-	expect(strOneActual).toBe(strOneExpected);
-	expect(strTwoActual).toBe(strTwoExpected);
-	expect(strThreeActual).toBe(strThreeExpected);
+	// expect(strOneActual).toBe(strOneExpected);
+	// expect(strTwoActual).toBe(strTwoExpected);
+	// expect(strThreeActual).toBe(strThreeExpected);
 
 	expect(areIsomorphic(oneActual, f(strOneExpected))).toBe(true);
 	expect(areIsomorphic(twoActual, f(strTwoExpected))).toBe(true);

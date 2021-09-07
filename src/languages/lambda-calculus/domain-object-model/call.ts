@@ -2,7 +2,7 @@
 
 // Call === Function Call === Application (Invocation) of Function
 
-import { IImmutableSet } from 'thaw-common-utilities.ts';
+import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
 	areIsomorphic,
@@ -106,7 +106,14 @@ export class LCFunctionCall implements ILCExpression {
 		// Rename variables as necessary (alpha reduction)
 		// My idea for an algorithm:
 		// 1) Build a set of all (unbound?) variables in the body;
-		const argVarNames = arg.getSetOfAllVariableNames().toArray();
+
+		// const argVarNames = arg.getSetOfAllVariableNames().toArray();
+
+		const argVarNames = arg
+			.getSetOfAllVariableNames()
+			.toArray()
+			.filter((name: string) => arg.containsUnboundVariableNamed(name, createSet<string>()));
+
 		// 2) for each var v in the set:
 		//   - If v occurs as a bound variable in the callee, then:
 		//     - Generate a new variable name w that does not occur in the callee;
