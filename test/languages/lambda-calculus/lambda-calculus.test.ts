@@ -507,6 +507,7 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 	const strFalse = 'λx.λy.y';
 	const strIf = 'λb.λx.λy.((b x) y)';
 	const strOne = 'λf.λx.(f x)';
+	const strTwo = 'λf.λx.(f (f x))';
 	const strThree = 'λf.λx.(f (f (f x)))';
 	const strSix = 'λf.λx.(f (f (f (f (f (f x))))))';
 	const strIsZero = `λn.((n λx.${strFalse}) ${strTrue})`;
@@ -517,6 +518,10 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 
 	const strYCombinator = 'λa.(λb.(a (b b)) λb.(a (b b)))';
 
+	// ((* 2) 3) is isomorphic to 6 via the CallByName strategy only:
+	// const expr = `((${strMult} ${strTwo}) ${strThree})`;
+
+	// This Y combinator test succeeds via the CallByName strategy only:
 	const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
 
 	// const expectedResult = strSix;
@@ -535,32 +540,70 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 
 	// F T T T -> No
 	// T T T T -> No
-	const betaReductionOptions = {
-		reduceLeftmostChildFirst: true,
-		reduceRecessiveChild: true, // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
-		reduceChildrenBeforeParents: true,
-		reduceRecessiveParentOrChild: false // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
-	};
 	const generateNewVariableName = createVariableNameGenerator();
 	const maxBetaReductionDepth = 100;
 
-	const fexpr = f(expr);
+	const expectedResult = f(strSix);
 
-	console.log(`Y combinator test 1: expr before reduction is ${fexpr}`);
-	console.log(`Y combinator test 1: expr.isBetaReducible() is ${fexpr.isBetaReducible()}`);
+	// console.log(`Y combinator test 1: expr before reduction is ${fexpr}`);
+	// console.log(`Y combinator test 1: expr.isBetaReducible() is ${fexpr.isBetaReducible()}`);
 
-	const actualResult = fexpr.betaReduceV2(
-		betaReductionOptions,
-		generateNewVariableName,
-		maxBetaReductionDepth
-	);
+	const successes: number[] = [];
 
-	console.log(`Y combinator test 1: actualResult is ${actualResult}`);
-	console.log(
-		`Y combinator test 1: actualResult is isomorphic to 6? ${actualResult.isIsomorphicTo(
-			f(strSix)
-		)}`
-	);
+	for (let i = 0; i < 16; i++) {
+		const ba = intToBoolArray(i, 4);
+		const betaReductionOptions = {
+			reduceLeftmostChildFirst: ba[0],
+			reduceRecessiveChild: ba[1], // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
+			reduceChildrenBeforeParents: ba[2],
+			reduceRecessiveParentOrChild: ba[3] // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
+		};
+
+		const fexpr = f(expr);
+		const actualResult = fexpr.betaReduceV2(
+			betaReductionOptions,
+			generateNewVariableName,
+			maxBetaReductionDepth
+		);
+
+		// console.log(`Y combinator test 1: actualResult is ${actualResult}`);
+
+		const isSuccess = actualResult.isIsomorphicTo(expectedResult);
+
+		// console.log(`Y combinator test 1: actualResult is isomorphic to 6? ${isSuccess}`);
+
+		if (isSuccess) {
+			successes.push(i);
+		}
+	}
+
+	if (
+		f(expr)
+			.betaReduce(
+				BetaReductionStrategy.CallByName,
+				generateNewVariableName,
+				maxBetaReductionDepth
+			)
+			.isIsomorphicTo(expectedResult)
+	) {
+		successes.push(101);
+	}
+
+	if (
+		f(expr)
+			.betaReduce(
+				BetaReductionStrategy.CallByValue,
+				generateNewVariableName,
+				maxBetaReductionDepth
+			)
+			.isIsomorphicTo(expectedResult)
+	) {
+		successes.push(102);
+	}
+
+	console.log('Y combinator test 1: successes:', successes);
+
+	expect(successes.length > 0).toBe(true);
 
 	// Assert
 	// console.log(`strPredecessor is ${strPredecessor}`);
