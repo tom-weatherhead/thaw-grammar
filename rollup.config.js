@@ -20,7 +20,6 @@ export default {
 			format: 'cjs',
 			exports: 'named',
 			globals: { uuid: 'uuid' }
-			// plugins: [nodeResolve()]
 		},
 		{
 			file: 'dist/thaw-grammar.esm.js',

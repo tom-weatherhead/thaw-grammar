@@ -461,3 +461,35 @@ test('LambdaCalculus Church Numerals isZero Test 1', () => {
 	expect(exprIsTwoZero.isIsomorphicTo(tt)).toBe(false);
 	expect(exprIsTwoZero.isIsomorphicTo(ff)).toBe(true);
 });
+
+// test('LambdaCalculusGrammar Y combinator test 1', () => {
+// 	// const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
+//
+// 	// Rewrite strG as pure λ-calculus:
+//
+// 	// Arrange
+// 	const strTrue = 'λx.λy.x';
+// 	const strFalse = 'λx.λy.y';
+// 	const strIf = 'λb.λx.λy.((b x) y)';
+// 	const strIsZero = `λn.((n λx.${strFalse}) ${strTrue})`;
+// 	const strMult = 'λm.λn.λf.(m (n f))';
+// 	const strPredecessor = 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)';
+//
+// 	const strG = `λr.λn.(${strIf} (${strIsZero} n) 1 (${strMult} n (r (${strPredecessor} n))))`;
+//
+// 	const strYCombinator = 'λa.(λb.(a (b b)) λb.(a (b b)))';
+//
+// 	const strThree = 'λf.λx.(f (f (f x)))';
+// 	const strSix = 'λf.λx.(f (f (f (f (f (f x))))))';
+//
+// 	const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
+//
+// 	const expectedResult = strSix;
+//
+// 	// Act
+// 	// Beta-reduce, presumably. Using with strategy and max depth?
+// 	const actualResult = expr.reduce();
+//
+// 	// Assert
+// 	expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
+// });

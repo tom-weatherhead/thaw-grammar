@@ -56,6 +56,10 @@ export class LCVariable implements ILCVariable {
 		return name === this.name ? value : this;
 	}
 
+	public isBetaReducible(): boolean {
+		return false;
+	}
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public betaReduce(
 		strategy: BetaReductionStrategy,

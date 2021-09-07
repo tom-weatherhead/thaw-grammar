@@ -62,6 +62,10 @@ export abstract class LCValueBase implements ILCExpression {
 		return createSet<string>();
 	}
 
+	public isBetaReducible(): boolean {
+		return false;
+	}
+
 	public betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,

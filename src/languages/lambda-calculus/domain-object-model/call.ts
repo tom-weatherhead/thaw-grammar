@@ -86,6 +86,10 @@ export class LCFunctionCall implements ILCExpression {
 	//
 	// η-reduction can be seen to be the same as the concept of local completeness in natural deduction, via the Curry–Howard isomorphism.
 
+	public isBetaReducible(): boolean {
+		return this.callee.isBetaReducible() || this.arg.isBetaReducible();
+	}
+
 	// private
 	public betaReduceCore(
 		lambdaExpression: LCLambdaExpression,
@@ -249,6 +253,31 @@ export class LCFunctionCall implements ILCExpression {
 		return afterBeta;
 	}
 
+	private betaReduceCallByValue(
+		generateNewVariableName: () => string,
+		maxDepth: number
+	): ILCExpression {
+		// return this; // TODO: Write the real implementation.
+
+		if (maxDepth <= 0 || !isLCLambdaExpression(this.callee)) {
+			return this;
+		}
+
+		const reducedArg = this.arg.betaReduce(
+			BetaReductionStrategy.CallByValue,
+			generateNewVariableName,
+			maxDepth - 1
+		);
+
+		const result = this.betaReduceCore(this.callee, reducedArg, generateNewVariableName);
+
+		return result.betaReduce(
+			BetaReductionStrategy.CallByValue,
+			generateNewVariableName,
+			maxDepth - 1
+		);
+	}
+
 	public betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,
@@ -257,6 +286,9 @@ export class LCFunctionCall implements ILCExpression {
 		switch (strategy) {
 			case BetaReductionStrategy.CallByName:
 				return this.betaReduceCallByName(generateNewVariableName, maxDepth);
+
+			case BetaReductionStrategy.CallByValue:
+				return this.betaReduceCallByValue(generateNewVariableName, maxDepth);
 
 			default:
 				throw new Error(

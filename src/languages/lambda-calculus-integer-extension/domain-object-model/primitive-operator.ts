@@ -155,6 +155,10 @@ export class LCPrimitiveOperator implements ILCExpression {
 		return this;
 	}
 
+	public isBetaReducible(): boolean {
+		return this.leftChild.isBetaReducible() || this.rightChild.isBetaReducible();
+	}
+
 	public betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,

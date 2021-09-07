@@ -130,6 +130,10 @@ export class LCIntegerLiteral implements ILCExpression {
 		return this;
 	}
 
+	public isBetaReducible(): boolean {
+		return false;
+	}
+
 	public betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,

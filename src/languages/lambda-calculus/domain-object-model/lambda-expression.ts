@@ -80,15 +80,42 @@ export class LCLambdaExpression implements ILCValue {
 			: new LCLambdaExpression(this.arg, this.body.substituteForUnboundVariable(name, value));
 	}
 
+	public isBetaReducible(): boolean {
+		return true; // Is it always true? Even if the expr is not in normal form?
+	}
+
 	public betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression {
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		// This is call-by-value, is it not? :
 		return new LCLambdaExpression(
 			this.arg,
-			this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
+			this.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
 		);
+
+		// TODO? : Replace with:
+
+		// switch (strategy) {
+		// 	case BetaReductionStrategy.CallByName:
+		// 		return this;
+		//
+		// 		case BetaReductionStrategy.CallByValue:
+		// 			return new LCLambdaExpression(
+		// 				this.arg,
+		// 				this.body.betaReduce(strategy, generateNewVariableName, maxDepth)
+		// 			);
+		//
+		// 	default:
+		// 		throw new Error(
+		// 			`LCLambdaExpression.betaReduce() : Unsupported BetaReductionStrategy ${BetaReductionStrategy[strategy]}`
+		// 		);
+		// }
 	}
 
 	public deltaReduce(): ILCExpression {

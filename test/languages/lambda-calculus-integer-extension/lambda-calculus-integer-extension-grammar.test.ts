@@ -467,7 +467,7 @@ test('LambdaCalculusIntegerExtensionGrammar Church numerals x 10 test', () => {
 		const iChurchExprAsInt = `((${iChurchExpr} λn.(+ n 1)) 0)`;
 		const actualResult = fb(iChurchExprAsInt);
 
-		console.log(`${i}: ${iChurchExpr} -> ${actualResult}`);
+		// console.log(`${i}: ${iChurchExpr} -> ${actualResult}`);
 
 		expect(actualResult).toBeTruthy();
 		expect(isLCIntegerLiteral(actualResult)).toBeTruthy();
