@@ -478,7 +478,7 @@ export class LCFunctionCall implements ILCExpression {
 		//     match *self {
 		//         Abs(ref mut abstracted) => abstracted.beta_hap(limit, count),
 		//         App(_) => {
-		//             self.lhs_mut().unwrap().beta_cbv(limit, count);
+		//             self.lhs_mut().unwrap().beta_cbv(limit, count); // Error? beta_cbv or beta_hap ?
 		//             self.rhs_mut().unwrap().beta_hap(limit, count);
 		//
 		//             if self.is_reducible(limit, *count) {
@@ -551,7 +551,7 @@ export class LCFunctionCall implements ILCExpression {
 		//     match *self {
 		//         Abs(ref mut abstracted) => abstracted.beta_hno(limit, count),
 		//         App(_) => {
-		//             self.lhs_mut().unwrap().beta_hsp(limit, count);
+		//             self.lhs_mut().unwrap().beta_hsp(limit, count); // Error? beta_hsp or beta_hno?
 		//
 		//             if self.is_reducible(limit, *count) {
 		//                 self.eval(count);
@@ -583,7 +583,7 @@ export class LCFunctionCall implements ILCExpression {
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
 		const evaluatedCallee = this.callee
-			.etaReduce()
+			.etaReduce() // ? Keep this or remove it?
 			.deltaReduce()
 			.betaReduce(
 				BetaReductionStrategy.ThAWHackForYCombinator,
@@ -594,7 +594,9 @@ export class LCFunctionCall implements ILCExpression {
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			const result = new LCFunctionCall(
 				evaluatedCallee,
-				// Note: Simply using 'this.arg' as the second argument fails.
+				// Note: Simply using 'this.arg' as the second argument fails for the Y comb.
+				// This is the first of two differences between this strategy and CallByName.
+				// this.arg		// As in CallByName
 				this.arg
 					.deltaReduce()
 					.betaReduce(
@@ -606,11 +608,6 @@ export class LCFunctionCall implements ILCExpression {
 
 			return result;
 		}
-
-		// case cbn e1 of
-		// Lam (x, e) => cbn (subst e2 (Lam(x, e)))
-		// x := evaluatedCallee.arg
-		// e := evaluatedCallee.body
 
 		// Next, substitute this.arg in for the arg in the evaluated callee.
 
@@ -718,7 +715,9 @@ export class LCFunctionCall implements ILCExpression {
 		//
 		// return this.callee.body.etaReduce();
 
-		return this;
+		// return this;
+
+		return new LCFunctionCall(this.callee.etaReduce(), this.arg.etaReduce());
 	}
 
 	public getSetOfAllVariableNames(): IImmutableSet<string> {

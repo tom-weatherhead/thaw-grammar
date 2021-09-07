@@ -130,6 +130,9 @@ export class LCLambdaExpression implements ILCValue {
 				);
 
 			case BetaReductionStrategy.ThAWHackForYCombinator:
+				// Note: Simply returning 'redex' here fails for the Y comb.
+				// This is the second of two differences between this strategy and CallByName.
+				// return redex; // Use this for real CallByName semantics.
 				// ThAW hack 2021-09-07 :
 				return new LCLambdaExpression(
 					redex.arg,
