@@ -20,6 +20,8 @@ export abstract class LCValueBase implements ILCExpression {
 
 	// public abstract equals(obj: unknown): boolean;
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
+
 	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
 		return this;
 	}
@@ -32,10 +34,6 @@ export abstract class LCValueBase implements ILCExpression {
 	// {
 	// 	return undefined; // TODO FIXME
 	// }
-
-	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
-		return areIsomorphic(this, other);
-	}
 
 	public containsVariableNamed(name: string): boolean {
 		return false;
@@ -78,13 +76,7 @@ export abstract class LCValueBase implements ILCExpression {
 		return this;
 	}
 
-	// public betaReduceV2(
-	// 	options: ILCBetaReductionOptions,
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression {
-	// 	return this;
-	// }
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 
 	public deltaReduce(): ILCExpression {
 		return this;
@@ -92,5 +84,9 @@ export abstract class LCValueBase implements ILCExpression {
 
 	public etaReduce(): ILCExpression {
 		return this;
+	}
+
+	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
+		return areIsomorphic(this, other);
 	}
 }
