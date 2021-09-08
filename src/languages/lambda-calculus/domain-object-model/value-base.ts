@@ -7,7 +7,7 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
-	ILCBetaReductionOptions,
+	// ILCBetaReductionOptions,
 	ILCExpression,
 	ISubstitution,
 	IUnifiable
@@ -18,17 +18,20 @@ export abstract class LCValueBase implements ILCExpression {
 
 	public abstract toString(): string;
 
+	// public abstract equals(obj: unknown): boolean;
+
 	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
 		return this;
 	}
 
-	public unify(
+	public abstract unify(
 		other: IUnifiable<ILCExpression>,
 		variablesInOriginalExpr1Param?: IImmutableSet<string>,
 		variablesInOriginalExpr2Param?: IImmutableSet<string>
-	): ISubstitution<ILCExpression> | undefined {
-		return undefined; // TODO FIXME
-	}
+	): ISubstitution<ILCExpression> | undefined;
+	// {
+	// 	return undefined; // TODO FIXME
+	// }
 
 	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
 		return areIsomorphic(this, other);
@@ -49,18 +52,18 @@ export abstract class LCValueBase implements ILCExpression {
 		return false;
 	}
 
-	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
-		// Alpha-conversion
-
-		return this;
-	}
-
 	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
 		return this;
 	}
 
 	public getSetOfAllVariableNames(): IImmutableSet<string> {
 		return createSet<string>();
+	}
+
+	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
+		// Alpha-conversion
+
+		return this;
 	}
 
 	public isBetaReducible(): boolean {
@@ -75,13 +78,13 @@ export abstract class LCValueBase implements ILCExpression {
 		return this;
 	}
 
-	public betaReduceV2(
-		options: ILCBetaReductionOptions,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
-		return this;
-	}
+	// public betaReduceV2(
+	// 	options: ILCBetaReductionOptions,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression {
+	// 	return this;
+	// }
 
 	public deltaReduce(): ILCExpression {
 		return this;

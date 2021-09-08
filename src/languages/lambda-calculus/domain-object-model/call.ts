@@ -5,7 +5,7 @@
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
-	areIsomorphic,
+	// areIsomorphic,
 	BetaReductionStrategy,
 	// ILCBetaReductionOptions,
 	ILCExpression,
@@ -15,6 +15,8 @@ import {
 } from './interfaces/expression';
 
 import { isLCLambdaExpression, LCLambdaExpression } from './lambda-expression';
+
+import { LCValueBase } from './value-base';
 
 const typenameLCFunctionCall = 'LCFunctionCall';
 
@@ -27,28 +29,31 @@ export function isLCFunctionCall(obj: unknown): obj is LCFunctionCall {
 	);
 }
 
-export class LCFunctionCall implements ILCExpression {
-	public readonly typename: string = typenameLCFunctionCall;
+// export class LCFunctionCall implements ILCExpression {
+export class LCFunctionCall extends LCValueBase {
+	// public readonly typename: string = typenameLCFunctionCall;
 
-	constructor(public readonly callee: ILCExpression, public readonly arg: ILCExpression) {}
+	constructor(public readonly callee: ILCExpression, public readonly arg: ILCExpression) {
+		super(typenameLCFunctionCall);
+	}
 	// constructor(public readonly callee: LCExpressionMapKey, public readonly arg: LCExpressionMapKey) {}
 
 	public toString(): string {
 		return `(${this.callee} ${this.arg})`;
 	}
 
-	public containsVariableNamed(name: string): boolean {
+	public override containsVariableNamed(name: string): boolean {
 		return this.callee.containsVariableNamed(name) || this.arg.containsVariableNamed(name);
 	}
 
-	public containsBoundVariableNamed(name: string): boolean {
+	public override containsBoundVariableNamed(name: string): boolean {
 		return (
 			this.callee.containsBoundVariableNamed(name) ||
 			this.arg.containsBoundVariableNamed(name)
 		);
 	}
 
-	public containsUnboundVariableNamed(
+	public override containsUnboundVariableNamed(
 		name: string,
 		boundVariableNames: IImmutableSet<string>
 	): boolean {
@@ -60,14 +65,17 @@ export class LCFunctionCall implements ILCExpression {
 
 	// Alpha-conversion:
 
-	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
+	public override renameBoundVariable(newName: string, oldName: string): ILCExpression {
 		return new LCFunctionCall(
 			this.callee.renameBoundVariable(newName, oldName),
 			this.arg.renameBoundVariable(newName, oldName)
 		);
 	}
 
-	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
+	public override substituteForUnboundVariable(
+		name: string,
+		value: ILCExpression
+	): ILCExpression {
 		return new LCFunctionCall(
 			this.callee.substituteForUnboundVariable(name, value),
 			this.arg.substituteForUnboundVariable(name, value)
@@ -88,7 +96,7 @@ export class LCFunctionCall implements ILCExpression {
 	//
 	// η-reduction can be seen to be the same as the concept of local completeness in natural deduction, via the Curry–Howard isomorphism.
 
-	public isBetaReducible(): boolean {
+	public override isBetaReducible(): boolean {
 		return (
 			isLCLambdaExpression(this.callee) ||
 			this.callee.isBetaReducible() ||
@@ -620,7 +628,7 @@ export class LCFunctionCall implements ILCExpression {
 			);
 	}
 
-	public betaReduce(
+	public override betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,
 		maxDepth: number
@@ -704,11 +712,11 @@ export class LCFunctionCall implements ILCExpression {
 	// 	return this;
 	// }
 
-	public deltaReduce(): ILCExpression {
+	public override deltaReduce(): ILCExpression {
 		return new LCFunctionCall(this.callee.deltaReduce(), this.arg.deltaReduce());
 	}
 
-	public etaReduce(): ILCExpression {
+	public override etaReduce(): ILCExpression {
 		// if (!isLCLambdaExpression(this.callee) || !this.callee.isEtaReducible()) {
 		// 	return this;
 		// }
@@ -720,11 +728,11 @@ export class LCFunctionCall implements ILCExpression {
 		return new LCFunctionCall(this.callee.etaReduce(), this.arg.etaReduce());
 	}
 
-	public getSetOfAllVariableNames(): IImmutableSet<string> {
+	public override getSetOfAllVariableNames(): IImmutableSet<string> {
 		return this.callee.getSetOfAllVariableNames().union(this.arg.getSetOfAllVariableNames());
 	}
 
-	public applySubstitution(substitution: ILCSubstitution): ILCExpression {
+	public override applySubstitution(substitution: ILCSubstitution): ILCExpression {
 		return new LCFunctionCall(
 			this.callee.applySubstitution(substitution),
 			this.arg.applySubstitution(substitution)
@@ -780,7 +788,7 @@ export class LCFunctionCall implements ILCExpression {
 		return unifier1.compose(unifier2);
 	}
 
-	public isIsomorphicTo(other: ILCExpression): boolean {
-		return areIsomorphic(this, other);
-	}
+	// public isIsomorphicTo(other: ILCExpression): boolean {
+	// 	return areIsomorphic(this, other);
+	// }
 }
