@@ -3,7 +3,7 @@
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
-	areIsomorphic,
+	// areIsomorphic,
 	BetaReductionStrategy,
 	// ILCBetaReductionOptions,
 	ILCExpression,
@@ -14,6 +14,8 @@ import {
 } from './interfaces/expression';
 
 import { isLCFunctionCall } from './call';
+
+import { LCValueBase } from './value-base';
 
 import { LCVariable } from './variable';
 
@@ -32,25 +34,27 @@ export function isLCLambdaExpression(obj: unknown): obj is LCLambdaExpression {
 
 // TODO: Name it 'LCLambdaExpression' or 'LCFunction' ?
 
-export class LCLambdaExpression implements ILCValue {
-	public readonly typename: string = typenameLCLambdaExpression;
+export class LCLambdaExpression extends LCValueBase implements ILCValue {
+	// public readonly typename: string = typenameLCLambdaExpression;
 
-	constructor(public readonly arg: LCVariable, public readonly body: ILCExpression) {}
+	constructor(public readonly arg: LCVariable, public readonly body: ILCExpression) {
+		super(typenameLCLambdaExpression);
+	}
 	// constructor(public readonly arg: LCVariable, public readonly body: LCExpressionMapKey) {}
 
 	public toString(): string {
 		return `λ${this.arg}.${this.body}`;
 	}
 
-	public containsVariableNamed(name: string): boolean {
+	public override containsVariableNamed(name: string): boolean {
 		return this.arg.containsVariableNamed(name) || this.body.containsVariableNamed(name);
 	}
 
-	public containsBoundVariableNamed(name: string): boolean {
+	public override containsBoundVariableNamed(name: string): boolean {
 		return this.arg.name === name || this.body.containsBoundVariableNamed(name);
 	}
 
-	public containsUnboundVariableNamed(
+	public override containsUnboundVariableNamed(
 		name: string,
 		boundVariableNames: IImmutableSet<string>
 	): boolean {
@@ -60,7 +64,7 @@ export class LCLambdaExpression implements ILCValue {
 		);
 	}
 
-	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
+	public override renameBoundVariable(newName: string, oldName: string): ILCExpression {
 		if (this.arg.name === oldName) {
 			const newVariable = new LCVariable(newName);
 
@@ -76,17 +80,20 @@ export class LCLambdaExpression implements ILCValue {
 		}
 	}
 
-	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
+	public override substituteForUnboundVariable(
+		name: string,
+		value: ILCExpression
+	): ILCExpression {
 		return name === this.arg.name
 			? this
 			: new LCLambdaExpression(this.arg, this.body.substituteForUnboundVariable(name, value));
 	}
 
-	public isBetaReducible(): boolean {
+	public override isBetaReducible(): boolean {
 		return true; // Is it always true? Even if the expr is not in normal form?
 	}
 
-	public betaReduce(
+	public override betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,
 		maxDepth: number
@@ -165,7 +172,7 @@ export class LCLambdaExpression implements ILCValue {
 	// 	}
 	// }
 
-	public deltaReduce(): ILCExpression {
+	public override deltaReduce(): ILCExpression {
 		return new LCLambdaExpression(this.arg, this.body.deltaReduce());
 	}
 
@@ -173,7 +180,7 @@ export class LCLambdaExpression implements ILCValue {
 	// 	return !this.body.containsUnboundVariableNamed(this.arg.name, createSet<string>());
 	// }
 
-	public etaReduce(): ILCExpression {
+	public override etaReduce(): ILCExpression {
 		// λx.(f x) eta-reduces to f iff x does not occur unbound in f.
 
 		if (
@@ -188,11 +195,11 @@ export class LCLambdaExpression implements ILCValue {
 		return this;
 	}
 
-	public getSetOfAllVariableNames(): IImmutableSet<string> {
+	public override getSetOfAllVariableNames(): IImmutableSet<string> {
 		return createSet([this.arg.name]).union(this.body.getSetOfAllVariableNames());
 	}
 
-	public applySubstitution(substitution: ILCSubstitution): ILCExpression {
+	public override applySubstitution(substitution: ILCSubstitution): ILCExpression {
 		const newArg = this.arg.applySubstitution(substitution);
 
 		if (!isLCVariable(newArg)) {
@@ -284,7 +291,7 @@ export class LCLambdaExpression implements ILCValue {
 		return compositeSubstitution;
 	}
 
-	public isIsomorphicTo(other: ILCExpression): boolean {
-		return areIsomorphic(this, other);
-	}
+	// public isIsomorphicTo(other: ILCExpression): boolean {
+	// 	return areIsomorphic(this, other);
+	// }
 }

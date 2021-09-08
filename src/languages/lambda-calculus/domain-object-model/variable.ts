@@ -3,8 +3,8 @@
 import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
-	areIsomorphic,
-	BetaReductionStrategy,
+	// areIsomorphic,
+	// BetaReductionStrategy,
 	// ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
@@ -16,12 +16,16 @@ import {
 
 import { createSubstitution } from './substitution';
 
+import { LCValueBase } from './value-base';
+
 // All variables are irreducible.
 
-export class LCVariable implements ILCVariable {
-	public readonly typename: string = typenameLCVariable;
+export class LCVariable extends LCValueBase implements ILCVariable {
+	// public readonly typename: string = typenameLCVariable;
 
-	constructor(public readonly name: string) {}
+	constructor(public readonly name: string) {
+		super(typenameLCVariable);
+	}
 
 	public toString(): string {
 		return this.name;
@@ -34,16 +38,16 @@ export class LCVariable implements ILCVariable {
 		return isLCVariable(otherVar) && this.name === otherVar.name;
 	}
 
-	public containsVariableNamed(name: string): boolean {
+	public override containsVariableNamed(name: string): boolean {
 		return name === this.name;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public containsBoundVariableNamed(name: string): boolean {
-		return false;
-	}
+	// public override containsBoundVariableNamed(name: string): boolean {
+	// 	return false;
+	// }
 
-	public containsUnboundVariableNamed(
+	public override containsUnboundVariableNamed(
 		name: string,
 		boundVariableNames: IImmutableSet<string>
 	): boolean {
@@ -51,26 +55,29 @@ export class LCVariable implements ILCVariable {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
-		return this;
-	}
+	// public override renameBoundVariable(newName: string, oldName: string): ILCExpression {
+	// 	return this;
+	// }
 
-	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
+	public override substituteForUnboundVariable(
+		name: string,
+		value: ILCExpression
+	): ILCExpression {
 		return name === this.name ? value : this;
 	}
 
-	public isBetaReducible(): boolean {
-		return false;
-	}
+	// public override isBetaReducible(): boolean {
+	// 	return false;
+	// }
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public betaReduce(
-		strategy: BetaReductionStrategy,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
-		return this;
-	}
+	// public override betaReduce(
+	// 	strategy: BetaReductionStrategy,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression {
+	// 	return this;
+	// }
 
 	// public betaReduceV2(
 	// 	options: ILCBetaReductionOptions,
@@ -80,19 +87,19 @@ export class LCVariable implements ILCVariable {
 	// 	return this;
 	// }
 
-	public deltaReduce(): ILCExpression {
-		return this;
-	}
+	// public override deltaReduce(): ILCExpression {
+	// 	return this;
+	// }
 
-	public etaReduce(): ILCExpression {
-		return this;
-	}
+	// public override etaReduce(): ILCExpression {
+	// 	return this;
+	// }
 
-	public getSetOfAllVariableNames(): IImmutableSet<string> {
+	public override getSetOfAllVariableNames(): IImmutableSet<string> {
 		return createSet([this.name]);
 	}
 
-	public applySubstitution(substitution: ILCSubstitution): ILCExpression {
+	public override applySubstitution(substitution: ILCSubstitution): ILCExpression {
 		return ifDefinedThenElse(substitution.SubstitutionList.get(this.name), this);
 	}
 
@@ -140,7 +147,7 @@ export class LCVariable implements ILCVariable {
 		}
 	}
 
-	public isIsomorphicTo(other: ILCExpression): boolean {
-		return areIsomorphic(this, other);
-	}
+	// public isIsomorphicTo(other: ILCExpression): boolean {
+	// 	return areIsomorphic(this, other);
+	// }
 }
