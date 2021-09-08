@@ -1,12 +1,12 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-integer-extension/domain-object-model/integer-literal.ts
 
-import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
+import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
 import {
-	areIsomorphic,
-	BetaReductionStrategy,
+	// areIsomorphic,
+	// BetaReductionStrategy,
 	// ILCBetaReductionOptions,
 	ILCExpression,
 	isLCVariable,
@@ -15,6 +15,8 @@ import {
 } from '../../lambda-calculus/domain-object-model/interfaces/expression';
 
 import { createSubstitution } from '../../lambda-calculus/domain-object-model/substitution';
+
+import { LCValueBase } from '../../lambda-calculus/domain-object-model/value-base';
 
 const typenameIntegerLiteral = 'LCIntegerLiteral';
 
@@ -29,14 +31,14 @@ export function isLCIntegerLiteral(obj: unknown): obj is LCIntegerLiteral {
 
 // All integer literals are irreducible.
 
-export class LCIntegerLiteral implements ILCExpression {
-	public readonly typename = typenameIntegerLiteral;
+export class LCIntegerLiteral extends LCValueBase {
+	// public readonly typename = typenameIntegerLiteral;
 	public readonly value: number;
 
 	// constructor(public readonly value: number) {}
 
 	constructor(value: unknown) {
-		// super();
+		super(typenameIntegerLiteral);
 
 		// HACK ThAW 2020-01-06 : The value in an IntegerLiteral can be int or float.
 		// In the future, we will need to properly support FloatLiterals
@@ -71,9 +73,9 @@ export class LCIntegerLiteral implements ILCExpression {
 		return isLCIntegerLiteral(otherIntegerLiteral) && this.value === otherIntegerLiteral.value;
 	}
 
-	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
-		return this;
-	}
+	// public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
+	// 	return this;
+	// }
 
 	public unify(
 		other: IUnifiable<ILCExpression>,
@@ -100,50 +102,50 @@ export class LCIntegerLiteral implements ILCExpression {
 		}
 	}
 
-	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
-		return areIsomorphic(this, other);
-	}
+	// public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
+	// 	return areIsomorphic(this, other);
+	// }
+	//
+	// public containsVariableNamed(name: string): boolean {
+	// 	return false;
+	// }
+	//
+	// public containsBoundVariableNamed(name: string): boolean {
+	// 	return false;
+	// }
+	//
+	// public containsUnboundVariableNamed(
+	// 	name: string,
+	// 	boundVariableNames: IImmutableSet<string>
+	// ): boolean {
+	// 	return false;
+	// }
+	//
+	// public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
+	// 	return this;
+	// }
+	//
+	// public getSetOfAllVariableNames(): IImmutableSet<string> {
+	// 	return createSet<string>();
+	// }
 
-	public containsVariableNamed(name: string): boolean {
-		return false;
-	}
-
-	public containsBoundVariableNamed(name: string): boolean {
-		return false;
-	}
-
-	public containsUnboundVariableNamed(
-		name: string,
-		boundVariableNames: IImmutableSet<string>
-	): boolean {
-		return false;
-	}
-
-	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
-		return this;
-	}
-
-	public getSetOfAllVariableNames(): IImmutableSet<string> {
-		return createSet<string>();
-	}
-
-	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
-		// Alpha-conversion
-
-		return this;
-	}
-
-	public isBetaReducible(): boolean {
-		return false;
-	}
-
-	public betaReduce(
-		strategy: BetaReductionStrategy,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
-		return this;
-	}
+	// public renameBoundVariable(newName: string, oldName: string): ILCExpression {
+	// 	// Alpha-conversion
+	//
+	// 	return this;
+	// }
+	//
+	// public isBetaReducible(): boolean {
+	// 	return false;
+	// }
+	//
+	// public betaReduce(
+	// 	strategy: BetaReductionStrategy,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression {
+	// 	return this;
+	// }
 
 	// public betaReduceV2(
 	// 	options: ILCBetaReductionOptions,
@@ -153,11 +155,11 @@ export class LCIntegerLiteral implements ILCExpression {
 	// 	return this;
 	// }
 
-	public deltaReduce(): ILCExpression {
-		return this;
-	}
-
-	public etaReduce(): ILCExpression {
-		return this;
-	}
+	// public deltaReduce(): ILCExpression {
+	// 	return this;
+	// }
+	//
+	// public etaReduce(): ILCExpression {
+	// 	return this;
+	// }
 }
