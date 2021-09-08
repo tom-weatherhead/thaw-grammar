@@ -3,9 +3,6 @@
 import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
-	// areIsomorphic,
-	// BetaReductionStrategy,
-	// ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -21,8 +18,6 @@ import { LCValueBase } from './value-base';
 // All variables are irreducible.
 
 export class LCVariable extends LCValueBase implements ILCVariable {
-	// public readonly typename: string = typenameLCVariable;
-
 	constructor(public readonly name: string) {
 		super(typenameLCVariable);
 	}
@@ -42,11 +37,6 @@ export class LCVariable extends LCValueBase implements ILCVariable {
 		return name === this.name;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// public override containsBoundVariableNamed(name: string): boolean {
-	// 	return false;
-	// }
-
 	public override containsUnboundVariableNamed(
 		name: string,
 		boundVariableNames: IImmutableSet<string>
@@ -54,46 +44,12 @@ export class LCVariable extends LCValueBase implements ILCVariable {
 		return name === this.name && !boundVariableNames.contains(name);
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// public override renameBoundVariable(newName: string, oldName: string): ILCExpression {
-	// 	return this;
-	// }
-
 	public override substituteForUnboundVariable(
 		name: string,
 		value: ILCExpression
 	): ILCExpression {
 		return name === this.name ? value : this;
 	}
-
-	// public override isBetaReducible(): boolean {
-	// 	return false;
-	// }
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// public override betaReduce(
-	// 	strategy: BetaReductionStrategy,
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression {
-	// 	return this;
-	// }
-
-	// public betaReduceV2(
-	// 	options: ILCBetaReductionOptions,
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression {
-	// 	return this;
-	// }
-
-	// public override deltaReduce(): ILCExpression {
-	// 	return this;
-	// }
-
-	// public override etaReduce(): ILCExpression {
-	// 	return this;
-	// }
 
 	public override getSetOfAllVariableNames(): IImmutableSet<string> {
 		return createSet([this.name]);
@@ -137,17 +93,7 @@ export class LCVariable extends LCValueBase implements ILCVariable {
 
 			return undefined; // This Variable and the Expression are not unifiable.
 		} else {
-			// return createSubstitution(this.name, otherExpr);
-
-			const result = createSubstitution(this.name, otherExpr);
-
-			// console.log(`Constructing the unifier ${result}`);
-
-			return result;
+			return createSubstitution(this.name, otherExpr);
 		}
 	}
-
-	// public isIsomorphicTo(other: ILCExpression): boolean {
-	// 	return areIsomorphic(this, other);
-	// }
 }

@@ -3,9 +3,7 @@
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
-	// areIsomorphic,
 	BetaReductionStrategy,
-	// ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -35,8 +33,6 @@ export function isLCLambdaExpression(obj: unknown): obj is LCLambdaExpression {
 // TODO: Name it 'LCLambdaExpression' or 'LCFunction' ?
 
 export class LCLambdaExpression extends LCValueBase implements ILCValue {
-	// public readonly typename: string = typenameLCLambdaExpression;
-
 	constructor(public readonly arg: LCVariable, public readonly body: ILCExpression) {
 		super(typenameLCLambdaExpression);
 	}
@@ -90,7 +86,9 @@ export class LCLambdaExpression extends LCValueBase implements ILCValue {
 	}
 
 	public override isBetaReducible(): boolean {
-		return true; // Is it always true? Even if the expr is not in normal form?
+		// return true; // Is it always true? Even if the expr is not in normal form?
+
+		return this.body.isBetaReducible();
 	}
 
 	public override betaReduce(
@@ -102,14 +100,6 @@ export class LCLambdaExpression extends LCValueBase implements ILCValue {
 			return this;
 		}
 
-		// This is call-by-value, is it not? :
-		// return new LCLambdaExpression(
-		// 	this.arg,
-		// 	this.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
-		// );
-
-		// TODO? : Replace with:
-
 		// 'redex' means 'reducible expression'.
 		const redex = this.etaReduce();
 
@@ -119,7 +109,7 @@ export class LCLambdaExpression extends LCValueBase implements ILCValue {
 
 		switch (strategy) {
 			case BetaReductionStrategy.CallByName:
-				return redex; // Use this for real CallByName semantics.
+				return redex;
 
 			case BetaReductionStrategy.NormalOrder:
 				return new LCLambdaExpression(
@@ -152,25 +142,6 @@ export class LCLambdaExpression extends LCValueBase implements ILCValue {
 				);
 		}
 	}
-
-	// public betaReduceV2(
-	// 	options: ILCBetaReductionOptions,
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression {
-	// 	if (maxDepth <= 0) {
-	// 		return this;
-	// 	}
-	//
-	// 	if (options.reduceChildrenBeforeParents || !options.reduceRecessiveParentOrChild) {
-	// 		return new LCLambdaExpression(
-	// 			this.arg,
-	// 			this.body.betaReduceV2(options, generateNewVariableName, maxDepth - 1)
-	// 		);
-	// 	} else {
-	// 		return this;
-	// 	}
-	// }
 
 	public override deltaReduce(): ILCExpression {
 		return new LCLambdaExpression(this.arg, this.body.deltaReduce());
@@ -231,20 +202,10 @@ export class LCLambdaExpression extends LCValueBase implements ILCValue {
 		if (isLCVariable(other)) {
 			return other.unify(this, variablesInOriginalExpr2, variablesInOriginalExpr1);
 		} else if (!isLCLambdaExpression(other)) {
-			// console.log(
-			// 	`${other} is neither a LambdaExpression nor a Variable; it fails to unify with ${this}`
-			// );
-
 			return undefined;
 		}
 
-		// console.log(`LCLambdaExpression.unify() : Trying to unify ${this} with ${other} ...`);
-
 		const otherLCLambdaExpression = other as LCLambdaExpression;
-
-		// console.log(
-		// 	`LCLambdaExpression.unify() : Trying to unify ${this.arg} with ${otherLCLambdaExpression.arg} ...`
-		// );
 
 		const unifier1 = this.arg.unify(
 			otherLCLambdaExpression.arg,
@@ -253,45 +214,20 @@ export class LCLambdaExpression extends LCValueBase implements ILCValue {
 		);
 
 		if (typeof unifier1 === 'undefined') {
-			// console.log(
-			// 	`LCLambdaExpression.unify() : Failed to unify ${this.arg} with ${otherLCLambdaExpression.arg}`
-			// );
-
 			return undefined;
 		}
-
-		// console.log(
-		// 	`LCLambdaExpression.unify() : The unifier of ${this.arg} and ${otherLCLambdaExpression.arg} is: ${unifier1}`
-		// );
 
 		const bodyA = this.body.applySubstitution(unifier1);
 		const bodyB = otherLCLambdaExpression.body.applySubstitution(unifier1);
 
-		// console.log(`LCLambdaExpression.unify() : bodyA is: ${bodyA}`);
-		// console.log(`LCLambdaExpression.unify() : bodyB is: ${bodyB}`);
-
 		const unifier2 = bodyA.unify(bodyB, variablesInOriginalExpr1, variablesInOriginalExpr2);
 
 		if (typeof unifier2 === 'undefined') {
-			// console.log(`LCLambdaExpression.unify() : Failed to unify ${bodyA} with ${bodyB}`);
-
 			return undefined;
 		}
 
-		// console.log(
-		// 	`LCLambdaExpression.unify() : The unifier of ${bodyA} and ${bodyB} is: ${unifier2}`
-		// );
-
 		const compositeSubstitution = unifier1.compose(unifier2);
-
-		// console.log(
-		// 	`LCLambdaExpression.unify() : The composition of ${unifier1} and ${unifier2} is: ${compositeSubstitution}`
-		// );
 
 		return compositeSubstitution;
 	}
-
-	// public isIsomorphicTo(other: ILCExpression): boolean {
-	// 	return areIsomorphic(this, other);
-	// }
 }

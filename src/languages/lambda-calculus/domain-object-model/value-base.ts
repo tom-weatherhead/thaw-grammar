@@ -2,12 +2,9 @@
 
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
-// import { ArgumentException } from '../../../common/exceptions/argument-exception';
-
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
-	// ILCBetaReductionOptions,
 	ILCExpression,
 	ISubstitution,
 	IUnifiable
@@ -31,9 +28,6 @@ export abstract class LCValueBase implements ILCExpression {
 		variablesInOriginalExpr1Param?: IImmutableSet<string>,
 		variablesInOriginalExpr2Param?: IImmutableSet<string>
 	): ISubstitution<ILCExpression> | undefined;
-	// {
-	// 	return undefined; // TODO FIXME
-	// }
 
 	public containsVariableNamed(name: string): boolean {
 		return false;
@@ -59,7 +53,7 @@ export abstract class LCValueBase implements ILCExpression {
 	}
 
 	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
-		// Alpha-conversion
+		// α-conversion
 
 		return this;
 	}

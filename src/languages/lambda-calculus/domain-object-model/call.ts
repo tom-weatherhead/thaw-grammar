@@ -5,9 +5,7 @@
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
-	// areIsomorphic,
 	BetaReductionStrategy,
-	// ILCBetaReductionOptions,
 	ILCExpression,
 	ILCSubstitution,
 	ILCUnifiable,
@@ -29,14 +27,11 @@ export function isLCFunctionCall(obj: unknown): obj is LCFunctionCall {
 	);
 }
 
-// export class LCFunctionCall implements ILCExpression {
 export class LCFunctionCall extends LCValueBase {
-	// public readonly typename: string = typenameLCFunctionCall;
-
 	constructor(public readonly callee: ILCExpression, public readonly arg: ILCExpression) {
 		super(typenameLCFunctionCall);
 	}
-	// constructor(public readonly callee: LCExpressionMapKey, public readonly arg: LCExpressionMapKey) {}
+	// TODO? : constructor(public readonly callee: LCExpressionMapKey, public readonly arg: LCExpressionMapKey) {}
 
 	public toString(): string {
 		return `(${this.callee} ${this.arg})`;
@@ -60,15 +55,6 @@ export class LCFunctionCall extends LCValueBase {
 		return (
 			this.callee.containsUnboundVariableNamed(name, boundVariableNames) ||
 			this.arg.containsUnboundVariableNamed(name, boundVariableNames)
-		);
-	}
-
-	// Alpha-conversion:
-
-	public override renameBoundVariable(newName: string, oldName: string): ILCExpression {
-		return new LCFunctionCall(
-			this.callee.renameBoundVariable(newName, oldName),
-			this.arg.renameBoundVariable(newName, oldName)
 		);
 	}
 
@@ -96,26 +82,31 @@ export class LCFunctionCall extends LCValueBase {
 	//
 	// η-reduction can be seen to be the same as the concept of local completeness in natural deduction, via the Curry–Howard isomorphism.
 
+	// α-conversion:
+
+	public override renameBoundVariable(newName: string, oldName: string): ILCExpression {
+		return new LCFunctionCall(
+			this.callee.renameBoundVariable(newName, oldName),
+			this.arg.renameBoundVariable(newName, oldName)
+		);
+	}
+
 	public override isBetaReducible(): boolean {
 		return (
 			isLCLambdaExpression(this.callee) ||
 			this.callee.isBetaReducible() ||
 			this.arg.isBetaReducible()
 		);
-		// return this.callee.isBetaReducible() || this.arg.isBetaReducible();
 	}
 
-	// private
-	public betaReduceCore(
+	private betaReduceCore(
 		lambdaExpression: LCLambdaExpression,
 		arg: ILCExpression,
 		generateNewVariableName: () => string
 	): ILCExpression {
-		// Rename variables as necessary (alpha reduction)
+		// Rename variables as necessary (α-conversion)
 		// My idea for an algorithm:
 		// 1) Build a set of all (unbound?) variables in the body;
-
-		// const argVarNames = arg.getSetOfAllVariableNames().toArray();
 
 		// I.e. Create an array of the names of all unbound variables in arg:
 		const argVarNames = arg
@@ -152,8 +143,6 @@ export class LCFunctionCall extends LCValueBase {
 				) as LCLambdaExpression;
 			}
 		}
-
-		// const lambdaExpressionBody = lambdaExpression.body;
 
 		// Substitution:
 		// Replace all unbound occurrences of Lambda expression's formal parameter
@@ -394,7 +383,6 @@ export class LCFunctionCall extends LCValueBase {
 
 		// Next, substitute evaluatedArg in for the arg in the evaluated callee.
 
-		// return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
 		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
 			.deltaReduce()
 			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
@@ -456,7 +444,6 @@ export class LCFunctionCall extends LCValueBase {
 
 		// Next, substitute evaluatedArg in for the arg in the evaluated callee.
 
-		// return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
 		return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
 			.deltaReduce()
 			.betaReduce(
@@ -464,8 +451,6 @@ export class LCFunctionCall extends LCValueBase {
 				generateNewVariableName,
 				maxDepth - 1
 			);
-
-		// return this; // TODO: Write a real implementation.
 	}
 
 	// 7.5 Hybrid Applicative Order Reduction to Normal Form
@@ -756,10 +741,6 @@ export class LCFunctionCall extends LCValueBase {
 		if (isLCVariable(other)) {
 			return other.unify(this, variablesInOriginalExpr2, variablesInOriginalExpr1);
 		} else if (!isLCFunctionCall(other)) {
-			// console.log(
-			// 	`${other} is neither a FunctionCall nor a Variable; it fails to unify with ${this}`
-			// );
-
 			return undefined;
 		}
 
@@ -777,8 +758,6 @@ export class LCFunctionCall extends LCValueBase {
 		const argA = this.arg.applySubstitution(unifier1);
 		const argB = otherLCFunctionCall.arg.applySubstitution(unifier1);
 
-		// return argA.unify(argB);
-
 		const unifier2 = argA.unify(argB, variablesInOriginalExpr1, variablesInOriginalExpr2);
 
 		if (typeof unifier2 === 'undefined') {
@@ -787,8 +766,4 @@ export class LCFunctionCall extends LCValueBase {
 
 		return unifier1.compose(unifier2);
 	}
-
-	// public isIsomorphicTo(other: ILCExpression): boolean {
-	// 	return areIsomorphic(this, other);
-	// }
 }
