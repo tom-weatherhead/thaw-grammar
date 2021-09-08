@@ -1,9 +1,12 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/domain-object-model/value-base.ts
 
+// Rename this file to expression-base.ts ?
+
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
+import { areIsomorphic } from '../utilities';
+
 import {
-	areIsomorphic,
 	BetaReductionStrategy,
 	ILCExpression,
 	ISubstitution,

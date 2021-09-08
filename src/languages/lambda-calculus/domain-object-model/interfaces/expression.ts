@@ -1,5 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/domain-object-model/interfaces/expression.ts
 
+//! [β-reduction](https://en.wikipedia.org/wiki/Beta_normal_form) for lambda `Term`s
+
 import { IEqualityComparable, IImmutableSet, IStringifiable } from 'thaw-common-utilities.ts';
 
 export enum BetaReductionStrategy {
@@ -104,39 +106,16 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 /* eslint-disable @typescript-eslint/no-empty-interface */
 export interface ILCValue extends ILCExpression {}
 
+export interface ILCFunctionCall extends ILCExpression {
+	readonly callee: ILCExpression;
+	readonly arg: ILCExpression;
+}
+
+export interface ILCLambdaExpression extends ILCValue {
+	readonly arg: ILCVariable;
+	readonly body: ILCExpression;
+}
+
 export interface ILCVariable extends IEqualityComparable, ILCExpression {
 	readonly name: string;
-}
-
-// **** These are not interfaces; they should be moved elsewhere ****
-
-export const typenameLCVariable = 'LCVariable';
-
-export function isLCVariable(obj: unknown): obj is ILCVariable {
-	const otherLCVariable = obj as ILCExpression;
-
-	return (
-		typeof otherLCVariable !== 'undefined' && otherLCVariable.typename === typenameLCVariable
-	);
-}
-
-export function areIsomorphic<T>(expr1: IUnifiable<T>, expr2: IUnifiable<T>): boolean {
-	const unifyingSubstitution = expr1.unify(
-		expr2 // ,
-		// expr1.getSetOfAllVariableNames().union(expr2.getSetOfAllVariableNames())
-	);
-
-	return typeof unifyingSubstitution !== 'undefined' && unifyingSubstitution.isOneToOne;
-
-	// if (typeof unifyingSubstitution === 'undefined' || !unifyingSubstitution.isOneToOne) {
-	// 	return false;
-	// }
-	//
-	// const keyNames = Array.from(unifyingSubstitution.SubstitutionList.keys());
-	// const valueNames = Array.from(unifyingSubstitution.SubstitutionList.values()).map(
-	// 	(v) => (v as ILCVariable).name
-	// );
-	// const s = createSet(keyNames.concat(valueNames));
-	//
-	// return s.size === 2 * keyNames.length;
 }

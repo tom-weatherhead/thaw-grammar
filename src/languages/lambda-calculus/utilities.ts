@@ -4,7 +4,11 @@ import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 
 import { IParser, ITokenizer } from 'thaw-interpreter-types';
 
-import { BetaReductionStrategy, ILCExpression } from './domain-object-model/interfaces/expression';
+import {
+	BetaReductionStrategy,
+	ILCExpression,
+	IUnifiable
+} from './domain-object-model/interfaces/expression';
 
 export const defaultMaxBetaReductionDepth = 100;
 
@@ -108,4 +112,10 @@ export function createMapOfLCExprNamesToExprs(
 	}
 
 	return mapLCExprNamesToExprs;
+}
+
+export function areIsomorphic<T>(expr1: IUnifiable<T>, expr2: IUnifiable<T>): boolean {
+	const unifyingSubstitution = expr1.unify(expr2);
+
+	return typeof unifyingSubstitution !== 'undefined' && unifyingSubstitution.isOneToOne;
 }

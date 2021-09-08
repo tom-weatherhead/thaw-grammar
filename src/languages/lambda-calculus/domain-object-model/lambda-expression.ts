@@ -5,13 +5,18 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	BetaReductionStrategy,
 	ILCExpression,
+	ILCLambdaExpression,
 	ILCSubstitution,
-	ILCUnifiable,
-	ILCValue,
-	isLCVariable
+	ILCUnifiable // ,
+	// ILCValue
 } from './interfaces/expression';
 
-import { isLCFunctionCall } from './call';
+import {
+	isLCFunctionCall,
+	isLCLambdaExpression,
+	isLCVariable,
+	typenameLCLambdaExpression
+} from '../type-guards';
 
 import { LCValueBase } from './value-base';
 
@@ -19,20 +24,9 @@ import { LCVariable } from './variable';
 
 // 'let x = e1 in e2;' can be expressed as '(λx.e2 e1)'
 
-const typenameLCLambdaExpression = 'LCLambdaExpression';
-
-export function isLCLambdaExpression(obj: unknown): obj is LCLambdaExpression {
-	const otherLCLambdaExpression = obj as LCLambdaExpression;
-
-	return (
-		typeof otherLCLambdaExpression !== 'undefined' &&
-		otherLCLambdaExpression.typename === typenameLCLambdaExpression
-	);
-}
-
 // TODO: Name it 'LCLambdaExpression' or 'LCFunction' ?
 
-export class LCLambdaExpression extends LCValueBase implements ILCValue {
+export class LCLambdaExpression extends LCValueBase implements ILCLambdaExpression {
 	constructor(public readonly arg: LCVariable, public readonly body: ILCExpression) {
 		super(typenameLCLambdaExpression);
 	}

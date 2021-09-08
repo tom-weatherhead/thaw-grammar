@@ -6,10 +6,11 @@ import { ArgumentException } from '../../../common/exceptions/argument-exception
 
 import {
 	ILCExpression,
-	isLCVariable,
 	ISubstitution,
 	IUnifiable
 } from '../../lambda-calculus/domain-object-model/interfaces/expression';
+
+import { isLCVariable } from '../../lambda-calculus/type-guards';
 
 import { createSubstitution } from '../../lambda-calculus/domain-object-model/substitution';
 

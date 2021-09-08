@@ -7,27 +7,35 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 import {
 	BetaReductionStrategy,
 	ILCExpression,
+	ILCFunctionCall,
+	ILCLambdaExpression,
 	ILCSubstitution,
-	ILCUnifiable,
-	isLCVariable
+	ILCUnifiable
 } from './interfaces/expression';
 
-import { isLCLambdaExpression, LCLambdaExpression } from './lambda-expression';
+import {
+	isLCFunctionCall,
+	isLCLambdaExpression,
+	isLCVariable,
+	typenameLCFunctionCall
+} from '../type-guards';
+
+// import { LCLambdaExpression } from './lambda-expression';
 
 import { LCValueBase } from './value-base';
 
-const typenameLCFunctionCall = 'LCFunctionCall';
+// const typenameLCFunctionCall = 'LCFunctionCall';
+//
+// export function isLCFunctionCall(obj: unknown): obj is LCFunctionCall {
+// 	const otherLCFunctionCall = obj as LCFunctionCall;
+//
+// 	return (
+// 		typeof otherLCFunctionCall !== 'undefined' &&
+// 		otherLCFunctionCall.typename === typenameLCFunctionCall
+// 	);
+// }
 
-export function isLCFunctionCall(obj: unknown): obj is LCFunctionCall {
-	const otherLCFunctionCall = obj as LCFunctionCall;
-
-	return (
-		typeof otherLCFunctionCall !== 'undefined' &&
-		otherLCFunctionCall.typename === typenameLCFunctionCall
-	);
-}
-
-export class LCFunctionCall extends LCValueBase {
+export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 	constructor(public readonly callee: ILCExpression, public readonly arg: ILCExpression) {
 		super(typenameLCFunctionCall);
 	}
@@ -100,7 +108,7 @@ export class LCFunctionCall extends LCValueBase {
 	}
 
 	private betaReduceCore(
-		lambdaExpression: LCLambdaExpression,
+		lambdaExpression: ILCLambdaExpression,
 		arg: ILCExpression,
 		generateNewVariableName: () => string
 	): ILCExpression {
@@ -140,7 +148,7 @@ export class LCFunctionCall extends LCValueBase {
 				lambdaExpression = lambdaExpression.renameBoundVariable(
 					generatedVarName,
 					name
-				) as LCLambdaExpression;
+				) as ILCLambdaExpression;
 			}
 		}
 
@@ -188,6 +196,11 @@ export class LCFunctionCall extends LCValueBase {
 		//         }
 		//     }
 		// }
+
+		// Note: fn is_reducible return true iff the lhs (the callee) is an abstraction
+		// (a lambda expression), and the recursion depth limit has not yet been reached.
+
+		// fn is_reducible appears to check only the current node, not child nodes.
 
 		// ****
 
@@ -489,7 +502,44 @@ export class LCFunctionCall extends LCValueBase {
 			return this;
 		}
 
-		return this; // TODO: Write a real implementation.
+		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
+		// then return.
+		const evaluatedCallee = this.callee
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
+		const evaluatedArg = this.arg
+			.deltaReduce()
+			.betaReduce(
+				BetaReductionStrategy.HybridApplicativeOrder,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+
+		if (!isLCLambdaExpression(evaluatedCallee)) {
+			return new LCFunctionCall(evaluatedCallee, evaluatedArg);
+		}
+
+		// Next, substitute evaluatedArg in for the arg in the evaluated callee.
+
+		return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
+			.deltaReduce()
+			.betaReduce(
+				BetaReductionStrategy.HybridApplicativeOrder,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+
+		// TODO: Implement the part:
+		// if !self.is_reducible(limit, *count) then
+		//   self.lhs_mut().unwrap().beta_hap(limit, count); // Note the hap rather than cbv
+
+		// const evaluatedCallee = this.callee
+		// 	.deltaReduce()
+		// 	.betaReduce(
+		// 		BetaReductionStrategy.ApplicativeOrder,
+		// 		generateNewVariableName,
+		// 		maxDepth - 1
+		// 	);
 	}
 
 	// 7.6 Head Spine Reduction to Head Normal Form
@@ -524,7 +574,21 @@ export class LCFunctionCall extends LCValueBase {
 			return this;
 		}
 
-		return this; // TODO: Write a real implementation.
+		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
+		// then return.
+		const evaluatedCallee = this.callee
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.HeadSpine, generateNewVariableName, maxDepth - 1);
+
+		if (!isLCLambdaExpression(evaluatedCallee)) {
+			return new LCFunctionCall(evaluatedCallee, this.arg);
+		}
+
+		// Next, substitute evaluatedArg in for the arg in the evaluated callee.
+
+		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.HeadSpine, generateNewVariableName, maxDepth - 1);
 	}
 
 	// 7.7 Hybrid Normal Order Reduction to Normal Form
@@ -562,7 +626,31 @@ export class LCFunctionCall extends LCValueBase {
 			return this;
 		}
 
-		return this; // TODO: Write a real implementation.
+		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
+		// then return.
+		const evaluatedCallee = this.callee
+			.deltaReduce()
+			.betaReduce(BetaReductionStrategy.HeadSpine, generateNewVariableName, maxDepth - 1);
+
+		if (!isLCLambdaExpression(evaluatedCallee)) {
+			return new LCFunctionCall(evaluatedCallee, this.arg);
+		}
+
+		// Next, substitute evaluatedArg in for the arg in the evaluated callee.
+
+		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
+			.deltaReduce()
+			.betaReduce(
+				BetaReductionStrategy.HybridNormalOrder,
+				generateNewVariableName,
+				maxDepth - 1
+			);
+
+		// TODO: Implement the part:
+		// if !self.is_reducible(limit, *count) then
+		//   self.lhs_mut().unwrap().beta_hno(limit, count);
+		//   self.rhs_mut().unwrap().beta_hno(limit, count);
+		// endif
 	}
 
 	private betaReduceThAWHackForYCombinator(

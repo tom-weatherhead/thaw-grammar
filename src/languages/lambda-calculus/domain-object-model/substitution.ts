@@ -5,7 +5,9 @@ import { createSet } from 'thaw-common-utilities.ts';
 // 2021-07-13: Warning: Circular dependency: caused by reference to prolog-variable.ts :
 // prolog-substitution.js -> prolog-variable.js -> prolog-substitution.js
 
-import { ILCSubstitution, ILCExpression, ILCVariable, isLCVariable } from './interfaces/expression';
+import { ILCSubstitution, ILCExpression, ILCVariable } from './interfaces/expression';
+
+import { isLCVariable } from '../type-guards';
 
 class LCSubstitution implements ILCSubstitution {
 	public readonly SubstitutionList = new Map<string, ILCExpression>();

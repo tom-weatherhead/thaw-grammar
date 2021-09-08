@@ -2,14 +2,9 @@
 
 import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
-import {
-	ILCExpression,
-	ILCSubstitution,
-	ILCUnifiable,
-	ILCVariable,
-	isLCVariable,
-	typenameLCVariable
-} from './interfaces/expression';
+import { ILCExpression, ILCSubstitution, ILCUnifiable, ILCVariable } from './interfaces/expression';
+
+import { isLCVariable, typenameLCVariable } from '../type-guards';
 
 import { createSubstitution } from './substitution';
 
