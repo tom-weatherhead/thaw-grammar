@@ -15,9 +15,11 @@ export abstract class LCValueBase implements ILCExpression {
 
 	public abstract toString(): string;
 
-	// public abstract equals(obj: unknown): boolean;
-
 	/* eslint-disable @typescript-eslint/no-unused-vars */
+
+	public equals(obj: unknown): boolean {
+		return false;
+	}
 
 	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
 		return this;

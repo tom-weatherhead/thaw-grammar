@@ -1,11 +1,9 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-integer-extension/domain-object-model/primitive-operator.ts
 
-import { IImmutableSet } from 'thaw-common-utilities.ts';
+import { ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
-	// areIsomorphic,
 	BetaReductionStrategy,
-	// ILCBetaReductionOptions,
 	ILCExpression,
 	ISubstitution,
 	IUnifiable
@@ -44,14 +42,6 @@ export function isPrimitiveOperator(obj: unknown): obj is LCPrimitiveOperator {
 }
 
 export class LCPrimitiveOperator extends LCValueBase {
-	// public readonly typename = typenamePrimitiveOperator;
-	// private readonly numArgs = 2;
-
-	// constructor(
-	// 	public readonly name: string,
-	// 	public readonly leftChild: LCExpressionMapKey,
-	// 	public readonly rightChild: LCExpressionMapKey
-	// ) {
 	constructor(
 		public readonly name: string,
 		public readonly leftChild: ILCExpression,
@@ -59,7 +49,6 @@ export class LCPrimitiveOperator extends LCValueBase {
 	) {
 		super(typenamePrimitiveOperator);
 
-		// if (['+', '-', '*', '/', '%', '=', '<', '>'].indexOf(this.name) < 0) {
 		if (['+', '-', '*', '/', '%', '='].indexOf(this.name) < 0) {
 			throw new Error(`Unrecognized PrimitiveOperator '${this.name}'`);
 		}
@@ -86,14 +75,14 @@ export class LCPrimitiveOperator extends LCValueBase {
 			return undefined;
 		}
 
-		const variablesInOriginalExpr1 =
-			typeof variablesInOriginalExpr1Param !== 'undefined'
-				? variablesInOriginalExpr1Param
-				: this.getSetOfAllVariableNames();
-		const variablesInOriginalExpr2 =
-			typeof variablesInOriginalExpr2Param !== 'undefined'
-				? variablesInOriginalExpr2Param
-				: (other as ILCExpression).getSetOfAllVariableNames();
+		const variablesInOriginalExpr1 = ifDefinedThenElse(
+			variablesInOriginalExpr1Param,
+			this.getSetOfAllVariableNames()
+		);
+		const variablesInOriginalExpr2 = ifDefinedThenElse(
+			variablesInOriginalExpr2Param,
+			(other as ILCExpression).getSetOfAllVariableNames()
+		);
 
 		const u1 = this.leftChild.unify(
 			other.leftChild,
@@ -105,8 +94,6 @@ export class LCPrimitiveOperator extends LCValueBase {
 			return undefined;
 		}
 
-		// return undefined; // TODO FIXME
-
 		return this.rightChild
 			.applySubstitution(u1)
 			.unify(
@@ -115,10 +102,6 @@ export class LCPrimitiveOperator extends LCValueBase {
 				variablesInOriginalExpr2
 			);
 	}
-
-	// public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
-	// 	return areIsomorphic(this, other);
-	// }
 
 	public override containsVariableNamed(name: string): boolean {
 		return (
@@ -156,17 +139,13 @@ export class LCPrimitiveOperator extends LCValueBase {
 	}
 
 	public override getSetOfAllVariableNames(): IImmutableSet<string> {
-		// return createSet<string>();
-
 		return this.leftChild
 			.getSetOfAllVariableNames()
 			.union(this.rightChild.getSetOfAllVariableNames());
 	}
 
 	public override renameBoundVariable(newName: string, oldName: string): ILCExpression {
-		// Alpha-conversion
-
-		// return this;
+		// α-conversion
 
 		return new LCPrimitiveOperator(
 			this.name,
@@ -184,21 +163,11 @@ export class LCPrimitiveOperator extends LCValueBase {
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression {
-		// return this;
-
 		const l = this.leftChild.betaReduce(strategy, generateNewVariableName, maxDepth - 1);
 		const r = this.rightChild.betaReduce(strategy, generateNewVariableName, maxDepth - 1);
 
 		return new LCPrimitiveOperator(this.name, l, r).deltaReduce();
 	}
-
-	// public betaReduceV2(
-	// 	options: ILCBetaReductionOptions,
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression {
-	// 	return this;
-	// }
 
 	// Delta-reduction? See Kamin p. 194.
 
@@ -230,8 +199,4 @@ export class LCPrimitiveOperator extends LCValueBase {
 				throw new Error(`Unrecognized PrimitiveOperator '${this.name}'`);
 		}
 	}
-
-	// public etaReduce(): ILCExpression {
-	// 	return this;
-	// }
 }

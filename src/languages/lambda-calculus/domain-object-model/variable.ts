@@ -26,7 +26,7 @@ export class LCVariable extends LCValueBase implements ILCVariable {
 		return this.name;
 	}
 
-	public equals(obj: unknown): boolean {
+	public override equals(obj: unknown): boolean {
 		const otherVar = obj as LCVariable;
 
 		// We can compare the Name members with == because Name is a string.
@@ -82,14 +82,10 @@ export class LCVariable extends LCValueBase implements ILCVariable {
 			// But what about a binding such as { X = foo(_) } ?
 			// (isLCVariable(other) && otherExpr.isNonBinding)
 		) {
-			// console.log(`${this} and ${otherExpr} are identical; they unify trivially.`);
-
 			return createSubstitution();
 			// } else if (otherExpr.containsVariableNamed(this.name)) {
 		} else if (variablesInOriginalExpr2.contains(this.name)) {
 			// This is the 'occurs' check.
-
-			// console.log(`${otherExpr} contains ${this} (the 'occurs' check); they fail to unify.`);
 
 			return undefined; // This Variable and the Expression are not unifiable.
 		} else {
