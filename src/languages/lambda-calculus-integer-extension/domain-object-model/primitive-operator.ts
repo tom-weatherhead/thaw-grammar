@@ -3,7 +3,7 @@
 import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
-	areIsomorphic,
+	// areIsomorphic,
 	BetaReductionStrategy,
 	// ILCBetaReductionOptions,
 	ILCExpression,
@@ -12,6 +12,9 @@ import {
 } from '../../lambda-calculus/domain-object-model/interfaces/expression';
 
 import { LCLambdaExpression } from '../../lambda-calculus/domain-object-model/lambda-expression';
+
+import { LCValueBase } from '../../lambda-calculus/domain-object-model/value-base';
+
 import { LCVariable } from '../../lambda-calculus/domain-object-model/variable';
 
 import { LCIntegerLiteral, isLCIntegerLiteral } from './integer-literal';
@@ -40,8 +43,8 @@ export function isPrimitiveOperator(obj: unknown): obj is LCPrimitiveOperator {
 	);
 }
 
-export class LCPrimitiveOperator implements ILCExpression {
-	public readonly typename = typenamePrimitiveOperator;
+export class LCPrimitiveOperator extends LCValueBase {
+	// public readonly typename = typenamePrimitiveOperator;
 	// private readonly numArgs = 2;
 
 	// constructor(
@@ -54,6 +57,8 @@ export class LCPrimitiveOperator implements ILCExpression {
 		public readonly leftChild: ILCExpression,
 		public readonly rightChild: ILCExpression
 	) {
+		super(typenamePrimitiveOperator);
+
 		// if (['+', '-', '*', '/', '%', '=', '<', '>'].indexOf(this.name) < 0) {
 		if (['+', '-', '*', '/', '%', '='].indexOf(this.name) < 0) {
 			throw new Error(`Unrecognized PrimitiveOperator '${this.name}'`);
@@ -64,7 +69,7 @@ export class LCPrimitiveOperator implements ILCExpression {
 		return `(${this.name} ${this.leftChild} ${this.rightChild})`;
 	}
 
-	public applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
+	public override applySubstitution(substitution: ISubstitution<ILCExpression>): ILCExpression {
 		return new LCPrimitiveOperator(
 			this.name,
 			this.leftChild.applySubstitution(substitution),
@@ -111,25 +116,25 @@ export class LCPrimitiveOperator implements ILCExpression {
 			);
 	}
 
-	public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
-		return areIsomorphic(this, other);
-	}
+	// public isIsomorphicTo(other: IUnifiable<ILCExpression>): boolean {
+	// 	return areIsomorphic(this, other);
+	// }
 
-	public containsVariableNamed(name: string): boolean {
+	public override containsVariableNamed(name: string): boolean {
 		return (
 			this.leftChild.containsVariableNamed(name) ||
 			this.rightChild.containsVariableNamed(name)
 		);
 	}
 
-	public containsBoundVariableNamed(name: string): boolean {
+	public override containsBoundVariableNamed(name: string): boolean {
 		return (
 			this.leftChild.containsBoundVariableNamed(name) ||
 			this.rightChild.containsBoundVariableNamed(name)
 		);
 	}
 
-	public containsUnboundVariableNamed(
+	public override containsUnboundVariableNamed(
 		name: string,
 		boundVariableNames: IImmutableSet<string>
 	): boolean {
@@ -139,7 +144,10 @@ export class LCPrimitiveOperator implements ILCExpression {
 		);
 	}
 
-	public substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression {
+	public override substituteForUnboundVariable(
+		name: string,
+		value: ILCExpression
+	): ILCExpression {
 		return new LCPrimitiveOperator(
 			this.name,
 			this.leftChild.substituteForUnboundVariable(name, value),
@@ -147,7 +155,7 @@ export class LCPrimitiveOperator implements ILCExpression {
 		);
 	}
 
-	public getSetOfAllVariableNames(): IImmutableSet<string> {
+	public override getSetOfAllVariableNames(): IImmutableSet<string> {
 		// return createSet<string>();
 
 		return this.leftChild
@@ -155,17 +163,23 @@ export class LCPrimitiveOperator implements ILCExpression {
 			.union(this.rightChild.getSetOfAllVariableNames());
 	}
 
-	public renameBoundVariable(newName: string, oldName: string): ILCExpression {
+	public override renameBoundVariable(newName: string, oldName: string): ILCExpression {
 		// Alpha-conversion
 
-		return this;
+		// return this;
+
+		return new LCPrimitiveOperator(
+			this.name,
+			this.leftChild.renameBoundVariable(newName, oldName),
+			this.rightChild.renameBoundVariable(newName, oldName)
+		);
 	}
 
-	public isBetaReducible(): boolean {
+	public override isBetaReducible(): boolean {
 		return this.leftChild.isBetaReducible() || this.rightChild.isBetaReducible();
 	}
 
-	public betaReduce(
+	public override betaReduce(
 		strategy: BetaReductionStrategy,
 		generateNewVariableName: () => string,
 		maxDepth: number
@@ -188,7 +202,7 @@ export class LCPrimitiveOperator implements ILCExpression {
 
 	// Delta-reduction? See Kamin p. 194.
 
-	public deltaReduce(): ILCExpression {
+	public override deltaReduce(): ILCExpression {
 		const leftValue = this.leftChild.deltaReduce();
 		const rightValue = this.rightChild.deltaReduce();
 
@@ -217,7 +231,7 @@ export class LCPrimitiveOperator implements ILCExpression {
 		}
 	}
 
-	public etaReduce(): ILCExpression {
-		return this;
-	}
+	// public etaReduce(): ILCExpression {
+	// 	return this;
+	// }
 }
