@@ -2,9 +2,6 @@
 
 import { createSet } from 'thaw-common-utilities.ts';
 
-// 2021-07-13: Warning: Circular dependency: caused by reference to prolog-variable.ts :
-// prolog-substitution.js -> prolog-variable.js -> prolog-substitution.js
-
 import { ILCSubstitution, ILCExpression, ILCVariable } from './interfaces/expression';
 
 import { isLCVariable } from '../type-guards';
@@ -39,90 +36,27 @@ class LCSubstitution implements ILCSubstitution {
 		const entries = [...this.SubstitutionList.entries()];
 
 		// e1[0] is e1.key; e1[1] would be e1.value
-		// entries.sort((e1: [string, IPrologExpression], e2: [string, IPrologExpression]) => e1[0].localeCompare(e2[0]));
 		entries.sort((e1, e2) => e1[0].localeCompare(e2[0]));
 
-		// return `[${entries.map(([key, value]: [string, IPrologExpression]) => `${key} -> ${value}`).join('; ')}]`;
 		return `[${entries.map(([key, value]) => `${key} -> ${value}`).join('; ')}]`;
 	}
 
-	public compose(otherSub: ILCSubstitution): ILCSubstitution {
-		const newSub = new LCSubstitution();
+	// public get containsOnlyVariables(): boolean {
+	// 	return [...this.SubstitutionList.values()].every(isLCVariable);
+	// }
 
-		// 1) Apply the Src substitution to this's terms.
-
-		// for (const key of this.SubstitutionList.keys()) {
-		for (const [key, expr] of this.SubstitutionList.entries()) {
-			const newUnifiable = expr.applySubstitution(otherSub) as ILCExpression;
-
-			if (typeof newUnifiable === 'undefined') {
-				throw new Error(
-					'PrologSubstitution.Compose() : The result of applying a substitution to an IUnifiable is not an IUnifiable.'
-				);
-			}
-
-			newSub.SubstitutionList.set(key, newUnifiable);
+	public get isOneToOne(): boolean {
+		if (!Array.from(this.SubstitutionList.values()).every(isLCVariable)) {
+			return false;
 		}
 
-		// 2) Remove identities.
-		const varsToRemove: string[] = [];
+		const keyNames = Array.from(this.SubstitutionList.keys());
+		const valueNames = Array.from(this.SubstitutionList.values()).map(
+			(v) => (v as ILCVariable).name
+		);
+		const s = createSet(keyNames.concat(valueNames));
 
-		for (const [key, value] of newSub.SubstitutionList.entries()) {
-			if (isLCVariable(value) && value.name === key) {
-				throw new Error(
-					'PrologSubstitution: An identity should have been removed from the substitution, but was not.'
-				);
-			}
-
-			// if (v.equals(newSub.SubstitutionList.get(key))) {
-			if (typeof value === 'string' && value === key) {
-				varsToRemove.push(key);
-			}
-		}
-
-		for (const v of varsToRemove) {
-			newSub.SubstitutionList.delete(v);
-		}
-
-		// 3) Remove duplicate variables; i.e. add substitutions from keys in otherSub that are not keys in the "this" Substitution.
-
-		for (const [key, v] of otherSub.SubstitutionList.entries()) {
-			if (!this.SubstitutionList.has(key)) {
-				// Correct, according to the CS 486 course notes.
-				newSub.SubstitutionList.set(key, v);
-			}
-		}
-
-		// #if SUBSTITUTION_COMPOSITION_VERIFICATION
-		// According to Kamin, we should ensure that no member of newSub.SubstitutionList.Keys appears in newSub.SubstitutionList.Values .
-		const variablesInValues = createSet<string>();
-
-		for (const value of newSub.SubstitutionList.values()) {
-			// variablesInValues.unionInPlace(value.FindBindingVariables());
-
-			const bindingVariables = value.getSetOfAllVariableNames();
-
-			for (const bv of bindingVariables) {
-				variablesInValues.add(bv);
-			}
-
-			// variablesInValues.unionInPlace(bindingVariables);
-		}
-
-		for (const key of newSub.SubstitutionList.keys()) {
-			if (variablesInValues.contains(key)) {
-				throw new Error(
-					`Unacceptable substitution; key == ${key}; this == ${this}; otherSub == ${otherSub}; newSub = ${newSub}`
-				);
-			}
-		}
-		// #endif
-
-		return newSub;
-	}
-
-	public containsOnlyVariables(): boolean {
-		return [...this.SubstitutionList.values()].every(isLCVariable);
+		return s.size === 2 * keyNames.length;
 	}
 
 	// public findBindingVariables(): Set<PrologVariable> {
@@ -141,18 +75,76 @@ class LCSubstitution implements ILCSubstitution {
 	// 	return result;
 	// }
 
-	public get isOneToOne(): boolean {
-		if (!Array.from(this.SubstitutionList.values()).every(isLCVariable)) {
-			return false;
+	public compose(otherSub: ILCSubstitution): ILCSubstitution {
+		const newSub = new LCSubstitution();
+
+		// 1) Apply the Src substitution to this's terms.
+
+		for (const [key, expr] of this.SubstitutionList.entries()) {
+			const newUnifiable = expr.applySubstitution(otherSub) as ILCExpression;
+
+			// if (typeof newUnifiable === 'undefined') {
+			// 	throw new Error(
+			// 		'LCSubstitution.Compose() : The result of applying a substitution to an IUnifiable is not an IUnifiable.'
+			// 	);
+			// }
+
+			newSub.SubstitutionList.set(key, newUnifiable);
 		}
 
-		const keyNames = Array.from(this.SubstitutionList.keys());
-		const valueNames = Array.from(this.SubstitutionList.values()).map(
-			(v) => (v as ILCVariable).name
-		);
-		const s = createSet(keyNames.concat(valueNames));
+		// 2) Remove identities.
+		const varsToRemove: string[] = [];
 
-		return s.size === 2 * keyNames.length;
+		for (const [key, value] of newSub.SubstitutionList.entries()) {
+			if (isLCVariable(value) && value.name === key) {
+				varsToRemove.push(key);
+				// Q: Will this exception ever be thrown?
+				throw new Error(
+					'LCSubstitution: An identity should have been removed from the substitution, but was not.'
+				);
+			}
+
+			// if (v.equals(newSub.SubstitutionList.get(key))) {
+			// if (typeof value === 'string' && value === key) {
+			// 	varsToRemove.push(key);
+			// }
+		}
+
+		for (const key of varsToRemove) {
+			newSub.SubstitutionList.delete(key);
+		}
+
+		// 3) Remove duplicate variables; i.e. add substitutions from keys in otherSub that are not keys in the "this" Substitution.
+
+		for (const [key, v] of otherSub.SubstitutionList.entries()) {
+			if (!this.SubstitutionList.has(key)) {
+				// Correct, according to the CS 486 course notes.
+				newSub.SubstitutionList.set(key, v);
+			}
+		}
+
+		// #if SUBSTITUTION_COMPOSITION_VERIFICATION
+		// According to Kamin, we should ensure that no member of newSub.SubstitutionList.Keys appears in newSub.SubstitutionList.Values .
+		const variablesInValues = createSet<string>();
+
+		for (const value of newSub.SubstitutionList.values()) {
+			const bindingVariables = value.getSetOfAllVariableNames();
+
+			for (const bv of bindingVariables) {
+				variablesInValues.add(bv);
+			}
+		}
+
+		for (const key of newSub.SubstitutionList.keys()) {
+			if (variablesInValues.contains(key)) {
+				throw new Error(
+					`Unacceptable substitution; key == ${key}; this == ${this}; otherSub == ${otherSub}; newSub = ${newSub}`
+				);
+			}
+		}
+		// #endif
+
+		return newSub;
 	}
 }
 

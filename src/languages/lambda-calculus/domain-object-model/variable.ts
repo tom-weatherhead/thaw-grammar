@@ -59,14 +59,14 @@ export class LCVariable extends LCValueBase implements ILCVariable {
 		variablesInOriginalExpr1Param?: IImmutableSet<string>,
 		variablesInOriginalExpr2Param?: IImmutableSet<string>
 	): ILCSubstitution | undefined {
-		// const variablesInOriginalExpr1 =
-		// 	typeof variablesInOriginalExpr1Param !== 'undefined'
-		// 		? variablesInOriginalExpr1Param
-		// 		: this.getSetOfAllVariableNames();
-		const variablesInOriginalExpr2 =
-			typeof variablesInOriginalExpr2Param !== 'undefined'
-				? variablesInOriginalExpr2Param
-				: (other as ILCExpression).getSetOfAllVariableNames();
+		// const variablesInOriginalExpr1 = ifDefinedThenElse(
+		// 	variablesInOriginalExpr1Param,
+		// 	this.getSetOfAllVariableNames()
+		// );
+		const variablesInOriginalExpr2 = ifDefinedThenElse(
+			variablesInOriginalExpr2Param,
+			(other as ILCExpression).getSetOfAllVariableNames()
+		);
 
 		const otherExpr = other as ILCExpression;
 

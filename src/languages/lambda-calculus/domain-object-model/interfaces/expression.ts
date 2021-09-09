@@ -16,16 +16,15 @@ export enum BetaReductionStrategy {
 }
 
 // Type T is the language's expression type.
-export interface ISubstitution<T> {
+export interface ISubstitution<T> extends IStringifiable {
 	readonly SubstitutionList: Map<string, T>;
 
 	length: number;
+	// containsOnlyVariables: boolean;
 	isOneToOne: boolean;
 
-	toString(): string;
-	compose(otherSub: ISubstitution<T>): ISubstitution<T>;
-	containsOnlyVariables(): boolean;
 	// findBindingVariables(): IImmutableSet<IVariable>;
+	compose(otherSub: ISubstitution<T>): ISubstitution<T>;
 }
 
 export type ILCSubstitution = ISubstitution<ILCExpression>;

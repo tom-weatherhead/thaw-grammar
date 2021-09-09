@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-integer-extension/domain-object-model/integer-literal.ts
 
-import { IImmutableSet } from 'thaw-common-utilities.ts';
+import { ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
@@ -72,14 +72,14 @@ export class LCIntegerLiteral extends LCValueBase {
 		variablesInOriginalExpr1Param?: IImmutableSet<string>,
 		variablesInOriginalExpr2Param?: IImmutableSet<string>
 	): ISubstitution<ILCExpression> | undefined {
-		const variablesInOriginalExpr1 =
-			typeof variablesInOriginalExpr1Param !== 'undefined'
-				? variablesInOriginalExpr1Param
-				: this.getSetOfAllVariableNames();
-		const variablesInOriginalExpr2 =
-			typeof variablesInOriginalExpr2Param !== 'undefined'
-				? variablesInOriginalExpr2Param
-				: (other as ILCExpression).getSetOfAllVariableNames();
+		const variablesInOriginalExpr1 = ifDefinedThenElse(
+			variablesInOriginalExpr1Param,
+			this.getSetOfAllVariableNames()
+		);
+		const variablesInOriginalExpr2 = ifDefinedThenElse(
+			variablesInOriginalExpr2Param,
+			(other as ILCExpression).getSetOfAllVariableNames()
+		);
 
 		const otherExpr = other as ILCExpression;
 

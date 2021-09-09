@@ -1,14 +1,13 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/domain-object-model/lambda-expression.ts
 
-import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
+import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
 	BetaReductionStrategy,
 	ILCExpression,
 	ILCLambdaExpression,
 	ILCSubstitution,
-	ILCUnifiable // ,
-	// ILCValue
+	ILCUnifiable
 } from './interfaces/expression';
 
 import {
@@ -184,14 +183,14 @@ export class LCLambdaExpression extends LCValueBase implements ILCLambdaExpressi
 		variablesInOriginalExpr1Param?: IImmutableSet<string>,
 		variablesInOriginalExpr2Param?: IImmutableSet<string>
 	): ILCSubstitution | undefined {
-		const variablesInOriginalExpr1 =
-			typeof variablesInOriginalExpr1Param !== 'undefined'
-				? variablesInOriginalExpr1Param
-				: this.getSetOfAllVariableNames();
-		const variablesInOriginalExpr2 =
-			typeof variablesInOriginalExpr2Param !== 'undefined'
-				? variablesInOriginalExpr2Param
-				: (other as ILCExpression).getSetOfAllVariableNames();
+		const variablesInOriginalExpr1 = ifDefinedThenElse(
+			variablesInOriginalExpr1Param,
+			this.getSetOfAllVariableNames()
+		);
+		const variablesInOriginalExpr2 = ifDefinedThenElse(
+			variablesInOriginalExpr2Param,
+			(other as ILCExpression).getSetOfAllVariableNames()
+		);
 
 		if (isLCVariable(other)) {
 			return other.unify(this, variablesInOriginalExpr2, variablesInOriginalExpr1);
@@ -220,8 +219,6 @@ export class LCLambdaExpression extends LCValueBase implements ILCLambdaExpressi
 			return undefined;
 		}
 
-		const compositeSubstitution = unifier1.compose(unifier2);
-
-		return compositeSubstitution;
+		return unifier1.compose(unifier2);
 	}
 }

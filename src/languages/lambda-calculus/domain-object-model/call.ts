@@ -2,7 +2,7 @@
 
 // Call === Function Call === Application (Invocation) of Function
 
-import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
+import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
 	BetaReductionStrategy,
@@ -20,20 +20,7 @@ import {
 	typenameLCFunctionCall
 } from '../type-guards';
 
-// import { LCLambdaExpression } from './lambda-expression';
-
 import { LCValueBase } from './value-base';
-
-// const typenameLCFunctionCall = 'LCFunctionCall';
-//
-// export function isLCFunctionCall(obj: unknown): obj is LCFunctionCall {
-// 	const otherLCFunctionCall = obj as LCFunctionCall;
-//
-// 	return (
-// 		typeof otherLCFunctionCall !== 'undefined' &&
-// 		otherLCFunctionCall.typename === typenameLCFunctionCall
-// 	);
-// }
 
 export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 	constructor(public readonly callee: ILCExpression, public readonly arg: ILCExpression) {
@@ -817,14 +804,14 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		variablesInOriginalExpr1Param?: IImmutableSet<string>,
 		variablesInOriginalExpr2Param?: IImmutableSet<string>
 	): ILCSubstitution | undefined {
-		const variablesInOriginalExpr1 =
-			typeof variablesInOriginalExpr1Param !== 'undefined'
-				? variablesInOriginalExpr1Param
-				: this.getSetOfAllVariableNames();
-		const variablesInOriginalExpr2 =
-			typeof variablesInOriginalExpr2Param !== 'undefined'
-				? variablesInOriginalExpr2Param
-				: (other as ILCExpression).getSetOfAllVariableNames();
+		const variablesInOriginalExpr1 = ifDefinedThenElse(
+			variablesInOriginalExpr1Param,
+			this.getSetOfAllVariableNames()
+		);
+		const variablesInOriginalExpr2 = ifDefinedThenElse(
+			variablesInOriginalExpr2Param,
+			(other as ILCExpression).getSetOfAllVariableNames()
+		);
 
 		if (isLCVariable(other)) {
 			return other.unify(this, variablesInOriginalExpr2, variablesInOriginalExpr1);

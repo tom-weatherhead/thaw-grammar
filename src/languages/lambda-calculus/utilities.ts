@@ -54,16 +54,10 @@ mapCombinatorNamesToStrings.set('S', 'λa.λb.λc.((a c) (b c))');
 mapCombinatorNamesToStrings.set('Y', 'λa.(λb.(a (b b)) λb.(a (b b)))');
 // mapCombinatorNamesToStrings.set('', '');
 
-// const ls = LanguageSelector.LambdaCalculus;
-
 export function getParseFunction(
 	tokenizer: ITokenizer,
 	parser: IParser
 ): (str: string) => ILCExpression {
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	// const parser = createParser(ParserSelector.LL1, grammar);
-
 	return (str: string) => parser.parse(tokenizer.tokenize(str)) as ILCExpression;
 }
 
