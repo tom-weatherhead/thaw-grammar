@@ -118,16 +118,9 @@ test('LambdaCalculus parse test', () => {
 	expect(f('(λx.x y)')).toBeTruthy();
 });
 
-// function createVariableNameGenerator(): () => string {
-// 	let n = 0;
-//
-// 	return () => `v${++n}`;
-// }
-
 function getfb(fparam?: (str: string) => ILCExpression): (s: string) => ILCExpression {
 	const generateNewVariableName = createVariableNameGenerator();
 	const f = typeof fparam !== 'undefined' ? fparam : getParseFunction();
-	// const maxBetaReductionDepth = 10;
 	const fb = (s: string): ILCExpression =>
 		f(s).betaReduce(
 			BetaReductionStrategy.NormalOrder,
@@ -222,17 +215,10 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 
 	// Act
 	const oneActual = fb(strOneSrc);
-	// const strOneActual = oneActual.toString();
 	const twoActual = fb(strTwoSrc);
-	// const strTwoActual = twoActual.toString();
 	const threeActual = fb(strThreeSrc);
-	// const strThreeActual = threeActual.toString();
 
 	// Assert
-	// expect(strOneActual).toBe(strOneExpected);
-	// expect(strTwoActual).toBe(strTwoExpected);
-	// expect(strThreeActual).toBe(strThreeExpected);
-
 	expect(areIsomorphic(oneActual, f(strOneExpected))).toBe(true);
 	expect(areIsomorphic(twoActual, f(strTwoExpected))).toBe(true);
 	expect(areIsomorphic(threeActual, f(strThreeExpected))).toBe(true);
@@ -288,22 +274,6 @@ test('LambdaCalculus Church Numerals And Test 1', () => {
 	const tAndt = fb(`((${strAnd} ${strTrue}) ${strTrue})`);
 
 	// Assert
-
-	// console.log(`ff is ${ff}`);
-	// console.log(`tt is ${tt}`);
-	//
-	// const u1 = ff.unify(tt);
-	//
-	// console.log(`ff.unify(tt) is ${u1}`);
-
-	// ff is λx.λy.y
-	// tt is λx.λy.x
-	// ff.unify(tt) is [y -> x]
-	// WRONG: We cannot replace y with x in either λx.λy.y or λx.λy.x because
-	// x already occurs in each.
-	// We need to expand our 'occurs' check to check both entire expressions,
-	// not just the parts of the two expressions that have not yet been unified.
-
 	expect(areIsomorphic(ff, tt)).toBe(false);
 	expect(areIsomorphic(tt, ff)).toBe(false);
 	expect(areIsomorphic(ff, ff)).toBe(true);
@@ -348,22 +318,6 @@ test('LambdaCalculus Church Numerals Or Test 1', () => {
 	const tOrt = fb(`((${strOr} ${strTrue}) ${strTrue})`);
 
 	// Assert
-
-	// console.log(`ff is ${ff}`);
-	// console.log(`tt is ${tt}`);
-	//
-	// const u1 = ff.unify(tt);
-	//
-	// console.log(`ff.unify(tt) is ${u1}`);
-
-	// ff is λx.λy.y
-	// tt is λx.λy.x
-	// ff.unify(tt) is [y -> x]
-	// WRONG: We cannot replace y with x in either λx.λy.y or λx.λy.x because
-	// x already occurs in each.
-	// We need to expand our 'occurs' check to check both entire expressions,
-	// not just the parts of the two expressions that have not yet been unified.
-
 	expect(areIsomorphic(ff, tt)).toBe(false);
 	expect(areIsomorphic(tt, ff)).toBe(false);
 	expect(areIsomorphic(ff, ff)).toBe(true);
@@ -525,58 +479,15 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 	// This Y combinator test succeeds via the CallByName strategy only:
 	const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
 
-	// const expectedResult = strSix;
-
 	expect(f(expr)).toBeDefined();
 
 	// Act
-	// Beta-reduce, presumably. Using with strategy and max depth?
-	// const actualResult = expr.reduce(); // TODO: Try expr.betaReduceV2(...);
-
-	// With maxBetaReductionDepth = 100 :
-	// F F F F -> Terminates without fully reducing
-	// T F F F -> Terminates without fully reducing
-	// F T F F -> Terminates without fully reducing
-	// T T F F -> Terminates without fully reducing
-
-	// F T T T -> No
-	// T T T T -> No
 	const generateNewVariableName = createVariableNameGenerator();
 	const maxBetaReductionDepth = 100;
 
 	const expectedResult = f(strSix);
 
-	// console.log(`Y combinator test 1: expr before reduction is ${fexpr}`);
-	// console.log(`Y combinator test 1: expr.isBetaReducible() is ${fexpr.isBetaReducible()}`);
-
 	const successes: number[] = [];
-
-	// for (let i = 0; i < 16; i++) {
-	// 	const ba = intToBoolArray(i, 4);
-	// 	const betaReductionOptions = {
-	// 		reduceLeftmostChildFirst: ba[0],
-	// 		reduceRecessiveChild: ba[1], // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
-	// 		reduceChildrenBeforeParents: ba[2],
-	// 		reduceRecessiveParentOrChild: ba[3] // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
-	// 	};
-	//
-	// 	const fexpr = f(expr);
-	// 	const actualResult = fexpr.betaReduceV2(
-	// 		betaReductionOptions,
-	// 		generateNewVariableName,
-	// 		maxBetaReductionDepth
-	// 	);
-	//
-	// 	// console.log(`Y combinator test 1: actualResult is ${actualResult}`);
-	//
-	// 	const isSuccess = actualResult.isIsomorphicTo(expectedResult);
-	//
-	// 	// console.log(`Y combinator test 1: actualResult is isomorphic to 6? ${isSuccess}`);
-	//
-	// 	if (isSuccess) {
-	// 		successes.push(i);
-	// 	}
-	// }
 
 	const actualResult1 = f(expr).betaReduce(
 		BetaReductionStrategy.CallByName,
@@ -676,15 +587,7 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 
 	console.log('Y combinator test 1: successes:', successes);
 
-	expect(successes.length > 0).toBe(true);
-	// expect(successes.length).toBe(0); // TODO: Find a strategy that works.
-
 	// Assert
-	// console.log(`strPredecessor is ${strPredecessor}`);
-	// expect(f(strPredecessor)).toBeDefined();
-	// console.log(`strG is ${strG}`);
-	// expect(f(strG)).toBeDefined();
-	// console.log(`expr is ${expr}`);
-
+	expect(successes.length > 0).toBe(true);
 	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
 });

@@ -28,7 +28,7 @@ const f2 = new LCLambdaExpression(varY, varY);
 const trueValue = new LCLambdaExpression(varX, f1); // x => y => x
 const falseValue = new LCLambdaExpression(varX, f2); // x => y => y
 
-// **** END ****
+// **** END Construct trueValue and falseValue ****
 
 const typenamePrimitiveOperator = 'LCPrimitiveOperator';
 

@@ -46,21 +46,12 @@ export interface IUnifiable<T> extends ISubstitutable<T> {
 
 export type ILCUnifiable = IUnifiable<ILCExpression>;
 
-// export interface ILCBetaReductionOptions {
-// 	readonly reduceLeftmostChildFirst: boolean;
-// 	readonly reduceRecessiveChild: boolean; // I.e. if reduceLeftmostChildFirst, then reduce the right child (of a function call) after reducing the left child.
-//
-// 	readonly reduceChildrenBeforeParents: boolean;
-// 	readonly reduceRecessiveParentOrChild: boolean; // I.e. if reduceChildrenBeforeParents, then reduce the parent after reducing the child(ren);
-// }
-
 // An LCExpressionMapKey is a reference to an expression value in the map.
 export type LCExpressionMapKey = number;
 // export type LCExpressionMapKey = string;
 
 export type LCExpressionMapType = Map<LCExpressionMapKey, ILCExpression>;
 
-// ISubstitutable<ILCExpression>,
 export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression> {
 	readonly typename: string;
 	// readonly mapKey: LCExpressionMapKey;
@@ -75,7 +66,6 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 	substituteForUnboundVariable(name: string, value: ILCExpression): ILCExpression;
 	getSetOfAllVariableNames(): IImmutableSet<string>;
 	// TODO? : getArrayOfAllUnboundVariableNames(): string[];
-	// applySubstitution(substitution: ILCSubstitution): ILCExpression;
 
 	// α-conversion
 	renameBoundVariable(newName: string, oldName: string): ILCExpression; // Alpha-conversion
@@ -87,16 +77,11 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 		generateNewVariableName: () => string,
 		maxDepth: number
 	): ILCExpression;
-	// betaReduceV2(
-	// 	options: ILCBetaReductionOptions,
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression;
 
 	// δ-reduction for extended Lambda calculus; e.g. ((+ 2) 3) δ-> 5
 	deltaReduce(): ILCExpression;
 
-	// η-reduction
+	// η-reduction: Reduce λx.(f x) to f if x does not appear free in f.
 	etaReduce(): ILCExpression;
 
 	// κ-reduction is the reduction of the SKI combinators (?)

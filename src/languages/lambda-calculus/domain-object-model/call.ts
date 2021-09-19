@@ -725,53 +725,6 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		}
 	}
 
-	// public betaReduceV2(
-	// 	options: ILCBetaReductionOptions,
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression {
-	// 	if (maxDepth <= 0) {
-	// 		return this;
-	// 	}
-	//
-	// 	// const callee: ILCExpression = this.callee;
-	//
-	// 	if (!options.reduceChildrenBeforeParents && isLCLambdaExpression(this.callee)) {
-	// 		// Reduce parent before child(ren). Callee is a Lambda expression.
-	// 		return this.betaReduceCore(this.callee, this.arg, generateNewVariableName);
-	// 	}
-	//
-	// 	// Reduce child(ren)
-	// 	let reducedLeftChild = this.callee;
-	// 	let reducedRightChild = this.arg;
-	//
-	// 	if (options.reduceLeftmostChildFirst || options.reduceRecessiveChild) {
-	// 		reducedLeftChild = reducedLeftChild.betaReduceV2(
-	// 			options,
-	// 			generateNewVariableName,
-	// 			maxDepth - 1
-	// 		);
-	// 	}
-	//
-	// 	if (!options.reduceLeftmostChildFirst || options.reduceRecessiveChild) {
-	// 		reducedRightChild = reducedLeftChild.betaReduceV2(
-	// 			options,
-	// 			generateNewVariableName,
-	// 			maxDepth - 1
-	// 		);
-	// 	}
-	//
-	// 	const reducedCall = new LCFunctionCall(reducedLeftChild, reducedRightChild);
-	//
-	// 	if (options.reduceChildrenBeforeParents && options.reduceRecessiveParentOrChild) {
-	// 		// Reduce parent after child(ren).
-	// 		// TODO: Should we call betaReduceCore (as above) instead of betaReduceV2 (as below)?
-	// 		return reducedCall.betaReduceV2(options, generateNewVariableName, maxDepth - 1);
-	// 	}
-	//
-	// 	return this;
-	// }
-
 	public override deltaReduce(): ILCExpression {
 		return new LCFunctionCall(this.callee.deltaReduce(), this.arg.deltaReduce());
 	}
@@ -782,8 +735,6 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 		//
 		// return this.callee.body.etaReduce();
-
-		// return this;
 
 		return new LCFunctionCall(this.callee.etaReduce(), this.arg.etaReduce());
 	}

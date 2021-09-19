@@ -135,8 +135,6 @@ export class LambdaCalculusGrammar extends GrammarBase {
 	}
 
 	public tokenToSymbol(token: IToken): GrammarSymbol {
-		// const tokenValueAsString: string = token.tokenValue as string;
-
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
 				return GrammarSymbol.terminalEOF;
@@ -148,19 +146,7 @@ export class LambdaCalculusGrammar extends GrammarBase {
 				return GrammarSymbol.terminalFn;
 			case LexicalState.tokenDot:
 				return GrammarSymbol.terminalDot;
-
 			case LexicalState.tokenIdent:
-				// switch (tokenValueAsString) {
-				// 	case '.':
-				// 		return GrammarSymbol.terminalDot; // We could modify the tokenizer to generate TokenType.T_Dot in this case, to obviate this line.
-				// 	case 'λ':
-				// 		console.log(
-				// 			'LexicalState.tokenIdent λ being converted to Symbol.terminalFn'
-				// 		);
-				// 		return GrammarSymbol.terminalFn;
-				// 	default:
-				// 		return GrammarSymbol.terminalID;
-				// }
 				return GrammarSymbol.terminalID;
 
 			default:

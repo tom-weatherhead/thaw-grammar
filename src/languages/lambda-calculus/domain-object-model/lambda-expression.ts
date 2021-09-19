@@ -79,8 +79,6 @@ export class LCLambdaExpression extends LCValueBase implements ILCLambdaExpressi
 	}
 
 	public override isBetaReducible(): boolean {
-		// return true; // Is it always true? Even if the expr is not in normal form?
-
 		return this.body.isBetaReducible();
 	}
 

@@ -21,17 +21,6 @@ import {
 	mapLCExprNamesToStrings
 } from '../../..';
 
-// import {
-// 	areIsomorphic,
-// 	// createMapOfLCExprNamesToExprs,
-// 	createVariableNameGenerator,
-// 	// getfb1,
-// 	// getfb2,
-// 	// getParseFunction,
-// 	ILCVariable
-// 	// , mapLCExprNamesToStrings
-// } from '../../..';
-
 import { createParser, SyntaxException } from 'thaw-parser';
 
 const ls = LanguageSelector.LambdaCalculusIntegerExtension;
