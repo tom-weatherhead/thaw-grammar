@@ -479,7 +479,12 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 
 	// This Y combinator test succeeds via the CallByName strategy only:
 	// const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
-	const expr = `let y = ${strYCombinator} in let g = ${strG} in ((y g) ${strThree})`; // 3 factorial
+	// const expr = `let y = ${strYCombinator} in let g = ${strG} in ((y g) ${strThree})`; // 3 factorial
+	const expr = [
+		`let y = ${strYCombinator} in`,
+		`let g = ${strG} in`,
+		`((y g) ${strThree})` // 3 factorial
+	].join(' ');
 
 	expect(f(expr)).toBeDefined();
 
