@@ -22,6 +22,19 @@ import { LCValueBase } from './value-base';
 import { LCVariable } from './variable';
 
 // 'let x = e1 in e2;' can be expressed as '(λx.e2 e1)'
+//
+// I.e. We could do this in EcstaSKI:
+//
+// let v1 = e1 in
+// let v2 = e2 in
+// let v3 = e3 in
+// ...
+// let vn = en in
+// e
+//
+// -> Transpiiles to ->
+//
+// (λv1.(λv2.(λv3. ... (λvn.e en) ... e3) e2) e1)
 
 // TODO: Name it 'LCLambdaExpression' or 'LCFunction' ?
 
