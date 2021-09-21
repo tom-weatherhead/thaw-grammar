@@ -51,6 +51,7 @@ import { createParser, SyntaxException } from 'thaw-parser';
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
+	churchNumeralToInteger,
 	createGrammar,
 	// createMapOfLCExprNamesToExprs,
 	createVariableNameGenerator,
@@ -607,5 +608,18 @@ test('LambdaCalculus integerToChurchNumeral Test 1', () => {
 	expect(integerToChurchNumeral(3).toString()).toBe('λf.λx.(f (f (f x)))');
 });
 
-// test('LambdaCalculus churchNumeralToInteger Test 1', () => {
-// });
+test('LambdaCalculus churchNumeralToInteger Test 1', () => {
+	// Arrange
+	const f = getParseFunction();
+
+	// Act
+	// Assert
+	expect(Number.isNaN(churchNumeralToInteger(f('x')))).toBe(true);
+	expect(Number.isNaN(churchNumeralToInteger(f('λx.x')))).toBe(true);
+	expect(Number.isNaN(churchNumeralToInteger(f('(f x)')))).toBe(true);
+
+	expect(churchNumeralToInteger(f('λf.λx.x'))).toBe(0);
+	expect(churchNumeralToInteger(f('λf.λx.(f x)'))).toBe(1);
+	expect(churchNumeralToInteger(f('λf.λx.(f (f x))'))).toBe(2);
+	expect(churchNumeralToInteger(f('λf.λx.(f (f (f x)))'))).toBe(3);
+});
