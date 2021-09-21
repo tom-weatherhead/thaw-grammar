@@ -59,7 +59,8 @@ import {
 	// getfb2,
 	// getParseFunction,
 	ILCExpression,
-	ILCVariable
+	ILCVariable,
+	integerToChurchNumeral
 	// , mapCombinatorNamesToStrings
 	// , mapLCExprNamesToStrings
 } from '../../..';
@@ -598,3 +599,13 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 	expect(successes.length > 0).toBe(true);
 	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
 });
+
+test('LambdaCalculus integerToChurchNumeral Test 1', () => {
+	expect(integerToChurchNumeral(0).toString()).toBe('λf.λx.x');
+	expect(integerToChurchNumeral(1).toString()).toBe('λf.λx.(f x)');
+	expect(integerToChurchNumeral(2).toString()).toBe('λf.λx.(f (f x))');
+	expect(integerToChurchNumeral(3).toString()).toBe('λf.λx.(f (f (f x)))');
+});
+
+// test('LambdaCalculus churchNumeralToInteger Test 1', () => {
+// });
