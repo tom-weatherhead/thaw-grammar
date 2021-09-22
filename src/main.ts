@@ -66,7 +66,10 @@ export {
 
 // The Lambda Calculus
 export * from './languages/lambda-calculus/church-numerals';
+export * from './languages/lambda-calculus/operators';
+export * from './languages/lambda-calculus/type-guards';
 export * from './languages/lambda-calculus/utilities';
+export * from './languages/lambda-calculus/utilities-with-dom';
 
 export * from './languages/lambda-calculus/domain-object-model/interfaces/expression';
 

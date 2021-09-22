@@ -3,6 +3,20 @@
 // Glossary:
 // A 'redex' is a reducible expression
 
+// TODO:
+
+// - Convert non-negative integers into Church numerals via integerToChurchNumeral()
+// - Add operators that can be easily converted to Lambda calculus expressions:
+//   - ++ (successor) : λn.λf.λx.(f ((n f) x))
+//   - -- (predecessor) : λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)
+//   - + : λm.λn.λf.λx.((n f) ((m f) x))
+//   - * : λm.λn.λf.(m (n f))
+//   - (z? or 0?) (isZero) : λn.((n λx.FALSE) TRUE)
+//   - if : λb.λx.λy.((b x) y)
+//   - && (and) : λp.λq.((p q) FALSE)
+//   - || (or) : λp.λq.(((IF p) TRUE) q)
+// - Add support for the constants 'true' (λx.λy.x) and 'false' (λx.λy.y).
+
 import {
 	GrammarSymbol,
 	IToken,

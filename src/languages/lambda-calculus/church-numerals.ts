@@ -65,3 +65,7 @@ export function churchNumeralToInteger(expr: ILCExpression): number {
 
 	return churchNumeralToIntegerHelper(expr.arg, expr.body.arg, expr.body.body, 0);
 }
+
+export function isChurchNumeral(expr: ILCExpression): boolean {
+	return !Number.isNaN(churchNumeralToInteger(expr));
+}
