@@ -31,6 +31,13 @@ import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
 import { integerToChurchNumeral } from '../lambda-calculus/church-numerals';
 
+import {
+	createOperatorAdd,
+	createOperatorMultiply,
+	createOperatorIfUsage,
+	createStatementLetUsage
+} from '../lambda-calculus/operators';
+
 import { ILCExpression } from '../lambda-calculus/domain-object-model/interfaces/expression';
 
 import { LCFunctionCall } from '../lambda-calculus/domain-object-model/call';
@@ -55,35 +62,35 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
 		this.terminals.push(GrammarSymbol.terminalDot);
 
+		this.terminals.push(GrammarSymbol.terminalIf);
+
 		this.terminals.push(GrammarSymbol.terminalLet);
 		this.terminals.push(GrammarSymbol.terminalEquals);
 		this.terminals.push(GrammarSymbol.terminalIn);
 
-		this.terminals.push(GrammarSymbol.terminalIf);
-
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
 		this.terminals.push(GrammarSymbol.terminalPlus);
-		// this.terminals.push(GrammarSymbol.terminalMinus);
 		this.terminals.push(GrammarSymbol.terminalMultiply);
-		// this.terminals.push(GrammarSymbol.terminalEquals);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
 		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
 
-		// This initial production needed to be added: Start -> Input EOF
 		this.addProduction(GrammarSymbol.nonterminalStart, [
-			// GrammarSymbol.nonterminalInput,
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.terminalEOF
 		]);
 
-		// Input -> Expression
-		// this.addProduction(GrammarSymbol.nonterminalInput, [GrammarSymbol.nonterminalExpression]);
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalBracketedExpression,
+			GrammarSymbol.terminalRightBracket
+		]);
 
 		// Expression -> Variable
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
@@ -96,7 +103,7 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		]);
 
 		// Expression -> Function Call
-		this.addProduction(GrammarSymbol.nonterminalExpression, [
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.nonterminalFunctionCall
 		]);
 
@@ -117,10 +124,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 
 		// Function Call -> ( Expression Expression )
 		this.addProduction(GrammarSymbol.nonterminalFunctionCall, [
-			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.nonterminalExpression,
-			GrammarSymbol.terminalRightBracket,
 			'#functionCall'
 		]);
 
@@ -143,7 +148,7 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		// In fact, a is either TRUE or FALSE, where:
 		// TRUE := λx.λy.x
 		// FALSE := λx.λy.y
-		this.addProduction(GrammarSymbol.nonterminalExpression, [
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalIf,
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.nonterminalExpression,
@@ -157,6 +162,12 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
 			GrammarSymbol.terminalIntegerLiteral
 		]);
+
+		// binaryintop -> +
+		this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.terminalPlus]);
+
+		// binaryintop -> *
+		this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.terminalMultiply]);
 	}
 
 	public get languageName(): string {
@@ -196,18 +207,20 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				expression2 = semanticStack.pop() as ILCExpression;
 				expression = semanticStack.pop() as ILCExpression; // The function's body
 				variable = semanticStack.pop() as LCVariable; // The function's formal argument
-				semanticStack.push(
-					new LCFunctionCall(new LCLambdaExpression(variable, expression2), expression)
-				);
+				// semanticStack.push(
+				// 	new LCFunctionCall(new LCLambdaExpression(variable, expression2), expression)
+				// );
+				semanticStack.push(createStatementLetUsage(variable, expression, expression2));
 				break;
 
 			case '#if':
 				expression3 = semanticStack.pop() as ILCExpression;
 				expression2 = semanticStack.pop() as ILCExpression;
 				expression = semanticStack.pop() as ILCExpression;
-				semanticStack.push(
-					new LCFunctionCall(new LCFunctionCall(expression, expression2), expression3)
-				);
+				// semanticStack.push(
+				// 	new LCFunctionCall(new LCFunctionCall(expression, expression2), expression3)
+				// );
+				semanticStack.push(createOperatorIfUsage(expression, expression2, expression3));
 				break;
 
 			default:
@@ -233,6 +246,10 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				return GrammarSymbol.terminalEquals;
 			case LexicalState.tokenIntLit:
 				return GrammarSymbol.terminalIntegerLiteral;
+			case LexicalState.tokenPlus:
+				return GrammarSymbol.terminalPlus;
+			case LexicalState.tokenMult:
+				return GrammarSymbol.terminalMultiply;
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
 					case 'if':
@@ -269,7 +286,15 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				break;
 
 			case GrammarSymbol.terminalIntegerLiteral:
-				semanticStack.push(integerToChurchNumeral(value as number));
+				semanticStack.push(integerToChurchNumeral(value));
+				break;
+
+			case GrammarSymbol.terminalPlus:
+				semanticStack.push(createOperatorAdd());
+				break;
+
+			case GrammarSymbol.terminalMultiply:
+				semanticStack.push(createOperatorMultiply());
 				break;
 
 			case GrammarSymbol.terminalLeftBracket:

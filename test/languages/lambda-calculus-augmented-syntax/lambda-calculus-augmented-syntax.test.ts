@@ -14,11 +14,9 @@ import {
 	churchNumeralToInteger,
 	createGrammar,
 	// createMapOfLCExprNamesToExprs,
+	createValueTrue,
 	createVariableNameGenerator,
 	defaultMaxBetaReductionDepth,
-	// getfb1,
-	// getfb2,
-	// getParseFunction,
 	ILCExpression,
 	ILCVariable,
 	integerToChurchNumeral
@@ -158,6 +156,28 @@ test('LambdaCalculusWithAugmentedSyntax expression unification test 1', () => {
 	expect(unifyingSubstitution.toString()).toBe('[x -> y]');
 	expect(areIsomorphic(expr1, expr2)).toBe(true);
 });
+
+test('LambdaCalculusWithAugmentedSyntax If Test 1', () => {
+	// Arrange
+	const conditionValue = createValueTrue();
+	const thenValue = 2;
+	const elseValue = 3;
+
+	const fb = getfb();
+
+	// Act
+	const expr = fb(
+		`(if ${conditionValue} ${integerToChurchNumeral(thenValue)} ${integerToChurchNumeral(
+			elseValue
+		)})`
+	);
+
+	// Assert
+	expect(churchNumeralToInteger(expr)).toBe(thenValue);
+});
+
+// test('LambdaCalculusWithAugmentedSyntax Let Test 1', () => {
+// });
 
 test('LambdaCalculusWithAugmentedSyntax Church Numerals Successor Test 1', () => {
 	// Arrange

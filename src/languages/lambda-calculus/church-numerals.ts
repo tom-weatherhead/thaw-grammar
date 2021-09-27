@@ -25,11 +25,19 @@ function integerToChurchNumeralHelper(
 }
 
 export function integerToChurchNumeral(
-	n: number,
+	nx: unknown,
 	options: { f?: string; x?: string } = {}
 ): ILCExpression {
-	if (typeof n !== 'number' || Number.isNaN(n) || Math.round(n) !== n || n < 0) {
-		throw new Error(`integerToChurchNumeral(${n}) : Bad parameter`);
+	if (typeof nx !== 'number') {
+		throw new Error(
+			`integerToChurchNumeral(${nx}) : Parameter type is '${typeof nx}', not 'number'.`
+		);
+	}
+
+	const n = nx as number;
+
+	if (Number.isNaN(n) || Math.round(n) !== n || n < 0) {
+		throw new Error(`integerToChurchNumeral(${n}) : Parameter is not a non-negative integer.`);
 	}
 
 	const varF = new LCVariable(ifDefinedThenElse(options.f, 'f'));
