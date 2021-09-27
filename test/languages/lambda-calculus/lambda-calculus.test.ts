@@ -98,7 +98,7 @@ test('LambdaCalculus recognize test', () => {
 	// 'a => b => c => a(c)(b(c))'
 	f('λa.λb.λc.((a c) (b c))'); // Combinator S
 	f('λa.(λb.(a (b b)) λb.(a (b b)))'); // Combinator Y (fixed-point; used to implement recursion)
-	f('let y = λx.x in y');
+	// f('let y = λx.x in y');
 
 	expect(() => f('(x y')).toThrow(SyntaxException);
 });
@@ -480,13 +480,7 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 	// const expr = `((${strMult} ${strTwo}) ${strThree})`;
 
 	// This Y combinator test succeeds via the CallByName strategy only:
-	// const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
-	// const expr = `let y = ${strYCombinator} in let g = ${strG} in ((y g) ${strThree})`; // 3 factorial
-	const expr = [
-		`let y = ${strYCombinator} in`,
-		`let g = ${strG} in`,
-		`((y g) ${strThree})` // 3 factorial
-	].join(' ');
+	const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
 
 	expect(f(expr)).toBeDefined();
 
