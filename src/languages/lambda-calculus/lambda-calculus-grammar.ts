@@ -1,5 +1,13 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus/lambda-calculus-grammar.ts
 
+// From https://opendsa.cs.vt.edu/ODSA/Books/PL/html/Syntax.html :
+//
+// 	A complete BNF grammar for the lambda calculus:
+//
+//  < λexp > ::= < var >
+//           | λ < var > . < λexp >
+//           | ( < λexp > < λexp > )
+
 // Glossary:
 // A 'redex' is a reducible expression
 
@@ -21,14 +29,6 @@ import { LCFunctionCall } from './domain-object-model/call';
 import { LCLambdaExpression } from './domain-object-model/lambda-expression';
 import { LCVariable } from './domain-object-model/variable';
 
-// From https://opendsa.cs.vt.edu/ODSA/Books/PL/html/Syntax.html :
-//
-// 	A complete BNF grammar for the lambda calculus:
-//
-// 	< λexp > ::= < var >
-// 		| λ < var > . < λexp >
-// 		| ( < λexp > < λexp > )
-
 export class LambdaCalculusGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
@@ -38,11 +38,6 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
 		this.terminals.push(GrammarSymbol.terminalDot);
-
-		// this.terminals.push(GrammarSymbol.terminalLet);
-		// this.terminals.push(GrammarSymbol.terminalEquals);
-		// this.terminals.push(GrammarSymbol.terminalIn);
-
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
@@ -51,15 +46,10 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
 
-		// This initial production needed to be added: Start -> Input EOF
 		this.addProduction(GrammarSymbol.nonterminalStart, [
-			// GrammarSymbol.nonterminalInput,
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.terminalEOF
 		]);
-
-		// Input -> Expression
-		// this.addProduction(GrammarSymbol.nonterminalInput, [GrammarSymbol.nonterminalExpression]);
 
 		// Expression -> Variable
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
@@ -99,20 +89,6 @@ export class LambdaCalculusGrammar extends GrammarBase {
 			GrammarSymbol.terminalRightBracket,
 			'#functionCall'
 		]);
-
-		// TODO: Remove 'let' from the basic Lambda Calculus grammar,
-		// but keep it in the augmented grammar.
-
-		// Expression -> let v = e in e2
-		// this.addProduction(GrammarSymbol.nonterminalExpression, [
-		// 	GrammarSymbol.terminalLet,
-		// 	GrammarSymbol.nonterminalVariable,
-		// 	GrammarSymbol.terminalEquals,
-		// 	GrammarSymbol.nonterminalExpression,
-		// 	GrammarSymbol.terminalIn,
-		// 	GrammarSymbol.nonterminalExpression,
-		// 	'#let'
-		// ]);
 	}
 
 	public get languageName(): string {
@@ -147,23 +123,12 @@ export class LambdaCalculusGrammar extends GrammarBase {
 				semanticStack.push(new LCFunctionCall(expression, expression2));
 				break;
 
-			case '#let': // I.e. let variable = expression in expression2
-				expression2 = semanticStack.pop() as ILCExpression;
-				expression = semanticStack.pop() as ILCExpression; // The function's body
-				variable = semanticStack.pop() as LCVariable; // The function's formal argument
-				semanticStack.push(
-					new LCFunctionCall(new LCLambdaExpression(variable, expression2), expression)
-				);
-				break;
-
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
 	}
 
 	public tokenToSymbol(token: IToken): GrammarSymbol {
-		// const tokenValueAsString: string = token.tokenValue as string;
-
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
 				return GrammarSymbol.terminalEOF;
@@ -175,18 +140,8 @@ export class LambdaCalculusGrammar extends GrammarBase {
 				return GrammarSymbol.terminalFn;
 			case LexicalState.tokenDot:
 				return GrammarSymbol.terminalDot;
-			// case LexicalState.tokenEqual:
-			// 	return GrammarSymbol.terminalEquals;
 			case LexicalState.tokenIdent:
 				return GrammarSymbol.terminalID;
-			// switch (tokenValueAsString) {
-			// 	case 'let':
-			// 		return GrammarSymbol.terminalLet;
-			// 	case 'in':
-			// 		return GrammarSymbol.terminalIn;
-			// 	default:
-			// 		return GrammarSymbol.terminalID;
-			// }
 
 			default:
 				throw new GrammarException(
@@ -215,9 +170,6 @@ export class LambdaCalculusGrammar extends GrammarBase {
 			case GrammarSymbol.terminalRightBracket:
 			case GrammarSymbol.terminalFn:
 			case GrammarSymbol.terminalDot:
-			// case GrammarSymbol.terminalLet:
-			// case GrammarSymbol.terminalIn:
-			// case GrammarSymbol.terminalEquals:
 			case GrammarSymbol.terminalEOF:
 				break;
 
