@@ -14,6 +14,7 @@ import {
 	churchNumeralToInteger,
 	createGrammar,
 	// createMapOfLCExprNamesToExprs,
+	createValueFalse,
 	createValueTrue,
 	createVariableNameGenerator,
 	defaultMaxBetaReductionDepth,
@@ -176,8 +177,40 @@ test('LambdaCalculusWithAugmentedSyntax If Test 1', () => {
 	expect(churchNumeralToInteger(expr)).toBe(thenValue);
 });
 
-// test('LambdaCalculusWithAugmentedSyntax Let Test 1', () => {
-// });
+test('LambdaCalculusWithAugmentedSyntax If Test 2', () => {
+	// Arrange
+	const conditionValue = createValueFalse();
+	const thenValue = 2;
+	const elseValue = 3;
+
+	const fb = getfb();
+
+	// Act
+	const expr = fb(
+		`(if ${conditionValue} ${integerToChurchNumeral(thenValue)} ${integerToChurchNumeral(
+			elseValue
+		)})`
+	);
+
+	// Assert
+	expect(churchNumeralToInteger(expr)).toBe(elseValue);
+});
+
+test('LambdaCalculusWithAugmentedSyntax Let Test 1', () => {
+	// Arrange
+	const variableName = 'x';
+	const variableValue = createValueTrue();
+	const expr = `((${variableName} ${variableName}) ${variableName})`;
+
+	const fb = getfb();
+
+	// Act
+	const expr1 = fb(`let ${variableName} = ${variableValue} in ${expr}`);
+	const expr2 = fb(`(λ${variableName}.${expr} ${variableValue})`);
+
+	// Assert
+	expect(areIsomorphic(expr1, expr2)).toBe(true);
+});
 
 test('LambdaCalculusWithAugmentedSyntax Church Numerals Successor Test 1', () => {
 	// Arrange
