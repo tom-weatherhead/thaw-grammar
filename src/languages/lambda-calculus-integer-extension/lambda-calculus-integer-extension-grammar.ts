@@ -49,8 +49,8 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
 		this.terminals.push(GrammarSymbol.terminalDot);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		this.terminals.push(GrammarSymbol.terminalLeftSquareBracket);
-		this.terminals.push(GrammarSymbol.terminalRightSquareBracket);
+		// this.terminals.push(GrammarSymbol.terminalLeftSquareBracket);
+		// this.terminals.push(GrammarSymbol.terminalRightSquareBracket);
 		this.terminals.push(GrammarSymbol.terminalPlus);
 		this.terminals.push(GrammarSymbol.terminalMinus);
 		this.terminals.push(GrammarSymbol.terminalMultiply);
@@ -230,11 +230,11 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
 				return GrammarSymbol.terminalRightBracket;
-			case LexicalState.tokenLeftSquareBracket:
-				return GrammarSymbol.terminalLeftSquareBracket;
-			case LexicalState.tokenRightSquareBracket:
-				return GrammarSymbol.terminalRightSquareBracket;
-			case LexicalState.tokenGreekLetterLambda:
+			// case LexicalState.tokenLeftSquareBracket:
+			// 	return GrammarSymbol.terminalLeftSquareBracket;
+			// case LexicalState.tokenRightSquareBracket:
+			// 	return GrammarSymbol.terminalRightSquareBracket;
+			case LexicalState.tokenLowercaseGreekLetterLambda:
 				return GrammarSymbol.terminalFn;
 			case LexicalState.tokenDot:
 				return GrammarSymbol.terminalDot;
@@ -288,8 +288,8 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 
 			case GrammarSymbol.terminalLeftBracket:
 			case GrammarSymbol.terminalRightBracket:
-			case GrammarSymbol.terminalLeftSquareBracket:
-			case GrammarSymbol.terminalRightSquareBracket:
+			// case GrammarSymbol.terminalLeftSquareBracket:
+			// case GrammarSymbol.terminalRightSquareBracket:
 			case GrammarSymbol.terminalFn:
 			case GrammarSymbol.terminalDot:
 			case GrammarSymbol.terminalIf:

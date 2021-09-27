@@ -114,6 +114,9 @@ export class LambdaCalculusGrammar extends GrammarBase {
 			'#functionCall'
 		]);
 
+		// TODO: Remove 'let' from the basic Lambda Calculus grammar,
+		// but keep it in the augmented grammar.
+
 		// Expression -> let v = e in e2
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
 			GrammarSymbol.terminalLet,
@@ -182,7 +185,7 @@ export class LambdaCalculusGrammar extends GrammarBase {
 				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
 				return GrammarSymbol.terminalRightBracket;
-			case LexicalState.tokenGreekLetterLambda:
+			case LexicalState.tokenLowercaseGreekLetterLambda:
 				return GrammarSymbol.terminalFn;
 			case LexicalState.tokenDot:
 				return GrammarSymbol.terminalDot;

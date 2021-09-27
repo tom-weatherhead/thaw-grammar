@@ -8,6 +8,7 @@ import { CluGrammar } from '../languages/clu/clu-grammar';
 import { InferenceGrammar } from '../languages/inference/inference-grammar';
 import { JSONGrammar } from '../languages/json/json-grammar';
 import { LambdaCalculusGrammar } from '../languages/lambda-calculus/lambda-calculus-grammar';
+import { LambdaCalculusWithAugmentedSyntaxGrammar } from '../languages/lambda-calculus-augmented-syntax/lambda-calculus-augmented-syntax-grammar';
 import { LambdaCalculusIntegerExtensionGrammar } from '../languages/lambda-calculus-integer-extension/lambda-calculus-integer-extension-grammar';
 import { LISPGrammar } from '../languages/lisp/lisp-grammar';
 import { MicroGrammar } from '../languages/micro/micro-grammar';
@@ -60,6 +61,9 @@ export function createGrammar(ls: LanguageSelector): IGrammar {
 
 		case LanguageSelector.LambdaCalculus:
 			return new LambdaCalculusGrammar();
+
+		case LanguageSelector.LambdaCalculusWithAugmentedSyntax:
+			return new LambdaCalculusWithAugmentedSyntaxGrammar();
 
 		case LanguageSelector.LambdaCalculusIntegerExtension:
 			return new LambdaCalculusIntegerExtensionGrammar();
