@@ -28,7 +28,7 @@ export function integerToChurchNumeral(
 	n: number,
 	options: { f?: string; x?: string } = {}
 ): ILCExpression {
-	if (Number.isNaN(n) || Math.round(n) !== n || n < 0) {
+	if (typeof n !== 'number' || Number.isNaN(n) || Math.round(n) !== n || n < 0) {
 		throw new Error(`integerToChurchNumeral(${n}) : Bad parameter`);
 	}
 

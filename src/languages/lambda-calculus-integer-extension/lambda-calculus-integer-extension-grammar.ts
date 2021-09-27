@@ -288,8 +288,6 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 
 			case GrammarSymbol.terminalLeftBracket:
 			case GrammarSymbol.terminalRightBracket:
-			// case GrammarSymbol.terminalLeftSquareBracket:
-			// case GrammarSymbol.terminalRightSquareBracket:
 			case GrammarSymbol.terminalFn:
 			case GrammarSymbol.terminalDot:
 			case GrammarSymbol.terminalIf:

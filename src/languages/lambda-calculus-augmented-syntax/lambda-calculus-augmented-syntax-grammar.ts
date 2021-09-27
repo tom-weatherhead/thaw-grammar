@@ -29,6 +29,8 @@ import { Name } from '../../common/domain-object-model/name';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
+import { integerToChurchNumeral } from '../lambda-calculus/church-numerals';
+
 import { ILCExpression } from '../lambda-calculus/domain-object-model/interfaces/expression';
 
 import { LCFunctionCall } from '../lambda-calculus/domain-object-model/call';
@@ -122,7 +124,7 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			'#functionCall'
 		]);
 
-		// Handling 'let':
+		// Handle 'let':
 
 		// Expression -> let v = e in e2
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
@@ -135,7 +137,7 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			'#let'
 		]);
 
-		// Handling 'if':
+		// Handle 'if':
 
 		// 'if a then b else c' translates to '((a b) c)', where a is a fn that takes 2 args.
 		// In fact, a is either TRUE or FALSE, where:
@@ -147,6 +149,13 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.nonterminalExpression,
 			'#if'
+		]);
+
+		// Handle integer literals:
+
+		// intexpr -> intlit
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.terminalIntegerLiteral
 		]);
 	}
 
@@ -222,6 +231,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				return GrammarSymbol.terminalDot;
 			case LexicalState.tokenEqual:
 				return GrammarSymbol.terminalEquals;
+			case LexicalState.tokenIntLit:
+				return GrammarSymbol.terminalIntegerLiteral;
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
 					case 'if':
@@ -255,6 +266,10 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		switch (tokenAsSymbol) {
 			case GrammarSymbol.terminalID:
 				semanticStack.push(new Name(value as string, token.line, token.column));
+				break;
+
+			case GrammarSymbol.terminalIntegerLiteral:
+				semanticStack.push(integerToChurchNumeral(value as number));
 				break;
 
 			case GrammarSymbol.terminalLeftBracket:
