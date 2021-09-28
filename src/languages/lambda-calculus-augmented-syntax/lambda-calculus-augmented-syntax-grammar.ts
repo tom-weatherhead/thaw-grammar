@@ -14,6 +14,7 @@
 //   - || (or) : λp.λq.(((IF p) TRUE) q)
 //   - + : λm.λn.λf.λx.((n f) ((m f) x))
 //   - * : λm.λn.λf.(m (n f))
+//   - comb ; e.g. (comb Y) for the Y combinator
 
 // Tasks TODO:
 
@@ -21,7 +22,6 @@
 //   - ++ (successor) : λn.λf.λx.(f ((n f) x))
 //   - -- (predecessor) : λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)
 //   - (z? or 0?) (isZero) : λn.((n λx.FALSE) TRUE)
-//   - comb ; e.g. (comb Y) for the Y combinator
 
 import {
 	GrammarSymbol,

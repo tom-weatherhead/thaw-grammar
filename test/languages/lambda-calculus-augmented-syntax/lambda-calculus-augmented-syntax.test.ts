@@ -2,6 +2,8 @@
 
 'use strict';
 
+import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
+
 import { LanguageSelector, LexicalAnalyzerSelector, ParserSelector } from 'thaw-interpreter-types';
 
 import { createTokenizer } from 'thaw-lexical-analyzer';
@@ -30,9 +32,9 @@ const ls = LanguageSelector.LambdaCalculusWithAugmentedSyntax;
 
 test('LambdaCalculusWithAugmentedSyntax Grammar instance creation test', () => {
 	// Arrange
+	// Act
 	const grammar = createGrammar(ls);
 
-	// Act
 	// Assert
 	expect(grammar).toBeTruthy();
 });
@@ -90,12 +92,15 @@ test('LambdaCalculusWithAugmentedSyntax parse test', () => {
 	expect(f('(λx.x y)')).toBeTruthy();
 });
 
-function getfb(fparam?: (str: string) => ILCExpression): (s: string) => ILCExpression {
+function getfb(
+	fparam?: (str: string) => ILCExpression,
+	options: { strategy?: BetaReductionStrategy } = {}
+): (s: string) => ILCExpression {
 	const generateNewVariableName = createVariableNameGenerator();
 	const f = typeof fparam !== 'undefined' ? fparam : getParseFunction();
 	const fb = (s: string): ILCExpression =>
 		f(s).betaReduce(
-			BetaReductionStrategy.NormalOrder,
+			ifDefinedThenElse(options.strategy, BetaReductionStrategy.NormalOrder),
 			generateNewVariableName,
 			defaultMaxBetaReductionDepth
 		);
@@ -536,37 +541,36 @@ test('LambdaCalculusWithAugmentedSyntax Church Numerals isZero Test 1', () => {
 });
 
 test('LambdaCalculusWithAugmentedSyntax Y combinator test 1', () => {
+	// Arrange
+
 	// const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
 
 	// Rewrite strG as pure λ-calculus:
 
-	// Arrange
 	const f = getParseFunction();
-	const strTrue = 'λx.λy.x';
-	const strFalse = 'λx.λy.y';
+
+	const strTrue = `${createValueTrue()}`;
+	const strFalse = `${createValueFalse()}`;
 	const strIf = 'λb.λx.λy.((b x) y)';
-	const strOne = 'λf.λx.(f x)';
+	const one = integerToChurchNumeral(1);
+	const strOne = `${one}`;
 	// const strTwo = 'λf.λx.(f (f x))';
-	const strThree = 'λf.λx.(f (f (f x)))';
-	const strSix = 'λf.λx.(f (f (f (f (f (f x))))))';
+	const three = integerToChurchNumeral(3);
+	const strThree = `${three}`;
+	const six = integerToChurchNumeral(6);
+	const strSix = `${six}`;
 	const strIsZero = `λn.((n λx.${strFalse}) ${strTrue})`;
 	const strMult = 'λm.λn.λf.(m (n f))';
 	const strPredecessor = 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)';
 
 	const strG = `λr.λn.(((${strIf} (${strIsZero} n)) ${strOne}) ((${strMult} n) (r (${strPredecessor} n))))`;
 
-	// const strYCombinator = 'λa.(λb.(a (b b)) λb.(a (b b)))';
-	const yCombinator = createCombinator('Y');
-	const strYCombinator = `${yCombinator}`;
-
 	// ((* 2) 3) is isomorphic to 6 via the CallByName strategy only:
 	// const expr = `((${strMult} ${strTwo}) ${strThree})`;
 
 	// This Y combinator test succeeds via the CallByName strategy only:
-	// const expr = `((${strYCombinator} ${strG}) ${strThree})`; // 3 factorial
-	// const expr = `let y = ${strYCombinator} in let g = ${strG} in ((y g) ${strThree})`; // 3 factorial
 	const expr = [
-		`let y = ${strYCombinator} in`,
+		`let y = ${createCombinator('Y')} in`,
 		`let g = ${strG} in`,
 		`((y g) ${strThree})` // 3 factorial
 	].join(' ');
@@ -574,38 +578,32 @@ test('LambdaCalculusWithAugmentedSyntax Y combinator test 1', () => {
 	expect(f(expr)).toBeDefined();
 
 	// Act
-	const generateNewVariableName = createVariableNameGenerator();
-	const maxBetaReductionDepth = 100;
+	// const generateNewVariableName = createVariableNameGenerator();
+	// const maxBetaReductionDepth = 100;
 
 	const expectedResult = f(strSix);
 
 	const successes: number[] = [];
 
-	const actualResult1 = f(expr).betaReduce(
-		BetaReductionStrategy.CallByName,
-		generateNewVariableName,
-		maxBetaReductionDepth
-	);
+	const actualResult1 = getfb(f, { strategy: BetaReductionStrategy.CallByName })(expr);
 
-	console.log(`Y combinator test: CallByName yields ${actualResult1}`);
+	// console.log(`Y combinator test: CallByName yields ${actualResult1}`);
 
 	if (actualResult1.isIsomorphicTo(expectedResult)) {
 		successes.push(101);
 	}
 
-	const actualResult8 = f(expr).betaReduce(
-		BetaReductionStrategy.ThAWHackForYCombinator,
-		generateNewVariableName,
-		maxBetaReductionDepth
+	const actualResult8 = getfb(f, { strategy: BetaReductionStrategy.ThAWHackForYCombinator })(
+		expr
 	);
 
-	console.log(`Y combinator test: ThAWHackForYCombinator yields ${actualResult8}`);
+	// console.log(`Y combinator test: ThAWHackForYCombinator yields ${actualResult8}`);
 
 	if (actualResult8.isIsomorphicTo(expectedResult)) {
 		successes.push(108);
 	}
 
-	console.log('Y combinator test 1: successes:', successes);
+	// console.log('Y combinator test 1: successes:', successes);
 
 	// Assert
 	expect(successes.length > 0).toBe(true);
