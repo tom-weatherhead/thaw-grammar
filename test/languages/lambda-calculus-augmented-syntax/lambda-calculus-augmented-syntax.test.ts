@@ -555,3 +555,19 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral Addition Test 1', () => {
 	// Assert
 	expect(actualResult).toBe(expectedResult);
 });
+
+test('LambdaCalculusWithAugmentedSyntax Church Numeral Multiplication Test 1', () => {
+	// Arrange
+	const x = 2;
+	const y = 3;
+	const expectedResult = x * y;
+
+	const fb = getfb();
+
+	// Act
+	const expr = fb(`(* ${integerToChurchNumeral(x)} ${integerToChurchNumeral(y)})`);
+	const actualResult = churchNumeralToInteger(expr);
+
+	// Assert
+	expect(actualResult).toBe(expectedResult);
+});

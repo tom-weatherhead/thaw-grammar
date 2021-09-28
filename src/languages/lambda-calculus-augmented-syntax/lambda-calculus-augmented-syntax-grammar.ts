@@ -33,7 +33,7 @@ import { integerToChurchNumeral } from '../lambda-calculus/church-numerals';
 
 import {
 	createOperatorAddUsage,
-	// createOperatorMultiply,
+	createOperatorMultiplyUsage,
 	createOperatorIfUsage,
 	createStatementLetUsage
 } from '../lambda-calculus/operators';
@@ -164,7 +164,6 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		]);
 
 		// binaryintop -> +
-		// this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.terminalPlus]);
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalPlus,
 			GrammarSymbol.nonterminalExpression,
@@ -173,7 +172,12 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		]);
 
 		// binaryintop -> *
-		// this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.terminalMultiply]);
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalMultiply,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#multiply'
+		]);
 	}
 
 	public get languageName(): string {
@@ -233,6 +237,12 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				expression2 = semanticStack.pop() as ILCExpression;
 				expression = semanticStack.pop() as ILCExpression;
 				semanticStack.push(createOperatorAddUsage(expression, expression2));
+				break;
+
+			case '#multiply':
+				expression2 = semanticStack.pop() as ILCExpression;
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(createOperatorMultiplyUsage(expression, expression2));
 				break;
 
 			default:
@@ -300,14 +310,6 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			case GrammarSymbol.terminalIntegerLiteral:
 				semanticStack.push(integerToChurchNumeral(value));
 				break;
-
-			// case GrammarSymbol.terminalPlus:
-			// 	semanticStack.push(createOperatorAdd());
-			// 	break;
-
-			// case GrammarSymbol.terminalMultiply:
-			// 	semanticStack.push(createOperatorMultiply());
-			// 	break;
 
 			case GrammarSymbol.terminalLeftBracket:
 			case GrammarSymbol.terminalRightBracket:
