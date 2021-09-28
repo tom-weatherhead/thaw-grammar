@@ -79,8 +79,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalPlus);
 		this.terminals.push(GrammarSymbol.terminalMultiply);
 
-		// this.terminals.push(GrammarSymbol.terminalTrue);
-		// this.terminals.push(GrammarSymbol.terminalFalse);
+		this.terminals.push(GrammarSymbol.terminalTrue);
+		this.terminals.push(GrammarSymbol.terminalFalse);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
@@ -141,10 +141,14 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 
 		// Handle the constants 'true' and 'false':
 
-		// this.addProduction(GrammarSymbol.nonterminalExpression, [
-		// 	GrammarSymbol.terminalTrue, '#true']);
-		// this.addProduction(GrammarSymbol.nonterminalExpression, [
-		// 	GrammarSymbol.terminalFalse, '#false']);
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.terminalTrue,
+			'#true'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.terminalFalse,
+			'#false'
+		]);
 
 		// Handle 'let':
 
@@ -299,16 +303,16 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				return GrammarSymbol.terminalMultiply;
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
-					// case 'false':
-					// 	return GrammarSymbol.terminalFalse;
+					case 'false':
+						return GrammarSymbol.terminalFalse;
 					case 'if':
 						return GrammarSymbol.terminalIf;
 					case 'in':
 						return GrammarSymbol.terminalIn;
 					case 'let':
 						return GrammarSymbol.terminalLet;
-					// case 'true':
-					// 	return GrammarSymbol.terminalTrue;
+					case 'true':
+						return GrammarSymbol.terminalTrue;
 					default:
 						return GrammarSymbol.terminalID;
 				}
@@ -344,9 +348,11 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			case GrammarSymbol.terminalRightBracket:
 			case GrammarSymbol.terminalFn:
 			case GrammarSymbol.terminalDot:
+			case GrammarSymbol.terminalTrue:
+			case GrammarSymbol.terminalFalse:
+			case GrammarSymbol.terminalIf:
 			case GrammarSymbol.terminalLet:
 			case GrammarSymbol.terminalIn:
-			case GrammarSymbol.terminalIf:
 			case GrammarSymbol.terminalEquals:
 			case GrammarSymbol.terminalPlus:
 			case GrammarSymbol.terminalMultiply:

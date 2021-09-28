@@ -196,6 +196,44 @@ test('LambdaCalculusWithAugmentedSyntax If Test 2', () => {
 	expect(churchNumeralToInteger(expr)).toBe(elseValue);
 });
 
+test('LambdaCalculusWithAugmentedSyntax If True Test 1', () => {
+	// Arrange
+	const conditionValue = 'true';
+	const thenValue = 2;
+	const elseValue = 3;
+
+	const fb = getfb();
+
+	// Act
+	const expr = fb(
+		`(if ${conditionValue} ${integerToChurchNumeral(thenValue)} ${integerToChurchNumeral(
+			elseValue
+		)})`
+	);
+
+	// Assert
+	expect(churchNumeralToInteger(expr)).toBe(thenValue);
+});
+
+test('LambdaCalculusWithAugmentedSyntax If False Test 1', () => {
+	// Arrange
+	const conditionValue = 'false';
+	const thenValue = 2;
+	const elseValue = 3;
+
+	const fb = getfb();
+
+	// Act
+	const expr = fb(
+		`(if ${conditionValue} ${integerToChurchNumeral(thenValue)} ${integerToChurchNumeral(
+			elseValue
+		)})`
+	);
+
+	// Assert
+	expect(churchNumeralToInteger(expr)).toBe(elseValue);
+});
+
 test('LambdaCalculusWithAugmentedSyntax Let Test 1', () => {
 	// Arrange
 	const variableName = 'x';
