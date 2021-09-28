@@ -539,3 +539,19 @@ test('LambdaCalculusWithAugmentedSyntax churchNumeralToInteger Test 1', () => {
 	expect(churchNumeralToInteger(f('λf.λx.(f (f x))'))).toBe(2);
 	expect(churchNumeralToInteger(f('λf.λx.(f (f (f x)))'))).toBe(3);
 });
+
+test('LambdaCalculusWithAugmentedSyntax Church Numeral Addition Test 1', () => {
+	// Arrange
+	const x = 2;
+	const y = 3;
+	const expectedResult = x + y;
+
+	const fb = getfb();
+
+	// Act
+	const expr = fb(`(+ ${integerToChurchNumeral(x)} ${integerToChurchNumeral(y)})`);
+	const actualResult = churchNumeralToInteger(expr);
+
+	// Assert
+	expect(actualResult).toBe(expectedResult);
+});

@@ -32,8 +32,8 @@ import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 import { integerToChurchNumeral } from '../lambda-calculus/church-numerals';
 
 import {
-	createOperatorAdd,
-	createOperatorMultiply,
+	createOperatorAddUsage,
+	// createOperatorMultiply,
 	createOperatorIfUsage,
 	createStatementLetUsage
 } from '../lambda-calculus/operators';
@@ -164,10 +164,16 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		]);
 
 		// binaryintop -> +
-		this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.terminalPlus]);
+		// this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.terminalPlus]);
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalPlus,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#plus'
+		]);
 
 		// binaryintop -> *
-		this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.terminalMultiply]);
+		// this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.terminalMultiply]);
 	}
 
 	public get languageName(): string {
@@ -221,6 +227,12 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				// 	new LCFunctionCall(new LCFunctionCall(expression, expression2), expression3)
 				// );
 				semanticStack.push(createOperatorIfUsage(expression, expression2, expression3));
+				break;
+
+			case '#plus':
+				expression2 = semanticStack.pop() as ILCExpression;
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(createOperatorAddUsage(expression, expression2));
 				break;
 
 			default:
@@ -289,13 +301,13 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				semanticStack.push(integerToChurchNumeral(value));
 				break;
 
-			case GrammarSymbol.terminalPlus:
-				semanticStack.push(createOperatorAdd());
-				break;
+			// case GrammarSymbol.terminalPlus:
+			// 	semanticStack.push(createOperatorAdd());
+			// 	break;
 
-			case GrammarSymbol.terminalMultiply:
-				semanticStack.push(createOperatorMultiply());
-				break;
+			// case GrammarSymbol.terminalMultiply:
+			// 	semanticStack.push(createOperatorMultiply());
+			// 	break;
 
 			case GrammarSymbol.terminalLeftBracket:
 			case GrammarSymbol.terminalRightBracket:
@@ -305,6 +317,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			case GrammarSymbol.terminalIn:
 			case GrammarSymbol.terminalIf:
 			case GrammarSymbol.terminalEquals:
+			case GrammarSymbol.terminalPlus:
+			case GrammarSymbol.terminalMultiply:
 			case GrammarSymbol.terminalEOF:
 				break;
 
