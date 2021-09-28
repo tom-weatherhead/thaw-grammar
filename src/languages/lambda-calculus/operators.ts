@@ -199,6 +199,29 @@ export function createOperatorMultiply(
 	return l(m, l(n, createOperatorMultiplyUsage(m, n, options)));
 }
 
+// export function createOperatorIncrementUsage(expression: ILCExpression, options: { f?: string; x?: string } = {}): ILCExpression {
+// 	// λn.λf.λx.(f ((n f) x))
+// 	const f = v(options.f, 'f');
+// 	const x = v(options.x, 'x');
+//
+// 	return L(f, L(x, c(f, c(c(expression, f), x))));
+// }
+//
+// export function createOperatorDecrementUsage(expression: ILCExpression): ILCExpression {
+// 	// λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)
+//
+// 	return ;
+// }
+//
+// export function createPredicateIsZeroUsage(expression: ILCExpression, options: { x?: string } = {}): ILCExpression {
+// 	// λn.((n λx.FALSE) TRUE)
+// 	const x = v(options.x, 'x');
+//
+// 	// return l(n, c(c(expression, l(n, createValueFalse())), createValueTrue()));
+//
+// 	return c(c(expression, l(x, createValueFalse())), createValueTrue());
+// }
+
 // export function createOperator(options: {} = {}): ILCExpression {
 // 	;
 // }
@@ -362,3 +385,17 @@ export function createFunctionGetTailOfList(
 // 	- tail = cdr
 // 	- cons? = append? -> It looks like append adds a onto the head of l, not the tail.
 // 		cons = λa.λl.λf.λx.?((f a) (l f) x)
+
+export function createCombinator(name: string): ILCExpression {
+	const x = new LCVariable('x');
+
+	switch (name) {
+		case 'I':
+			return l(x, x);
+
+		default:
+			throw new Error(
+				`createCombinator() : Combinator '${name}' is either unimplemented or non-existent.`
+			);
+	}
+}

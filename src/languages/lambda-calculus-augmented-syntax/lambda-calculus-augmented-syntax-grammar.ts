@@ -6,6 +6,7 @@
 // Tasks completed:
 
 // - Convert non-negative integers into Church numerals via integerToChurchNumeral()
+// - Add language support for the constants 'true' (λx.λy.x) and 'false' (λx.λy.y).
 // - Add operators that can be easily converted to Lambda calculus expressions:
 //   - + : λm.λn.λf.λx.((n f) ((m f) x))
 //   - * : λm.λn.λf.(m (n f))
@@ -20,7 +21,7 @@
 //   - (z? or 0?) (isZero) : λn.((n λx.FALSE) TRUE)
 //   - && (and) : λp.λq.((p q) FALSE)
 //   - || (or) : λp.λq.(((IF p) TRUE) q)
-// - Add language support for the constants 'true' (λx.λy.x) and 'false' (λx.λy.y).
+//   - comb ; e.g. (comb Y) for the Y combinator
 
 import {
 	GrammarSymbol,
@@ -37,9 +38,14 @@ import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 import { integerToChurchNumeral } from '../lambda-calculus/church-numerals';
 
 import {
+	createCombinator,
 	createOperatorAddUsage,
-	createOperatorMultiplyUsage,
+	createOperatorDecrementUsage,
 	createOperatorIfUsage,
+	createOperatorIncrementUsage,
+	createOperatorIsZeroUsage,
+	createOperatorMultiplyUsage,
+	// createPredicateIsZeroUsage,
 	createStatementLetUsage,
 	createValueFalse,
 	createValueTrue
@@ -81,6 +87,14 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 
 		this.terminals.push(GrammarSymbol.terminalTrue);
 		this.terminals.push(GrammarSymbol.terminalFalse);
+
+		this.terminals.push(GrammarSymbol.terminalComb);
+
+		this.terminals.push(GrammarSymbol.terminalInc);
+		this.terminals.push(GrammarSymbol.terminalDec);
+		this.terminals.push(GrammarSymbol.terminalIsZero);
+		this.terminals.push(GrammarSymbol.terminalAnd);
+		this.terminals.push(GrammarSymbol.terminalOr);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
@@ -199,6 +213,52 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			GrammarSymbol.nonterminalExpression,
 			'#multiply'
 		]);
+
+		// Handle combinators:
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalComb,
+			GrammarSymbol.terminalID,
+			'#comb'
+		]);
+
+		// case GrammarSymbol.terminalInc:
+		// case GrammarSymbol.terminalDec:
+		// case GrammarSymbol.terminalIsZero:
+		// case GrammarSymbol.terminalAnd:
+		// case GrammarSymbol.terminalOr:
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalInc,
+			GrammarSymbol.nonterminalExpression,
+			'#inc'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalDec,
+			GrammarSymbol.nonterminalExpression,
+			'#dec'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalIsZero,
+			GrammarSymbol.nonterminalExpression,
+			'#isZero'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalAnd,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#and'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalOr,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#or'
+		]);
 	}
 
 	public get languageName(): string {
@@ -274,6 +334,42 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				semanticStack.push(createValueFalse());
 				break;
 
+			case '#comb':
+				name = semanticStack.pop() as Name;
+				semanticStack.push(createCombinator(name.value));
+				break;
+
+			case '#inc':
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(createOperatorIncrementUsage(expression));
+				break;
+
+			case '#dec':
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(createOperatorDecrementUsage(expression));
+				break;
+
+			case '#isZero':
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(createOperatorIsZeroUsage(expression));
+				break;
+
+			case '#and':
+				expression2 = semanticStack.pop() as ILCExpression;
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(
+					createOperatorIfUsage(expression, expression2, createValueFalse())
+				);
+				break;
+
+			case '#or':
+				expression2 = semanticStack.pop() as ILCExpression;
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(
+					createOperatorIfUsage(expression, createValueTrue(), expression2)
+				);
+				break;
+
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
@@ -303,6 +399,18 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				return GrammarSymbol.terminalMultiply;
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
+					case 'inc':
+						return GrammarSymbol.terminalInc;
+					case 'dec':
+						return GrammarSymbol.terminalDec;
+					case 'zero?':
+						return GrammarSymbol.terminalIsZero;
+					case 'and':
+						return GrammarSymbol.terminalAnd;
+					case 'or':
+						return GrammarSymbol.terminalOr;
+					case 'comb':
+						return GrammarSymbol.terminalComb;
 					case 'false':
 						return GrammarSymbol.terminalFalse;
 					case 'if':
@@ -356,6 +464,12 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			case GrammarSymbol.terminalEquals:
 			case GrammarSymbol.terminalPlus:
 			case GrammarSymbol.terminalMultiply:
+			case GrammarSymbol.terminalComb:
+			case GrammarSymbol.terminalInc:
+			case GrammarSymbol.terminalDec:
+			case GrammarSymbol.terminalIsZero:
+			case GrammarSymbol.terminalAnd:
+			case GrammarSymbol.terminalOr:
 			case GrammarSymbol.terminalEOF:
 				break;
 
