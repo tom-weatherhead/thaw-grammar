@@ -234,6 +234,60 @@ test('LambdaCalculusWithAugmentedSyntax If False Test 1', () => {
 	expect(churchNumeralToInteger(expr)).toBe(elseValue);
 });
 
+test('LambdaCalculusWithAugmentedSyntax AND Truth Table Test 1', () => {
+	// Arrange
+	const t = createValueTrue();
+	const f = createValueFalse();
+
+	const fb = getfb();
+
+	// Act
+	const actualResult0 = fb('(and false false)');
+	const actualResult1 = fb('(and false true)');
+	const actualResult2 = fb('(and true false)');
+	const actualResult3 = fb('(and true true)');
+
+	// Assert
+	expect(areIsomorphic(actualResult0, f)).toBe(true);
+	expect(areIsomorphic(actualResult0, t)).toBe(false);
+
+	expect(areIsomorphic(actualResult1, f)).toBe(true);
+	expect(areIsomorphic(actualResult1, t)).toBe(false);
+
+	expect(areIsomorphic(actualResult2, f)).toBe(true);
+	expect(areIsomorphic(actualResult2, t)).toBe(false);
+
+	expect(areIsomorphic(actualResult3, f)).toBe(false);
+	expect(areIsomorphic(actualResult3, t)).toBe(true);
+});
+
+test('LambdaCalculusWithAugmentedSyntax OR Truth Table Test 1', () => {
+	// Arrange
+	const t = createValueTrue();
+	const f = createValueFalse();
+
+	const fb = getfb();
+
+	// Act
+	const actualResult0 = fb('(or false false)');
+	const actualResult1 = fb('(or false true)');
+	const actualResult2 = fb('(or true false)');
+	const actualResult3 = fb('(or true true)');
+
+	// Assert
+	expect(areIsomorphic(actualResult0, f)).toBe(true);
+	expect(areIsomorphic(actualResult0, t)).toBe(false);
+
+	expect(areIsomorphic(actualResult1, f)).toBe(false);
+	expect(areIsomorphic(actualResult1, t)).toBe(true);
+
+	expect(areIsomorphic(actualResult2, f)).toBe(false);
+	expect(areIsomorphic(actualResult2, t)).toBe(true);
+
+	expect(areIsomorphic(actualResult3, f)).toBe(false);
+	expect(areIsomorphic(actualResult3, t)).toBe(true);
+});
+
 test('LambdaCalculusWithAugmentedSyntax Let Test 1', () => {
 	// Arrange
 	const variableName = 'x';
