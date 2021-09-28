@@ -12,6 +12,7 @@ import {
 	areIsomorphic,
 	BetaReductionStrategy,
 	churchNumeralToInteger,
+	createCombinator,
 	createGrammar,
 	// createMapOfLCExprNamesToExprs,
 	createValueFalse,
@@ -554,7 +555,9 @@ test('LambdaCalculusWithAugmentedSyntax Y combinator test 1', () => {
 
 	const strG = `λr.λn.(((${strIf} (${strIsZero} n)) ${strOne}) ((${strMult} n) (r (${strPredecessor} n))))`;
 
-	const strYCombinator = 'λa.(λb.(a (b b)) λb.(a (b b)))';
+	// const strYCombinator = 'λa.(λb.(a (b b)) λb.(a (b b)))';
+	const yCombinator = createCombinator('Y');
+	const strYCombinator = `${yCombinator}`;
 
 	// ((* 2) 3) is isomorphic to 6 via the CallByName strategy only:
 	// const expr = `((${strMult} ${strTwo}) ${strThree})`;

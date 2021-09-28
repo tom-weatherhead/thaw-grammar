@@ -388,10 +388,28 @@ export function createFunctionGetTailOfList(
 
 export function createCombinator(name: string): ILCExpression {
 	const x = new LCVariable('x');
+	const y = new LCVariable('y');
+	const z = new LCVariable('z');
 
 	switch (name) {
 		case 'I':
+			// The identity operator I, with the property that I x = x. See https://iep.utm.edu/curry/
+			// I = SKK :
+			// Note that I can be defined in terms of the other operators, since W K x = K x x = x, so I = W K. Also, since S K K x = K x (K x) = x, I can be defined as S K K.
 			return l(x, x);
+
+		case 'K':
+			// The constancy operator K with the property that K x y = x. See https://iep.utm.edu/curry/
+			return l(x, l(y, x));
+
+		case 'S':
+			// The distributor S with the property that S x y z = ((x z) (y z)). See https://iep.utm.edu/curry/
+			return l(x, l(y, l(z, c(c(x, z), c(y, z)))));
+
+		case 'Y':
+			// The fixed-point combinator Y with the property that 𝐘𝐹=𝐹(𝐘𝐹) for any 𝜆-term 𝐹
+			// λx.(λy.(x (y y)) λy.(x (y y)))
+			return l(x, c(l(y, c(x, c(y, y))), l(y, c(x, c(y, y)))));
 
 		default:
 			throw new Error(

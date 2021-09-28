@@ -8,10 +8,12 @@
 // - Convert non-negative integers into Church numerals via integerToChurchNumeral()
 // - Add language support for the constants 'true' (λx.λy.x) and 'false' (λx.λy.y).
 // - Add operators that can be easily converted to Lambda calculus expressions:
+//   - let : 'let v = e1 in e2' -> (λv.e2 e1)
+//   - if : λb.λx.λy.((b x) y)
+//   - && (and) : λp.λq.((p q) FALSE)
+//   - || (or) : λp.λq.(((IF p) TRUE) q)
 //   - + : λm.λn.λf.λx.((n f) ((m f) x))
 //   - * : λm.λn.λf.(m (n f))
-//   - if : λb.λx.λy.((b x) y)
-//   - let : 'let v = e1 in e2' -> (λv.e2 e1)
 
 // Tasks TODO:
 
@@ -19,8 +21,6 @@
 //   - ++ (successor) : λn.λf.λx.(f ((n f) x))
 //   - -- (predecessor) : λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)
 //   - (z? or 0?) (isZero) : λn.((n λx.FALSE) TRUE)
-//   - && (and) : λp.λq.((p q) FALSE)
-//   - || (or) : λp.λq.(((IF p) TRUE) q)
 //   - comb ; e.g. (comb Y) for the Y combinator
 
 import {
