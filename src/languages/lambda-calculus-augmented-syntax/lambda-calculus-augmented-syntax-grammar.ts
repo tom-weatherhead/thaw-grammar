@@ -3,19 +3,24 @@
 // Glossary:
 // A 'redex' is a reducible expression
 
-// TODO:
+// Tasks completed:
 
 // - Convert non-negative integers into Church numerals via integerToChurchNumeral()
 // - Add operators that can be easily converted to Lambda calculus expressions:
-//   - ++ (successor) : λn.λf.λx.(f ((n f) x))
-//   - -- (predecessor) : λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)
 //   - + : λm.λn.λf.λx.((n f) ((m f) x))
 //   - * : λm.λn.λf.(m (n f))
-//   - (z? or 0?) (isZero) : λn.((n λx.FALSE) TRUE)
 //   - if : λb.λx.λy.((b x) y)
+//   - let : 'let v = e1 in e2' -> (λv.e2 e1)
+
+// Tasks TODO:
+
+// - Add operators that can be easily converted to Lambda calculus expressions:
+//   - ++ (successor) : λn.λf.λx.(f ((n f) x))
+//   - -- (predecessor) : λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)
+//   - (z? or 0?) (isZero) : λn.((n λx.FALSE) TRUE)
 //   - && (and) : λp.λq.((p q) FALSE)
 //   - || (or) : λp.λq.(((IF p) TRUE) q)
-// - Add support for the constants 'true' (λx.λy.x) and 'false' (λx.λy.y).
+// - Add language support for the constants 'true' (λx.λy.x) and 'false' (λx.λy.y).
 
 import {
 	GrammarSymbol,
@@ -35,7 +40,9 @@ import {
 	createOperatorAddUsage,
 	createOperatorMultiplyUsage,
 	createOperatorIfUsage,
-	createStatementLetUsage
+	createStatementLetUsage,
+	createValueFalse,
+	createValueTrue
 } from '../lambda-calculus/operators';
 
 import { ILCExpression } from '../lambda-calculus/domain-object-model/interfaces/expression';
@@ -71,6 +78,9 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
 		this.terminals.push(GrammarSymbol.terminalPlus);
 		this.terminals.push(GrammarSymbol.terminalMultiply);
+
+		// this.terminals.push(GrammarSymbol.terminalTrue);
+		// this.terminals.push(GrammarSymbol.terminalFalse);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
@@ -128,6 +138,13 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			GrammarSymbol.nonterminalExpression,
 			'#functionCall'
 		]);
+
+		// Handle the constants 'true' and 'false':
+
+		// this.addProduction(GrammarSymbol.nonterminalExpression, [
+		// 	GrammarSymbol.terminalTrue, '#true']);
+		// this.addProduction(GrammarSymbol.nonterminalExpression, [
+		// 	GrammarSymbol.terminalFalse, '#false']);
 
 		// Handle 'let':
 
@@ -245,6 +262,14 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				semanticStack.push(createOperatorMultiplyUsage(expression, expression2));
 				break;
 
+			case '#true':
+				semanticStack.push(createValueTrue());
+				break;
+
+			case '#false':
+				semanticStack.push(createValueFalse());
+				break;
+
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
@@ -274,12 +299,16 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				return GrammarSymbol.terminalMultiply;
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
+					// case 'false':
+					// 	return GrammarSymbol.terminalFalse;
 					case 'if':
 						return GrammarSymbol.terminalIf;
 					case 'in':
 						return GrammarSymbol.terminalIn;
 					case 'let':
 						return GrammarSymbol.terminalLet;
+					// case 'true':
+					// 	return GrammarSymbol.terminalTrue;
 					default:
 						return GrammarSymbol.terminalID;
 				}
