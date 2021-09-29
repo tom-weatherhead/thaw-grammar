@@ -17,6 +17,8 @@ import {
 	createCombinator,
 	createGrammar,
 	// createMapOfLCExprNamesToExprs,
+	createOperatorDecrementUsage,
+	createOperatorIncrementUsage,
 	createOperatorIsZeroUsage,
 	createValueFalse,
 	createValueTrue,
@@ -674,17 +676,44 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral Multiplication Test 1', (
 	expect(actualResult).toBe(expectedResult);
 });
 
-// test('LambdaCalculusWithAugmentedSyntax Church Numeral Increment Test 1', () => {
-// });
+test('LambdaCalculusWithAugmentedSyntax Church Numeral Increment Test 1', () => {
+	// Arrange
+	const fn = (n: number): ILCExpression =>
+		createOperatorIncrementUsage(integerToChurchNumeral(n)).betaReduce({ generateNewVariableName: createVariableNameGenerator() });
 
-// test('LambdaCalculusWithAugmentedSyntax Church Numeral Decrement Test 1', () => {
-// });
+	// Act
+	const actualResult0 = fn(0);
+	const actualResult1 = fn(1);
+	const actualResult2 = fn(2);
+	const actualResult3 = fn(3);
+
+	// Assert
+	expect(churchNumeralToInteger(actualResult0)).toBe(1);
+	expect(churchNumeralToInteger(actualResult1)).toBe(2);
+	expect(churchNumeralToInteger(actualResult2)).toBe(3);
+	expect(churchNumeralToInteger(actualResult3)).toBe(4);
+});
+
+test('LambdaCalculusWithAugmentedSyntax Church Numeral Decrement Test 1', () => {
+	// Arrange
+	const fn = (n: number): ILCExpression =>
+		createOperatorDecrementUsage(integerToChurchNumeral(n)).betaReduce({ generateNewVariableName: createVariableNameGenerator() });
+
+	// Act
+	const actualResult1 = fn(1);
+	const actualResult2 = fn(2);
+	const actualResult3 = fn(3);
+
+	// Assert
+	expect(churchNumeralToInteger(actualResult1)).toBe(0);
+	expect(churchNumeralToInteger(actualResult2)).toBe(1);
+	expect(churchNumeralToInteger(actualResult3)).toBe(2);
+});
 
 test('LambdaCalculusWithAugmentedSyntax Church Numeral isZero Predicate Test 1', () => {
 	// Arrange
 	const t = createValueTrue();
 	const f = createValueFalse();
-	// const fb = getfb();
 
 	const fn = (n: number): ILCExpression =>
 		createOperatorIsZeroUsage(integerToChurchNumeral(n)).betaReduce({ generateNewVariableName: createVariableNameGenerator() });
@@ -692,8 +721,19 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral isZero Predicate Test 1',
 	// Act
 	const actualResult0 = fn(0);
 	const actualResult1 = fn(1);
+	const actualResult2 = fn(2);
+	const actualResult3 = fn(3);
 
 	// Assert
 	expect(areIsomorphic(actualResult0, t)).toBe(true);
+	expect(areIsomorphic(actualResult0, f)).toBe(false);
+
+	expect(areIsomorphic(actualResult1, t)).toBe(false);
 	expect(areIsomorphic(actualResult1, f)).toBe(true);
+
+	expect(areIsomorphic(actualResult2, t)).toBe(false);
+	expect(areIsomorphic(actualResult2, f)).toBe(true);
+
+	expect(areIsomorphic(actualResult3, t)).toBe(false);
+	expect(areIsomorphic(actualResult3, f)).toBe(true);
 });
