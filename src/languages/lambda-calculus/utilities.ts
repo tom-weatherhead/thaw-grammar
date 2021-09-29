@@ -18,47 +18,47 @@ export const defaultMaxBetaReductionDepth = 30;
 // export const defaultMaxBetaReductionDepth = 50;
 // export const defaultMaxBetaReductionDepth = 100;
 
-const strTrue = 'λx.λy.x';
-const strFalse = 'λx.λy.y';
-
-const strIf = 'λb.λx.λy.((b x) y)'; // if b then x else y
-
-export const mapLCExprNamesToStrings = new Map<string, string>();
-
-mapLCExprNamesToStrings.set('identity', 'λx.x');
-
-mapLCExprNamesToStrings.set('true', strTrue);
-mapLCExprNamesToStrings.set('false', strFalse);
-
-mapLCExprNamesToStrings.set('0', 'λf.λx.x');
-mapLCExprNamesToStrings.set('1', 'λf.λx.(f x)');
-mapLCExprNamesToStrings.set('2', 'λf.λx.(f (f x))');
-mapLCExprNamesToStrings.set('3', 'λf.λx.(f (f (f x)))');
-mapLCExprNamesToStrings.set('4', 'λf.λx.(f (f (f (f x))))');
-mapLCExprNamesToStrings.set('5', 'λf.λx.(f (f (f (f (f x)))))');
-mapLCExprNamesToStrings.set('6', 'λf.λx.(f (f (f (f (f (f x))))))');
-mapLCExprNamesToStrings.set('7', 'λf.λx.(f (f (f (f (f (f (f x)))))))');
-mapLCExprNamesToStrings.set('8', 'λf.λx.(f (f (f (f (f (f (f (f x))))))))');
-mapLCExprNamesToStrings.set('9', 'λf.λx.(f (f (f (f (f (f (f (f (f x)))))))))');
-
-mapLCExprNamesToStrings.set('isZero', `λn.((n λx.${strFalse}) ${strTrue})`);
-mapLCExprNamesToStrings.set('successor', 'λn.λf.λx.(f ((n f) x))');
-mapLCExprNamesToStrings.set('predecessor', 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)');
-mapLCExprNamesToStrings.set('if', strIf);
-mapLCExprNamesToStrings.set('and', `λp.λq.((p q) ${strFalse})`);
-mapLCExprNamesToStrings.set('or', `λp.λq.(((${strIf} p) ${strTrue}) q)`);
-mapLCExprNamesToStrings.set('add', 'λm.λn.λf.λx.((n f) ((m f) x))');
-mapLCExprNamesToStrings.set('multiply', 'λm.λn.λf.(m (n f))');
-// mapLCExprNamesToStrings.set('', '');
-
-export const mapCombinatorNamesToStrings = new Map<string, string>();
-
-mapCombinatorNamesToStrings.set('I', 'λx.x');
-mapCombinatorNamesToStrings.set('K', 'λx.λy.x'); // === strTrue
-mapCombinatorNamesToStrings.set('S', 'λa.λb.λc.((a c) (b c))');
-// Y is a fixed-point combinator; it is used to implement recursion.
-mapCombinatorNamesToStrings.set('Y', 'λa.(λb.(a (b b)) λb.(a (b b)))');
-// mapCombinatorNamesToStrings.set('', '');
+// const strTrue = 'λx.λy.x';
+// const strFalse = 'λx.λy.y';
+//
+// const strIf = 'λb.λx.λy.((b x) y)'; // if b then x else y
+//
+// export const mapLCExprNamesToStrings = new Map<string, string>();
+//
+// mapLCExprNamesToStrings.set('identity', 'λx.x');
+//
+// mapLCExprNamesToStrings.set('true', strTrue);
+// mapLCExprNamesToStrings.set('false', strFalse);
+//
+// mapLCExprNamesToStrings.set('0', 'λf.λx.x');
+// mapLCExprNamesToStrings.set('1', 'λf.λx.(f x)');
+// mapLCExprNamesToStrings.set('2', 'λf.λx.(f (f x))');
+// mapLCExprNamesToStrings.set('3', 'λf.λx.(f (f (f x)))');
+// mapLCExprNamesToStrings.set('4', 'λf.λx.(f (f (f (f x))))');
+// mapLCExprNamesToStrings.set('5', 'λf.λx.(f (f (f (f (f x)))))');
+// mapLCExprNamesToStrings.set('6', 'λf.λx.(f (f (f (f (f (f x))))))');
+// mapLCExprNamesToStrings.set('7', 'λf.λx.(f (f (f (f (f (f (f x)))))))');
+// mapLCExprNamesToStrings.set('8', 'λf.λx.(f (f (f (f (f (f (f (f x))))))))');
+// mapLCExprNamesToStrings.set('9', 'λf.λx.(f (f (f (f (f (f (f (f (f x)))))))))');
+//
+// mapLCExprNamesToStrings.set('isZero', `λn.((n λx.${strFalse}) ${strTrue})`);
+// mapLCExprNamesToStrings.set('successor', 'λn.λf.λx.(f ((n f) x))');
+// mapLCExprNamesToStrings.set('predecessor', 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)');
+// mapLCExprNamesToStrings.set('if', strIf);
+// mapLCExprNamesToStrings.set('and', `λp.λq.((p q) ${strFalse})`);
+// mapLCExprNamesToStrings.set('or', `λp.λq.(((${strIf} p) ${strTrue}) q)`);
+// mapLCExprNamesToStrings.set('add', 'λm.λn.λf.λx.((n f) ((m f) x))');
+// mapLCExprNamesToStrings.set('multiply', 'λm.λn.λf.(m (n f))');
+// // mapLCExprNamesToStrings.set('', '');
+//
+// export const mapCombinatorNamesToStrings = new Map<string, string>();
+//
+// mapCombinatorNamesToStrings.set('I', 'λx.x');
+// mapCombinatorNamesToStrings.set('K', 'λx.λy.x'); // === strTrue
+// mapCombinatorNamesToStrings.set('S', 'λa.λb.λc.((a c) (b c))');
+// // Y is a fixed-point combinator; it is used to implement recursion.
+// mapCombinatorNamesToStrings.set('Y', 'λa.(λb.(a (b b)) λb.(a (b b)))');
+// // mapCombinatorNamesToStrings.set('', '');
 
 export function getParseFunction(
 	tokenizer: ITokenizer,
@@ -81,23 +81,17 @@ export function getfb1(
 		readonly maxDepth?: number;
 	} = {}
 ): (s: string) => ILCExpression {
-	// const generateNewVariableName = createVariableNameGenerator();
-	const fb = (s: string): ILCExpression =>
-		// f(s).betaReduce(
-		// 	ifDefinedThenElse(options.betaReductionStrategy, BetaReductionStrategy.NormalOrder),
-		// 	generateNewVariableName,
-		// 	ifDefinedThenElse(options.maxBetaReductionDepth, defaultMaxBetaReductionDepth)
-		// );
+	const generateNewVariableName = createVariableNameGenerator();
+
+	return (s: string): ILCExpression =>
 		f(s).betaReduce({
 			strategy: options.strategy,
 			generateNewVariableName: ifDefinedThenElse(
 				options.generateNewVariableName,
-				createVariableNameGenerator()
+				generateNewVariableName
 			),
 			maxDepth: options.maxDepth
 		});
-
-	return fb;
 }
 
 export function getfb2(
@@ -112,17 +106,17 @@ export function getfb2(
 	return getfb1(getParseFunction(tokenizer, parser), options);
 }
 
-export function createMapOfLCExprNamesToExprs(
-	fb: (s: string) => ILCExpression
-): Map<string, ILCExpression> {
-	const mapLCExprNamesToExprs = new Map<string, ILCExpression>();
-
-	for (const [key, value] of Object.entries(mapLCExprNamesToStrings)) {
-		mapLCExprNamesToExprs.set(key, fb(value));
-	}
-
-	return mapLCExprNamesToExprs;
-}
+// export function createMapOfLCExprNamesToExprs(
+// 	fb: (s: string) => ILCExpression
+// ): Map<string, ILCExpression> {
+// 	const mapLCExprNamesToExprs = new Map<string, ILCExpression>();
+//
+// 	for (const [key, value] of Object.entries(mapLCExprNamesToStrings)) {
+// 		mapLCExprNamesToExprs.set(key, fb(value));
+// 	}
+//
+// 	return mapLCExprNamesToExprs;
+// }
 
 export function areIsomorphic<T>(expr1: IUnifiable<T>, expr2: IUnifiable<T>): boolean {
 	const unifyingSubstitution = expr1.unify(expr2);

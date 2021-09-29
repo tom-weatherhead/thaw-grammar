@@ -1,5 +1,13 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-augmented-syntax/lambda-calculus-augmented-syntax-grammar.ts
 
+// From https://opendsa.cs.vt.edu/ODSA/Books/PL/html/Syntax.html :
+//
+// 	A complete BNF grammar for the lambda calculus:
+//
+// 	< λexp > ::= < var >
+// 		| λ < var > . < λexp >
+// 		| ( < λexp > < λexp > )
+
 // Glossary:
 // A 'redex' is a reducible expression
 
@@ -14,14 +22,14 @@
 //   - || (or) : λp.λq.(((IF p) TRUE) q)
 //   - + : λm.λn.λf.λx.((n f) ((m f) x))
 //   - * : λm.λn.λf.(m (n f))
-//   - comb ; e.g. (comb Y) for the Y combinator
-
-// Tasks TODO:
-
-// - Add operators that can be easily converted to Lambda calculus expressions:
 //   - ++ (successor) : λn.λf.λx.(f ((n f) x))
 //   - -- (predecessor) : λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)
 //   - (z? or 0?) (isZero) : λn.((n λx.FALSE) TRUE)
+//   - comb ; e.g. (comb Y) for the Y combinator
+
+// Tasks TODO:
+// - Add language support for pairs (?)
+// - Add language support for lists (?)
 
 import {
 	GrammarSymbol,
@@ -56,14 +64,6 @@ import { ILCExpression } from '../lambda-calculus/domain-object-model/interfaces
 import { LCFunctionCall } from '../lambda-calculus/domain-object-model/call';
 import { LCLambdaExpression } from '../lambda-calculus/domain-object-model/lambda-expression';
 import { LCVariable } from '../lambda-calculus/domain-object-model/variable';
-
-// From https://opendsa.cs.vt.edu/ODSA/Books/PL/html/Syntax.html :
-//
-// 	A complete BNF grammar for the lambda calculus:
-//
-// 	< λexp > ::= < var >
-// 		| λ < var > . < λexp >
-// 		| ( < λexp > < λexp > )
 
 export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 	constructor() {
@@ -222,12 +222,6 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			'#comb'
 		]);
 
-		// case GrammarSymbol.terminalInc:
-		// case GrammarSymbol.terminalDec:
-		// case GrammarSymbol.terminalIsZero:
-		// case GrammarSymbol.terminalAnd:
-		// case GrammarSymbol.terminalOr:
-
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalInc,
 			GrammarSymbol.nonterminalExpression,
@@ -298,9 +292,6 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				expression2 = semanticStack.pop() as ILCExpression;
 				expression = semanticStack.pop() as ILCExpression; // The function's body
 				variable = semanticStack.pop() as LCVariable; // The function's formal argument
-				// semanticStack.push(
-				// 	new LCFunctionCall(new LCLambdaExpression(variable, expression2), expression)
-				// );
 				semanticStack.push(createStatementLetUsage(variable, expression, expression2));
 				break;
 
@@ -308,9 +299,6 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				expression3 = semanticStack.pop() as ILCExpression;
 				expression2 = semanticStack.pop() as ILCExpression;
 				expression = semanticStack.pop() as ILCExpression;
-				// semanticStack.push(
-				// 	new LCFunctionCall(new LCFunctionCall(expression, expression2), expression3)
-				// );
 				semanticStack.push(createOperatorIfUsage(expression, expression2, expression3));
 				break;
 

@@ -32,8 +32,8 @@ const strFalse = 'λx.λy.y';
 const strCombinatorI = 'λx.x';
 const strCombinatorK = 'λx.λy.x';
 const strCombinatorS = 'λx.λy.λz.((x z) (y z))';
-// const strCombinatorY = 'λg.(λx.(g (x x)) λx.(g (x x)))';
-const strCombinatorY = mapCombinatorNamesToStrings.get('Y');
+const strCombinatorY = 'λg.(λx.(g (x x)) λx.(g (x x)))';
+// const strCombinatorY = mapCombinatorNamesToStrings.get('Y');
 
 test('LambdaCalculusIntegerExtensionGrammar instance creation test', () => {
 	// Arrange
@@ -495,29 +495,29 @@ test('LambdaCalculusIntegerExtensionGrammar Y combinator pre-test 2', () => {
 	expect((actualResult5 as LCIntegerLiteral).value).toBe(120);
 });
 
-test('LambdaCalculusIntegerExtensionGrammar Church numerals x 10 test', () => {
-	// const limit = 3;
-	const limit = 10;
-	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	const parser = createParser(ParserSelector.LL1, grammar);
-	const fb = getfb2(tokenizer, parser);
-	// , {
-	// 	generateNewVariableName: createVariableNameGenerator(),
-	// 	// maxDepth: limit + 3
-	// 	maxDepth: 100
-	// });
-
-	for (let i = 0; i < limit; i++) {
-		const expectedResult = i;
-		const iChurchExpr = mapLCExprNamesToStrings.get(`${i}`);
-		const iChurchExprAsInt = `((${iChurchExpr} λn.(+ n 1)) 0)`;
-		const actualResult = fb(iChurchExprAsInt);
-
-		// console.log(`${i}: ${iChurchExpr} -> ${actualResult}`);
-
-		expect(actualResult).toBeTruthy();
-		expect(isLCIntegerLiteral(actualResult)).toBeTruthy();
-		expect((actualResult as LCIntegerLiteral).value).toBe(expectedResult);
-	}
-});
+// test('LambdaCalculusIntegerExtensionGrammar Church numerals x 10 test', () => {
+// 	// const limit = 3;
+// 	const limit = 10;
+// 	const grammar = createGrammar(ls);
+// 	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+// 	const parser = createParser(ParserSelector.LL1, grammar);
+// 	const fb = getfb2(tokenizer, parser);
+// 	// , {
+// 	// 	generateNewVariableName: createVariableNameGenerator(),
+// 	// 	// maxDepth: limit + 3
+// 	// 	maxDepth: 100
+// 	// });
+//
+// 	for (let i = 0; i < limit; i++) {
+// 		const expectedResult = i;
+// 		const iChurchExpr = mapLCExprNamesToStrings.get(`${i}`);
+// 		const iChurchExprAsInt = `((${iChurchExpr} λn.(+ n 1)) 0)`;
+// 		const actualResult = fb(iChurchExprAsInt);
+//
+// 		// console.log(`${i}: ${iChurchExpr} -> ${actualResult}`);
+//
+// 		expect(actualResult).toBeTruthy();
+// 		expect(isLCIntegerLiteral(actualResult)).toBeTruthy();
+// 		expect((actualResult as LCIntegerLiteral).value).toBe(expectedResult);
+// 	}
+// });

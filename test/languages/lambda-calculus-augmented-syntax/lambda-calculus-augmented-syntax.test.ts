@@ -624,32 +624,10 @@ test('LambdaCalculusWithAugmentedSyntax Y combinator test 1', () => {
 
 test('LambdaCalculusWithAugmentedSyntax Y combinator test 2', () => {
 	// Arrange
-
-	// const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
-
-	// Rewrite strG as pure λ-calculus:
-
 	const f = getParseFunction();
 
-	// const strTrue = `${createValueTrue()}`;
-	// const strFalse = `${createValueFalse()}`;
-	// const strIf = 'λb.λx.λy.((b x) y)';
-	// const one = integerToChurchNumeral(1);
-	// const strOne = `${one}`;
-	// const strTwo = 'λf.λx.(f (f x))';
-	const three = integerToChurchNumeral(3);
-	// const strThree = `${three}`;
-	// const six = integerToChurchNumeral(6);
-	// const strSix = `${six}`;
-	// const strIsZero = `λn.((n λx.${strFalse}) ${strTrue})`;
-	// const strMult = 'λm.λn.λf.(m (n f))';
-	// const strPredecessor = 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)';
-
-	// const strG = `λr.λn.(((${strIf} (${strIsZero} n)) ${strOne}) ((${strMult} n) (r (${strPredecessor} n))))`;
 	const strG = 'λr.λn.(if (zero? n) 1 (* n (r (dec n))))';
-
-	// ((* 2) 3) is isomorphic to 6 via the CallByName strategy only:
-	// const expr = `((${strMult} ${strTwo}) ${strThree})`;
+	const three = integerToChurchNumeral(3);
 
 	// This Y combinator test succeeds via the CallByName strategy only:
 	const expr = [
@@ -658,16 +636,11 @@ test('LambdaCalculusWithAugmentedSyntax Y combinator test 2', () => {
 		`((y g) ${three})` // 3 factorial
 	].join(' ');
 
-	expect(f(expr)).toBeDefined();
-
-	// Act
-	// const generateNewVariableName = createVariableNameGenerator();
-	// const maxBetaReductionDepth = 100;
-
-	// const expectedResult = f(strSix);
 	const expectedResult = 6;
 
-	// const successes: number[] = [];
+	expect(f(expr)).toBeDefined(); // Ensure that it parses
+
+	// Act
 
 	// const actualResult1 = churchNumeralToInteger(getfb(f, { strategy: BetaReductionStrategy.CallByName })(expr));
 	//
@@ -707,29 +680,11 @@ test('LambdaCalculusWithAugmentedSyntax Y combinator test 2', () => {
 	//
 	// expect(actualResult7).toBe(expectedResult);
 
-	// console.log(`Y combinator test: CallByName yields ${actualResult1}`);
-
-	// if (actualResult1.isIsomorphicTo(expectedResult)) {
-	// 	successes.push(101);
-	// }
-
 	const actualResult8 = churchNumeralToInteger(
 		getfb(f, { strategy: BetaReductionStrategy.ThAWHackForYCombinator })(expr)
 	);
 
 	expect(actualResult8).toBe(expectedResult);
-
-	// console.log(`Y combinator test: ThAWHackForYCombinator yields ${actualResult8}`);
-
-	// if (actualResult8.isIsomorphicTo(expectedResult)) {
-	// 	successes.push(108);
-	// }
-
-	// console.log('Y combinator test 1: successes:', successes);
-
-	// Assert
-	// expect(successes.length > 0).toBe(true);
-	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
 });
 
 test('LambdaCalculusWithAugmentedSyntax integerToChurchNumeral Test 1', () => {

@@ -78,12 +78,6 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 
 	// β-reduction
 	isBetaReducible(): boolean;
-	// betaReduce(
-	// 	strategy: BetaReductionStrategy,
-	// 	generateNewVariableName: () => string,
-	// 	maxDepth: number
-	// ): ILCExpression;
-	// TODO:
 	betaReduce(options?: ILCBetaReductionOptions): ILCExpression;
 
 	// δ-reduction for extended Lambda calculus; e.g. ((+ 2) 3) δ-> 5
