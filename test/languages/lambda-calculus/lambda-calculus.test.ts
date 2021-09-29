@@ -254,8 +254,8 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 
 	const oneExpected = f(strOneExpected);
 
-	console.log(`LambdaCalculus Church Numerals Successor Test 1 : oneExpected is ${oneExpected}`);
-	console.log(`LambdaCalculus Church Numerals Successor Test 1 : oneActual is ${oneActual}`);
+	// console.log(`LambdaCalculus Church Numerals Successor Test 1 : oneExpected is ${oneExpected}`);
+	// console.log(`LambdaCalculus Church Numerals Successor Test 1 : oneActual is ${oneActual}`);
 
 	// LambdaCalculus Church Numerals Successor Test 1 : oneExpected is λf.λx.(f x)
 	// LambdaCalculus Church Numerals Successor Test 1 : oneActual is λf.λx.(f ((λf.λx.x f) x))
@@ -281,9 +281,9 @@ test('LambdaCalculus Church Numerals Successor Test 1a', () => {
 	// Act
 	const actualResult = fb(input);
 
-	console.log(
-		`LambdaCalculus Church Numerals Successor Test 1a : actualResult = ${actualResult}; expected ${expectedResultStr}`
-	);
+	// console.log(
+	// 	`LambdaCalculus Church Numerals Successor Test 1a : actualResult = ${actualResult}; expected ${expectedResultStr}`
+	// );
 
 	const actualResultStr = `${actualResult}`;
 
@@ -306,9 +306,9 @@ test('LambdaCalculus Church Numerals Successor Test 1b', () => {
 	// Act
 	const actualResult = fb(input);
 
-	console.log(
-		`LambdaCalculus Church Numerals Successor Test 1b : actualResult = ${actualResult}; expected ${expectedResultStr}`
-	);
+	// console.log(
+	// 	`LambdaCalculus Church Numerals Successor Test 1b : actualResult = ${actualResult}; expected ${expectedResultStr}`
+	// );
 
 	const actualResultStr = `${actualResult}`;
 
@@ -331,9 +331,9 @@ test('LambdaCalculus Church Numerals Successor Test 1c', () => {
 	// Act
 	const actualResult = fb(input);
 
-	console.log(
-		`LambdaCalculus Church Numerals Successor Test 1c : actualResult = ${actualResult}; expected ${expectedResultStr}`
-	);
+	// console.log(
+	// 	`LambdaCalculus Church Numerals Successor Test 1c : actualResult = ${actualResult}; expected ${expectedResultStr}`
+	// );
 
 	const actualResultStr = `${actualResult}`;
 
@@ -357,9 +357,9 @@ test('LambdaCalculus Church Numerals Successor Test 1d', () => {
 	// Act
 	const actualResult = fb(input);
 
-	console.log(
-		`LambdaCalculus Church Numerals Successor Test 1d : actualResult = ${actualResult}; expected ${expectedResultStr}`
-	);
+	// console.log(
+	// 	`LambdaCalculus Church Numerals Successor Test 1d : actualResult = ${actualResult}; expected ${expectedResultStr}`
+	// );
 
 	const actualResultStr = `${actualResult}`;
 
@@ -580,12 +580,12 @@ test('LambdaCalculus Church Numerals Multiplication Test 1', () => {
 	const actualResult = fb(`((${strMult} ${strTwo}) ${strThree})`);
 	// const actualResult = f(`((${strMult} ${strTwo}) ${strThree})`).betaReduce();
 
-	console.log(
-		`LambdaCalculus Church Numerals Multiplication Test 1: expectedResult is ${expectedResult}`
-	);
-	console.log(
-		`LambdaCalculus Church Numerals Multiplication Test 1: actualResult is ${actualResult}`
-	);
+	// console.log(
+	// 	`LambdaCalculus Church Numerals Multiplication Test 1: expectedResult is ${expectedResult}`
+	// );
+	// console.log(
+	// 	`LambdaCalculus Church Numerals Multiplication Test 1: actualResult is ${actualResult}`
+	// );
 
 	// Assert
 	expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);

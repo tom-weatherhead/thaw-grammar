@@ -291,8 +291,8 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// ****
 
 		if (maxDepth <= 0) {
-			// return this;
-			throw new Error('call.ts : betaReduceNormalOrder() : maxDepth <= 0');
+			return this;
+			// throw new Error('call.ts : betaReduceNormalOrder() : maxDepth <= 0');
 		}
 
 		const options = {
