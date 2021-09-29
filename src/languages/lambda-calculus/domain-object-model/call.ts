@@ -6,6 +6,7 @@ import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utiliti
 
 import {
 	BetaReductionStrategy,
+	ILCBetaReductionOptions,
 	ILCExpression,
 	ILCFunctionCall,
 	ILCLambdaExpression,
@@ -19,6 +20,12 @@ import {
 	isLCVariable,
 	typenameLCFunctionCall
 } from '../type-guards';
+
+import {
+	// createVariableNameGenerator,
+	defaultBetaReductionStrategy,
+	defaultMaxBetaReductionDepth
+} from '../utilities';
 
 import { LCValueBase } from './value-base';
 
@@ -129,13 +136,22 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 				do {
 					generatedVarName = generateNewVariableName();
+					// console.log(
+					// 	`call.ts : betaReduceCore() : generatedVarName is ${generatedVarName}`
+					// );
 				} while (lambdaExpression.containsVariableNamed(generatedVarName));
 
 				// α-conversion :
+				// console.log(
+				// 	`call.ts : betaReduceCore() : Old lambdaExpression is ${lambdaExpression}`
+				// );
 				lambdaExpression = lambdaExpression.renameBoundVariable(
 					generatedVarName,
 					name
 				) as ILCLambdaExpression;
+				// console.log(
+				// 	`call.ts : betaReduceCore() : New (renamed) lambdaExpression is ${lambdaExpression}`
+				// );
 			}
 		}
 
@@ -192,27 +208,25 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// ****
 
 		if (maxDepth <= 0) {
-			return this;
+			// return this;
+			throw new Error('call.ts : betaReduceCallByName() : maxDepth <= 0');
 		}
+
+		const options = {
+			strategy: BetaReductionStrategy.CallByName,
+			generateNewVariableName,
+			maxDepth
+		};
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
-		const evaluatedCallee = this.callee
-			.etaReduce()
-			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, maxDepth - 1);
+		const evaluatedCallee = this.callee.etaReduce().deltaReduce().betaReduce(options);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			const result = new LCFunctionCall(
 				evaluatedCallee,
 				// Note: Simply using 'this.arg' as the second argument fails.
-				this.arg
-					.deltaReduce()
-					.betaReduce(
-						BetaReductionStrategy.CallByName,
-						generateNewVariableName,
-						maxDepth - 1
-					)
+				this.arg.deltaReduce().betaReduce(options)
 			);
 
 			return result;
@@ -227,7 +241,7 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
 			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.CallByName, generateNewVariableName, maxDepth - 1);
+			.betaReduce(options);
 	}
 
 	/// normal - leftmost outermost; the most popular reduction strategy
@@ -277,14 +291,19 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// ****
 
 		if (maxDepth <= 0) {
-			return this;
+			// return this;
+			throw new Error('call.ts : betaReduceNormalOrder() : maxDepth <= 0');
 		}
+
+		const options = {
+			strategy: BetaReductionStrategy.NormalOrder,
+			generateNewVariableName,
+			maxDepth
+		};
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
-		const evaluatedCallee = this.callee
-			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.NormalOrder, generateNewVariableName, maxDepth - 1);
+		const evaluatedCallee = this.callee.deltaReduce().betaReduce(options);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			// The result is App(e1’’, nor e2),
@@ -292,21 +311,9 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 			// and e1’ = nor e1 = evaluatedCallee
 			// and e1 = this.callee
 			const result = new LCFunctionCall(
-				evaluatedCallee
-					.deltaReduce()
-					.betaReduce(
-						BetaReductionStrategy.NormalOrder,
-						generateNewVariableName,
-						maxDepth - 1
-					),
+				evaluatedCallee.deltaReduce().betaReduce(options),
 				// Note: Simply using 'this.arg' as the second argument fails.
-				this.arg
-					.deltaReduce()
-					.betaReduce(
-						BetaReductionStrategy.NormalOrder,
-						generateNewVariableName,
-						maxDepth - 1
-					)
+				this.arg.deltaReduce().betaReduce(options)
 			);
 
 			return result;
@@ -316,7 +323,7 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
 			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.NormalOrder, generateNewVariableName, maxDepth - 1);
+			.betaReduce(options);
 	}
 
 	/// call-by-value - leftmost innermost, no reductions inside abstractions
@@ -360,17 +367,20 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// ****
 
 		if (maxDepth <= 0) {
-			return this;
+			// return this;
+			throw new Error('call.ts : betaReduceCallByValue() : maxDepth <= 0');
 		}
+
+		const options = {
+			strategy: BetaReductionStrategy.CallByValue,
+			generateNewVariableName,
+			maxDepth
+		};
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
-		const evaluatedCallee = this.callee
-			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
-		const evaluatedArg = this.arg
-			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
+		const evaluatedCallee = this.callee.deltaReduce().betaReduce(options);
+		const evaluatedArg = this.arg.deltaReduce().betaReduce(options);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			return new LCFunctionCall(evaluatedCallee, evaluatedArg);
@@ -385,7 +395,7 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
 			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
+			.betaReduce(options);
 	}
 
 	// 7.4 Applicative Order Reduction to Normal Form
@@ -418,25 +428,20 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 
 		if (maxDepth <= 0) {
-			return this;
+			// return this;
+			throw new Error('call.ts : betaReduceApplicativeOrder() : maxDepth <= 0');
 		}
+
+		const options = {
+			strategy: BetaReductionStrategy.ApplicativeOrder,
+			generateNewVariableName,
+			maxDepth
+		};
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
-		const evaluatedCallee = this.callee
-			.deltaReduce()
-			.betaReduce(
-				BetaReductionStrategy.ApplicativeOrder,
-				generateNewVariableName,
-				maxDepth - 1
-			);
-		const evaluatedArg = this.arg
-			.deltaReduce()
-			.betaReduce(
-				BetaReductionStrategy.ApplicativeOrder,
-				generateNewVariableName,
-				maxDepth - 1
-			);
+		const evaluatedCallee = this.callee.deltaReduce().betaReduce(options);
+		const evaluatedArg = this.arg.deltaReduce().betaReduce(options);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			return new LCFunctionCall(evaluatedCallee, evaluatedArg);
@@ -446,11 +451,7 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 		return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
 			.deltaReduce()
-			.betaReduce(
-				BetaReductionStrategy.ApplicativeOrder,
-				generateNewVariableName,
-				maxDepth - 1
-			);
+			.betaReduce(options);
 	}
 
 	// 7.5 Hybrid Applicative Order Reduction to Normal Form
@@ -486,21 +487,25 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 
 		if (maxDepth <= 0) {
-			return this;
+			// return this;
+			throw new Error('call.ts : betaReduceHybridApplicativeOrder() : maxDepth <= 0');
 		}
+
+		const optionsCBV = {
+			strategy: BetaReductionStrategy.CallByValue,
+			generateNewVariableName,
+			maxDepth
+		};
+		const optionsHAO = {
+			strategy: BetaReductionStrategy.HybridApplicativeOrder,
+			generateNewVariableName,
+			maxDepth
+		};
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
-		const evaluatedCallee = this.callee
-			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.CallByValue, generateNewVariableName, maxDepth - 1);
-		const evaluatedArg = this.arg
-			.deltaReduce()
-			.betaReduce(
-				BetaReductionStrategy.HybridApplicativeOrder,
-				generateNewVariableName,
-				maxDepth - 1
-			);
+		const evaluatedCallee = this.callee.deltaReduce().betaReduce(optionsCBV);
+		const evaluatedArg = this.arg.deltaReduce().betaReduce(optionsHAO);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			return new LCFunctionCall(evaluatedCallee, evaluatedArg);
@@ -510,11 +515,7 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 		return this.betaReduceCore(evaluatedCallee, evaluatedArg, generateNewVariableName)
 			.deltaReduce()
-			.betaReduce(
-				BetaReductionStrategy.HybridApplicativeOrder,
-				generateNewVariableName,
-				maxDepth - 1
-			);
+			.betaReduce(optionsHAO);
 
 		// TODO: Implement the part:
 		// if !self.is_reducible(limit, *count) then
@@ -558,14 +559,19 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 
 		if (maxDepth <= 0) {
-			return this;
+			// return this;
+			throw new Error('call.ts : betaReduceHeadSpine() : maxDepth <= 0');
 		}
+
+		const options = {
+			strategy: BetaReductionStrategy.HeadSpine,
+			generateNewVariableName,
+			maxDepth
+		};
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
-		const evaluatedCallee = this.callee
-			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.HeadSpine, generateNewVariableName, maxDepth - 1);
+		const evaluatedCallee = this.callee.deltaReduce().betaReduce(options);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			return new LCFunctionCall(evaluatedCallee, this.arg);
@@ -575,7 +581,7 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
 			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.HeadSpine, generateNewVariableName, maxDepth - 1);
+			.betaReduce(options);
 	}
 
 	// 7.7 Hybrid Normal Order Reduction to Normal Form
@@ -610,14 +616,24 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 
 		if (maxDepth <= 0) {
-			return this;
+			// return this;
+			throw new Error('call.ts : betaReduceHybridNormalOrder() : maxDepth <= 0');
 		}
+
+		const optionsHS = {
+			strategy: BetaReductionStrategy.HeadSpine,
+			generateNewVariableName,
+			maxDepth
+		};
+		const optionsHNO = {
+			strategy: BetaReductionStrategy.HybridNormalOrder,
+			generateNewVariableName,
+			maxDepth
+		};
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
-		const evaluatedCallee = this.callee
-			.deltaReduce()
-			.betaReduce(BetaReductionStrategy.HeadSpine, generateNewVariableName, maxDepth - 1);
+		const evaluatedCallee = this.callee.deltaReduce().betaReduce(optionsHS);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			return new LCFunctionCall(evaluatedCallee, this.arg);
@@ -627,11 +643,7 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
 			.deltaReduce()
-			.betaReduce(
-				BetaReductionStrategy.HybridNormalOrder,
-				generateNewVariableName,
-				maxDepth - 1
-			);
+			.betaReduce(optionsHNO);
 
 		// TODO: Implement the part:
 		// if !self.is_reducible(limit, *count) then
@@ -645,19 +657,22 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		maxDepth: number
 	): ILCExpression {
 		if (maxDepth <= 0) {
-			return this;
+			return this; // This is needed to prevent unbounded recursion.
+			// throw new Error('call.ts : betaReduceThAWHackForYCombinator() : maxDepth <= 0');
 		}
+
+		const options = {
+			strategy: BetaReductionStrategy.ThAWHackForYCombinator,
+			generateNewVariableName,
+			maxDepth
+		};
 
 		// First, evaluate this.callee; if it does not evaluate to a LCLambdaExpression,
 		// then return.
 		const evaluatedCallee = this.callee
 			.etaReduce() // ? Keep this or remove it?
 			.deltaReduce()
-			.betaReduce(
-				BetaReductionStrategy.ThAWHackForYCombinator,
-				generateNewVariableName,
-				maxDepth - 1
-			);
+			.betaReduce(options);
 
 		if (!isLCLambdaExpression(evaluatedCallee)) {
 			const result = new LCFunctionCall(
@@ -665,13 +680,7 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 				// Note: Simply using 'this.arg' as the second argument fails for the Y comb.
 				// This is the first of two differences between this strategy and CallByName.
 				// this.arg		// As in CallByName
-				this.arg
-					.deltaReduce()
-					.betaReduce(
-						BetaReductionStrategy.ThAWHackForYCombinator,
-						generateNewVariableName,
-						maxDepth - 1
-					)
+				this.arg.deltaReduce().betaReduce(options)
 			);
 
 			return result;
@@ -681,18 +690,30 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 
 		return this.betaReduceCore(evaluatedCallee, this.arg, generateNewVariableName)
 			.deltaReduce()
-			.betaReduce(
-				BetaReductionStrategy.ThAWHackForYCombinator,
-				generateNewVariableName,
-				maxDepth - 1
-			);
+			.betaReduce(options);
 	}
 
-	public override betaReduce(
-		strategy: BetaReductionStrategy,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
+	public override betaReduce(options: ILCBetaReductionOptions = {}): ILCExpression {
+		if (typeof options.generateNewVariableName === 'undefined') {
+			throw new Error('call.ts betaReduce() : options.generateNewVariableName is undefined');
+		}
+
+		let maxDepth = ifDefinedThenElse(options.maxDepth, defaultMaxBetaReductionDepth);
+
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		maxDepth--;
+
+		const strategy = ifDefinedThenElse(options.strategy, defaultBetaReductionStrategy);
+		// const generateNewVariableName = ifDefinedThenElse(
+		// 	options.generateNewVariableName,
+		// 	createVariableNameGenerator()
+		// );
+
+		const generateNewVariableName = options.generateNewVariableName;
+
 		switch (strategy) {
 			case BetaReductionStrategy.CallByName:
 				return this.betaReduceCallByName(generateNewVariableName, maxDepth);

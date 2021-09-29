@@ -4,6 +4,7 @@ import { createSet, ifDefinedThenElse, IImmutableSet } from 'thaw-common-utiliti
 
 import {
 	BetaReductionStrategy,
+	ILCBetaReductionOptions,
 	ILCExpression,
 	ILCLambdaExpression,
 	ILCSubstitution,
@@ -16,6 +17,8 @@ import {
 	isLCVariable,
 	typenameLCLambdaExpression
 } from '../type-guards';
+
+import { defaultBetaReductionStrategy, defaultMaxBetaReductionDepth } from '../utilities';
 
 import { LCValueBase } from './value-base';
 
@@ -95,20 +98,34 @@ export class LCLambdaExpression extends LCValueBase implements ILCLambdaExpressi
 		return this.body.isBetaReducible();
 	}
 
-	public override betaReduce(
-		strategy: BetaReductionStrategy,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression {
+	public override betaReduce(options: ILCBetaReductionOptions = {}): ILCExpression {
+		if (typeof options.generateNewVariableName === 'undefined') {
+			throw new Error(
+				'lambda-expression.ts betaReduce() : options.generateNewVariableName is undefined'
+			);
+		}
+
+		let maxDepth = ifDefinedThenElse(options.maxDepth, defaultMaxBetaReductionDepth);
+
 		if (maxDepth <= 0) {
 			return this;
+			// throw new Error('lambda-expression.ts betaReduce() : maxDepth <= 0');
 		}
+
+		maxDepth--;
+
+		const strategy = ifDefinedThenElse(options.strategy, defaultBetaReductionStrategy);
+		const newOptions = {
+			strategy,
+			generateNewVariableName: options.generateNewVariableName,
+			maxDepth
+		};
 
 		// 'redex' means 'reducible expression'.
 		const redex = this.etaReduce();
 
 		if (!isLCLambdaExpression(redex)) {
-			return redex.betaReduce(strategy, generateNewVariableName, maxDepth);
+			return redex.betaReduce(newOptions);
 		}
 
 		switch (strategy) {
@@ -116,29 +133,20 @@ export class LCLambdaExpression extends LCValueBase implements ILCLambdaExpressi
 				return redex;
 
 			case BetaReductionStrategy.NormalOrder:
-				return new LCLambdaExpression(
-					redex.arg,
-					redex.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
-				);
+				return new LCLambdaExpression(redex.arg, redex.body.betaReduce(newOptions));
 
 			case BetaReductionStrategy.CallByValue:
 				return redex;
 
 			case BetaReductionStrategy.ApplicativeOrder:
-				return new LCLambdaExpression(
-					redex.arg,
-					redex.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
-				);
+				return new LCLambdaExpression(redex.arg, redex.body.betaReduce(newOptions));
 
 			case BetaReductionStrategy.ThAWHackForYCombinator:
 				// Note: Simply returning 'redex' here fails for the Y comb.
 				// This is the second of two differences between this strategy and CallByName.
 				// return redex; // Use this for real CallByName semantics.
 				// ThAW hack 2021-09-07 :
-				return new LCLambdaExpression(
-					redex.arg,
-					redex.body.betaReduce(strategy, generateNewVariableName, maxDepth - 1)
-				);
+				return new LCLambdaExpression(redex.arg, redex.body.betaReduce(newOptions));
 
 			default:
 				throw new Error(

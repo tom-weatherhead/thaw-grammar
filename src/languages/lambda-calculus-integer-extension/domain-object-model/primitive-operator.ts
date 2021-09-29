@@ -9,6 +9,8 @@ import {
 	IUnifiable
 } from '../../lambda-calculus/domain-object-model/interfaces/expression';
 
+import { defaultMaxBetaReductionDepth } from '../../lambda-calculus/utilities';
+
 import { LCLambdaExpression } from '../../lambda-calculus/domain-object-model/lambda-expression';
 
 import { LCValueBase } from '../../lambda-calculus/domain-object-model/value-base';
@@ -159,12 +161,26 @@ export class LCPrimitiveOperator extends LCValueBase {
 	}
 
 	public override betaReduce(
-		strategy: BetaReductionStrategy,
-		generateNewVariableName: () => string,
-		maxDepth: number
+		options: {
+			strategy?: BetaReductionStrategy;
+			generateNewVariableName?: () => string;
+			maxDepth?: number;
+		} = {}
 	): ILCExpression {
-		const l = this.leftChild.betaReduce(strategy, generateNewVariableName, maxDepth - 1);
-		const r = this.rightChild.betaReduce(strategy, generateNewVariableName, maxDepth - 1);
+		const maxDepth = ifDefinedThenElse(options.maxDepth, defaultMaxBetaReductionDepth);
+
+		if (maxDepth <= 0) {
+			return this;
+		}
+
+		const newOptions = {
+			strategy: options.strategy,
+			generateNewVariableName: options.generateNewVariableName,
+			maxDepth: maxDepth - 1
+		};
+
+		const l = this.leftChild.betaReduce(newOptions);
+		const r = this.rightChild.betaReduce(newOptions);
 
 		return new LCPrimitiveOperator(this.name, l, r).deltaReduce();
 	}

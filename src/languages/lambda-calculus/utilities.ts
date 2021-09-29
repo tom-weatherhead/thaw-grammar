@@ -10,7 +10,13 @@ import {
 	IUnifiable
 } from './domain-object-model/interfaces/expression';
 
-export const defaultMaxBetaReductionDepth = 100;
+// export const defaultBetaReductionStrategy = BetaReductionStrategy.CallByName;
+export const defaultBetaReductionStrategy = BetaReductionStrategy.NormalOrder;
+
+// export const defaultMaxBetaReductionDepth = 20; // 2021-09-28 19:01 with CallByName : 2 tests fail.
+export const defaultMaxBetaReductionDepth = 30;
+// export const defaultMaxBetaReductionDepth = 50;
+// export const defaultMaxBetaReductionDepth = 100;
 
 const strTrue = 'λx.λy.x';
 const strFalse = 'λx.λy.y';
@@ -70,17 +76,26 @@ export function createVariableNameGenerator(): () => string {
 export function getfb1(
 	f: (str: string) => ILCExpression,
 	options: {
-		readonly maxBetaReductionDepth?: number;
-		readonly betaReductionStrategy?: BetaReductionStrategy;
+		readonly strategy?: BetaReductionStrategy;
+		readonly generateNewVariableName?: () => string;
+		readonly maxDepth?: number;
 	} = {}
 ): (s: string) => ILCExpression {
-	const generateNewVariableName = createVariableNameGenerator();
+	// const generateNewVariableName = createVariableNameGenerator();
 	const fb = (s: string): ILCExpression =>
-		f(s).betaReduce(
-			ifDefinedThenElse(options.betaReductionStrategy, BetaReductionStrategy.NormalOrder),
-			generateNewVariableName,
-			ifDefinedThenElse(options.maxBetaReductionDepth, defaultMaxBetaReductionDepth)
-		);
+		// f(s).betaReduce(
+		// 	ifDefinedThenElse(options.betaReductionStrategy, BetaReductionStrategy.NormalOrder),
+		// 	generateNewVariableName,
+		// 	ifDefinedThenElse(options.maxBetaReductionDepth, defaultMaxBetaReductionDepth)
+		// );
+		f(s).betaReduce({
+			strategy: options.strategy,
+			generateNewVariableName: ifDefinedThenElse(
+				options.generateNewVariableName,
+				createVariableNameGenerator()
+			),
+			maxDepth: options.maxDepth
+		});
 
 	return fb;
 }
@@ -89,8 +104,9 @@ export function getfb2(
 	tokenizer: ITokenizer,
 	parser: IParser,
 	options: {
-		readonly maxBetaReductionDepth?: number;
-		readonly betaReductionStrategy?: BetaReductionStrategy;
+		readonly strategy?: BetaReductionStrategy;
+		readonly generateNewVariableName?: () => string;
+		readonly maxDepth?: number;
 	} = {}
 ): (s: string) => ILCExpression {
 	return getfb1(getParseFunction(tokenizer, parser), options);

@@ -17,10 +17,11 @@ import {
 	createCombinator,
 	createGrammar,
 	// createMapOfLCExprNamesToExprs,
+	// createOperatorIsZeroUsage,
 	createValueFalse,
 	createValueTrue,
 	createVariableNameGenerator,
-	defaultMaxBetaReductionDepth,
+	// defaultMaxBetaReductionDepth,
 	ILCExpression,
 	ILCVariable,
 	integerToChurchNumeral
@@ -94,16 +95,24 @@ test('LambdaCalculusWithAugmentedSyntax parse test', () => {
 
 function getfb(
 	fparam?: (str: string) => ILCExpression,
-	options: { strategy?: BetaReductionStrategy } = {}
+	options: {
+		strategy?: BetaReductionStrategy;
+		generateNewVariableName?: () => string;
+		maxDepth?: number;
+	} = {}
 ): (s: string) => ILCExpression {
-	const generateNewVariableName = createVariableNameGenerator();
+	// const generateNewVariableName = createVariableNameGenerator();
 	const f = typeof fparam !== 'undefined' ? fparam : getParseFunction();
+	// const fb = (s: string): ILCExpression => f(s).betaReduce(options);
 	const fb = (s: string): ILCExpression =>
-		f(s).betaReduce(
-			ifDefinedThenElse(options.strategy, BetaReductionStrategy.NormalOrder),
-			generateNewVariableName,
-			defaultMaxBetaReductionDepth
-		);
+		f(s).betaReduce({
+			strategy: options.strategy,
+			generateNewVariableName: ifDefinedThenElse(
+				options.generateNewVariableName,
+				createVariableNameGenerator()
+			),
+			maxDepth: options.maxDepth
+		});
 
 	return fb;
 }
@@ -156,7 +165,7 @@ test('LambdaCalculusWithAugmentedSyntax expression unification test 1', () => {
 	const expr2 = f('y');
 	const unifyingSubstitution = expr1.unify(expr2);
 
-	console.log(`unifyingSubstitution is: ${unifyingSubstitution}`);
+	// console.log(`unifyingSubstitution is: ${unifyingSubstitution}`);
 
 	// Assert
 	expect(unifyingSubstitution).toBeDefined();
@@ -664,3 +673,25 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral Multiplication Test 1', (
 	// Assert
 	expect(actualResult).toBe(expectedResult);
 });
+
+// test('LambdaCalculusWithAugmentedSyntax Church Numeral Increment Test 1', () => {
+// });
+
+// test('LambdaCalculusWithAugmentedSyntax Church Numeral Decrement Test 1', () => {
+// });
+
+// test('LambdaCalculusWithAugmentedSyntax Church Numeral isZero Predicate Test 1', () => {
+// 	// Arrange
+// 	const t = createValueTrue();
+// 	const f = createValueFalse();
+// 	const fb = getfb();
+//
+// 	const fn = (n: number): ILCExpression =>
+// 		createOperatorIsZeroUsage(integerToChurchNumeral(n)).betaReduce();
+//
+// 	// Act
+// 	const actualResult0 = fb(createOperatorIsZeroUsage(integerToChurchNumeral(0)));
+//
+// 	// Assert
+// 	expect(areIsomorphic(integerToChurchNumeral(0), t)).toBe(true);
+// });

@@ -52,6 +52,12 @@ export type LCExpressionMapKey = number;
 
 export type LCExpressionMapType = Map<LCExpressionMapKey, ILCExpression>;
 
+export interface ILCBetaReductionOptions {
+	readonly strategy?: BetaReductionStrategy;
+	readonly generateNewVariableName?: () => string;
+	readonly maxDepth?: number;
+}
+
 export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression> {
 	readonly typename: string;
 	// readonly mapKey: LCExpressionMapKey;
@@ -72,11 +78,13 @@ export interface ILCExpression extends IStringifiable, IUnifiable<ILCExpression>
 
 	// β-reduction
 	isBetaReducible(): boolean;
-	betaReduce(
-		strategy: BetaReductionStrategy,
-		generateNewVariableName: () => string,
-		maxDepth: number
-	): ILCExpression;
+	// betaReduce(
+	// 	strategy: BetaReductionStrategy,
+	// 	generateNewVariableName: () => string,
+	// 	maxDepth: number
+	// ): ILCExpression;
+	// TODO:
+	betaReduce(options?: ILCBetaReductionOptions): ILCExpression;
 
 	// δ-reduction for extended Lambda calculus; e.g. ((+ 2) 3) δ-> 5
 	deltaReduce(): ILCExpression;

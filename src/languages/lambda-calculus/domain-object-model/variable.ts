@@ -56,6 +56,7 @@ export class LCVariable extends LCValueBase implements ILCVariable {
 
 	public unify(
 		other: ILCUnifiable,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		variablesInOriginalExpr1Param?: IImmutableSet<string>,
 		variablesInOriginalExpr2Param?: IImmutableSet<string>
 	): ILCSubstitution | undefined {
