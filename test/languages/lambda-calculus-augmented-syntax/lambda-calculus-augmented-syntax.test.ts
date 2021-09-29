@@ -17,7 +17,7 @@ import {
 	createCombinator,
 	createGrammar,
 	// createMapOfLCExprNamesToExprs,
-	// createOperatorIsZeroUsage,
+	createOperatorIsZeroUsage,
 	createValueFalse,
 	createValueTrue,
 	createVariableNameGenerator,
@@ -680,18 +680,20 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral Multiplication Test 1', (
 // test('LambdaCalculusWithAugmentedSyntax Church Numeral Decrement Test 1', () => {
 // });
 
-// test('LambdaCalculusWithAugmentedSyntax Church Numeral isZero Predicate Test 1', () => {
-// 	// Arrange
-// 	const t = createValueTrue();
-// 	const f = createValueFalse();
-// 	const fb = getfb();
-//
-// 	const fn = (n: number): ILCExpression =>
-// 		createOperatorIsZeroUsage(integerToChurchNumeral(n)).betaReduce();
-//
-// 	// Act
-// 	const actualResult0 = fb(createOperatorIsZeroUsage(integerToChurchNumeral(0)));
-//
-// 	// Assert
-// 	expect(areIsomorphic(integerToChurchNumeral(0), t)).toBe(true);
-// });
+test('LambdaCalculusWithAugmentedSyntax Church Numeral isZero Predicate Test 1', () => {
+	// Arrange
+	const t = createValueTrue();
+	const f = createValueFalse();
+	// const fb = getfb();
+
+	const fn = (n: number): ILCExpression =>
+		createOperatorIsZeroUsage(integerToChurchNumeral(n)).betaReduce({ generateNewVariableName: createVariableNameGenerator() });
+
+	// Act
+	const actualResult0 = fn(0);
+	const actualResult1 = fn(1);
+
+	// Assert
+	expect(areIsomorphic(actualResult0, t)).toBe(true);
+	expect(areIsomorphic(actualResult1, f)).toBe(true);
+});
