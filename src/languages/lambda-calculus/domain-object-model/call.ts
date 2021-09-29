@@ -208,8 +208,8 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// ****
 
 		if (maxDepth <= 0) {
-			// return this;
-			throw new Error('call.ts : betaReduceCallByName() : maxDepth <= 0');
+			return this;
+			// throw new Error('call.ts : betaReduceCallByName() : maxDepth <= 0');
 		}
 
 		const options = {
@@ -367,8 +367,8 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// ****
 
 		if (maxDepth <= 0) {
-			// return this;
-			throw new Error('call.ts : betaReduceCallByValue() : maxDepth <= 0');
+			return this;
+			// throw new Error('call.ts : betaReduceCallByValue() : maxDepth <= 0');
 		}
 
 		const options = {
@@ -428,8 +428,8 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 
 		if (maxDepth <= 0) {
-			// return this;
-			throw new Error('call.ts : betaReduceApplicativeOrder() : maxDepth <= 0');
+			return this;
+			// throw new Error('call.ts : betaReduceApplicativeOrder() : maxDepth <= 0');
 		}
 
 		const options = {
@@ -487,8 +487,8 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 
 		if (maxDepth <= 0) {
-			// return this;
-			throw new Error('call.ts : betaReduceHybridApplicativeOrder() : maxDepth <= 0');
+			return this;
+			// throw new Error('call.ts : betaReduceHybridApplicativeOrder() : maxDepth <= 0');
 		}
 
 		const optionsCBV = {
@@ -559,8 +559,8 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 
 		if (maxDepth <= 0) {
-			// return this;
-			throw new Error('call.ts : betaReduceHeadSpine() : maxDepth <= 0');
+			return this;
+			// throw new Error('call.ts : betaReduceHeadSpine() : maxDepth <= 0');
 		}
 
 		const options = {
@@ -616,8 +616,8 @@ export class LCFunctionCall extends LCValueBase implements ILCFunctionCall {
 		// }
 
 		if (maxDepth <= 0) {
-			// return this;
-			throw new Error('call.ts : betaReduceHybridNormalOrder() : maxDepth <= 0');
+			return this;
+			// throw new Error('call.ts : betaReduceHybridNormalOrder() : maxDepth <= 0');
 		}
 
 		const optionsHS = {

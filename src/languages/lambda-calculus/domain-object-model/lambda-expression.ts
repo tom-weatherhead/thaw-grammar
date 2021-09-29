@@ -141,6 +141,18 @@ export class LCLambdaExpression extends LCValueBase implements ILCLambdaExpressi
 			case BetaReductionStrategy.ApplicativeOrder:
 				return new LCLambdaExpression(redex.arg, redex.body.betaReduce(newOptions));
 
+			case BetaReductionStrategy.HybridApplicativeOrder:
+				// return redex; // TODO: Is this correct?
+				return new LCLambdaExpression(redex.arg, redex.body.betaReduce(newOptions));
+
+			case BetaReductionStrategy.HeadSpine:
+				// return redex; // TODO: Is this correct?
+				return new LCLambdaExpression(redex.arg, redex.body.betaReduce(newOptions));
+
+			case BetaReductionStrategy.HybridNormalOrder:
+				// return redex; // TODO: Is this correct?
+				return new LCLambdaExpression(redex.arg, redex.body.betaReduce(newOptions));
+
 			case BetaReductionStrategy.ThAWHackForYCombinator:
 				// Note: Simply returning 'redex' here fails for the Y comb.
 				// This is the second of two differences between this strategy and CallByName.

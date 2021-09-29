@@ -24,6 +24,7 @@ import {
 	createValueTrue,
 	createVariableNameGenerator,
 	// defaultMaxBetaReductionDepth,
+	getfb2,
 	ILCExpression,
 	ILCVariable,
 	integerToChurchNumeral
@@ -621,6 +622,116 @@ test('LambdaCalculusWithAugmentedSyntax Y combinator test 1', () => {
 	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
 });
 
+test('LambdaCalculusWithAugmentedSyntax Y combinator test 2', () => {
+	// Arrange
+
+	// const strG = 'λr.λn.if (= n 0) 1 (* n (r (- n 1)))';
+
+	// Rewrite strG as pure λ-calculus:
+
+	const f = getParseFunction();
+
+	// const strTrue = `${createValueTrue()}`;
+	// const strFalse = `${createValueFalse()}`;
+	// const strIf = 'λb.λx.λy.((b x) y)';
+	// const one = integerToChurchNumeral(1);
+	// const strOne = `${one}`;
+	// const strTwo = 'λf.λx.(f (f x))';
+	const three = integerToChurchNumeral(3);
+	// const strThree = `${three}`;
+	// const six = integerToChurchNumeral(6);
+	// const strSix = `${six}`;
+	// const strIsZero = `λn.((n λx.${strFalse}) ${strTrue})`;
+	// const strMult = 'λm.λn.λf.(m (n f))';
+	// const strPredecessor = 'λn.λf.λx.(((n λg.λh.(h (g f))) λu.x) λu.u)';
+
+	// const strG = `λr.λn.(((${strIf} (${strIsZero} n)) ${strOne}) ((${strMult} n) (r (${strPredecessor} n))))`;
+	const strG = 'λr.λn.(if (zero? n) 1 (* n (r (dec n))))';
+
+	// ((* 2) 3) is isomorphic to 6 via the CallByName strategy only:
+	// const expr = `((${strMult} ${strTwo}) ${strThree})`;
+
+	// This Y combinator test succeeds via the CallByName strategy only:
+	const expr = [
+		`let y = ${createCombinator('Y')} in`,
+		`let g = ${strG} in`,
+		`((y g) ${three})` // 3 factorial
+	].join(' ');
+
+	expect(f(expr)).toBeDefined();
+
+	// Act
+	// const generateNewVariableName = createVariableNameGenerator();
+	// const maxBetaReductionDepth = 100;
+
+	// const expectedResult = f(strSix);
+	const expectedResult = 6;
+
+	// const successes: number[] = [];
+
+	// const actualResult1 = churchNumeralToInteger(getfb(f, { strategy: BetaReductionStrategy.CallByName })(expr));
+	//
+	// expect(actualResult1).toBe(expectedResult);
+
+	const actualResult2 = churchNumeralToInteger(
+		getfb(f, { strategy: BetaReductionStrategy.NormalOrder })(expr)
+	);
+
+	expect(actualResult2).toBe(expectedResult);
+
+	// const actualResult3 = churchNumeralToInteger(getfb(f, { strategy: BetaReductionStrategy.CallByValue })(expr));
+	//
+	// expect(actualResult3).toBe(expectedResult);
+
+	const actualResult4 = churchNumeralToInteger(
+		getfb(f, { strategy: BetaReductionStrategy.ApplicativeOrder })(expr)
+	);
+
+	expect(actualResult4).toBe(expectedResult);
+
+	const actualResult5 = churchNumeralToInteger(
+		getfb(f, { strategy: BetaReductionStrategy.HybridApplicativeOrder })(expr)
+	);
+
+	expect(actualResult5).toBe(expectedResult);
+
+	// const actualResult6 = churchNumeralToInteger(
+	// 	getfb(f, { strategy: BetaReductionStrategy.HeadSpine })(expr)
+	// );
+	//
+	// expect(actualResult6).toBe(expectedResult);
+
+	// const actualResult7 = churchNumeralToInteger(
+	// 	getfb(f, { strategy: BetaReductionStrategy.HybridNormalOrder })(expr)
+	// );
+	//
+	// expect(actualResult7).toBe(expectedResult);
+
+	// console.log(`Y combinator test: CallByName yields ${actualResult1}`);
+
+	// if (actualResult1.isIsomorphicTo(expectedResult)) {
+	// 	successes.push(101);
+	// }
+
+	const actualResult8 = churchNumeralToInteger(
+		getfb(f, { strategy: BetaReductionStrategy.ThAWHackForYCombinator })(expr)
+	);
+
+	expect(actualResult8).toBe(expectedResult);
+
+	// console.log(`Y combinator test: ThAWHackForYCombinator yields ${actualResult8}`);
+
+	// if (actualResult8.isIsomorphicTo(expectedResult)) {
+	// 	successes.push(108);
+	// }
+
+	// console.log('Y combinator test 1: successes:', successes);
+
+	// Assert
+	// expect(successes.length > 0).toBe(true);
+	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
+});
+
 test('LambdaCalculusWithAugmentedSyntax integerToChurchNumeral Test 1', () => {
 	expect(integerToChurchNumeral(0).toString()).toBe('λf.λx.x');
 	expect(integerToChurchNumeral(1).toString()).toBe('λf.λx.(f x)');
@@ -644,7 +755,7 @@ test('LambdaCalculusWithAugmentedSyntax churchNumeralToInteger Test 1', () => {
 	expect(churchNumeralToInteger(f('λf.λx.(f (f (f x)))'))).toBe(3);
 });
 
-test('LambdaCalculusWithAugmentedSyntax Church Numeral Addition Test 1', () => {
+test('LambdaCalculusWithAugmentedSyntax Church Numeral Addition Test 2', () => {
 	// Arrange
 	const x = 2;
 	const y = 3;
@@ -660,7 +771,7 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral Addition Test 1', () => {
 	expect(actualResult).toBe(expectedResult);
 });
 
-test('LambdaCalculusWithAugmentedSyntax Church Numeral Multiplication Test 1', () => {
+test('LambdaCalculusWithAugmentedSyntax Church Numeral Multiplication Test 2', () => {
 	// Arrange
 	const x = 2;
 	const y = 3;
@@ -679,7 +790,9 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral Multiplication Test 1', (
 test('LambdaCalculusWithAugmentedSyntax Church Numeral Increment Test 1', () => {
 	// Arrange
 	const fn = (n: number): ILCExpression =>
-		createOperatorIncrementUsage(integerToChurchNumeral(n)).betaReduce({ generateNewVariableName: createVariableNameGenerator() });
+		createOperatorIncrementUsage(integerToChurchNumeral(n)).betaReduce({
+			generateNewVariableName: createVariableNameGenerator()
+		});
 
 	// Act
 	const actualResult0 = fn(0);
@@ -694,10 +807,35 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral Increment Test 1', () => 
 	expect(churchNumeralToInteger(actualResult3)).toBe(4);
 });
 
+test('LambdaCalculusWithAugmentedSyntax Church Numeral Increment Test 2', () => {
+	// Arrange
+	const grammar = createGrammar(ls);
+	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	const parser = createParser(ParserSelector.LL1, grammar);
+	const fb2 = getfb2(tokenizer, parser, {
+		generateNewVariableName: createVariableNameGenerator()
+	});
+	const fn = (n: number): number => churchNumeralToInteger(fb2(`(inc ${n})`));
+
+	// Act
+	const actualResult0 = fn(0);
+	const actualResult1 = fn(1);
+	const actualResult2 = fn(2);
+	const actualResult3 = fn(3);
+
+	// Assert
+	expect(actualResult0).toBe(1);
+	expect(actualResult1).toBe(2);
+	expect(actualResult2).toBe(3);
+	expect(actualResult3).toBe(4);
+});
+
 test('LambdaCalculusWithAugmentedSyntax Church Numeral Decrement Test 1', () => {
 	// Arrange
 	const fn = (n: number): ILCExpression =>
-		createOperatorDecrementUsage(integerToChurchNumeral(n)).betaReduce({ generateNewVariableName: createVariableNameGenerator() });
+		createOperatorDecrementUsage(integerToChurchNumeral(n)).betaReduce({
+			generateNewVariableName: createVariableNameGenerator()
+		});
 
 	// Act
 	const actualResult1 = fn(1);
@@ -710,13 +848,68 @@ test('LambdaCalculusWithAugmentedSyntax Church Numeral Decrement Test 1', () => 
 	expect(churchNumeralToInteger(actualResult3)).toBe(2);
 });
 
+test('LambdaCalculusWithAugmentedSyntax Church Numeral Decrement Test 2', () => {
+	// Arrange
+	const grammar = createGrammar(ls);
+	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	const parser = createParser(ParserSelector.LL1, grammar);
+	const fb2 = getfb2(tokenizer, parser, {
+		generateNewVariableName: createVariableNameGenerator()
+	});
+	const fn = (n: number): number => churchNumeralToInteger(fb2(`(dec ${n})`));
+
+	// Act
+	const actualResult1 = fn(1);
+	const actualResult2 = fn(2);
+	const actualResult3 = fn(3);
+
+	// Assert
+	expect(actualResult1).toBe(0);
+	expect(actualResult2).toBe(1);
+	expect(actualResult3).toBe(2);
+});
+
 test('LambdaCalculusWithAugmentedSyntax Church Numeral isZero Predicate Test 1', () => {
 	// Arrange
 	const t = createValueTrue();
 	const f = createValueFalse();
 
 	const fn = (n: number): ILCExpression =>
-		createOperatorIsZeroUsage(integerToChurchNumeral(n)).betaReduce({ generateNewVariableName: createVariableNameGenerator() });
+		createOperatorIsZeroUsage(integerToChurchNumeral(n)).betaReduce({
+			generateNewVariableName: createVariableNameGenerator()
+		});
+
+	// Act
+	const actualResult0 = fn(0);
+	const actualResult1 = fn(1);
+	const actualResult2 = fn(2);
+	const actualResult3 = fn(3);
+
+	// Assert
+	expect(areIsomorphic(actualResult0, t)).toBe(true);
+	expect(areIsomorphic(actualResult0, f)).toBe(false);
+
+	expect(areIsomorphic(actualResult1, t)).toBe(false);
+	expect(areIsomorphic(actualResult1, f)).toBe(true);
+
+	expect(areIsomorphic(actualResult2, t)).toBe(false);
+	expect(areIsomorphic(actualResult2, f)).toBe(true);
+
+	expect(areIsomorphic(actualResult3, t)).toBe(false);
+	expect(areIsomorphic(actualResult3, f)).toBe(true);
+});
+
+test('LambdaCalculusWithAugmentedSyntax Church Numeral isZero Predicate Test 2', () => {
+	// Arrange
+	const t = createValueTrue();
+	const f = createValueFalse();
+	const grammar = createGrammar(ls);
+	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	const parser = createParser(ParserSelector.LL1, grammar);
+	const fb2 = getfb2(tokenizer, parser, {
+		generateNewVariableName: createVariableNameGenerator()
+	});
+	const fn = (n: number): ILCExpression => fb2(`(zero? ${n})`);
 
 	// Act
 	const actualResult0 = fn(0);
