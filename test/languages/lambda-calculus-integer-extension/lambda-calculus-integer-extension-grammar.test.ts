@@ -9,7 +9,7 @@ import { createTokenizer } from 'thaw-lexical-analyzer';
 import {
 	BetaReductionStrategy,
 	createGrammar,
-	getfb2,
+	// getfb2,
 	ILCExpression,
 	isLCFunctionCall,
 	isLCIntegerLiteral,
@@ -17,9 +17,9 @@ import {
 	LCFunctionCall,
 	LCIntegerLiteral,
 	LCLambdaExpression,
-	LCPrimitiveOperator,
-	mapCombinatorNamesToStrings,
-	mapLCExprNamesToStrings
+	LCPrimitiveOperator // ,
+	// mapCombinatorNamesToStrings,
+	// mapLCExprNamesToStrings
 } from '../../..';
 
 import { createParser, SyntaxException } from 'thaw-parser';
