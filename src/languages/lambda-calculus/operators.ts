@@ -260,106 +260,106 @@ export function createFunctionGetSecondOfPair(
 //
 // ((append a) l) constructs a list with head a and tail l.
 
-export function createEmptyList(options: { f?: string; x?: string } = {}): ILCExpression {
-	// This is equivalent to the Church numeral zero.
-	const f = v(options.f, 'f');
-	const x = v(options.x, 'x');
-
-	return l(f, l(x, x));
-}
-
-export function createFunctionAppend(
-	options: { a?: string; l?: string; f?: string; x?: string } = {}
-): ILCExpression {
-	// append = λa.λl.λf.λx.((f a) ((l f) x))
-	const a = v(options.a, 'a');
-	const ll = v(options.l, 'l'); // Var named ll because of the func l() above.
-	const f = v(options.f, 'f');
-	const x = v(options.x, 'x');
-
-	return l(a, l(ll, l(f, l(x, c(c(f, a), c(c(ll, f), x))))));
-}
-
-export function createFunctionGetHeadOfList(options: { l?: string } = {}): ILCExpression {
-	// head = λl.((l (λa.λb.a)) (any expression))
-	const ll = v(options.l, 'l');
-
-	return l(ll, c(c(ll, createValueTrue()), ll));
-}
-
-export function createFunctionIsListEmpty(
-	options: { a?: string; b?: string; l?: string } = {}
-): ILCExpression {
-	// isempty = λl.((l (λa.λb.FALSE)) TRUE)
-	const a = v(options.a, 'a');
-	const b = v(options.b, 'b');
-	const ll = v(options.l, 'l');
-
-	return l(ll, c(c(ll, l(a, l(b, createValueFalse()))), createValueTrue()));
-}
+// export function createEmptyList(options: { f?: string; x?: string } = {}): ILCExpression {
+// 	// This is equivalent to the Church numeral zero.
+// 	const f = v(options.f, 'f');
+// 	const x = v(options.x, 'x');
+//
+// 	return l(f, l(x, x));
+// }
+//
+// export function createFunctionAppend(
+// 	options: { a?: string; l?: string; f?: string; x?: string } = {}
+// ): ILCExpression {
+// 	// append = λa.λl.λf.λx.((f a) ((l f) x))
+// 	const a = v(options.a, 'a');
+// 	const ll = v(options.l, 'l'); // Var named ll because of the func l() above.
+// 	const f = v(options.f, 'f');
+// 	const x = v(options.x, 'x');
+//
+// 	return l(a, l(ll, l(f, l(x, c(c(f, a), c(c(ll, f), x))))));
+// }
+//
+// export function createFunctionGetHeadOfList(options: { l?: string } = {}): ILCExpression {
+// 	// head = λl.((l (λa.λb.a)) (any expression))
+// 	const ll = v(options.l, 'l');
+//
+// 	return l(ll, c(c(ll, createValueTrue()), ll));
+// }
+//
+// export function createFunctionIsListEmpty(
+// 	options: { a?: string; b?: string; l?: string } = {}
+// ): ILCExpression {
+// 	// isempty = λl.((l (λa.λb.FALSE)) TRUE)
+// 	const a = v(options.a, 'a');
+// 	const b = v(options.b, 'b');
+// 	const ll = v(options.l, 'l');
+//
+// 	return l(ll, c(c(ll, l(a, l(b, createValueFalse()))), createValueTrue()));
+// }
 
 // The tail function is more complicated, and makes use of the tuples defined above. The principle is to start off with a pair (empty, empty), and at each stage turn the pair (x, y) into the pair (y, ((append a) y)), where a is the current list element, and then take the first element of the pair. The lambda expression is:
 //
 //     tail = λl.first(l(λab.pair(second b)(append a (second b)))(pair empty empty))
 // 		-> λl.(first (l (λa.λb.(pair (second b)) ((append a) (second b))) ((pair empty) empty)))
 
-export function createFunctionGetTailOfList(
-	options: { l?: string; a?: string; b?: string } = {}
-): ILCExpression {
-	// tail = λl.first(
-	//   l(λab.pair(second b)(append a (second b)))
-	//   (pair empty empty)
-	// )
-	// -> λl.(first (l
-	//   (
-	//     λa.λb.(pair (second b))
-	//     ((append a) (second b))
-	//   )
-	//   ((pair empty) empty)))
-	const ll = v(options.l, 'l');
-
-	// const cp = createFunctionCreatePair();
-	// const f = createFunctionGetFirstOfPair();
-	// const s = createFunctionGetSecondOfPair();
-	// const e = createEmptyList();
-	// const ap = createFunctionAppend();
-
-	const cp = createFunctionCreatePair({ f: 'f51', a: 'a51', b: 'b51' });
-	const f = createFunctionGetFirstOfPair({ x: 'x51', y: 'y51' });
-	const s = createFunctionGetSecondOfPair({ x: 'x52', y: 'y52' });
-	const e = createEmptyList({ f: 'f52', x: 'x53' });
-	const ap = createFunctionAppend({ f: 'f53', x: 'x54' });
-
-	const a = v(options.a, 'a');
-	const b = v(options.b, 'b');
-
-	return l(
-		ll,
-		c(
-			f,
-			c(
-				ll, // Calls No. 1 and 2
-				c(
-					// BEGIN Call No. 3
-					// BEGIN Callee No. 3
-					l(
-						a,
-						l(
-							b,
-							c(
-								// Create a pair : Takes 2 args, so make 2 calls
-								c(cp, c(s, b)), // The pair's first element
-								c(c(ap, a), c(s, b))
-							)
-						) // The pair's second element
-					), // END of creation of pair
-					// END Callee No. 3
-					c(c(cp, e), e) // Argument for call No. 3
-				) // END Call No. 3
-			)
-		)
-	);
-}
+// export function createFunctionGetTailOfList(
+// 	options: { l?: string; a?: string; b?: string } = {}
+// ): ILCExpression {
+// 	// tail = λl.first(
+// 	//   l(λab.pair(second b)(append a (second b)))
+// 	//   (pair empty empty)
+// 	// )
+// 	// -> λl.(first (l
+// 	//   (
+// 	//     λa.λb.(pair (second b))
+// 	//     ((append a) (second b))
+// 	//   )
+// 	//   ((pair empty) empty)))
+// 	const ll = v(options.l, 'l');
+//
+// 	// const cp = createFunctionCreatePair();
+// 	// const f = createFunctionGetFirstOfPair();
+// 	// const s = createFunctionGetSecondOfPair();
+// 	// const e = createEmptyList();
+// 	// const ap = createFunctionAppend();
+//
+// 	const cp = createFunctionCreatePair({ f: 'f51', a: 'a51', b: 'b51' });
+// 	const f = createFunctionGetFirstOfPair({ x: 'x51', y: 'y51' });
+// 	const s = createFunctionGetSecondOfPair({ x: 'x52', y: 'y52' });
+// 	const e = createEmptyList({ f: 'f52', x: 'x53' });
+// 	const ap = createFunctionAppend({ f: 'f53', x: 'x54' });
+//
+// 	const a = v(options.a, 'a');
+// 	const b = v(options.b, 'b');
+//
+// 	return l(
+// 		ll,
+// 		c(
+// 			f,
+// 			c(
+// 				ll, // Calls No. 1 and 2
+// 				c(
+// 					// BEGIN Call No. 3
+// 					// BEGIN Callee No. 3
+// 					l(
+// 						a,
+// 						l(
+// 							b,
+// 							c(
+// 								// Create a pair : Takes 2 args, so make 2 calls
+// 								c(cp, c(s, b)), // The pair's first element
+// 								c(c(ap, a), c(s, b))
+// 							)
+// 						) // The pair's second element
+// 					), // END of creation of pair
+// 					// END Callee No. 3
+// 					c(c(cp, e), e) // Argument for call No. 3
+// 				) // END Call No. 3
+// 			)
+// 		)
+// 	);
+// }
 
 // Lists version 2
 

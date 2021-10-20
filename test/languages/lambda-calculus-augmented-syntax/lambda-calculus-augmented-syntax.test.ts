@@ -15,11 +15,11 @@ import {
 	BetaReductionStrategy,
 	churchNumeralToInteger,
 	createCombinator,
-	createEmptyList,
-	createFunctionAppend,
-	createFunctionGetHeadOfList,
-	createFunctionGetTailOfList,
-	createFunctionIsListEmpty,
+	// createEmptyList,
+	// createFunctionAppend,
+	// createFunctionGetHeadOfList,
+	// createFunctionGetTailOfList,
+	// createFunctionIsListEmpty,
 	createGrammar,
 	// createMapOfLCExprNamesToExprs,
 	createOperatorDecrementUsage,
@@ -32,7 +32,13 @@ import {
 	getfb2,
 	ILCExpression,
 	ILCVariable,
-	integerToChurchNumeral
+	integerToChurchNumeral,
+	lcaCons,
+	lcaCreateNil,
+	lcaHead,
+	lcaIsNull,
+	// , lcaIsNullUsage
+	lcaTail
 	// , mapCombinatorNamesToStrings
 	// , mapLCExprNamesToStrings
 } from '../../..';
@@ -899,19 +905,63 @@ function reducesToFalse(str: string): boolean {
 	return areIsomorphic(getfb()(str), createValueFalse());
 }
 
-test('LambdaCalculusWithAugmentedSyntax List Test 1', () => {
-	// Arrange
-	// const fb = getfb();
-	//
-	// const t = createValueTrue();
-	// const f = createValueFalse();
+// test('LambdaCalculusWithAugmentedSyntax List Test 1', () => {
+// 	// Arrange
+// 	// const fb = getfb();
+// 	//
+// 	// const t = createValueTrue();
+// 	// const f = createValueFalse();
+//
+// 	const emptyList = createEmptyList();
+// 	// createFunctionAppend
+// 	// createFunctionGetHeadOfList
+// 	// createFunctionGetTailOfList
+// 	// createFunctionIsListEmpty
+// 	const fnIsListEmpty = createFunctionIsListEmpty();
+//
+// 	// Act
+//
+// 	// Assert
+// 	expect(reducesToTrue(`(${fnIsListEmpty} ${emptyList})`)).toBe(true);
+// });
+//
+// test('LambdaCalculusWithAugmentedSyntax List Test 2', () => {
+// 	const emptyList = createEmptyList({ f: 'f0', x: 'x0' });
+// 	const element1AsInt = 2;
+// 	const element1 = integerToChurchNumeral(element1AsInt, { f: 'f1', x: 'x1' });
+// 	const fnAppend = createFunctionAppend({ f: 'f2', x: 'x2' });
+// 	const fb = getfb();
+//
+// 	// console.log(`LCAug List Test 2: emptyList is: ${emptyList}`);
+// 	// console.log(`LCAug List Test 2: element1 is: ${element1}`);
+//
+// 	const list1 = fb(`((${fnAppend} ${element1}) ${emptyList})`);
+//
+// 	console.log(`LCAug List Test 2: list1 is: ${list1}`);
+//
+// 	const fnGetHeadOfList = createFunctionGetHeadOfList();
+// 	const head1 = fb(`(${fnGetHeadOfList} ${list1})`);
+//
+// 	// console.log(`LCAug List Test 2: head1 is: ${head1}`);
+//
+// 	// const fnGetTailOfList = createFunctionGetTailOfList({ l: 'l4', a: 'a4', b: 'b4' });
+// 	// const tail1 = fb(`(${fnGetTailOfList} ${list1})`);
+//
+// 	// console.log(`LCAug List Test 2: tail1 is: ${tail1}`);
+//
+// 	const fnIsListEmpty = createFunctionIsListEmpty();
+//
+// 	// Assert
+// 	expect(areIsomorphic(head1, element1)).toBe(true);
+// 	expect(churchNumeralToInteger(head1)).toBe(element1AsInt);
+// 	expect(reducesToFalse(`(${fnIsListEmpty} ${list1})`)).toBe(true);
+// 	// expect(reducesToTrue(`(${fnIsListEmpty} ${tail1})`)).toBe(true);
+// });
 
-	const emptyList = createEmptyList();
-	// createFunctionAppend
-	// createFunctionGetHeadOfList
-	// createFunctionGetTailOfList
-	// createFunctionIsListEmpty
-	const fnIsListEmpty = createFunctionIsListEmpty();
+test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 1', () => {
+	// Arrange
+	const emptyList = lcaCreateNil({ f: 'f0', x: 'x0', y: 'y0' });
+	const fnIsListEmpty = lcaIsNull({ l: 'l1', h: 'h1', t: 't1', x: 'x1', y: 'y1' });
 
 	// Act
 
@@ -919,35 +969,35 @@ test('LambdaCalculusWithAugmentedSyntax List Test 1', () => {
 	expect(reducesToTrue(`(${fnIsListEmpty} ${emptyList})`)).toBe(true);
 });
 
-test('LambdaCalculusWithAugmentedSyntax List Test 2', () => {
-	const emptyList = createEmptyList({ f: 'f0', x: 'x0' });
+test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 2', () => {
+	const emptyList = lcaCreateNil({ f: 'f0', x: 'x0', y: 'y0' });
 	const element1AsInt = 2;
 	const element1 = integerToChurchNumeral(element1AsInt, { f: 'f1', x: 'x1' });
-	const fnAppend = createFunctionAppend({ f: 'f2', x: 'x2' });
+	const fnAppend = lcaCons({ h: 'h2', t: 't2', f: 'f2' });
 	const fb = getfb();
 
-	// console.log(`LCAug List Test 2: emptyList is: ${emptyList}`);
-	// console.log(`LCAug List Test 2: element1 is: ${element1}`);
+	console.log(`LCAug List Test 2: emptyList is: ${emptyList}`);
+	console.log(`LCAug List Test 2: element1 is: ${element1}`);
 
 	const list1 = fb(`((${fnAppend} ${element1}) ${emptyList})`);
 
 	console.log(`LCAug List Test 2: list1 is: ${list1}`);
 
-	const fnGetHeadOfList = createFunctionGetHeadOfList();
+	const fnGetHeadOfList = lcaHead({ l: 'l3', h: 'h3', t: 't3' });
 	const head1 = fb(`(${fnGetHeadOfList} ${list1})`);
 
 	// console.log(`LCAug List Test 2: head1 is: ${head1}`);
 
-	// const fnGetTailOfList = createFunctionGetTailOfList({ l: 'l4', a: 'a4', b: 'b4' });
-	// const tail1 = fb(`(${fnGetTailOfList} ${list1})`);
+	const fnGetTailOfList = lcaTail({ l: 'l4', h: 'h4', t: 't4' });
+	const tail1 = fb(`(${fnGetTailOfList} ${list1})`);
 
 	// console.log(`LCAug List Test 2: tail1 is: ${tail1}`);
 
-	const fnIsListEmpty = createFunctionIsListEmpty();
+	const fnIsListEmpty = lcaIsNull({ l: 'l5', h: 'h5', t: 't5', x: 'x5', y: 'y5' });
 
 	// Assert
 	expect(areIsomorphic(head1, element1)).toBe(true);
 	expect(churchNumeralToInteger(head1)).toBe(element1AsInt);
 	expect(reducesToFalse(`(${fnIsListEmpty} ${list1})`)).toBe(true);
-	// expect(reducesToTrue(`(${fnIsListEmpty} ${tail1})`)).toBe(true);
+	expect(reducesToTrue(`(${fnIsListEmpty} ${tail1})`)).toBe(true);
 });
