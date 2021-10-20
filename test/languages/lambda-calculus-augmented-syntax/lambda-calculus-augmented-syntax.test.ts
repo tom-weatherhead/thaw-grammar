@@ -82,6 +82,16 @@ test('LambdaCalculusWithAugmentedSyntax recognize test', () => {
 	f('λa.(λb.(a (b b)) λb.(a (b b)))'); // Combinator Y (fixed-point; used to implement recursion)
 	f('let y = λx.x in y');
 
+	// List syntax
+	f('nil');
+	f('(null? nil)');
+	f('(cons x y)');
+	f('(cons 1 nil)');
+	f('(hd x)');
+	f('(car x)');
+	f('(tl x)');
+	f('(cdr x)');
+
 	expect(() => f('(x y')).toThrow(SyntaxException);
 });
 
