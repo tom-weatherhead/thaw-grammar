@@ -957,11 +957,11 @@ test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 3', () => {
 	const fnCons = lcaCons({ h: 'h4', t: 't4', f: 'f4' });
 	const fb = getfb();
 
-	const list1 = fb(`((${fnCons} ${element1}) ${emptyList})`);
-	const list2 = fb(`((${fnCons} ${element2}) ${list1})`);
-	const list3 = fb(`((${fnCons} ${element3}) ${list2})`);
+	const list3 = fb(`((${fnCons} ${element3}) ${emptyList})`);
+	const list2 = fb(`((${fnCons} ${element2}) ${list3})`);
+	const list1 = fb(`((${fnCons} ${element1}) ${list2})`);
 
-	const str = listToString(list3);
+	const str = listToString(list1);
 
 	// Assert
 	expect(str).toBe(`[${element1AsInt}, ${element2AsInt}, ${element3AsInt}]`);

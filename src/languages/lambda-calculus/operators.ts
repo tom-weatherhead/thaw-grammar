@@ -568,7 +568,7 @@ export function listToString(l: ILCExpression): string {
 
 		const head = reduce(c(fnGetHeadOfList, l));
 
-		strList.unshift(exprToString(head));
+		strList.push(exprToString(head));
 		l = reduce(c(fnGetTailOfList, l));
 	}
 
