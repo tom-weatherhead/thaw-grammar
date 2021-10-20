@@ -1,6 +1,6 @@
 {
 	"name": "thaw-grammar",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "Implementations of the grammars of several programming languages, including LISP, Scheme, Prolog, and the Lambda Calculus.",
 	"keywords": [
 		"CFG",

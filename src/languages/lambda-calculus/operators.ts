@@ -318,11 +318,17 @@ export function createFunctionGetTailOfList(
 	//   ((pair empty) empty)))
 	const ll = v(options.l, 'l');
 
-	const cp = createFunctionCreatePair();
-	const f = createFunctionGetFirstOfPair();
-	const s = createFunctionGetSecondOfPair();
-	const e = createEmptyList();
-	const ap = createFunctionAppend();
+	// const cp = createFunctionCreatePair();
+	// const f = createFunctionGetFirstOfPair();
+	// const s = createFunctionGetSecondOfPair();
+	// const e = createEmptyList();
+	// const ap = createFunctionAppend();
+
+	const cp = createFunctionCreatePair({ f: 'f51', a: 'a51', b: 'b51' });
+	const f = createFunctionGetFirstOfPair({ x: 'x51', y: 'y51' });
+	const s = createFunctionGetSecondOfPair({ x: 'x52', y: 'y52' });
+	const e = createEmptyList({ f: 'f52', x: 'x53' });
+	const ap = createFunctionAppend({ f: 'f53', x: 'x54' });
 
 	const a = v(options.a, 'a');
 	const b = v(options.b, 'b');
@@ -354,6 +360,127 @@ export function createFunctionGetTailOfList(
 		)
 	);
 }
+
+// Lists version 2
+
+// From https://users.monash.edu/~lloyd/tildeFP/Lambda/Examples/const-list/ :
+
+// let rec
+//  CONS = lambda h. lambda t. lambda f. f h t,
+
+export function lcaConsUsage(
+	h: ILCExpression,
+	t: ILCExpression,
+	options: { f?: string } = {}
+): ILCExpression {
+	const f = v(options.f, 'f');
+
+	return l(f, c(c(f, h), t));
+}
+
+export function lcaCons(options: { h?: string; t?: string; f?: string } = {}): ILCExpression {
+	const h = v(options.h, 'h');
+	const t = v(options.t, 't');
+
+	return l(h, l(t, lcaConsUsage(h, t, options)));
+}
+
+//  NIL = lambda f. true, // (i.e. the empty list)
+
+export function lcaCreateNil(options: { f?: string; x?: string; y?: string } = {}): ILCExpression {
+	const f = v(options.f, 'f');
+
+	return l(f, createValueTrue(options));
+}
+
+//  isNull? = NULL = lambda L. L (lambda h. lambda t. false), // (i.e. NULL NIL is true; NULL (anything else) is false)
+
+export function lcaIsNullUsage(
+	ll: ILCExpression,
+	options: { h?: string; t?: string; x?: string; y?: string } = {}
+): ILCExpression {
+	const h = v(options.h, 'h');
+	const t = v(options.t, 't');
+
+	return c(ll, l(h, l(t, createValueFalse(options))));
+}
+
+export function lcaIsNull(
+	options: { l?: string; h?: string; t?: string; x?: string; y?: string } = {}
+): ILCExpression {
+	const ll = v(options.l, 'l');
+
+	return l(ll, lcaIsNullUsage(ll, options));
+}
+
+//  HD = lambda L. L (lambda h. lambda t. h), // head; i.e. car
+
+export function lcaHeadUsage(
+	ll: ILCExpression,
+	options: { h?: string; t?: string } = {}
+): ILCExpression {
+	const h = v(options.h, 'h');
+	const t = v(options.t, 't');
+
+	return c(ll, l(h, l(t, h)));
+
+	// I.e. return c(ll, createValueTrue(options));
+}
+
+export function lcaHead(options: { l?: string; h?: string; t?: string } = {}): ILCExpression {
+	const ll = v(options.l, 'l');
+
+	return l(ll, lcaHeadUsage(ll, options));
+}
+
+//  TL = lambda L. L (lambda h. lambda t. t), // tail; i.e. cdr
+
+export function lcaTailUsage(
+	ll: ILCExpression,
+	options: { h?: string; t?: string } = {}
+): ILCExpression {
+	const h = v(options.h, 'h');
+	const t = v(options.t, 't');
+
+	return c(ll, l(h, l(t, t)));
+
+	// I.e. return c(ll, createValueFalse(options));
+}
+
+export function lcaTail(options: { l?: string; h?: string; t?: string } = {}): ILCExpression {
+	const ll = v(options.l, 'l');
+
+	return l(ll, lcaTailUsage(ll, options));
+}
+
+//  PRINT = lambda L.
+//    if NULL L then '/' else (HD L)::(PRINT (TL L))
+//
+// in let L = CONS 1 (CONS 2 (CONS 3 NIL)) {an e.g.}
+//
+// in PRINT( CONS (NULL NIL)       {T}
+//         ( CONS (NULL L)         {F}
+//         ( CONS (HD L)           {1}
+//         ( CONS (HD (TL L))      {2}
+//         ( CONS (HD (TL (TL L))) {3}
+//           NIL)))))              {/}
+//
+// {\fB Define (Flat) Lists From Scratch. \fP}
+
+// ThAW: I.e.:
+
+// car = hd = λl.(l true)
+// cdr = tl = λl.(l false)
+
+// An example list: λf.((f head) tail)
+
+// cons = λh.λt.λf.((f h) t)
+
+// nil = λf.true
+
+// null? = λl.(l λh.λt.false)
+
+// End of Lists version 2
 
 // - In LISP terms:
 // 	- head = car
