@@ -30,6 +30,11 @@
 // Tasks TODO:
 // - Add language support for pairs (?)
 // - Add language support for lists (?)
+//   - nil
+//   - null?
+//   - cons
+//   - hd (car)
+//   - tl (cdr)
 
 import {
 	GrammarSymbol,
@@ -56,7 +61,12 @@ import {
 	// createPredicateIsZeroUsage,
 	createStatementLetUsage,
 	createValueFalse,
-	createValueTrue
+	createValueTrue,
+	lcaConsUsage,
+	lcaCreateNil,
+	lcaHeadUsage,
+	lcaIsNullUsage,
+	lcaTailUsage
 } from '../lambda-calculus/operators';
 
 import { ILCExpression } from '../lambda-calculus/domain-object-model/interfaces/expression';
@@ -95,6 +105,12 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalIsZero);
 		this.terminals.push(GrammarSymbol.terminalAnd);
 		this.terminals.push(GrammarSymbol.terminalOr);
+
+		this.terminals.push(GrammarSymbol.terminalNil);
+		this.terminals.push(GrammarSymbol.terminalNullPred);
+		this.terminals.push(GrammarSymbol.terminalCons);
+		this.terminals.push(GrammarSymbol.terminalCar);
+		this.terminals.push(GrammarSymbol.terminalCdr);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
@@ -253,6 +269,38 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			GrammarSymbol.nonterminalExpression,
 			'#or'
 		]);
+
+		// Handle lists:
+
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.terminalNil,
+			'#nil'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalNullPred,
+			GrammarSymbol.nonterminalExpression,
+			'#null?'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalCons,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#cons'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalCar,
+			GrammarSymbol.nonterminalExpression,
+			'#car'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalCdr,
+			GrammarSymbol.nonterminalExpression,
+			'#cdr'
+		]);
 	}
 
 	public get languageName(): string {
@@ -358,6 +406,31 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				);
 				break;
 
+			case '#nil':
+				semanticStack.push(lcaCreateNil());
+				break;
+
+			case '#null?':
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(lcaIsNullUsage(expression));
+				break;
+
+			case '#cons':
+				expression2 = semanticStack.pop() as ILCExpression;
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(lcaConsUsage(expression, expression2));
+				break;
+
+			case '#car':
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(lcaHeadUsage(expression));
+				break;
+
+			case '#cdr':
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(lcaTailUsage(expression));
+				break;
+
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
@@ -409,6 +482,18 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 						return GrammarSymbol.terminalLet;
 					case 'true':
 						return GrammarSymbol.terminalTrue;
+					case 'nil':
+						return GrammarSymbol.terminalNil;
+					case 'null?':
+						return GrammarSymbol.terminalNullPred;
+					case 'cons':
+						return GrammarSymbol.terminalCons;
+					case 'hd':
+					case 'car':
+						return GrammarSymbol.terminalCar;
+					case 'tl':
+					case 'cdr':
+						return GrammarSymbol.terminalCdr;
 					default:
 						return GrammarSymbol.terminalID;
 				}
@@ -458,6 +543,11 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			case GrammarSymbol.terminalIsZero:
 			case GrammarSymbol.terminalAnd:
 			case GrammarSymbol.terminalOr:
+			case GrammarSymbol.terminalNil:
+			case GrammarSymbol.terminalNullPred:
+			case GrammarSymbol.terminalCons:
+			case GrammarSymbol.terminalCar:
+			case GrammarSymbol.terminalCdr:
 			case GrammarSymbol.terminalEOF:
 				break;
 
