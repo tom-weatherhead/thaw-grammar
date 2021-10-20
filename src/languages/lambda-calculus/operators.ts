@@ -14,6 +14,8 @@ import { LCVariable } from './domain-object-model/variable';
 
 import { churchNumeralToInteger } from './church-numerals';
 
+import { isLCFunctionCall, isLCLambdaExpression, isLCVariable } from './type-guards';
+
 import { areIsomorphic, reduce } from './utilities';
 
 function v(s1: string | undefined, s2: string): LCVariable {
@@ -524,13 +526,26 @@ export function createCombinator(name: string): ILCExpression {
 	}
 }
 
-function reducesToTrue(expr: ILCExpression): boolean {
+export function reducesToTrue(expr: ILCExpression): boolean {
 	return areIsomorphic(reduce(expr), createValueTrue());
 }
 
-// function reducesToFalse(str: string): boolean {
-// 	return areIsomorphic(getfb()(str), createValueFalse());
-// }
+export function reducesToFalse(expr: ILCExpression): boolean {
+	return areIsomorphic(reduce(expr), createValueFalse());
+}
+
+export function isList(expr: ILCExpression): boolean {
+	// A list (i.e. a pair) looks like this:
+	// l(v, c(c(v, ?), ?))
+
+	return (
+		isLCLambdaExpression(expr) &&
+		isLCFunctionCall(expr.body) &&
+		isLCFunctionCall(expr.body.callee) &&
+		isLCVariable(expr.body.callee.callee) &&
+		expr.arg.name === expr.body.callee.callee.name
+	);
+}
 
 export function exprToString(l: ILCExpression): string {
 	const n = churchNumeralToInteger(l);
@@ -544,16 +559,16 @@ export function listToString(l: ILCExpression): string {
 	const fnGetHeadOfList = lcaHead({ l: 'l3', h: 'h3', t: 't3' });
 	const fnGetTailOfList = lcaTail({ l: 'l4', h: 'h4', t: 't4' });
 
-	// const fb = getfb();
 	const strList: string[] = [];
 
-	// while (!reducesToTrue(`(${fnIsListEmpty} ${l})`)) {
 	while (!reducesToTrue(c(fnIsListEmpty, l))) {
-		// const head = fb(`(${fnGetHeadOfList} ${l})`);
+		if (!isList(l)) {
+			throw new Error('listToString() : !isList');
+		}
+
 		const head = reduce(c(fnGetHeadOfList, l));
 
 		strList.unshift(exprToString(head));
-		// l = fb(`(${fnGetTailOfList} ${l})`);
 		l = reduce(c(fnGetTailOfList, l));
 	}
 
