@@ -73,6 +73,26 @@ export function createVariableNameGenerator(): () => string {
 	return () => `v${++n}`;
 }
 
+export function reduce(
+	expr: ILCExpression,
+	options: {
+		readonly strategy?: BetaReductionStrategy;
+		readonly generateNewVariableName?: () => string;
+		readonly maxDepth?: number;
+	} = {}
+): ILCExpression {
+	const generateNewVariableName = createVariableNameGenerator();
+
+	return expr.betaReduce({
+		strategy: options.strategy,
+		generateNewVariableName: ifDefinedThenElse(
+			options.generateNewVariableName,
+			generateNewVariableName
+		),
+		maxDepth: options.maxDepth
+	});
+}
+
 export function getfb1(
 	f: (str: string) => ILCExpression,
 	options: {
@@ -81,17 +101,19 @@ export function getfb1(
 		readonly maxDepth?: number;
 	} = {}
 ): (s: string) => ILCExpression {
-	const generateNewVariableName = createVariableNameGenerator();
+	// const generateNewVariableName = createVariableNameGenerator();
+	//
+	// return (s: string): ILCExpression =>
+	// 	f(s).betaReduce({
+	// 		strategy: options.strategy,
+	// 		generateNewVariableName: ifDefinedThenElse(
+	// 			options.generateNewVariableName,
+	// 			generateNewVariableName
+	// 		),
+	// 		maxDepth: options.maxDepth
+	// 	});
 
-	return (s: string): ILCExpression =>
-		f(s).betaReduce({
-			strategy: options.strategy,
-			generateNewVariableName: ifDefinedThenElse(
-				options.generateNewVariableName,
-				generateNewVariableName
-			),
-			maxDepth: options.maxDepth
-		});
+	return (s: string): ILCExpression => reduce(f(s), options);
 }
 
 export function getfb2(

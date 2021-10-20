@@ -12,6 +12,10 @@ import { LCVariable } from './domain-object-model/variable';
 
 // import { isChurchNumeral } from './church-numerals';
 
+import { churchNumeralToInteger } from './church-numerals';
+
+import { areIsomorphic, reduce } from './utilities';
+
 function v(s1: string | undefined, s2: string): LCVariable {
 	return new LCVariable(ifDefinedThenElse(s1, s2));
 }
@@ -518,4 +522,40 @@ export function createCombinator(name: string): ILCExpression {
 				`createCombinator() : Combinator '${name}' is either unimplemented or non-existent.`
 			);
 	}
+}
+
+function reducesToTrue(expr: ILCExpression): boolean {
+	return areIsomorphic(reduce(expr), createValueTrue());
+}
+
+// function reducesToFalse(str: string): boolean {
+// 	return areIsomorphic(getfb()(str), createValueFalse());
+// }
+
+export function exprToString(l: ILCExpression): string {
+	const n = churchNumeralToInteger(l);
+
+	return Number.isNaN(n) ? `${l}` : `${n}`;
+}
+
+export function listToString(l: ILCExpression): string {
+	const fnIsListEmpty = lcaIsNull({ l: 'l0', h: 'h0', t: 't0', x: 'x0', y: 'y0' });
+
+	const fnGetHeadOfList = lcaHead({ l: 'l3', h: 'h3', t: 't3' });
+	const fnGetTailOfList = lcaTail({ l: 'l4', h: 'h4', t: 't4' });
+
+	// const fb = getfb();
+	const strList: string[] = [];
+
+	// while (!reducesToTrue(`(${fnIsListEmpty} ${l})`)) {
+	while (!reducesToTrue(c(fnIsListEmpty, l))) {
+		// const head = fb(`(${fnGetHeadOfList} ${l})`);
+		const head = reduce(c(fnGetHeadOfList, l));
+
+		strList.unshift(exprToString(head));
+		// l = fb(`(${fnGetTailOfList} ${l})`);
+		l = reduce(c(fnGetTailOfList, l));
+	}
+
+	return '[' + strList.join(', ') + ']';
 }

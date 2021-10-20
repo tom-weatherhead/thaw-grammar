@@ -38,7 +38,8 @@ import {
 	lcaHead,
 	lcaIsNull,
 	// , lcaIsNullUsage
-	lcaTail
+	lcaTail,
+	listToString
 	// , mapCombinatorNamesToStrings
 	// , mapLCExprNamesToStrings
 } from '../../..';
@@ -1002,31 +1003,6 @@ test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 2', () => {
 	expect(reducesToTrue(`(${fnIsListEmpty} ${tail1})`)).toBe(true);
 });
 
-function exprToString(l: ILCExpression): string {
-	const n = churchNumeralToInteger(l);
-
-	return Number.isNaN(n) ? `${l}` : `${n}`;
-}
-
-function listToString(l: ILCExpression): string {
-	const fnIsListEmpty = lcaIsNull({ l: 'l0', h: 'h0', t: 't0', x: 'x0', y: 'y0' });
-
-	const fnGetHeadOfList = lcaHead({ l: 'l3', h: 'h3', t: 't3' });
-	const fnGetTailOfList = lcaTail({ l: 'l4', h: 'h4', t: 't4' });
-
-	const fb = getfb();
-	const strList: string[] = [];
-
-	while (!reducesToTrue(`(${fnIsListEmpty} ${l})`)) {
-		const head = fb(`(${fnGetHeadOfList} ${l})`);
-
-		strList.unshift(exprToString(head));
-		l = fb(`(${fnGetTailOfList} ${l})`);
-	}
-
-	return '[' + strList.join(', ') + ']';
-}
-
 test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 3', () => {
 	const element1AsInt = 2;
 	const element2AsInt = 3;
@@ -1043,20 +1019,8 @@ test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 3', () => {
 	const list2 = fb(`((${fnCons} ${element2}) ${list1})`);
 	const list3 = fb(`((${fnCons} ${element3}) ${list2})`);
 
-	// const fnGetHeadOfList = lcaHead({ l: 'l3', h: 'h3', t: 't3' });
-	// const head1 = fb(`(${fnGetHeadOfList} ${list1})`);
-	//
-	// const fnGetTailOfList = lcaTail({ l: 'l4', h: 'h4', t: 't4' });
-	// const tail1 = fb(`(${fnGetTailOfList} ${list1})`);
-	//
-	// const fnIsListEmpty = lcaIsNull({ l: 'l5', h: 'h5', t: 't5', x: 'x5', y: 'y5' });
-
 	const str = listToString(list3);
 
 	// Assert
-	// expect(areIsomorphic(head1, element1)).toBe(true);
-	// expect(churchNumeralToInteger(head1)).toBe(element1AsInt);
-	// expect(reducesToFalse(`(${fnIsListEmpty} ${list1})`)).toBe(true);
-	// expect(reducesToTrue(`(${fnIsListEmpty} ${tail1})`)).toBe(true);
 	expect(str).toBe(`[${element1AsInt}, ${element2AsInt}, ${element3AsInt}]`);
 });
