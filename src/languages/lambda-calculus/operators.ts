@@ -399,7 +399,14 @@ export function lcaCreateNil(options: { f?: string; x?: string; y?: string } = {
 	return l(f, createValueTrue(options));
 }
 
+export function booleanToLCBoolean(b: boolean): ILCExpression {
+	return b ? createValueTrue() : createValueFalse();
+}
+
 //  isNull? = NULL = lambda L. L (lambda h. lambda t. false), // (i.e. NULL NIL is true; NULL (anything else) is false)
+// I.e. isNull? = λl.(l λh.λt.false) = λl.(l λh.λt.λa.λb.b)
+// 2021-10-20 : Note Bene: If the argument passed to 'null?' is neither nil nor a list,
+// then the result could be neither true nor false.
 
 export function lcaIsNullUsage(
 	ll: ILCExpression,
@@ -411,12 +418,18 @@ export function lcaIsNullUsage(
 	return c(ll, l(h, l(t, createValueFalse(options))));
 }
 
+// export function lcaIsNullUsage(ll: ILCExpression): ILCExpression {
+// 	return booleanToLCBoolean(areIsomorphic(ll, lcaCreateNil()));
+// }
+
 export function lcaIsNull(
 	options: { l?: string; h?: string; t?: string; x?: string; y?: string } = {}
 ): ILCExpression {
 	const ll = v(options.l, 'l');
 
 	return l(ll, lcaIsNullUsage(ll, options));
+
+	// return l(ll, lcaIsNullUsage(ll));
 }
 
 //  HD = lambda L. L (lambda h. lambda t. h), // head; i.e. car
@@ -494,6 +507,18 @@ export function lcaTail(options: { l?: string; h?: string; t?: string } = {}): I
 // 	- cons? = append? -> It looks like append adds a onto the head of l, not the tail.
 // 		cons = λa.λl.λf.λx.?((f a) (l f) x)
 
+export function lcaIsListUsage(ll: ILCExpression): ILCExpression {
+	// TODO: If possible, implement this in the Lambda Calculus, not Typescript.
+
+	return booleanToLCBoolean(isList(ll));
+}
+
+export function lcaIsList(options: { l?: string } = {}): ILCExpression {
+	const ll = v(options.l, 'l');
+
+	return l(ll, lcaIsListUsage(ll));
+}
+
 export function createCombinator(name: string): ILCExpression {
 	const x = new LCVariable('x');
 	const y = new LCVariable('y');
@@ -555,6 +580,7 @@ export function exprToString(l: ILCExpression): string {
 
 export function listToString(l: ILCExpression): string {
 	const fnIsListEmpty = lcaIsNull({ l: 'l0', h: 'h0', t: 't0', x: 'x0', y: 'y0' });
+	// const fnIsListEmpty = lcaIsNull({ l: 'l0' });
 
 	const fnGetHeadOfList = lcaHead({ l: 'l3', h: 'h3', t: 't3' });
 	const fnGetTailOfList = lcaTail({ l: 'l4', h: 'h4', t: 't4' });

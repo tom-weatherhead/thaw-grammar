@@ -28,6 +28,7 @@ import {
 	ILCExpression,
 	ILCVariable,
 	integerToChurchNumeral,
+	isList,
 	lcaCons,
 	lcaCreateNil,
 	lcaHead,
@@ -920,6 +921,7 @@ test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 1', () => {
 
 	// Assert
 	expect(reducesToTrue(`(${fnIsListEmpty} ${emptyList})`)).toBe(true);
+	expect(reducesToFalse(`(${fnIsListEmpty} ${emptyList})`)).toBe(false);
 });
 
 test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 2', () => {
@@ -950,9 +952,14 @@ test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 2', () => {
 
 	// Assert
 	expect(areIsomorphic(head1, element1)).toBe(true);
+
 	expect(churchNumeralToInteger(head1)).toBe(element1AsInt);
+
+	expect(reducesToTrue(`(${fnIsListEmpty} ${list1})`)).toBe(false);
 	expect(reducesToFalse(`(${fnIsListEmpty} ${list1})`)).toBe(true);
+
 	expect(reducesToTrue(`(${fnIsListEmpty} ${tail1})`)).toBe(true);
+	expect(reducesToFalse(`(${fnIsListEmpty} ${tail1})`)).toBe(false);
 });
 
 test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 3', () => {
@@ -975,4 +982,122 @@ test('LambdaCalculusWithAugmentedSyntax List Version 2 Test 3', () => {
 
 	// Assert
 	expect(str).toBe(`[${element1AsInt}, ${element2AsInt}, ${element3AsInt}]`);
+});
+
+test('LambdaCalculusWithAugmentedSyntax NullPred Nil Test', () => {
+	// Arrange
+	const t = createValueTrue();
+	const f = createValueFalse();
+	const fb = getfb();
+
+	// Act
+	// 2021-10-20 : Note Bene: If the argument passed to 'null?' is neither nil nor a list,
+	// then the result could be neither true nor false.
+	const actualResult1 = fb('(null? nil)');
+	const actualResult2 = fb('(null? 0)');
+	const actualResult3 = fb('(null? 1)');
+	const actualResult4 = fb('(null? (cons 1 nil))');
+
+	// console.log(`actualResult2: (null? 0) -> ${actualResult2}`); // λx.x
+	// console.log(churchNumeralToInteger(actualResult2));
+
+	// console.log(`actualResult3: (null? 1) -> ${actualResult3}`); // λh.λt.λx.λy.y
+	// console.log(churchNumeralToInteger(actualResult3));
+
+	// Assert
+	expect(areIsomorphic(actualResult1, t)).toBe(true);
+	expect(areIsomorphic(actualResult1, f)).toBe(false);
+
+	expect(areIsomorphic(actualResult2, t)).toBe(false);
+	// expect(areIsomorphic(actualResult2, f)).toBe(true);
+	// expect(reducesToFalse('(null? 0)')).toBe(true);
+	// expect(areIsomorphic(actualResult2, fb('0'))).toBe(true);
+
+	expect(areIsomorphic(actualResult3, t)).toBe(false);
+	// expect(areIsomorphic(actualResult3, f)).toBe(true);
+	// expect(reducesToFalse('(null? 1)')).toBe(true);
+
+	expect(areIsomorphic(actualResult4, t)).toBe(false);
+	expect(areIsomorphic(actualResult4, f)).toBe(true);
+});
+
+test('LambdaCalculusWithAugmentedSyntax List to String Test', () => {
+	// Arrange
+	// const t = createValueTrue();
+	// const f = createValueFalse();
+	const f = getParseFunction();
+	// const fb = getfb();
+	const expectedResult = '[2, 3, 5, 7]';
+
+	// Act
+	const actualResult = listToString(f('(cons 2 (cons 3 (cons 5 (cons 7 nil))))'));
+
+	// Assert
+	expect(actualResult).toBe(expectedResult);
+});
+
+test('LambdaCalculusWithAugmentedSyntax isList Test', () => {
+	// Arrange
+	const f = getParseFunction();
+
+	// Act
+	const actualResult1 = isList(f('nil'));
+	const actualResult2 = isList(f('0'));
+	const actualResult3 = isList(f('1'));
+	const actualResult4 = isList(f('2'));
+	const actualResult5 = isList(f('(cons 2 nil)'));
+	const actualResult6 = isList(f('(cons 2 (cons 3 nil))'));
+	const actualResult7 = isList(f('(cons 2 (cons 3 (cons 5 nil)))'));
+	const actualResult8 = isList(f('(cons 2 (cons 3 (cons 5 (cons 7 nil))))'));
+
+	// Assert
+	expect(actualResult1).toBe(false);
+	expect(actualResult2).toBe(false);
+	expect(actualResult3).toBe(false);
+	expect(actualResult4).toBe(false);
+	expect(actualResult5).toBe(true);
+	expect(actualResult6).toBe(true);
+	expect(actualResult7).toBe(true);
+	expect(actualResult8).toBe(true);
+});
+
+test('LambdaCalculusWithAugmentedSyntax ListPred Test', () => {
+	// Arrange
+	// const t = createValueTrue();
+	// const f = createValueFalse();
+	// const fb = getfb();
+
+	// Act
+	const str1 = '(list? nil)';
+	const str2 = '(list? 0)';
+	const str3 = '(list? 1)';
+	const str4 = '(list? 2)';
+	const str5 = '(list? (cons 2 nil))';
+	const str6 = '(list? (cons 2 (cons 3 nil)))';
+	const str7 = '(list? (cons 2 (cons 3 (cons 5 nil))))';
+	const str8 = '(list? (cons 2 (cons 3 (cons 5 (cons 7 nil)))))';
+
+	expect(reducesToTrue(str1)).toBe(false);
+	expect(reducesToFalse(str1)).toBe(true);
+
+	expect(reducesToTrue(str2)).toBe(false);
+	expect(reducesToFalse(str2)).toBe(true);
+
+	expect(reducesToTrue(str3)).toBe(false);
+	expect(reducesToFalse(str3)).toBe(true);
+
+	expect(reducesToTrue(str4)).toBe(false);
+	expect(reducesToFalse(str4)).toBe(true);
+
+	expect(reducesToTrue(str5)).toBe(true);
+	expect(reducesToFalse(str5)).toBe(false);
+
+	expect(reducesToTrue(str6)).toBe(true);
+	expect(reducesToFalse(str6)).toBe(false);
+
+	expect(reducesToTrue(str7)).toBe(true);
+	expect(reducesToFalse(str7)).toBe(false);
+
+	expect(reducesToTrue(str8)).toBe(true);
+	expect(reducesToFalse(str8)).toBe(false);
 });

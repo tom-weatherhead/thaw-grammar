@@ -65,6 +65,7 @@ import {
 	lcaConsUsage,
 	lcaCreateNil,
 	lcaHeadUsage,
+	lcaIsListUsage,
 	lcaIsNullUsage,
 	lcaTailUsage
 } from '../lambda-calculus/operators';
@@ -111,6 +112,7 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalCons);
 		this.terminals.push(GrammarSymbol.terminalCar);
 		this.terminals.push(GrammarSymbol.terminalCdr);
+		this.terminals.push(GrammarSymbol.terminalListPred);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
@@ -301,6 +303,12 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			GrammarSymbol.nonterminalExpression,
 			'#cdr'
 		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalListPred,
+			GrammarSymbol.nonterminalExpression,
+			'#list?'
+		]);
 	}
 
 	public get languageName(): string {
@@ -431,6 +439,11 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				semanticStack.push(lcaTailUsage(expression));
 				break;
 
+			case '#list?':
+				expression = semanticStack.pop() as ILCExpression;
+				semanticStack.push(lcaIsListUsage(expression));
+				break;
+
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
 		}
@@ -494,6 +507,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 					case 'tl':
 					case 'cdr':
 						return GrammarSymbol.terminalCdr;
+					case 'list?':
+						return GrammarSymbol.terminalListPred;
 					default:
 						return GrammarSymbol.terminalID;
 				}
@@ -548,6 +563,7 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			case GrammarSymbol.terminalCons:
 			case GrammarSymbol.terminalCar:
 			case GrammarSymbol.terminalCdr:
+			case GrammarSymbol.terminalListPred:
 			case GrammarSymbol.terminalEOF:
 				break;
 
