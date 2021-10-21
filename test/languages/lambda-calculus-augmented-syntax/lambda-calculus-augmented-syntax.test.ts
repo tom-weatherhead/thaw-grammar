@@ -92,6 +92,9 @@ test('LambdaCalculusWithAugmentedSyntax recognize test', () => {
 	f('(car x)');
 	f('(tl x)');
 	f('(cdr x)');
+	f('x => x');
+	f('x => (+ x 1)');
+	f('(x => (+ x 1) 7)');
 
 	expect(() => f('(x y')).toThrow(SyntaxException);
 });

@@ -114,6 +114,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalCdr);
 		this.terminals.push(GrammarSymbol.terminalListPred);
 
+		this.terminals.push(GrammarSymbol.terminalThickArrow);
+
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
@@ -122,6 +124,7 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
 		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
+		this.nonTerminals.push(GrammarSymbol.nonterminalAfterVariable);
 
 		this.addProduction(GrammarSymbol.nonterminalStart, [
 			GrammarSymbol.nonterminalExpression,
@@ -136,8 +139,11 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 
 		// Expression -> Variable
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
-			GrammarSymbol.nonterminalVariable
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalAfterVariable
 		]);
+
+		this.addProduction(GrammarSymbol.nonterminalAfterVariable, [GrammarSymbol.Lambda]);
 
 		// Expression -> Lambda Expression
 		this.addProduction(GrammarSymbol.nonterminalExpression, [
@@ -309,6 +315,14 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			GrammarSymbol.nonterminalExpression,
 			'#list?'
 		]);
+
+		// Arrow syntax for lambda expressions
+
+		this.addProduction(GrammarSymbol.nonterminalAfterVariable, [
+			GrammarSymbol.terminalThickArrow,
+			GrammarSymbol.nonterminalExpression,
+			'#arrow'
+		]);
 	}
 
 	public get languageName(): string {
@@ -471,6 +485,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 				return GrammarSymbol.terminalPlus;
 			case LexicalState.tokenMult:
 				return GrammarSymbol.terminalMultiply;
+			case LexicalState.tokenThickArrow:
+				return GrammarSymbol.terminalThickArrow;
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
 					case 'inc':
@@ -509,6 +525,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 						return GrammarSymbol.terminalCdr;
 					case 'list?':
 						return GrammarSymbol.terminalListPred;
+					// case '=>':
+					// 	return GrammarSymbol.terminalThickArrow;
 					default:
 						return GrammarSymbol.terminalID;
 				}
@@ -564,6 +582,7 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 			case GrammarSymbol.terminalCar:
 			case GrammarSymbol.terminalCdr:
 			case GrammarSymbol.terminalListPred:
+			case GrammarSymbol.terminalThickArrow:
 			case GrammarSymbol.terminalEOF:
 				break;
 
