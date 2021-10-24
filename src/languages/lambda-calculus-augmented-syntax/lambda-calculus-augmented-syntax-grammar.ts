@@ -321,7 +321,8 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		this.addProduction(GrammarSymbol.nonterminalAfterVariable, [
 			GrammarSymbol.terminalThickArrow,
 			GrammarSymbol.nonterminalExpression,
-			'#arrow'
+			// '#arrow'
+			'#lambdaExpression'
 		]);
 	}
 

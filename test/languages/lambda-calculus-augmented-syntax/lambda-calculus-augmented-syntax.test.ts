@@ -30,6 +30,7 @@ import {
 	integerToChurchNumeral,
 	isList,
 	lcaCons,
+	lcaConsUsage,
 	lcaCreateNil,
 	lcaHead,
 	lcaIsNull,
@@ -92,9 +93,11 @@ test('LambdaCalculusWithAugmentedSyntax recognize test', () => {
 	f('(car x)');
 	f('(tl x)');
 	f('(cdr x)');
+
+	// Thick arrow syntax for defining lambda expressions
 	f('x => x');
 	f('x => (+ x 1)');
-	f('(x => (+ x 1) 7)');
+	f('(x => (+ x 1) 7)'); // Invocation of such a lambda expression
 
 	expect(() => f('(x y')).toThrow(SyntaxException);
 });
@@ -1080,6 +1083,7 @@ test('LambdaCalculusWithAugmentedSyntax ListPred Test', () => {
 	const str7 = '(list? (cons 2 (cons 3 (cons 5 nil))))';
 	const str8 = '(list? (cons 2 (cons 3 (cons 5 (cons 7 nil)))))';
 
+	// Assert
 	expect(reducesToTrue(str1)).toBe(false);
 	expect(reducesToFalse(str1)).toBe(true);
 
@@ -1103,4 +1107,34 @@ test('LambdaCalculusWithAugmentedSyntax ListPred Test', () => {
 
 	expect(reducesToTrue(str8)).toBe(true);
 	expect(reducesToFalse(str8)).toBe(false);
+});
+
+function listToLCList(l: ILCExpression[]): ILCExpression {
+	if (l.length === 0) {
+		return lcaCreateNil();
+	} else {
+		return lcaConsUsage(l[0], listToLCList(l.slice(1)));
+	}
+}
+
+test('LambdaCalculusWithAugmentedSyntax List Length Test', () => {
+	// Arrange
+	const fb = getfb();
+	const l = [2, 3, 5, 7];
+	const lcList = listToLCList(l.map((n) => integerToChurchNumeral(n)));
+	// This Y combinator test succeeds via the CallByName strategy only:
+	const str = [
+		`let y = ${createCombinator('Y')} in`,
+		`let length = r => l => (if (null? l) 0 (+ 1 (r (cdr l)))) in`,
+		`((y length) ${lcList})`
+	].join(' ');
+	const expectedValueInt = l.length;
+
+	// Act
+	const actualValueExpr = fb(str);
+	const actualValueInt = churchNumeralToInteger(actualValueExpr);
+
+	// Assert
+	expect(Number.isNaN(actualValueInt)).toBe(false);
+	expect(actualValueInt).toBe(expectedValueInt);
 });
