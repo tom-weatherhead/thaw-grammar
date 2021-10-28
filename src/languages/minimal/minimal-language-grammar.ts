@@ -141,7 +141,7 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		}
 	}
 
-	public tokenToSymbol(token: IToken): number {
+	public tokenToSymbol(token: IToken): GrammarSymbol {
 		// Returns Symbol
 		// const tokenValueAsString: string = token.tokenValue as string;
 

@@ -1005,7 +1005,7 @@ export class SchemeGrammar extends GrammarBase {
 		return 'Scheme';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 

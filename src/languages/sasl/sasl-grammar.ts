@@ -85,7 +85,7 @@ export class SASLGrammar extends SchemeGrammar {
 		return 'SASL';
 	}
 
-	public override get selectorsOfCompatibleParsers(): number[] {
+	public override get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 

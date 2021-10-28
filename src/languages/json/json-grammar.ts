@@ -29,7 +29,7 @@ export class JSONGrammar extends GrammarBase {
 		return 'JSON';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 

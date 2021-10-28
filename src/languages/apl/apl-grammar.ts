@@ -30,7 +30,7 @@ export class APLGrammar extends GrammarBase {
 		return 'APL';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 
@@ -38,7 +38,7 @@ export class APLGrammar extends GrammarBase {
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public tokenToSymbol(token: IToken): number {
+	public tokenToSymbol(token: IToken): GrammarSymbol {
 		// Returns Symbol
 		return GrammarSymbol.UndefinedSymbol;
 	}

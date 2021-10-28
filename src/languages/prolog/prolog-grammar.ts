@@ -481,7 +481,7 @@ export class PrologGrammar extends GrammarBase {
 		return 'Prolog';
 	}
 
-	public get selectorsOfCompatibleParsers(): number[] {
+	public get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LL1];
 	}
 
