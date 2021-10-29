@@ -7,7 +7,7 @@ import {
 	IToken,
 	// LanguageSelector,
 	LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -54,9 +54,9 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalPrint);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		this.terminals.push(GrammarSymbol.terminalCond);
-		this.terminals.push(GrammarSymbol.terminalLet);
-		this.terminals.push(GrammarSymbol.terminalLetStar);
+		// this.terminals.push(GrammarSymbol.terminalCond);
+		// this.terminals.push(GrammarSymbol.terminalLet);
+		// this.terminals.push(GrammarSymbol.terminalLetStar);
 
 		this.terminals.push(GrammarSymbol.terminalRandom);
 		this.terminals.push(GrammarSymbol.terminalToString);
@@ -85,7 +85,6 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalCharPred);
 		this.terminals.push(GrammarSymbol.terminalStringIndex);
 		this.terminals.push(GrammarSymbol.terminalArrayPred);
-
 		this.terminals.push(GrammarSymbol.terminalClass);
 		this.terminals.push(GrammarSymbol.terminalOctothorpe);
 		this.terminals.push(GrammarSymbol.terminalFloatLiteral);
@@ -113,9 +112,10 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
 		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
+
 		this.nonTerminals.push(GrammarSymbol.nonterminalClassDef);
 		this.nonTerminals.push(GrammarSymbol.nonterminalClass);
 		this.nonTerminals.push(GrammarSymbol.nonterminalInstVars);
@@ -447,17 +447,17 @@ export class SmalltalkGrammar extends GrammarBase {
 		return 'Smalltalk';
 	}
 
-	public override get defaultParser(): ParserSelector {
-		return ParserSelector.LL1;
+	// public override get defaultParser(): ParserSelector {
+	// 	return ParserSelector.LL1;
+	//
+	// 	// return ParserSelector.SLR1;
+	// }
 
-		// return ParserSelector.SLR1;
-	}
-
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [this.defaultParser];
-
-		// return [ParserSelector.LL1, ParserSelector.SLR1];
-	}
+	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [this.defaultParser];
+	//
+	// 	// return [ParserSelector.LL1, ParserSelector.SLR1];
+	// }
 
 	// private ISmalltalkExpression CreateLetUsage(string letKeyword,
 	//     List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>> varExprList, ISmalltalkExpression expression)

@@ -40,7 +40,7 @@ import {
 	GrammarSymbol,
 	IToken,
 	LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -330,9 +330,9 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 		return 'The Lambda Calculus with Augmented Syntax';
 	}
 
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [ParserSelector.LL1];
-	}
+	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [ParserSelector.LL1];
+	// }
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;

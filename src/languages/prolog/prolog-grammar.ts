@@ -5,7 +5,7 @@ import {
 	IToken,
 	LanguageSelector,
 	LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -481,9 +481,9 @@ export class PrologGrammar extends GrammarBase {
 		return 'Prolog';
 	}
 
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [ParserSelector.LL1];
-	}
+	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [ParserSelector.LL1];
+	// }
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		const gs = LanguageSelector.Prolog2;

@@ -7,7 +7,7 @@ import {
 	IToken,
 	// LanguageSelector,
 	// LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -23,16 +23,393 @@ export class APLGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
 
-		// ...
+		this.terminals.push(GrammarSymbol.terminalLeftBracket);
+		this.terminals.push(GrammarSymbol.terminalRightBracket);
+		this.terminals.push(GrammarSymbol.terminalDefine);
+		this.terminals.push(GrammarSymbol.terminalIf);
+		this.terminals.push(GrammarSymbol.terminalWhile);
+		this.terminals.push(GrammarSymbol.terminalSet);
+		this.terminals.push(GrammarSymbol.terminalBegin);
+		this.terminals.push(GrammarSymbol.terminalPlus);
+		this.terminals.push(GrammarSymbol.terminalMinus);
+		this.terminals.push(GrammarSymbol.terminalMultiply);
+		this.terminals.push(GrammarSymbol.terminalDivide);
+		this.terminals.push(GrammarSymbol.terminalEquals);
+		this.terminals.push(GrammarSymbol.terminalLessThan);
+		this.terminals.push(GrammarSymbol.terminalPrint);
+		this.terminals.push(GrammarSymbol.terminalID);
+		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
+		// this.terminals.push(GrammarSymbol.terminalCond);
+		// this.terminals.push(GrammarSymbol.terminalLet);
+		// this.terminals.push(GrammarSymbol.terminalLetStar);
+
+		// this.terminals.push(GrammarSymbol.terminalMax);
+		// this.terminals.push(GrammarSymbol.terminalOr);
+		// this.terminals.push(GrammarSymbol.terminalAnd);
+		// this.terminals.push(GrammarSymbol.terminalPlusSlash);
+		// this.terminals.push(GrammarSymbol.terminalMinusSlash);
+		// this.terminals.push(GrammarSymbol.terminalMultiplySlash);
+		// this.terminals.push(GrammarSymbol.terminalDivideSlash);
+		// this.terminals.push(GrammarSymbol.terminalMaxSlash);
+		// this.terminals.push(GrammarSymbol.terminalOrSlash);
+		// this.terminals.push(GrammarSymbol.terminalAndSlash);
+		// this.terminals.push(GrammarSymbol.terminalCompress);
+		// this.terminals.push(GrammarSymbol.terminalShape);
+		// this.terminals.push(GrammarSymbol.terminalRavel);
+		// this.terminals.push(GrammarSymbol.terminalRestruct);
+		// this.terminals.push(GrammarSymbol.terminalCat);
+		// this.terminals.push(GrammarSymbol.terminalIndx);
+		// this.terminals.push(GrammarSymbol.terminalTrans);
+		// this.terminals.push(GrammarSymbol.terminalSquareBrackets);
+		// this.terminals.push(GrammarSymbol.terminalApostrophe);
+		// this.terminals.push(GrammarSymbol.terminalAssign);
+		// this.terminals.push(GrammarSymbol.terminalDoubleSubscripting);
+		// this.terminals.push(GrammarSymbol.terminalFloatLiteral);
+		// this.terminals.push(GrammarSymbol.terminalRandom);
+		// this.terminals.push(GrammarSymbol.terminalPow);
+		// this.terminals.push(GrammarSymbol.terminalExp);
+		// this.terminals.push(GrammarSymbol.terminalLn);
+		// this.terminals.push(GrammarSymbol.terminalSin);
+		// this.terminals.push(GrammarSymbol.terminalCos);
+		// this.terminals.push(GrammarSymbol.terminalTan);
+
+		this.terminals.push(GrammarSymbol.terminalEOF);
+
+		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
+		this.nonTerminals.push(GrammarSymbol.nonterminalInput);
+		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedInput);
+		this.nonTerminals.push(GrammarSymbol.nonterminalUnbracketedInput);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
+		this.nonTerminals.push(GrammarSymbol.nonterminalValue);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVariableList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalFunDef);
+		this.nonTerminals.push(GrammarSymbol.nonterminalFunction);
+		this.nonTerminals.push(GrammarSymbol.nonterminalArgList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
+		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
+
+		// this.nonTerminals.push(GrammarSymbol.nonterminalVectorConst);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalIntegerLiteralList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalFloatLiteralList);
+
+		// This initial production needed to be added: Start -> Input EOF
+		this.addProduction(GrammarSymbol.nonterminalStart, [
+			GrammarSymbol.nonterminalInput,
+			GrammarSymbol.terminalEOF
+		]);
+
+		// Input -> ( BracketedInput )
+		this.addProduction(GrammarSymbol.nonterminalInput, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalBracketedInput,
+			GrammarSymbol.terminalRightBracket
+		]);
+
+		// Input -> UnbracketedInput
+		this.addProduction(GrammarSymbol.nonterminalInput, [
+			GrammarSymbol.nonterminalUnbracketedInput
+		]);
+
+		// BracketedInput -> BracketedExpression
+		this.addProduction(GrammarSymbol.nonterminalBracketedInput, [
+			GrammarSymbol.nonterminalBracketedExpression
+		]);
+
+		// BracketedInput -> FunDef
+		this.addProduction(GrammarSymbol.nonterminalBracketedInput, [
+			GrammarSymbol.nonterminalFunDef
+		]);
+
+		// - UnbracketedInput -> Value
+		this.addProduction(GrammarSymbol.nonterminalUnbracketedInput, [
+			GrammarSymbol.nonterminalValue
+		]);
+
+		// - UnbracketedInput -> Variable
+		this.addProduction(GrammarSymbol.nonterminalUnbracketedInput, [
+			GrammarSymbol.nonterminalVariable
+		]);
+
+		// FunDef -> define Function ArgList Expression
+		this.addProduction(GrammarSymbol.nonterminalFunDef, [
+			GrammarSymbol.terminalDefine,
+			GrammarSymbol.nonterminalFunction,
+			GrammarSymbol.nonterminalArgList,
+			GrammarSymbol.nonterminalExpression,
+			'#functionDefinition'
+		]);
+
+		// Expression -> Value
+		this.addProduction(GrammarSymbol.nonterminalExpression, [GrammarSymbol.nonterminalValue]);
+
+		// Expression -> Variable
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.nonterminalVariable
+		]);
+
+		// Expression -> ( BracketedExpression )
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalBracketedExpression,
+			GrammarSymbol.terminalRightBracket
+		]);
+
+		// Productions.Add(new Production(Symbol.N_ArgList, new List<object>() { Symbol.T_LeftBracket, Symbol.N_VariableList, Symbol.T_RightBracket }, 5));
+		this.addProduction(GrammarSymbol.nonterminalArgList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVariableList,
+			GrammarSymbol.terminalRightBracket
+		]);
+
+		// Productions.Add(new Production(Symbol.N_VariableList, new List<object>() { Symbol.N_Variable, Symbol.N_VariableList, "#variableList" }, 6));
+		this.addProduction(GrammarSymbol.nonterminalVariableList, [
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalVariableList,
+			'#variableList'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_VariableList, new List<object>() { Symbol.Lambda, "#emptyVariableList" }, 7));
+		this.addProduction(GrammarSymbol.nonterminalVariableList, [
+			GrammarSymbol.Lambda,
+			'#emptyVariableList'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalIf,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#if'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_While, Symbol.N_Expression, Symbol.N_Expression, "#while" }, 12));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalWhile,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#while'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Set, Symbol.N_Variable, Symbol.N_Expression, "#set" }, 13));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalSet,
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalExpression,
+			'#set'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Begin, Symbol.N_Expression, Symbol.N_ExpressionList, "#begin" }, 14));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalBegin,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpressionList,
+			'#begin'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.N_Optr, Symbol.N_ExpressionList, "#operatorUsage" }, 15));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.nonterminalOptr,
+			GrammarSymbol.nonterminalExpressionList,
+			'#operatorUsage'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_ExpressionList, new List<object>() { Symbol.N_Expression, Symbol.N_ExpressionList, "#expressionList" }, 16));
+		this.addProduction(GrammarSymbol.nonterminalExpressionList, [
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpressionList,
+			'#expressionList'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_ExpressionList, new List<object>() { Symbol.Lambda, "#emptyExpressionList" }, 17));
+		this.addProduction(GrammarSymbol.nonterminalExpressionList, [
+			GrammarSymbol.Lambda,
+			'#emptyExpressionList'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_Optr, new List<object>() { Symbol.N_Function }, 18));
+		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalFunction]);
+
+		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalValueOp]);
+
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalIntegerLiteral]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPlus]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMinus]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMultiply]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalDivide]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalEquals]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLessThan]);
+
+		// //Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_GreaterThan }, 27));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [
+		// 	GrammarSymbol.terminalGreaterThan
+		// ]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPrint]);
+
+		// Productions.Add(new Production(Symbol.N_Function, new List<object>() { Symbol.T_ID }, 29));
+		this.addProduction(GrammarSymbol.nonterminalFunction, [GrammarSymbol.terminalID]);
+
+		// Productions.Add(new Production(Symbol.N_Variable, new List<object>() { Symbol.T_ID, "#variable" }, 30));
+		this.addProduction(GrammarSymbol.nonterminalVariable, [
+			GrammarSymbol.terminalID,
+			'#variable'
+		]);
+
+		// cond
+
+		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
+		//     GrammarSymbol.terminalCond,
+		//     GrammarSymbol.terminalLeftBracket,
+		//     Symbol.N_Expression,
+		//     Symbol.N_Expression,
+		//     GrammarSymbol.terminalRightBracket,
+		//     Symbol.N_ExprPairList, "#condUsage" }, 31));
+		// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() {
+		//     GrammarSymbol.terminalLeftBracket,
+		//     Symbol.N_Expression,
+		//     Symbol.N_Expression,
+		//     GrammarSymbol.terminalRightBracket,
+		//     Symbol.N_ExprPairList, "#exprPairList" }, 32));
+		// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() { Symbol.Lambda, "#emptyExprPairList" }, 33));
+
+		// let and let*
+
+		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
+		//     Symbol.N_LetKeyword,
+		//     GrammarSymbol.terminalLeftBracket,
+		//     Symbol.N_VarExprList,
+		//     GrammarSymbol.terminalRightBracket,
+		//     Symbol.N_Expression, "#letUsage" }, 34));
+		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLet }, 35));
+		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLetStar }, 36));
+		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() {
+		//     GrammarSymbol.terminalLeftBracket,
+		//     Symbol.N_Variable,
+		//     Symbol.N_Expression,
+		//     GrammarSymbol.terminalRightBracket,
+		//     Symbol.N_VarExprList, "#varExprList" }, 37));
+		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, "#emptyVarExprList" }, 38));
+
+		// APL Productions
+
+		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.N_VectorConst }, 39));
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.nonterminalVectorConst]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Max }, 40));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMax]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Or }, 41));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalOr]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_And }, 42));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalAnd]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_PlusSlash }, 43));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPlusSlash]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_MinusSlash }, 44));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMinusSlash]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_MultiplySlash }, 45));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMultiplySlash]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_DivideSlash }, 46));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalDivideSlash]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_MaxSlash }, 47));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMaxSlash]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_OrSlash }, 48));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalOrSlash]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_AndSlash }, 49));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalAndSlash]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Compress }, 50));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCompress]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Shape }, 51));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalShape]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Ravel }, 52));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalRavel]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Restruct }, 53));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalRestruct]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cat }, 54));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCat]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Indx }, 55));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalIndx]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Trans }, 56));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalTrans]);
+
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_SquareBrackets }, 57));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [
+			GrammarSymbol.terminalSquareBrackets
+		]);
+
+		// An empty vector is an int vector.
+
+		// Productions.Add(new Production(Symbol.N_VectorConst, new List<object>() { Symbol.T_Apostrophe, Symbol.T_LeftBracket, Symbol.N_IntegerLiteralList, Symbol.T_RightBracket, "#makeIntVector" }, 58));
+		this.addProduction(GrammarSymbol.nonterminalVectorConst, [
+			GrammarSymbol.terminalApostrophe,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalIntegerLiteralList,
+			GrammarSymbol.terminalRightBracket,
+			'#makeIntVector'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_VectorConst, new List<object>() { Symbol.T_Apostrophe, Symbol.T_LeftBracket, Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, Symbol.T_RightBracket, "#makeFloatVector" }, 59));
+
+		// Productions.Add(new Production(Symbol.N_IntegerLiteralList, new List<object>() { Symbol.T_IntegerLiteral, Symbol.N_IntegerLiteralList, "#intList" }, 60));
+		this.addProduction(GrammarSymbol.nonterminalIntegerLiteralList, [
+			GrammarSymbol.terminalIntegerLiteral,
+			GrammarSymbol.nonterminalIntegerLiteralList,
+			'#intList'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_IntegerLiteralList, new List<object>() { Symbol.Lambda, "#emptyIntList" }, 61));
+		this.addProduction(GrammarSymbol.nonterminalIntegerLiteralList, [
+			GrammarSymbol.Lambda,
+			'#emptyIntList'
+		]);
+
+		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, "#floatList" }, 62));
+		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.Lambda, "#emptyFloatList" }, 63));
+		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Assign, Symbol.N_Variable, Symbol.N_Expression, Symbol.N_Expression, "#vecassign" }, 64));
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_DoubleSubscripting }, 65));
+		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.T_FloatLiteral }, 66));
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Random }, 67));
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Pow }, 68));
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Exp }, 69));
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Ln }, 70));
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Sin }, 71));
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cos }, 72));
+		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Tan }, 73));
 	}
 
 	public get languageName(): string {
 		return 'APL';
 	}
 
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [ParserSelector.LL1];
-	}
+	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [ParserSelector.LL1];
+	// }
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {}

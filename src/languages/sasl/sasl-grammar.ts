@@ -6,7 +6,7 @@ import {
 	GrammarSymbol,
 	IToken,
 	LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -85,9 +85,9 @@ export class SASLGrammar extends SchemeGrammar {
 		return 'SASL';
 	}
 
-	public override get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [ParserSelector.LL1];
-	}
+	// public override get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [ParserSelector.LL1];
+	// }
 
 	public override executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;

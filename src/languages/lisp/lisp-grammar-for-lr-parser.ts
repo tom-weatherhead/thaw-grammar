@@ -970,7 +970,11 @@ export class LISPGrammarForLRParser extends GrammarBase {
 		return 'LISP';
 	}
 
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	public override get defaultParser(): ParserSelector {
+		return ParserSelector.SLR1;
+	}
+
+	public override get selectorsOfCompatibleParsers(): ParserSelector[] {
 		return [ParserSelector.LR1, ParserSelector.SLR1, ParserSelector.LALR1];
 	}
 

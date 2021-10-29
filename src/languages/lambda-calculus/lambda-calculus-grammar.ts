@@ -15,7 +15,7 @@ import {
 	GrammarSymbol,
 	IToken,
 	LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -95,9 +95,9 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		return 'The Lambda Calculus';
 	}
 
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [ParserSelector.LL1];
-	}
+	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [ParserSelector.LL1];
+	// }
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;

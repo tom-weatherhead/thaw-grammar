@@ -6,7 +6,7 @@ import {
 	GrammarSymbol,
 	IToken,
 	LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -357,9 +357,9 @@ export class Chapter1Grammar extends GrammarBase {
 		return 'Chapter 1';
 	}
 
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [ParserSelector.LL1];
-	}
+	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [ParserSelector.LL1];
+	// }
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		// console.log(`Chapter1Grammar.executeSemanticAction() : action is ${typeof action} ${action}`);

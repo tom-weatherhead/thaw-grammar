@@ -20,7 +20,7 @@ import {
 	IToken,
 	// LanguageSelector,
 	LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -1005,9 +1005,9 @@ export class SchemeGrammar extends GrammarBase {
 		return 'Scheme';
 	}
 
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [ParserSelector.LL1];
-	}
+	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [ParserSelector.LL1];
+	// }
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		// console.log(`SchemeGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);

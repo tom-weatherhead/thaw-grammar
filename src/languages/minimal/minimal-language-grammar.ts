@@ -9,7 +9,7 @@ import {
 	GrammarSymbol,
 	IToken,
 	LexicalState,
-	ParserSelector,
+	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -106,9 +106,9 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		return 'The minimal language';
 	}
 
-	public get selectorsOfCompatibleParsers(): ParserSelector[] {
-		return [ParserSelector.LL1];
-	}
+	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
+	// 	return [ParserSelector.LL1];
+	// }
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
