@@ -367,8 +367,6 @@ export class APLGrammar extends GrammarBase {
 	}
 
 	public tokenToSymbol(token: IToken): GrammarSymbol {
-		console.log('token:', token);
-
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {

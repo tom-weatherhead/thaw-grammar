@@ -1,11 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/smalltalk-grammar.ts
 
-import {
-	GrammarSymbol,
-	IToken,
-	LexicalState,
-	SemanticStackType
-} from 'thaw-interpreter-types';
+import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 // import { ExpressionList }  from '../../common/domain-object-model/expression-list';
 // import { IExpression }  from '../../common/domain-object-model/iexpression';
