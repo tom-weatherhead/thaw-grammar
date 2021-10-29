@@ -1,21 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/apl/apl-grammar.ts
 
-// import { Stack } from 'thaw-common-utilities.ts';
-
-import {
-	GrammarSymbol,
-	IToken,
-	// LanguageSelector,
-	LexicalState,
-	// ParserSelector,
-	SemanticStackType
-} from 'thaw-interpreter-types';
-
-// import { Token } from 'thaw-lexical-analyzer';
+import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
-// import { ParserSelector } from '../../common/parser-selectors';
-// import { Symbol } from '../../common/symbol';
 
 export class APLGrammar extends GrammarBase {
 	// The APL grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -161,21 +148,18 @@ export class APLGrammar extends GrammarBase {
 			GrammarSymbol.terminalRightBracket
 		]);
 
-		// Productions.Add(new Production(Symbol.N_ArgList, new List<object>() { Symbol.T_LeftBracket, Symbol.N_VariableList, Symbol.T_RightBracket }, 5));
 		this.addProduction(GrammarSymbol.nonterminalArgList, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalVariableList,
 			GrammarSymbol.terminalRightBracket
 		]);
 
-		// Productions.Add(new Production(Symbol.N_VariableList, new List<object>() { Symbol.N_Variable, Symbol.N_VariableList, "#variableList" }, 6));
 		this.addProduction(GrammarSymbol.nonterminalVariableList, [
 			GrammarSymbol.nonterminalVariable,
 			GrammarSymbol.nonterminalVariableList,
 			'#variableList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_VariableList, new List<object>() { Symbol.Lambda, "#emptyVariableList" }, 7));
 		this.addProduction(GrammarSymbol.nonterminalVariableList, [
 			GrammarSymbol.Lambda,
 			'#emptyVariableList'
@@ -189,7 +173,6 @@ export class APLGrammar extends GrammarBase {
 			'#if'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_While, Symbol.N_Expression, Symbol.N_Expression, "#while" }, 12));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalWhile,
 			GrammarSymbol.nonterminalExpression,
@@ -197,7 +180,6 @@ export class APLGrammar extends GrammarBase {
 			'#while'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Set, Symbol.N_Variable, Symbol.N_Expression, "#set" }, 13));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalSet,
 			GrammarSymbol.nonterminalVariable,
@@ -205,7 +187,6 @@ export class APLGrammar extends GrammarBase {
 			'#set'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Begin, Symbol.N_Expression, Symbol.N_ExpressionList, "#begin" }, 14));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalBegin,
 			GrammarSymbol.nonterminalExpression,
@@ -213,27 +194,23 @@ export class APLGrammar extends GrammarBase {
 			'#begin'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.N_Optr, Symbol.N_ExpressionList, "#operatorUsage" }, 15));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.nonterminalOptr,
 			GrammarSymbol.nonterminalExpressionList,
 			'#operatorUsage'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_ExpressionList, new List<object>() { Symbol.N_Expression, Symbol.N_ExpressionList, "#expressionList" }, 16));
 		this.addProduction(GrammarSymbol.nonterminalExpressionList, [
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.nonterminalExpressionList,
 			'#expressionList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_ExpressionList, new List<object>() { Symbol.Lambda, "#emptyExpressionList" }, 17));
 		this.addProduction(GrammarSymbol.nonterminalExpressionList, [
 			GrammarSymbol.Lambda,
 			'#emptyExpressionList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_Optr, new List<object>() { Symbol.N_Function }, 18));
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalFunction]);
 
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalValueOp]);
@@ -252,15 +229,12 @@ export class APLGrammar extends GrammarBase {
 
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLessThan]);
 
-		// //Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_GreaterThan }, 27));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalGreaterThan]);
 
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPrint]);
 
-		// Productions.Add(new Production(Symbol.N_Function, new List<object>() { Symbol.T_ID }, 29));
 		this.addProduction(GrammarSymbol.nonterminalFunction, [GrammarSymbol.terminalID]);
 
-		// Productions.Add(new Production(Symbol.N_Variable, new List<object>() { Symbol.T_ID, "#variable" }, 30));
 		this.addProduction(GrammarSymbol.nonterminalVariable, [
 			GrammarSymbol.terminalID,
 			'#variable'
@@ -303,61 +277,42 @@ export class APLGrammar extends GrammarBase {
 
 		// APL Productions
 
-		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.N_VectorConst }, 39));
 		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.nonterminalVectorConst]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Max }, 40));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMax]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Or }, 41));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalOr]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_And }, 42));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalAnd]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_PlusSlash }, 43));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPlusSlash]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_MinusSlash }, 44));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMinusSlash]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_MultiplySlash }, 45));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMultiplySlash]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_DivideSlash }, 46));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalDivideSlash]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_MaxSlash }, 47));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMaxSlash]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_OrSlash }, 48));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalOrSlash]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_AndSlash }, 49));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalAndSlash]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Compress }, 50));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCompress]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Shape }, 51));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalShape]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Ravel }, 52));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalRavel]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Restruct }, 53));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalRestruct]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cat }, 54));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCat]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Indx }, 55));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalIndx]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Trans }, 56));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalTrans]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_SquareBrackets }, 57));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [
 			GrammarSymbol.terminalSquareBrackets
 		]);
@@ -430,10 +385,8 @@ export class APLGrammar extends GrammarBase {
 			case LexicalState.tokenGreater:
 				return GrammarSymbol.terminalGreaterThan;
 			case LexicalState.tokenIntLit:
-				// console.log('tokenIntLit received.');
 				return GrammarSymbol.terminalIntegerLiteral;
 			case LexicalState.tokenPlus:
-				// console.log('tokenPlus received.');
 				return GrammarSymbol.terminalPlus;
 			case LexicalState.tokenMinus:
 				return GrammarSymbol.terminalMinus;
@@ -471,81 +424,12 @@ export class APLGrammar extends GrammarBase {
 						return GrammarSymbol.terminalEquals;
 					case '<':
 						return GrammarSymbol.terminalLessThan;
-
 					case 'cond':
 						return GrammarSymbol.terminalCond;
 					case 'let':
 						return GrammarSymbol.terminalLet;
 					case 'let*':
 						return GrammarSymbol.terminalLetStar;
-					// case 'list?':
-					// 	return GrammarSymbol.terminalListPred;
-					// case '=>':
-					// 	return GrammarSymbol.terminalThickArrow;
-					//case '>': return GrammarSymbol.terminalGreaterThan;
-					// case 'class':
-					// 	return GrammarSymbol.terminalClass;
-					// case 'number?':
-					// 	return GrammarSymbol.terminalNumberPred;
-					// case 'symbol?':
-					// 	return GrammarSymbol.terminalSymbolPred;
-					// case 'string?':
-					// 	return GrammarSymbol.terminalStringPred;
-					// case 'object?':
-					// 	return GrammarSymbol.terminalObjectPred;
-					// case 'random':
-					// 	return GrammarSymbol.terminalRandom;
-					// case 'tostring':
-					// 	return GrammarSymbol.terminalToString;
-					// case 'stringtosymbol':
-					// 	return GrammarSymbol.terminalStringToSymbol;
-					// case 'pow':
-					// 	return GrammarSymbol.terminalPow;
-					// case 'exp':
-					// 	return GrammarSymbol.terminalExp;
-					// case 'ln':
-					// 	return GrammarSymbol.terminalLn;
-					// case 'sin':
-					// 	return GrammarSymbol.terminalSin;
-					// case 'cos':
-					// 	return GrammarSymbol.terminalCos;
-					// case 'tan':
-					// 	return GrammarSymbol.terminalTan;
-					// case 'atan2':
-					// 	return GrammarSymbol.terminalAtan2;
-					// case 'floor':
-					// 	return GrammarSymbol.terminalFloor;
-					// case 'throw':
-					// 	return GrammarSymbol.terminalThrow;
-					// case 'string<':
-					// 	return GrammarSymbol.terminalStringLessThan;
-					// case 'strlen':
-					// 	return GrammarSymbol.terminalStrlen;
-					// case 'substr':
-					// 	return GrammarSymbol.terminalSubstr;
-					// case 'typename':
-					// 	return GrammarSymbol.terminalTypename;
-					// case 'hash':
-					// 	return GrammarSymbol.terminalHash;
-					// case 'ref=':
-					// 	return GrammarSymbol.terminalReferenceEquals;
-					// case 'strcat':
-					// 	return GrammarSymbol.terminalStrcat;
-					// case 'newarray':
-					// 	return GrammarSymbol.terminalNewArray;
-					// case 'arraylength':
-					// 	return GrammarSymbol.terminalArrayLength;
-					// case 'arrayget':
-					// 	return GrammarSymbol.terminalArrayGet;
-					// case 'arrayset':
-					// 	return GrammarSymbol.terminalArraySet;
-					// case 'array?':
-					// 	return GrammarSymbol.terminalArrayPred;
-					// case 'char?':
-					// 	return GrammarSymbol.terminalCharPred;
-					// case 'stridx':
-					// 	return GrammarSymbol.terminalStringIndex;
-					// case 'if': return GrammarSymbol.terminalID;
 					default:
 						return GrammarSymbol.terminalID;
 				}
