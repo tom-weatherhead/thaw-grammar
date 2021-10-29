@@ -6,14 +6,14 @@ import {
 	GrammarSymbol,
 	IToken,
 	// LanguageSelector,
-	// LexicalState,
+	LexicalState,
 	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
 // import { Token } from 'thaw-lexical-analyzer';
 
-import { GrammarBase } from 'thaw-interpreter-core';
+import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 // import { ParserSelector } from '../../common/parser-selectors';
 // import { Symbol } from '../../common/symbol';
 
@@ -36,6 +36,7 @@ export class APLGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalDivide);
 		this.terminals.push(GrammarSymbol.terminalEquals);
 		this.terminals.push(GrammarSymbol.terminalLessThan);
+		this.terminals.push(GrammarSymbol.terminalGreaterThan);
 		this.terminals.push(GrammarSymbol.terminalPrint);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
@@ -43,26 +44,26 @@ export class APLGrammar extends GrammarBase {
 		// this.terminals.push(GrammarSymbol.terminalLet);
 		// this.terminals.push(GrammarSymbol.terminalLetStar);
 
-		// this.terminals.push(GrammarSymbol.terminalMax);
-		// this.terminals.push(GrammarSymbol.terminalOr);
-		// this.terminals.push(GrammarSymbol.terminalAnd);
-		// this.terminals.push(GrammarSymbol.terminalPlusSlash);
-		// this.terminals.push(GrammarSymbol.terminalMinusSlash);
-		// this.terminals.push(GrammarSymbol.terminalMultiplySlash);
-		// this.terminals.push(GrammarSymbol.terminalDivideSlash);
-		// this.terminals.push(GrammarSymbol.terminalMaxSlash);
-		// this.terminals.push(GrammarSymbol.terminalOrSlash);
-		// this.terminals.push(GrammarSymbol.terminalAndSlash);
-		// this.terminals.push(GrammarSymbol.terminalCompress);
-		// this.terminals.push(GrammarSymbol.terminalShape);
-		// this.terminals.push(GrammarSymbol.terminalRavel);
-		// this.terminals.push(GrammarSymbol.terminalRestruct);
-		// this.terminals.push(GrammarSymbol.terminalCat);
-		// this.terminals.push(GrammarSymbol.terminalIndx);
-		// this.terminals.push(GrammarSymbol.terminalTrans);
-		// this.terminals.push(GrammarSymbol.terminalSquareBrackets);
-		// this.terminals.push(GrammarSymbol.terminalApostrophe);
-		// this.terminals.push(GrammarSymbol.terminalAssign);
+		this.terminals.push(GrammarSymbol.terminalMax);
+		this.terminals.push(GrammarSymbol.terminalOr);
+		this.terminals.push(GrammarSymbol.terminalAnd);
+		this.terminals.push(GrammarSymbol.terminalPlusSlash);
+		this.terminals.push(GrammarSymbol.terminalMinusSlash);
+		this.terminals.push(GrammarSymbol.terminalMultiplySlash);
+		this.terminals.push(GrammarSymbol.terminalDivideSlash);
+		this.terminals.push(GrammarSymbol.terminalMaxSlash);
+		this.terminals.push(GrammarSymbol.terminalOrSlash);
+		this.terminals.push(GrammarSymbol.terminalAndSlash);
+		this.terminals.push(GrammarSymbol.terminalCompress);
+		this.terminals.push(GrammarSymbol.terminalShape);
+		this.terminals.push(GrammarSymbol.terminalRavel);
+		this.terminals.push(GrammarSymbol.terminalRestruct);
+		this.terminals.push(GrammarSymbol.terminalCat);
+		this.terminals.push(GrammarSymbol.terminalIndx);
+		this.terminals.push(GrammarSymbol.terminalTrans);
+		this.terminals.push(GrammarSymbol.terminalSquareBrackets);
+		this.terminals.push(GrammarSymbol.terminalApostrophe);
+		this.terminals.push(GrammarSymbol.terminalAssign);
 		// this.terminals.push(GrammarSymbol.terminalDoubleSubscripting);
 		// this.terminals.push(GrammarSymbol.terminalFloatLiteral);
 		// this.terminals.push(GrammarSymbol.terminalRandom);
@@ -94,8 +95,8 @@ export class APLGrammar extends GrammarBase {
 		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
 		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
 
-		// this.nonTerminals.push(GrammarSymbol.nonterminalVectorConst);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalIntegerLiteralList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVectorConst);
+		this.nonTerminals.push(GrammarSymbol.nonterminalIntegerLiteralList);
 		// this.nonTerminals.push(GrammarSymbol.nonterminalFloatLiteralList);
 
 		// This initial production needed to be added: Start -> Input EOF
@@ -252,9 +253,7 @@ export class APLGrammar extends GrammarBase {
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLessThan]);
 
 		// //Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_GreaterThan }, 27));
-		// this.addProduction(GrammarSymbol.nonterminalValueOp, [
-		// 	GrammarSymbol.terminalGreaterThan
-		// ]);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalGreaterThan]);
 
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPrint]);
 
@@ -407,17 +406,159 @@ export class APLGrammar extends GrammarBase {
 		return 'APL';
 	}
 
-	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	return [ParserSelector.LL1];
-	// }
-
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {}
+	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
+		throw new Error('APLGrammar.executeSemanticAction() : Not yet implemented.');
+	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public tokenToSymbol(token: IToken): GrammarSymbol {
-		// Returns Symbol
-		return GrammarSymbol.UndefinedSymbol;
+		console.log('token:', token);
+
+		const tokenValueAsString: string = token.tokenValue as string;
+
+		switch (token.tokenType) {
+			case LexicalState.tokenEOF:
+				return GrammarSymbol.terminalEOF;
+			case LexicalState.tokenLeftBracket:
+				return GrammarSymbol.terminalLeftBracket;
+			case LexicalState.tokenRightBracket:
+				return GrammarSymbol.terminalRightBracket;
+			case LexicalState.tokenEqual:
+				return GrammarSymbol.terminalEquals;
+			case LexicalState.tokenLess:
+				return GrammarSymbol.terminalLessThan;
+			case LexicalState.tokenGreater:
+				return GrammarSymbol.terminalGreaterThan;
+			case LexicalState.tokenIntLit:
+				// console.log('tokenIntLit received.');
+				return GrammarSymbol.terminalIntegerLiteral;
+			case LexicalState.tokenPlus:
+				// console.log('tokenPlus received.');
+				return GrammarSymbol.terminalPlus;
+			case LexicalState.tokenMinus:
+				return GrammarSymbol.terminalMinus;
+			case LexicalState.tokenMult:
+				return GrammarSymbol.terminalMultiply;
+			case LexicalState.tokenDiv:
+				return GrammarSymbol.terminalDivide;
+			case LexicalState.tokenOctothorpe:
+				return GrammarSymbol.terminalOctothorpe;
+			case LexicalState.tokenDollar:
+				return GrammarSymbol.terminalDollar;
+			case LexicalState.tokenIdent:
+				switch (tokenValueAsString) {
+					case 'define':
+						return GrammarSymbol.terminalDefine;
+					case 'if':
+						return GrammarSymbol.terminalIf;
+					case 'while':
+						return GrammarSymbol.terminalWhile;
+					case 'set':
+						return GrammarSymbol.terminalSet;
+					case 'begin':
+						return GrammarSymbol.terminalBegin;
+					case 'print':
+						return GrammarSymbol.terminalPrint;
+					case '+':
+						return GrammarSymbol.terminalPlus;
+					case '-':
+						return GrammarSymbol.terminalMinus;
+					case '*':
+						return GrammarSymbol.terminalMultiply;
+					case '/':
+						return GrammarSymbol.terminalDivide;
+					case '=':
+						return GrammarSymbol.terminalEquals;
+					case '<':
+						return GrammarSymbol.terminalLessThan;
+
+					case 'cond':
+						return GrammarSymbol.terminalCond;
+					case 'let':
+						return GrammarSymbol.terminalLet;
+					case 'let*':
+						return GrammarSymbol.terminalLetStar;
+					// case 'list?':
+					// 	return GrammarSymbol.terminalListPred;
+					// case '=>':
+					// 	return GrammarSymbol.terminalThickArrow;
+					//case '>': return GrammarSymbol.terminalGreaterThan;
+					// case 'class':
+					// 	return GrammarSymbol.terminalClass;
+					// case 'number?':
+					// 	return GrammarSymbol.terminalNumberPred;
+					// case 'symbol?':
+					// 	return GrammarSymbol.terminalSymbolPred;
+					// case 'string?':
+					// 	return GrammarSymbol.terminalStringPred;
+					// case 'object?':
+					// 	return GrammarSymbol.terminalObjectPred;
+					// case 'random':
+					// 	return GrammarSymbol.terminalRandom;
+					// case 'tostring':
+					// 	return GrammarSymbol.terminalToString;
+					// case 'stringtosymbol':
+					// 	return GrammarSymbol.terminalStringToSymbol;
+					// case 'pow':
+					// 	return GrammarSymbol.terminalPow;
+					// case 'exp':
+					// 	return GrammarSymbol.terminalExp;
+					// case 'ln':
+					// 	return GrammarSymbol.terminalLn;
+					// case 'sin':
+					// 	return GrammarSymbol.terminalSin;
+					// case 'cos':
+					// 	return GrammarSymbol.terminalCos;
+					// case 'tan':
+					// 	return GrammarSymbol.terminalTan;
+					// case 'atan2':
+					// 	return GrammarSymbol.terminalAtan2;
+					// case 'floor':
+					// 	return GrammarSymbol.terminalFloor;
+					// case 'throw':
+					// 	return GrammarSymbol.terminalThrow;
+					// case 'string<':
+					// 	return GrammarSymbol.terminalStringLessThan;
+					// case 'strlen':
+					// 	return GrammarSymbol.terminalStrlen;
+					// case 'substr':
+					// 	return GrammarSymbol.terminalSubstr;
+					// case 'typename':
+					// 	return GrammarSymbol.terminalTypename;
+					// case 'hash':
+					// 	return GrammarSymbol.terminalHash;
+					// case 'ref=':
+					// 	return GrammarSymbol.terminalReferenceEquals;
+					// case 'strcat':
+					// 	return GrammarSymbol.terminalStrcat;
+					// case 'newarray':
+					// 	return GrammarSymbol.terminalNewArray;
+					// case 'arraylength':
+					// 	return GrammarSymbol.terminalArrayLength;
+					// case 'arrayget':
+					// 	return GrammarSymbol.terminalArrayGet;
+					// case 'arrayset':
+					// 	return GrammarSymbol.terminalArraySet;
+					// case 'array?':
+					// 	return GrammarSymbol.terminalArrayPred;
+					// case 'char?':
+					// 	return GrammarSymbol.terminalCharPred;
+					// case 'stridx':
+					// 	return GrammarSymbol.terminalStringIndex;
+					// case 'if': return GrammarSymbol.terminalID;
+					default:
+						return GrammarSymbol.terminalID;
+				}
+
+			default:
+				throw new GrammarException(
+					`APLGrammar.tokenToSymbol() : No grammar symbol matches token ${
+						token.tokenType
+					} ${LexicalState[token.tokenType]} (value '${token.tokenValue}')`,
+					token.line,
+					token.column
+				);
+		}
 	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
@@ -426,6 +567,8 @@ export class APLGrammar extends GrammarBase {
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,
 		token: IToken
-	): void {}
+	): void {
+		throw new Error('APLGrammar.pushTokenOntoSemanticStack() : Not yet implemented.');
+	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

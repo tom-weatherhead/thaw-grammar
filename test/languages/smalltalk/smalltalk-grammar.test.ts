@@ -4,8 +4,6 @@
 
 import { LanguageSelector } from 'thaw-interpreter-types';
 
-// import { createTokenizer } from 'thaw-lexical-analyzer';
-
 import { createParser /*, SyntaxException */ } from 'thaw-parser';
 
 import { createGrammar } from '../../..';
@@ -36,10 +34,6 @@ test('SmalltalkGrammar parser instance creation test', () => {
 
 test('SmalltalkGrammar recognize test', () => {
 	// Arrange
-	// const grammar = createGrammar(ls);
-	// // const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	// const tokenizer = createTokenizer(grammar.defaultLexicalAnalyzer, ls);
-	// const parser = createParser(grammar.defaultParser, grammar);
 	const { tokenizer, parser } = createInfrastructure(ls);
 
 	const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));

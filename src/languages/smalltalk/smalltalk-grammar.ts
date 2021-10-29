@@ -447,18 +447,6 @@ export class SmalltalkGrammar extends GrammarBase {
 		return 'Smalltalk';
 	}
 
-	// public override get defaultParser(): ParserSelector {
-	// 	return ParserSelector.LL1;
-	//
-	// 	// return ParserSelector.SLR1;
-	// }
-
-	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	return [this.defaultParser];
-	//
-	// 	// return [ParserSelector.LL1, ParserSelector.SLR1];
-	// }
-
 	// private ISmalltalkExpression CreateLetUsage(string letKeyword,
 	//     List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>> varExprList, ISmalltalkExpression expression)
 	// {
@@ -478,7 +466,7 @@ export class SmalltalkGrammar extends GrammarBase {
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
-		throw new Error('SmalltalkGrammar.executeSemanticAction() : Not yet imiplemented.');
+		throw new Error('SmalltalkGrammar.executeSemanticAction() : Not yet implemented.');
 
 		//         Name name;
 		//         Name functionName;
@@ -821,7 +809,7 @@ export class SmalltalkGrammar extends GrammarBase {
 		tokenAsSymbol: number,
 		token: IToken
 	): void {
-		throw new Error('SmalltalkGrammar.pushTokenOntoSemanticStack() : Not yet imiplemented.');
+		throw new Error('SmalltalkGrammar.pushTokenOntoSemanticStack() : Not yet implemented.');
 
 		// const value = token.tokenValue;
 		//
