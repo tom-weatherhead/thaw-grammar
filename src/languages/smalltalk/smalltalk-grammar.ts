@@ -1,13 +1,9 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/smalltalk-grammar.ts
 
-// import { Stack } from 'thaw-common-utilities.ts';
-
 import {
 	GrammarSymbol,
 	IToken,
-	// LanguageSelector,
 	LexicalState,
-	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -30,7 +26,6 @@ import {
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
-// import { createProduction }  from '../../common/production';
 
 export class SmalltalkGrammar extends GrammarBase {
 	// The Smalltalk grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -93,7 +88,6 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalSymbolPred);
 		this.terminals.push(GrammarSymbol.terminalStringPred);
 		this.terminals.push(GrammarSymbol.terminalObjectPred);
-		// this.terminals.push(GrammarSymbol.terminal);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
@@ -186,21 +180,18 @@ export class SmalltalkGrammar extends GrammarBase {
 			GrammarSymbol.terminalRightBracket
 		]);
 
-		// Productions.Add(new Production(Symbol.N_ArgList, new List<object>() { Symbol.T_LeftBracket, Symbol.N_VariableList, Symbol.T_RightBracket }, 5));
 		this.addProduction(GrammarSymbol.nonterminalArgList, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalVariableList,
 			GrammarSymbol.terminalRightBracket
 		]);
 
-		// Productions.Add(new Production(Symbol.N_VariableList, new List<object>() { Symbol.N_Variable, Symbol.N_VariableList, "#variableList" }, 6));
 		this.addProduction(GrammarSymbol.nonterminalVariableList, [
 			GrammarSymbol.nonterminalVariable,
 			GrammarSymbol.nonterminalVariableList,
 			'#variableList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_VariableList, new List<object>() { Symbol.Lambda, "#emptyVariableList" }, 7));
 		this.addProduction(GrammarSymbol.nonterminalVariableList, [
 			GrammarSymbol.Lambda,
 			'#emptyVariableList'
@@ -214,7 +205,6 @@ export class SmalltalkGrammar extends GrammarBase {
 			'#if'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_While, Symbol.N_Expression, Symbol.N_Expression, "#while" }, 12));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalWhile,
 			GrammarSymbol.nonterminalExpression,
@@ -222,7 +212,6 @@ export class SmalltalkGrammar extends GrammarBase {
 			'#while'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Set, Symbol.N_Variable, Symbol.N_Expression, "#set" }, 13));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalSet,
 			GrammarSymbol.nonterminalVariable,
@@ -230,7 +219,6 @@ export class SmalltalkGrammar extends GrammarBase {
 			'#set'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Begin, Symbol.N_Expression, Symbol.N_ExpressionList, "#begin" }, 14));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalBegin,
 			GrammarSymbol.nonterminalExpression,
@@ -238,51 +226,39 @@ export class SmalltalkGrammar extends GrammarBase {
 			'#begin'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.N_Optr, Symbol.N_ExpressionList, "#operatorUsage" }, 15));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.nonterminalOptr,
 			GrammarSymbol.nonterminalExpressionList,
 			'#operatorUsage'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_ExpressionList, new List<object>() { Symbol.N_Expression, Symbol.N_ExpressionList, "#expressionList" }, 16));
 		this.addProduction(GrammarSymbol.nonterminalExpressionList, [
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.nonterminalExpressionList,
 			'#expressionList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_ExpressionList, new List<object>() { Symbol.Lambda, "#emptyExpressionList" }, 17));
 		this.addProduction(GrammarSymbol.nonterminalExpressionList, [
 			GrammarSymbol.Lambda,
 			'#emptyExpressionList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_Optr, new List<object>() { Symbol.N_Function }, 18));
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalFunction]);
 
-		// Productions.Add(new Production(Symbol.N_Optr, new List<object>() { Symbol.N_ValueOp }, 19));
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalValueOp]);
 
-		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.T_IntegerLiteral }, 20));
 		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalIntegerLiteral]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Plus }, 21));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPlus]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Minus }, 22));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMinus]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Multiply }, 23));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMultiply]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Divide }, 24));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalDivide]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Equals }, 25));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalEquals]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_LessThan }, 26));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLessThan]);
 
 		// //Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_GreaterThan }, 27));
@@ -290,13 +266,10 @@ export class SmalltalkGrammar extends GrammarBase {
 		// 	GrammarSymbol.terminalGreaterThan
 		// ]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Print }, 28));
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPrint]);
 
-		// Productions.Add(new Production(Symbol.N_Function, new List<object>() { Symbol.T_ID }, 29));
 		this.addProduction(GrammarSymbol.nonterminalFunction, [GrammarSymbol.terminalID]);
 
-		// Productions.Add(new Production(Symbol.N_Variable, new List<object>() { Symbol.T_ID, "#variable" }, 30));
 		this.addProduction(GrammarSymbol.nonterminalVariable, [
 			GrammarSymbol.terminalID,
 			'#variable'
@@ -361,30 +334,25 @@ export class SmalltalkGrammar extends GrammarBase {
 			'#classDefinition'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_Class, new List<object>() { GrammarSymbol.terminalID }, 47));
 		this.addProduction(GrammarSymbol.nonterminalClass, [GrammarSymbol.terminalID]);
 
-		// Productions.Add(new Production(Symbol.N_InstVars, new List<object>() { GrammarSymbol.terminalLeftBracket, Symbol.N_VariableList, GrammarSymbol.terminalRightBracket }, 43));
 		this.addProduction(GrammarSymbol.nonterminalInstVars, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalVariableList,
 			GrammarSymbol.terminalRightBracket
 		]);
 
-		// Productions.Add(new Production(Symbol.N_MethodDefList, new List<object>() { Symbol.N_MethodDef, Symbol.N_MethodDefList, "#methodDefList" }, 41));
 		this.addProduction(GrammarSymbol.nonterminalMethodDefList, [
 			GrammarSymbol.nonterminalMethodDef,
 			GrammarSymbol.nonterminalMethodDefList,
 			'#methodDefList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_MethodDefList, new List<object>() { Symbol.Lambda, "#emptyMethodDefList" }, 42));
 		this.addProduction(GrammarSymbol.nonterminalMethodDefList, [
 			GrammarSymbol.Lambda,
 			'#emptyMethodDefList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_MethodDef, new List<object>() { Symbol.N_FunDef }, 44));
 		this.addProduction(GrammarSymbol.nonterminalMethodDef, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalFunDef,
@@ -660,10 +628,7 @@ export class SmalltalkGrammar extends GrammarBase {
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public tokenToSymbol(token: IToken): GrammarSymbol {
-		console.log('token:', token);
-
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
@@ -676,10 +641,8 @@ export class SmalltalkGrammar extends GrammarBase {
 			case LexicalState.tokenEqual:
 				return GrammarSymbol.terminalEquals;
 			case LexicalState.tokenIntLit:
-				console.log('tokenIntLit received.');
 				return GrammarSymbol.terminalIntegerLiteral;
 			case LexicalState.tokenPlus:
-				console.log('tokenPlus received.');
 				return GrammarSymbol.terminalPlus;
 			case LexicalState.tokenMult:
 				return GrammarSymbol.terminalMultiply;
@@ -693,6 +656,7 @@ export class SmalltalkGrammar extends GrammarBase {
 						return GrammarSymbol.terminalDefine;
 					case 'if':
 						return GrammarSymbol.terminalIf;
+					// case 'if': return GrammarSymbol.terminalID;
 					case 'while':
 						return GrammarSymbol.terminalWhile;
 					case 'set':
@@ -787,7 +751,6 @@ export class SmalltalkGrammar extends GrammarBase {
 						return GrammarSymbol.terminalCharPred;
 					case 'stridx':
 						return GrammarSymbol.terminalStringIndex;
-					// case 'if': return GrammarSymbol.terminalID;
 					default:
 						return GrammarSymbol.terminalID;
 				}
@@ -876,17 +839,3 @@ export class SmalltalkGrammar extends GrammarBase {
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }
-
-// Sample Smalltalk code (using Kamin's syntax) :
-
-// ; Random.txt - A pseudorandom number generator
-// ; Exercise 1 on page 344
-// (class Rand Object ()
-//     (seed)
-//     (define init () (begin (initRand self 1) self))
-//     (define initRand (n) (set seed n))
-//     (define nextRand () (set seed (mod (+ (* seed 9) 5) 1024)))
-// )
-// (set r (init (new Rand)))
-// (nextRand r)
-// (nextRand r)

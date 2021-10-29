@@ -32,6 +32,20 @@ test('SmalltalkGrammar parser instance creation test', () => {
 	expect(parser).toBeTruthy();
 });
 
+// Sample Smalltalk code (using Kamin's syntax) :
+
+// ; Random.txt - A pseudorandom number generator
+// ; Exercise 1 on page 344
+// (class Rand Object ()
+//     (seed)
+//     (define init () (begin (initRand self 1) self))
+//     (define initRand (n) (set seed n))
+//     (define nextRand () (set seed (mod (+ (* seed 9) 5) 1024)))
+// )
+// (set r (init (new Rand)))
+// (nextRand r)
+// (nextRand r)
+
 test('SmalltalkGrammar recognize test', () => {
 	// Arrange
 	const { tokenizer, parser } = createInfrastructure(ls);
