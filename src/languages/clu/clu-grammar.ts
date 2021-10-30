@@ -38,15 +38,10 @@ export class CluGrammar extends GrammarBase {
 		// this.terminals.push(GrammarSymbol.terminalLet);
 		// this.terminals.push(GrammarSymbol.terminalLetStar);
 
-		// this.terminals.push(GrammarSymbol.terminalDoubleSubscripting);
-		// this.terminals.push(GrammarSymbol.terminalFloatLiteral);
-		// this.terminals.push(GrammarSymbol.terminalRandom);
-		// this.terminals.push(GrammarSymbol.terminalPow);
-		// this.terminals.push(GrammarSymbol.terminalExp);
-		// this.terminals.push(GrammarSymbol.terminalLn);
-		// this.terminals.push(GrammarSymbol.terminalSin);
-		// this.terminals.push(GrammarSymbol.terminalCos);
-		// this.terminals.push(GrammarSymbol.terminalTan);
+		this.terminals.push(GrammarSymbol.terminalCluster);
+		this.terminals.push(GrammarSymbol.terminalRep);
+		this.terminals.push(GrammarSymbol.terminalDollar);
+		this.terminals.push(GrammarSymbol.terminalExport);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
@@ -68,6 +63,16 @@ export class CluGrammar extends GrammarBase {
 		// this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
 		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
 		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
+
+		this.nonTerminals.push(GrammarSymbol.nonterminalClusterDef);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalCluster);
+		this.nonTerminals.push(GrammarSymbol.nonterminalRep);
+		this.nonTerminals.push(GrammarSymbol.nonterminalFunDefList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalOnePartName);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalTwoPartName);
+		this.nonTerminals.push(GrammarSymbol.nonterminalOnePartNameTail);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExportList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalOnePartNameList);
 
 		// This initial production needed to be added: Start -> Input EOF
 		this.addProduction(GrammarSymbol.nonterminalStart, [
@@ -194,7 +199,7 @@ export class CluGrammar extends GrammarBase {
 			'#emptyExpressionList'
 		]);
 
-		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalFunction]);
+		// this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalFunction]);
 
 		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalValueOp]);
 
@@ -260,17 +265,11 @@ export class CluGrammar extends GrammarBase {
 
 		// CLU Productions
 
-		// Productions.RemoveAt(18 - 1);   // Remove this production: Optr -> Function
-		//
-		// Terminals.UnionWith(new HashSet<Symbol>() {
-		// 	Symbol.T_Cluster, Symbol.T_Rep, Symbol.T_Dollar, Symbol.T_Export });
-		//
-		// NonTerminals.UnionWith(new HashSet<Symbol>() {
-		// 	Symbol.N_ClusterDef, /* Symbol.N_Cluster, */ Symbol.N_Rep,
-		// 	Symbol.N_FunDefList, Symbol.N_OnePartName, Symbol.N_TwoPartName,
-		// 	Symbol.N_ExportList, Symbol.N_OnePartNameList });
-		//
 		// Productions.Add(new Production(Symbol.N_Input, new List<object>() { Symbol.N_ClusterDef }, 39));
+		this.addProduction(GrammarSymbol.nonterminalBracketedInput, [
+			GrammarSymbol.nonterminalClusterDef
+		]);
+
 		// Productions.Add(new Production(Symbol.N_ClusterDef, new List<object>() {
 		// 	Symbol.T_LeftBracket,
 		// 	Symbol.T_Cluster,
@@ -280,43 +279,135 @@ export class CluGrammar extends GrammarBase {
 		// 	Symbol.N_FunDef,
 		// 	Symbol.N_FunDefList,
 		// 	Symbol.T_RightBracket, "#clusterDefinition" }, 40));
+		this.addProduction(GrammarSymbol.nonterminalClusterDef, [
+			GrammarSymbol.terminalCluster,
+			GrammarSymbol.terminalID,
+			GrammarSymbol.nonterminalExportList,
+			GrammarSymbol.nonterminalRep,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalFunDef,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalFunDefList,
+			'#clusterDefinition'
+		]);
+
 		// Productions.Add(new Production(Symbol.N_Rep, new List<object>() {
 		// 	Symbol.T_LeftBracket,
 		// 	Symbol.T_Rep,
 		// 	Symbol.N_Variable,
 		// 	Symbol.N_VariableList,
 		// 	Symbol.T_RightBracket, "#variableList" }, 41));
+		this.addProduction(GrammarSymbol.nonterminalRep, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.terminalRep,
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalVariableList,
+			GrammarSymbol.terminalRightBracket,
+			'#variableList'
+		]);
+
 		// Productions.Add(new Production(Symbol.N_FunDefList, new List<object>() { Symbol.N_FunDef, Symbol.N_FunDefList, "#funDefList" }, 42));
+		this.addProduction(GrammarSymbol.nonterminalFunDefList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalFunDef,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalFunDefList,
+			'#funDefList'
+		]);
+
 		// Productions.Add(new Production(Symbol.N_FunDefList, new List<object>() { Symbol.Lambda, "#emptyFunDefList" }, 43));
+		this.addProduction(GrammarSymbol.nonterminalFunDefList, [
+			GrammarSymbol.Lambda,
+			'#emptyFunDefList'
+		]);
+
+		/*
 		// Productions.Add(new Production(Symbol.N_Optr, new List<object>() { Symbol.N_OnePartName }, 44));
+		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalOnePartName]);
+
 		// Productions.Add(new Production(Symbol.N_Optr, new List<object>() { Symbol.N_TwoPartName }, 45));
+		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.nonterminalTwoPartName]);
+
+		// 2021-10-30 : Grammar error:
+		// LL(1) ParserException at line 0 column 0: Error in FillParseTable() : Table entry not unique;
+		// p.lhs = 149 nonterminalOptr; t = 15 terminalID;
+		// p1 = 39: nonterminalOptr -> nonterminalOnePartName;
+		// p2 = 40: nonterminalOptr -> nonterminalTwoPartName
+
 		// Productions.Add(new Production(Symbol.N_OnePartName, new List<object>() { Symbol.T_ID }, 46));
+		this.addProduction(GrammarSymbol.nonterminalOnePartName, [GrammarSymbol.terminalID]);
+
 		// Productions.Add(new Production(Symbol.N_TwoPartName, new List<object>() {
 		// 	Symbol.T_ID, // This T_ID is really a Symbol.N_Cluster
 		// 	Symbol.T_Dollar,
 		// 	Symbol.T_ID, "#makeTwoPartName" }, 47));
+		this.addProduction(GrammarSymbol.nonterminalTwoPartName, [
+			GrammarSymbol.terminalID,
+			GrammarSymbol.terminalDollar,
+			GrammarSymbol.terminalID, '#makeTwoPartName'
+		]);
+		 */
+
+		this.addProduction(GrammarSymbol.nonterminalOptr, [
+			GrammarSymbol.nonterminalOnePartName,
+			GrammarSymbol.nonterminalOnePartNameTail
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalOnePartName, [GrammarSymbol.terminalID]);
+
+		this.addProduction(GrammarSymbol.nonterminalOnePartNameTail, [GrammarSymbol.Lambda]);
+
+		this.addProduction(GrammarSymbol.nonterminalOnePartNameTail, [
+			GrammarSymbol.terminalDollar,
+			GrammarSymbol.terminalID,
+			'#makeTwoPartName'
+		]);
+
 		// // SLR(1): There was a reduce-reduce conflict between N_OnePartName -> T_ID and N_Cluster -> T_ID.
 		// //Productions.Add(new Production(Symbol.N_Cluster, new List<object>() { Symbol.T_ID }, 48));
+
 		// Productions.Add(new Production(Symbol.N_ExportList, new List<object>() {
 		// 	Symbol.T_LeftBracket,
 		// 	Symbol.T_Export,
 		// 	Symbol.N_OnePartName,
 		// 	Symbol.N_OnePartNameList,
 		// 	Symbol.T_RightBracket, "#exportList" }, 49));
+		this.addProduction(GrammarSymbol.nonterminalExportList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.terminalExport,
+			GrammarSymbol.nonterminalOnePartName,
+			GrammarSymbol.nonterminalOnePartNameList,
+			GrammarSymbol.terminalRightBracket,
+			'#exportList'
+		]);
+
 		// Productions.Add(new Production(Symbol.N_OnePartNameList, new List<object>() { Symbol.N_OnePartName, Symbol.N_OnePartNameList, "#exportList" }, 50));
+		this.addProduction(GrammarSymbol.nonterminalOnePartNameList, [
+			GrammarSymbol.nonterminalOnePartName,
+			GrammarSymbol.nonterminalOnePartNameList,
+			'#exportList'
+		]);
+
 		// Productions.Add(new Production(Symbol.N_OnePartNameList, new List<object>() { Symbol.Lambda, "#emptyExportList" }, 51));
+		this.addProduction(GrammarSymbol.nonterminalOnePartNameList, [
+			GrammarSymbol.Lambda,
+			'#emptyExportList'
+		]);
 	}
 
 	public get languageName(): string {
-		return 'Clu';
+		return 'CLU';
 	}
+
+	// public override get defaultParser(): ParserSelector {
+	// 	return ParserSelector.SLR1;
+	// }
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		throw new Error('CLUGrammar.executeSemanticAction() : Not yet implemented.');
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
@@ -379,6 +470,13 @@ export class CluGrammar extends GrammarBase {
 						return GrammarSymbol.terminalLet;
 					case 'let*':
 						return GrammarSymbol.terminalLetStar;
+					// CLU-specific:
+					case 'cluster':
+						return GrammarSymbol.terminalCluster;
+					case 'export':
+						return GrammarSymbol.terminalExport;
+					case 'rep':
+						return GrammarSymbol.terminalRep;
 					default:
 						return GrammarSymbol.terminalID;
 				}
