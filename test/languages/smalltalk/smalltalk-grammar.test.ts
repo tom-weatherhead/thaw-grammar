@@ -4,17 +4,17 @@
 
 import { LanguageSelector } from 'thaw-interpreter-types';
 
-import { createParser /*, SyntaxException */ } from 'thaw-parser';
+// import { createParser /*, SyntaxException */ } from 'thaw-parser';
+//
+// import { createGrammar } from '../../..';
 
-import { createGrammar } from '../../..';
-
-import { createInfrastructure } from '../../create-infrastructure';
+import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
 const ls = LanguageSelector.Smalltalk;
 
 test('SmalltalkGrammar instance creation test', () => {
 	// Arrange
-	const grammar = createGrammar(ls);
+	const { grammar } = createInfrastructure(ls);
 
 	// Act
 	// Assert
@@ -23,10 +23,8 @@ test('SmalltalkGrammar instance creation test', () => {
 
 test('SmalltalkGrammar parser instance creation test', () => {
 	// Arrange
-	const grammar = createGrammar(ls);
-
 	// Act
-	const parser = createParser(grammar.defaultParser, grammar);
+	const { parser } = createInfrastructure(ls);
 
 	// Assert
 	expect(parser).toBeTruthy();
@@ -48,9 +46,10 @@ test('SmalltalkGrammar parser instance creation test', () => {
 
 test('SmalltalkGrammar recognize test', () => {
 	// Arrange
-	const { tokenizer, parser } = createInfrastructure(ls);
-
-	const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	// const { tokenizer, parser } = createInfrastructure(ls);
+	//
+	// const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	const f = createFnRecognizer(ls);
 
 	const str1 = [
 		'(class Rand Object ()',
