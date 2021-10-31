@@ -623,7 +623,7 @@ export class SmalltalkGrammar extends GrammarBase {
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 
-	public tokenToSymbol(token: IToken): GrammarSymbol {
+	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {

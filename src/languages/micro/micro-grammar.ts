@@ -35,7 +35,7 @@ export class MicroGrammar extends GrammarBase {
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public tokenToSymbol(token: IToken): GrammarSymbol {
+	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		return GrammarSymbol.UndefinedSymbol;
 	}
 

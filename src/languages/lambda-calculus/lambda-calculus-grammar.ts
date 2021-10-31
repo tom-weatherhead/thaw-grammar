@@ -128,7 +128,7 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		}
 	}
 
-	public tokenToSymbol(token: IToken): GrammarSymbol {
+	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
 				return GrammarSymbol.terminalEOF;

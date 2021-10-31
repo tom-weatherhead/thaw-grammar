@@ -653,7 +653,7 @@ export class PrologGrammar extends GrammarBase {
 		}
 	}
 
-	public tokenToSymbol(token: IToken): GrammarSymbol {
+	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {

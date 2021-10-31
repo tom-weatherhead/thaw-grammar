@@ -408,7 +408,7 @@ export class CluGrammar extends GrammarBase {
 		throw new Error('CLUGrammar.executeSemanticAction() : Not yet implemented.');
 	}
 
-	public tokenToSymbol(token: IToken): GrammarSymbol {
+	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
