@@ -2,4 +2,8 @@
 
 export interface ISmalltalkValue {
 	isInteger: boolean;
+
+	toInteger(): number | undefined;
+	toFloat(): number | undefined;
+	toStringX(): string | undefined;
 }

@@ -1,5 +1,23 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/smalltalk-grammar.ts
 
+// 2021-10-31 : Note: For each language with value type IDOMValue, we can define this:
+
+// interface IDOMValueConverter {
+// 	toInteger(value: IDOMValue): number | undefined;
+// 	toFloat(value: IDOMValue): number | undefined;
+// 	toStringX(value: IDOMValue): string | undefined; // 'toStringX' so we don't conflict with 'toString'
+//
+// 	fromInteger(value: number): IDOMValue;
+// 	fromFloat(value: number): IDOMValue;
+// 	fromString(value: string): IDOMValue;
+// }
+
+// Then isInteger(value: IDOMValue) can be implemented as: typeof toInteger(value) !== 'undefined'
+
+// ... and fromInteger(value: number) can be implemented as: new SmalltalkIntegerValue(value)
+
+// ****
+
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
@@ -858,6 +876,12 @@ export class SmalltalkGrammar extends GrammarBase {
 			// case GrammarSymbol.terminalStringLiteral:
 			//     semanticStack.push(new SmalltalkStringValue((string)value));
 			//     break;
+
+			case GrammarSymbol.terminalLeftBracket:
+			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalEOF:
+				// For these terminals, push nothing onto the semantic stack.
+				break;
 
 			default:
 				// break;

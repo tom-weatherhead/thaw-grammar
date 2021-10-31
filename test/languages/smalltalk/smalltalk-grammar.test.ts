@@ -6,9 +6,13 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 // import { createParser /*, SyntaxException */ } from 'thaw-parser';
 //
-// import { createGrammar } from '../../..';
+import { EnvironmentFrame, ISmalltalkExpression, ISmalltalkValue, SmalltalkGlobalInfo } from '../../..';
 
-import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
+import {
+	createFnParser,
+	createFnRecognizer,
+	createInfrastructure
+} from '../../create-infrastructure';
 
 const ls = LanguageSelector.Smalltalk;
 
@@ -72,4 +76,21 @@ test('SmalltalkGrammar recognize test', () => {
 	f('(+ 2 3)');
 
 	// expect(() => f('')).toThrow(SyntaxException);
+});
+
+test('SmalltalkGrammar addition test', () => {
+	const f = createFnParser<ISmalltalkExpression>(ls);
+	const a = 2;
+	const b = 3;
+
+	const localEnvironment = new EnvironmentFrame<ISmalltalkValue>();
+	const globalInfo = new SmalltalkGlobalInfo();
+
+	const actualSmalltalkExpression = f(`(+ ${a} ${b})`);
+	const actualSmalltalkValue = actualSmalltalkExpression.evaluate(localEnvironment, globalInfo);
+
+	console.log('actualSmalltalkValue is', actualSmalltalkValue);
+
+	expect(actualSmalltalkValue.isInteger).toBe(true);
+	expect(actualSmalltalkValue.value).toBe(a + b);
 });

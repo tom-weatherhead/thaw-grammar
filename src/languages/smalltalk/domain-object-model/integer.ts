@@ -46,6 +46,18 @@ export class SmalltalkIntegerValue implements ISmalltalkExpression, ISmalltalkVa
 		return true;
 	}
 
+	public toInteger(): number | undefined {
+		return this.value;
+	}
+
+	public toFloat(): number | undefined {
+		return this.value;
+	}
+
+	public toStringX(): string | undefined {
+		return undefined;
+	}
+
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		localEnvironment: EnvironmentFrame<ISmalltalkValue>,
