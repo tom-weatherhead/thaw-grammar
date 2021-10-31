@@ -1,36 +1,39 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/integer.ts
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-import { IExpression } from '../../../common/domain-object-model/iexpression';
+// import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
-export class SmalltalkIntegerValue implements IExpression<number> {
-	public readonly value: number;
-	public readonly line: number;
-	public readonly column: number;
+import { ISmalltalkExpression } from './interfaces/iexpression';
+import { ISmalltalkValue } from './interfaces/ivalue';
 
-	constructor(value: unknown, line = 0, column = 0) {
+export class SmalltalkIntegerValue implements ISmalltalkExpression, ISmalltalkValue {
+	public readonly value: number;
+	// public readonly line: number;
+	// public readonly column: number;
+
+	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
 		if (typeof value !== 'number') {
 			throw new ArgumentException(
-				`IntegerLiteral constructor: typeof value is not 'number'; it is '${typeof value}'.`,
+				`SmalltalkIntegerValue constructor: typeof value is not 'number'; it is '${typeof value}'.`,
 				'value'
 			);
 		} else if (Number.isNaN(value)) {
 			throw new ArgumentException(
-				'IntegerLiteral constructor: value is not a number (NaN).',
+				'SmalltalkIntegerValue constructor: value is not a number (NaN).',
 				'value'
 			);
 		} else if (Math.floor(value) !== value) {
 			throw new ArgumentException(
-				'IntegerLiteral constructor: value is not an integer.',
+				'SmalltalkIntegerValue constructor: value is not an integer.',
 				'value'
 			);
 		}
 
 		this.value = value as number;
-		this.line = line;
-		this.column = column;
+		// this.line = line;
+		// this.column = column;
 	}
 
 	public toString(): string {
@@ -39,12 +42,16 @@ export class SmalltalkIntegerValue implements IExpression<number> {
 		return `${this.value}`;
 	}
 
+	public get isInteger(): boolean {
+		return true;
+	}
+
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
-		localEnvironment: EnvironmentFrame<number>,
-		globalInfo: IGlobalInfo<number>
-	): number {
-		return this.value;
+		localEnvironment: EnvironmentFrame<ISmalltalkValue>,
+		globalInfo: IGlobalInfo<ISmalltalkValue>
+	): ISmalltalkValue {
+		return this;
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

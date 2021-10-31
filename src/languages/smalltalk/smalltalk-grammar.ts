@@ -2,7 +2,9 @@
 
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
-// import { ExpressionList }  from '../../common/domain-object-model/expression-list';
+import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
+
+import { ExpressionList } from '../../common/domain-object-model/expression-list';
 // import { IExpression }  from '../../common/domain-object-model/iexpression';
 import { Name } from '../../common/domain-object-model/name';
 // import { Variable }  from '../../common/domain-object-model/variable';
@@ -20,9 +22,12 @@ import { Name } from '../../common/domain-object-model/name';
 
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 
-import { SmalltalkIntegerValue } from './domain-object-model/integer';
+import { ISmalltalkExpression } from './domain-object-model/interfaces/iexpression';
+import { ISmalltalkValue } from './domain-object-model/interfaces/ivalue';
 
-import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
+import { SmalltalkIntegerValue } from './domain-object-model/integer';
+import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
+import { SmalltalkVariable } from './domain-object-model/variable';
 
 export class SmalltalkGrammar extends GrammarBase {
 	// The Smalltalk grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -431,197 +436,202 @@ export class SmalltalkGrammar extends GrammarBase {
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
-		throw new Error('SmalltalkGrammar.executeSemanticAction() : Not yet implemented.');
+		// throw new Error('SmalltalkGrammar.executeSemanticAction() : Not yet implemented.');
 
-		//         Name name;
-		//         Name functionName;
-		//         Name superClassName;
-		//         SmalltalkVariable variable;
-		//         List<SmalltalkVariable> variableList;
-		//         List<SmalltalkVariable> classVariableList;
-		//         ISmalltalkExpression expression;
-		//         ISmalltalkExpression expression2;
-		//         List<ISmalltalkExpression> expressionList;
-		//         SmalltalkFunctionDefinition funDef;
-		//         List<SmalltalkFunctionDefinition> funDefList;
-		//         List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>> exprPairList;
-		//         List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>> varExprList;
-		//         List<ISmalltalkValue> literalList;
-		//
-		//         switch (action)
-		//         {
-		//             case '#functionDefinition':
-		//                 var body = (ISmalltalkExpression)semanticStack.Pop();
-		//                 var argList = (List<SmalltalkVariable>)semanticStack.Pop();
-		//
-		//                 functionName = (Name)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkFunctionDefinition(functionName.Value, argList, body));
-		//                 break;
-		//
-		//             case '#variableList':
-		//                 variableList = (List<SmalltalkVariable>)semanticStack.Pop();
-		//                 variable = (SmalltalkVariable)semanticStack.Pop();
-		//                 variableList.Insert(0, variable);
-		//                 semanticStack.Push(variableList);
-		//                 break;
-		//
-		//             case '#emptyVariableList':
-		//                 semanticStack.Push(new List<SmalltalkVariable>());
-		//                 break;
-		//
-		// #if DEAD_CODE
-		//             case '#if':
-		//                 var expression3 = (ISmalltalkExpression)semanticStack.Pop();
-		//
-		//                 expression2 = (ISmalltalkExpression)semanticStack.Pop();
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkIfUsage(expression, expression2, expression3));
-		//                 break;
-		// #endif
-		//
-		//             case '#while':
-		//                 expression2 = (ISmalltalkExpression)semanticStack.Pop();
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkWhileUsage(expression, expression2));
-		//                 break;
-		//
-		//             case '#set':
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 variable = (SmalltalkVariable)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkSetUsage(variable, expression));
-		//                 break;
-		//
-		//             case '#begin':
-		//                 expressionList = (List<ISmalltalkExpression>)semanticStack.Pop();
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkBeginUsage(expression, expressionList));
-		//                 break;
-		//
-		//             case '#operatorUsage':
-		//                 expressionList = (List<ISmalltalkExpression>)semanticStack.Pop();
-		//                 name = (Name)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkOperatorUsage(name /*.Value */, expressionList));
-		//                 break;
-		//
-		//             case '#expressionList':
-		//                 expressionList = (List<ISmalltalkExpression>)semanticStack.Pop();
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 expressionList.Insert(0, expression);
-		//                 semanticStack.Push(expressionList);
-		//                 break;
-		//
-		//             case '#emptyExpressionList':
-		//                 semanticStack.Push(new List<ISmalltalkExpression>());
-		//                 break;
-		//
-		//             case '#variable':
-		//                 name = (Name)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkVariable(name.Value));
-		//                 break;
-		//
-		//             case '#methodDefList':
-		//                 funDefList = (List<SmalltalkFunctionDefinition>)semanticStack.Pop();
-		//                 funDef = (SmalltalkFunctionDefinition)semanticStack.Pop();
-		//                 funDefList.Insert(0, funDef);
-		//                 semanticStack.Push(funDefList);
-		//                 break;
-		//
-		//             case '#emptyMethodDefList':
-		//                 semanticStack.Push(new List<SmalltalkFunctionDefinition>());
-		//                 break;
-		//
-		//             case '#classDefinition':
-		//                 funDefList = (List<SmalltalkFunctionDefinition>)semanticStack.Pop();
-		//                 funDef = (SmalltalkFunctionDefinition)semanticStack.Pop();
-		//                 funDefList.Insert(0, funDef);
-		//                 variableList = (List<SmalltalkVariable>)semanticStack.Pop();
-		//                 classVariableList = (List<SmalltalkVariable>)semanticStack.Pop();
-		//                 superClassName = (Name)semanticStack.Pop();
-		//                 name = (Name)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkClass(name, superClassName.Value, classVariableList, variableList, funDefList));
-		//                 break;
-		//
-		//             case '#symbol':
-		//                 name = (Name)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkSymbolValue(name.Value));
-		//                 break;
-		//
-		//             case '#condUsage':
-		//                 exprPairList = (List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>)semanticStack.Pop();
-		//                 expression2 = (ISmalltalkExpression)semanticStack.Pop();
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 exprPairList.Insert(0, new KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>(expression, expression2));
-		//                 semanticStack.Push(new SmalltalkCondUsage(exprPairList));
-		//                 break;
-		//
-		//             case '#exprPairList':
-		//                 exprPairList = (List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>)semanticStack.Pop();
-		//                 expression2 = (ISmalltalkExpression)semanticStack.Pop();
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 exprPairList.Insert(0, new KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>(expression, expression2));
-		//                 semanticStack.Push(exprPairList);
-		//                 break;
-		//
-		//             case '#emptyExprPairList':
-		//                 semanticStack.Push(new List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>());
-		//                 break;
-		//
-		//             case '#letUsage':
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 varExprList = (List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>)semanticStack.Pop();
-		//
-		//                 var letName = (Name)semanticStack.Pop();
-		//
-		//                 semanticStack.Push(CreateLetUsage(letName.Value, varExprList, expression));
-		//                 break;
-		//
-		//             case '#varExprList':
-		//                 varExprList = (List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>)semanticStack.Pop();
-		//                 expression = (ISmalltalkExpression)semanticStack.Pop();
-		//                 variable = (SmalltalkVariable)semanticStack.Pop();
-		//                 varExprList.Insert(0, new KeyValuePair<SmalltalkVariable, ISmalltalkExpression>(variable, expression));
-		//                 semanticStack.Push(varExprList);
-		//                 break;
-		//
-		//             case '#emptyVarExprList':
-		//                 semanticStack.Push(new List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>());
-		//                 break;
-		//
-		//             case '#emptyLiteralList':
-		//                 semanticStack.Push(new List<ISmalltalkValue>());
-		//                 break;
-		//
-		//             case '#literalList':
-		//                 literalList = (List<ISmalltalkValue>)semanticStack.Pop();
-		//
-		//                 var literal = (ISmalltalkValue)semanticStack.Pop();
-		//
-		//                 literalList.Insert(0, literal);
-		//                 semanticStack.Push(literalList);
-		//                 break;
-		//
-		//             case '#arrayLiteral':
-		//                 literalList = (List<ISmalltalkValue>)semanticStack.Pop();
-		//
-		//                 var array = new SmalltalkArrayValue(literalList.Count);
-		//
-		//                 for (var i = 0; i < literalList.Count; ++i)
-		//                 {
-		//                     array.Value[i] = literalList[i];
-		//                 }
-		//
-		//                 semanticStack.Push(array);
-		//                 break;
-		//
-		//             case '#characterLiteral':
-		//                 name = (Name)semanticStack.Pop();
-		//                 semanticStack.Push(new SmalltalkCharacterValue(name.Value[0]));
-		//                 break;
-		//
-		//             default:
-		//                 base.ExecuteSemanticAction(semanticStack, action);
-		//                 break;
-		//         }
+		let name: Name;
+		// let functionName: Name;
+		// let superClassName: Name;
+		// let variable: SmalltalkVariable;
+		// let variableList: SmalltalkVariable[];
+		// let classVariableList: SmalltalkVariable[];
+		let expression: ISmalltalkExpression;
+		// let expression2: ISmalltalkExpression;
+		// let expressionList: ISmalltalkExpression[];
+		let expressionList: ExpressionList<ISmalltalkValue>;
+		// SmalltalkFunctionDefinition funDef;
+		// List<SmalltalkFunctionDefinition> funDefList;
+		// List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>> exprPairList;
+		// List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>> varExprList;
+		// let literalList: ISmalltalkValue[];
+
+		switch (action) {
+			// case '#functionDefinition':
+			//     var body = (ISmalltalkExpression)semanticStack.Pop();
+			//     var argList = (List<SmalltalkVariable>)semanticStack.Pop();
+			//
+			//     functionName = (Name)semanticStack.Pop();
+			//     semanticStack.Push(new SmalltalkFunctionDefinition(functionName.Value, argList, body));
+			//     break;
+			//
+			// case '#variableList':
+			//     variableList = (List<SmalltalkVariable>)semanticStack.Pop();
+			//     variable = (SmalltalkVariable)semanticStack.Pop();
+			//     variableList.Insert(0, variable);
+			//     semanticStack.Push(variableList);
+			//     break;
+			//
+			// case '#emptyVariableList':
+			//     semanticStack.Push(new List<SmalltalkVariable>());
+			//     break;
+			//
+			// 	// #if DEAD_CODE
+			// case '#if':
+			//     var expression3 = (ISmalltalkExpression)semanticStack.Pop();
+			//
+			//     expression2 = (ISmalltalkExpression)semanticStack.Pop();
+			//     expression = (ISmalltalkExpression)semanticStack.Pop();
+			//     semanticStack.Push(new SmalltalkIfUsage(expression, expression2, expression3));
+			//     break;
+			// 	// #endif
+			//
+			// case '#while':
+			//     expression2 = (ISmalltalkExpression)semanticStack.Pop();
+			//     expression = (ISmalltalkExpression)semanticStack.Pop();
+			//     semanticStack.Push(new SmalltalkWhileUsage(expression, expression2));
+			//     break;
+			//
+			// case '#set':
+			//     expression = (ISmalltalkExpression)semanticStack.Pop();
+			//     variable = (SmalltalkVariable)semanticStack.Pop();
+			//     semanticStack.Push(new SmalltalkSetUsage(variable, expression));
+			//     break;
+			//
+			// case '#begin':
+			//     expressionList = (List<ISmalltalkExpression>)semanticStack.Pop();
+			//     expression = (ISmalltalkExpression)semanticStack.Pop();
+			//     semanticStack.Push(new SmalltalkBeginUsage(expression, expressionList));
+			//     break;
+
+			case '#operatorUsage':
+				// expressionList = semanticStack.pop() as ISmalltalkExpression[];
+				expressionList = semanticStack.pop() as ExpressionList<ISmalltalkValue>;
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new SmalltalkOperatorUsage(name, expressionList));
+				break;
+
+			case '#expressionList':
+				// expressionList = semanticStack.pop() as ISmalltalkExpression[];
+				expressionList = semanticStack.pop() as ExpressionList<ISmalltalkValue>;
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				// expressionList.unshift(expression);
+				expressionList.value.unshift(expression);
+				semanticStack.push(expressionList);
+				break;
+
+			case '#emptyExpressionList':
+				// semanticStack.push([] as ISmalltalkExpression[]);
+				semanticStack.push(new ExpressionList<ISmalltalkValue>());
+				break;
+
+			case '#variable':
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new SmalltalkVariable(name.value, name.line, name.column));
+				break;
+
+			// case '#methodDefList':
+			//     funDefList = (List<SmalltalkFunctionDefinition>)semanticStack.Pop();
+			//     funDef = (SmalltalkFunctionDefinition)semanticStack.Pop();
+			//     funDefList.Insert(0, funDef);
+			//     semanticStack.Push(funDefList);
+			//     break;
+			//
+			// case '#emptyMethodDefList':
+			//     semanticStack.Push(new List<SmalltalkFunctionDefinition>());
+			//     break;
+			//
+			// case '#classDefinition':
+			//     funDefList = (List<SmalltalkFunctionDefinition>)semanticStack.Pop();
+			//     funDef = (SmalltalkFunctionDefinition)semanticStack.Pop();
+			//     funDefList.Insert(0, funDef);
+			//     variableList = (List<SmalltalkVariable>)semanticStack.Pop();
+			//     classVariableList = (List<SmalltalkVariable>)semanticStack.Pop();
+			//     superClassName = (Name)semanticStack.Pop();
+			//     name = (Name)semanticStack.Pop();
+			//     semanticStack.Push(new SmalltalkClass(name, superClassName.Value, classVariableList, variableList, funDefList));
+			//     break;
+			//
+			// case '#symbol':
+			//     name = (Name)semanticStack.Pop();
+			//     semanticStack.Push(new SmalltalkSymbolValue(name.Value));
+			//     break;
+			//
+			// case '#condUsage':
+			//     exprPairList = (List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>)semanticStack.Pop();
+			//     expression2 = (ISmalltalkExpression)semanticStack.Pop();
+			//     expression = (ISmalltalkExpression)semanticStack.Pop();
+			//     exprPairList.Insert(0, new KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>(expression, expression2));
+			//     semanticStack.Push(new SmalltalkCondUsage(exprPairList));
+			//     break;
+			//
+			// case '#exprPairList':
+			//     exprPairList = (List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>)semanticStack.Pop();
+			//     expression2 = (ISmalltalkExpression)semanticStack.Pop();
+			//     expression = (ISmalltalkExpression)semanticStack.Pop();
+			//     exprPairList.Insert(0, new KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>(expression, expression2));
+			//     semanticStack.Push(exprPairList);
+			//     break;
+			//
+			// case '#emptyExprPairList':
+			//     semanticStack.Push(new List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>());
+			//     break;
+			//
+			// case '#letUsage':
+			//     expression = (ISmalltalkExpression)semanticStack.Pop();
+			//     varExprList = (List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>)semanticStack.Pop();
+			//
+			//     var letName = (Name)semanticStack.Pop();
+			//
+			//     semanticStack.Push(CreateLetUsage(letName.Value, varExprList, expression));
+			//     break;
+			//
+			// case '#varExprList':
+			//     varExprList = (List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>)semanticStack.Pop();
+			//     expression = (ISmalltalkExpression)semanticStack.Pop();
+			//     variable = (SmalltalkVariable)semanticStack.Pop();
+			//     varExprList.Insert(0, new KeyValuePair<SmalltalkVariable, ISmalltalkExpression>(variable, expression));
+			//     semanticStack.Push(varExprList);
+			//     break;
+			//
+			// case '#emptyVarExprList':
+			//     semanticStack.Push(new List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>());
+			//     break;
+			//
+			// case '#emptyLiteralList':
+			//     semanticStack.Push(new List<ISmalltalkValue>());
+			//     break;
+			//
+			// case '#literalList':
+			//     literalList = (List<ISmalltalkValue>)semanticStack.Pop();
+			//
+			//     var literal = (ISmalltalkValue)semanticStack.Pop();
+			//
+			//     literalList.Insert(0, literal);
+			//     semanticStack.Push(literalList);
+			//     break;
+			//
+			// case '#arrayLiteral':
+			//     literalList = (List<ISmalltalkValue>)semanticStack.Pop();
+			//
+			//     var array = new SmalltalkArrayValue(literalList.Count);
+			//
+			//     for (var i = 0; i < literalList.Count; ++i)
+			//     {
+			//         array.Value[i] = literalList[i];
+			//     }
+			//
+			//     semanticStack.Push(array);
+			//     break;
+			//
+			// case '#characterLiteral':
+			//     name = (Name)semanticStack.Pop();
+			//     semanticStack.Push(new SmalltalkCharacterValue(name.Value[0]));
+			//     break;
+
+			default:
+				// base.ExecuteSemanticAction(semanticStack, action);
+				// break;
+				throw new GrammarException(`Smalltalk: Unrecognized semantic action: ${action}`);
+		}
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 
