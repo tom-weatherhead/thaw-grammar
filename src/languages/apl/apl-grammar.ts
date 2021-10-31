@@ -394,38 +394,18 @@ export class APLGrammar extends GrammarBase {
 			// 	return GrammarSymbol.terminalGreaterThan;
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
-					case 'define':
-						return GrammarSymbol.terminalDefine;
-					case 'if':
-						return GrammarSymbol.terminalIf;
-					case 'while':
-						return GrammarSymbol.terminalWhile;
-					case 'set':
-						return GrammarSymbol.terminalSet;
-					case 'begin':
-						return GrammarSymbol.terminalBegin;
-					case 'print':
-						return GrammarSymbol.terminalPrint;
-					// case '+':
-					// 	return GrammarSymbol.terminalPlus;
-					// case '-':
-					// 	return GrammarSymbol.terminalMinus;
-					// case '*':
-					// 	return GrammarSymbol.terminalMultiply;
-					// case '/':
-					// 	return GrammarSymbol.terminalDivide;
-					// case '=':
-					// 	return GrammarSymbol.terminalEquals;
-					// case '<':
-					// 	return GrammarSymbol.terminalLessThan;
-
-					// case 'cond':
-					// 	return GrammarSymbol.terminalCond;
-					// case 'let':
-					// 	return GrammarSymbol.terminalLet;
-					// case 'let*':
-					// 	return GrammarSymbol.terminalLetStar;
-
+					// case 'define':
+					// 	return GrammarSymbol.terminalDefine;
+					// case 'if':
+					// 	return GrammarSymbol.terminalIf;
+					// case 'while':
+					// 	return GrammarSymbol.terminalWhile;
+					// case 'set':
+					// 	return GrammarSymbol.terminalSet;
+					// case 'begin':
+					// 	return GrammarSymbol.terminalBegin;
+					// case 'print':
+					// 	return GrammarSymbol.terminalPrint;
 					case 'max':
 						return GrammarSymbol.terminalMax;
 					case 'or':
@@ -468,23 +448,14 @@ export class APLGrammar extends GrammarBase {
 						return GrammarSymbol.terminalAssign;
 					case '[;]':
 						return GrammarSymbol.terminalDoubleSubscripting;
-
 					default:
 						break;
-					// 	return GrammarSymbol.terminalID;
 				}
 
 				break;
 
 			default:
 				break;
-			// throw new GrammarException(
-			// 	`APLGrammar.tokenToSymbol() : No grammar symbol matches token ${
-			// 		token.tokenType
-			// 	} ${LexicalState[token.tokenType]} (value '${token.tokenValue}')`,
-			// 	token.line,
-			// 	token.column
-			// );
 		}
 
 		return super.tokenToSymbol(token);
