@@ -376,12 +376,6 @@ export class APLGrammar extends GrammarBase {
 				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
 				return GrammarSymbol.terminalRightBracket;
-			case LexicalState.tokenEqual:
-				return GrammarSymbol.terminalEquals;
-			case LexicalState.tokenLess:
-				return GrammarSymbol.terminalLessThan;
-			case LexicalState.tokenGreater:
-				return GrammarSymbol.terminalGreaterThan;
 			case LexicalState.tokenIntLit:
 				return GrammarSymbol.terminalIntegerLiteral;
 			case LexicalState.tokenPlus:
@@ -392,10 +386,16 @@ export class APLGrammar extends GrammarBase {
 				return GrammarSymbol.terminalMultiply;
 			case LexicalState.tokenDiv:
 				return GrammarSymbol.terminalDivide;
-			case LexicalState.tokenOctothorpe:
-				return GrammarSymbol.terminalOctothorpe;
-			case LexicalState.tokenDollar:
-				return GrammarSymbol.terminalDollar;
+			case LexicalState.tokenEqual:
+				return GrammarSymbol.terminalEquals;
+			case LexicalState.tokenLess:
+				return GrammarSymbol.terminalLessThan;
+			case LexicalState.tokenGreater:
+				return GrammarSymbol.terminalGreaterThan;
+			// case LexicalState.tokenOctothorpe:
+			// 	return GrammarSymbol.terminalOctothorpe;
+			// case LexicalState.tokenDollar:
+			// 	return GrammarSymbol.terminalDollar;
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
 					case 'define':
@@ -410,18 +410,18 @@ export class APLGrammar extends GrammarBase {
 						return GrammarSymbol.terminalBegin;
 					case 'print':
 						return GrammarSymbol.terminalPrint;
-					case '+':
-						return GrammarSymbol.terminalPlus;
-					case '-':
-						return GrammarSymbol.terminalMinus;
-					case '*':
-						return GrammarSymbol.terminalMultiply;
-					case '/':
-						return GrammarSymbol.terminalDivide;
-					case '=':
-						return GrammarSymbol.terminalEquals;
-					case '<':
-						return GrammarSymbol.terminalLessThan;
+					// case '+':
+					// 	return GrammarSymbol.terminalPlus;
+					// case '-':
+					// 	return GrammarSymbol.terminalMinus;
+					// case '*':
+					// 	return GrammarSymbol.terminalMultiply;
+					// case '/':
+					// 	return GrammarSymbol.terminalDivide;
+					// case '=':
+					// 	return GrammarSymbol.terminalEquals;
+					// case '<':
+					// 	return GrammarSymbol.terminalLessThan;
 					case 'cond':
 						return GrammarSymbol.terminalCond;
 					case 'let':

@@ -633,14 +633,22 @@ export class SmalltalkGrammar extends GrammarBase {
 				return GrammarSymbol.terminalLeftBracket;
 			case LexicalState.tokenRightBracket:
 				return GrammarSymbol.terminalRightBracket;
-			case LexicalState.tokenEqual:
-				return GrammarSymbol.terminalEquals;
 			case LexicalState.tokenIntLit:
 				return GrammarSymbol.terminalIntegerLiteral;
 			case LexicalState.tokenPlus:
 				return GrammarSymbol.terminalPlus;
+			case LexicalState.tokenMinus:
+				return GrammarSymbol.terminalMinus;
 			case LexicalState.tokenMult:
 				return GrammarSymbol.terminalMultiply;
+			case LexicalState.tokenDiv:
+				return GrammarSymbol.terminalDivide;
+			case LexicalState.tokenEqual:
+				return GrammarSymbol.terminalEquals;
+			case LexicalState.tokenLess:
+				return GrammarSymbol.terminalLessThan;
+			// case LexicalState.tokenGreater:
+			// 	return GrammarSymbol.terminalGreaterThan; ? or ID?
 			case LexicalState.tokenOctothorpe:
 				return GrammarSymbol.terminalOctothorpe;
 			case LexicalState.tokenDollar:
@@ -651,6 +659,10 @@ export class SmalltalkGrammar extends GrammarBase {
 						return GrammarSymbol.terminalDefine;
 					case 'if':
 						return GrammarSymbol.terminalIf;
+					// TODO (when we replace the keyword 'if' with a method) :
+					// (if x y z) -> (x y z)
+					// (true x y) -> x
+					// (false x y) -> y
 					// case 'if': return GrammarSymbol.terminalID;
 					case 'while':
 						return GrammarSymbol.terminalWhile;
@@ -660,19 +672,18 @@ export class SmalltalkGrammar extends GrammarBase {
 						return GrammarSymbol.terminalBegin;
 					case 'print':
 						return GrammarSymbol.terminalPrint;
-					case '+':
-						return GrammarSymbol.terminalPlus;
-					case '-':
-						return GrammarSymbol.terminalMinus;
-					case '*':
-						return GrammarSymbol.terminalMultiply;
-					case '/':
-						return GrammarSymbol.terminalDivide;
-					case '=':
-						return GrammarSymbol.terminalEquals;
-					case '<':
-						return GrammarSymbol.terminalLessThan;
-
+					// case '+':
+					// 	return GrammarSymbol.terminalPlus;
+					// case '-':
+					// 	return GrammarSymbol.terminalMinus;
+					// case '*':
+					// 	return GrammarSymbol.terminalMultiply;
+					// case '/':
+					// 	return GrammarSymbol.terminalDivide;
+					// case '=':
+					// 	return GrammarSymbol.terminalEquals;
+					// case '<':
+					// 	return GrammarSymbol.terminalLessThan;
 					case 'cond':
 						return GrammarSymbol.terminalCond;
 					case 'let':
@@ -752,9 +763,9 @@ export class SmalltalkGrammar extends GrammarBase {
 
 			default:
 				throw new GrammarException(
-					`No grammar symbol matches token ${token.tokenType} ${
-						LexicalState[token.tokenType]
-					} (value '${token.tokenValue}')`,
+					`SmalltalkGrammar.tokenToSymbol() : No grammar symbol matches token ${
+						token.tokenType
+					} ${LexicalState[token.tokenType]} (value '${token.tokenValue}')`,
 					token.line,
 					token.column
 				);
