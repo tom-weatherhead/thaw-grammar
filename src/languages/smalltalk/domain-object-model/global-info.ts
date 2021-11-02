@@ -602,9 +602,9 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { isSmalltalkBlock } from './block';
+import { isSmalltalkBlock, objectClass, selfVar } from './block';
 
-import { SmalltalkClass } from './class';
+// import { SmalltalkClass } from './class';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
@@ -612,10 +612,10 @@ import { SmalltalkIntegerValue } from './integer';
 
 import { SmalltalkUserValue } from './user-value';
 
-import { SmalltalkVariable } from './variable';
+// import { SmalltalkVariable } from './variable';
 
-export const selfVar = new SmalltalkVariable('self', 0, 0);
-export const objectClass = new SmalltalkClass('Object', undefined, [], [selfVar], []);
+// export const selfVar = new SmalltalkVariable('self', 0, 0);
+// export const objectClass = new SmalltalkClass('Object', undefined, [], [selfVar], []);
 
 export function unblockValue(value: ISmalltalkValue): ISmalltalkValue {
 	if (isSmalltalkBlock(value)) {

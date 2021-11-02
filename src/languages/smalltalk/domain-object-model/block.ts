@@ -13,13 +13,20 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
+import { SmalltalkClass } from './class';
+
 // import { SmalltalkEnvironmentFrame } from './environment-frame';
 
-import { objectClass } from './global-info';
+// import { objectClass } from './global-info';
 
 import { SmalltalkValueBase } from './value-base';
 
+import { SmalltalkVariable } from './variable';
+
 const typenameSmalltalkBlock = 'SmalltalkBlock';
+
+export const selfVar = new SmalltalkVariable('self', 0, 0);
+export const objectClass = new SmalltalkClass('Object', undefined, [], [selfVar], []);
 
 export function isSmalltalkBlock(obj: unknown): obj is SmalltalkBlock {
 	const v = obj as SmalltalkBlock;
