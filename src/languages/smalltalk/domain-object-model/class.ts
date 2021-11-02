@@ -25,15 +25,17 @@ export class SmalltalkClass implements ISmalltalkClass {
 	public readonly exportedDict = new Map<string, ISmalltalkFunctionDefinition>();
 	public readonly classVariableEnvFrame = new SmalltalkEnvironmentFrame();
 	// private static readonly reservedTypeNames = new HashSet<string>() { "int", "float", "symbol", "char", "string", "array" };
-	// private readonly lineNumber: number;
-	// private readonly columnNumber: number;
+	// private readonly line: number;
+	// private readonly column: number;
 
 	constructor(
 		public readonly className: string,
 		public readonly superClassName: string | undefined,
 		public readonly classVariableList: ISmalltalkVariable[],
 		public readonly clRep: ISmalltalkVariable[],
-		private exportedList: ISmalltalkFunctionDefinition[]
+		private exportedList: ISmalltalkFunctionDefinition[],
+		public readonly line = 0,
+		public readonly column = 0
 	) {
 		// ClassName = className.Value;
 		// SuperClassName = superClassName;

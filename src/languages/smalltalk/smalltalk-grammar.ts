@@ -22,30 +22,19 @@ import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-int
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
-// import { ExpressionList } from '../../common/domain-object-model/expression-list';
-// import { IExpression }  from '../../common/domain-object-model/iexpression';
 import { Name } from '../../common/domain-object-model/name';
-// import { Variable }  from '../../common/domain-object-model/variable';
-// import { VariableList }  from '../../common/domain-object-model/variable-list';
-
-// import { BeginUsage }  from '../../common/domain-object-model/begin-usage';
-// import { CondUsage }  from '../../common/domain-object-model/cond-usage';
-// import { FunctionDefinition }  from '../../common/domain-object-model/function-definition';
-// import { IfUsage }  from '../../common/domain-object-model/if-usage';
-// import { LetStarUsage }  from '../../common/domain-object-model/let-star-usage';
-// import { LetUsage }  from '../../common/domain-object-model/let-usage';
-// import { OperatorUsage }  from '../../common/domain-object-model/operator-usage';
-// import { SetUsage }  from '../../common/domain-object-model/set-usage';
-// import { WhileUsage }  from '../../common/domain-object-model/while-usage';
 
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 
 import {
-	ISmalltalkExpression // ,
-	// ISmalltalkValue
+	ISmalltalkExpression,
+	ISmalltalkFunctionDefinition,
+	// ISmalltalkValue,
+	ISmalltalkVariable
 } from './domain-object-model/interfaces/iexpression';
-// import { ISmalltalkValue } from './domain-object-model/interfaces/ivalue';
 
+import { SmalltalkClass } from './domain-object-model/class';
+import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 import { SmalltalkIntegerValue } from './domain-object-model/integer';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
 import { SmalltalkVariable } from './domain-object-model/variable';
@@ -455,46 +444,46 @@ export class SmalltalkGrammar extends GrammarBase {
 	//     }
 	// }
 
-	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
-		// throw new Error('SmalltalkGrammar.executeSemanticAction() : Not yet implemented.');
-
 		let name: Name;
-		// let functionName: Name;
-		// let superClassName: Name;
-		// let variable: SmalltalkVariable;
-		// let variableList: SmalltalkVariable[];
-		// let classVariableList: SmalltalkVariable[];
+		let functionName: Name;
+		let superClassName: Name;
+		let variable: ISmalltalkVariable;
+		let variableList: ISmalltalkVariable[];
+		let argumentList: ISmalltalkVariable[];
+		let classVariableList: ISmalltalkVariable[];
+		let body: ISmalltalkExpression;
 		let expression: ISmalltalkExpression;
 		// let expression2: ISmalltalkExpression;
-		// let expressionList: ISmalltalkExpression[];
 		let expressionList: ISmalltalkExpression[];
-		// SmalltalkFunctionDefinition funDef;
-		// List<SmalltalkFunctionDefinition> funDefList;
+		let funDef: ISmalltalkFunctionDefinition;
+		let funDefList: ISmalltalkFunctionDefinition[];
 		// List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>> exprPairList;
 		// List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>> varExprList;
 		// let literalList: ISmalltalkValue[];
 
 		switch (action) {
-			// case '#functionDefinition':
-			//     var body = (ISmalltalkExpression)semanticStack.Pop();
-			//     var argList = (List<SmalltalkVariable>)semanticStack.Pop();
-			//
-			//     functionName = (Name)semanticStack.Pop();
-			//     semanticStack.Push(new SmalltalkFunctionDefinition(functionName.Value, argList, body));
-			//     break;
-			//
-			// case '#variableList':
-			//     variableList = (List<SmalltalkVariable>)semanticStack.Pop();
-			//     variable = (SmalltalkVariable)semanticStack.Pop();
-			//     variableList.Insert(0, variable);
-			//     semanticStack.Push(variableList);
-			//     break;
-			//
-			// case '#emptyVariableList':
-			//     semanticStack.Push(new List<SmalltalkVariable>());
-			//     break;
-			//
+			case '#functionDefinition':
+				body = semanticStack.pop() as ISmalltalkExpression;
+				argumentList = semanticStack.pop() as ISmalltalkVariable[];
+
+				functionName = semanticStack.pop() as Name;
+				semanticStack.push(
+					new SmalltalkFunctionDefinition(functionName.value, argumentList, body)
+				);
+				break;
+
+			case '#variableList':
+				variableList = semanticStack.pop() as ISmalltalkVariable[];
+				variable = semanticStack.pop() as ISmalltalkVariable;
+				variableList.unshift(variable);
+				semanticStack.push(variableList);
+				break;
+
+			case '#emptyVariableList':
+				semanticStack.push([] as ISmalltalkVariable[]);
+				break;
+
 			// 	// #if DEAD_CODE
 			// case '#if':
 			//     var expression3 = (ISmalltalkExpression)semanticStack.Pop();
@@ -524,23 +513,19 @@ export class SmalltalkGrammar extends GrammarBase {
 			//     break;
 
 			case '#operatorUsage':
-				// expressionList = semanticStack.pop() as ISmalltalkExpression[];
 				expressionList = semanticStack.pop() as ISmalltalkExpression[];
 				name = semanticStack.pop() as Name;
 				semanticStack.push(new SmalltalkOperatorUsage(name, expressionList));
 				break;
 
 			case '#expressionList':
-				// expressionList = semanticStack.pop() as ISmalltalkExpression[];
 				expressionList = semanticStack.pop() as ISmalltalkExpression[];
 				expression = semanticStack.pop() as ISmalltalkExpression;
-				// expressionList.unshift(expression);
 				expressionList.unshift(expression);
 				semanticStack.push(expressionList);
 				break;
 
 			case '#emptyExpressionList':
-				// semanticStack.push([] as ISmalltalkExpression[]);
 				semanticStack.push([] as ISmalltalkExpression[]);
 				break;
 
@@ -549,28 +534,38 @@ export class SmalltalkGrammar extends GrammarBase {
 				semanticStack.push(new SmalltalkVariable(name.value, name.line, name.column));
 				break;
 
-			// case '#methodDefList':
-			//     funDefList = (List<SmalltalkFunctionDefinition>)semanticStack.Pop();
-			//     funDef = (SmalltalkFunctionDefinition)semanticStack.Pop();
-			//     funDefList.Insert(0, funDef);
-			//     semanticStack.Push(funDefList);
-			//     break;
-			//
-			// case '#emptyMethodDefList':
-			//     semanticStack.Push(new List<SmalltalkFunctionDefinition>());
-			//     break;
-			//
-			// case '#classDefinition':
-			//     funDefList = (List<SmalltalkFunctionDefinition>)semanticStack.Pop();
-			//     funDef = (SmalltalkFunctionDefinition)semanticStack.Pop();
-			//     funDefList.Insert(0, funDef);
-			//     variableList = (List<SmalltalkVariable>)semanticStack.Pop();
-			//     classVariableList = (List<SmalltalkVariable>)semanticStack.Pop();
-			//     superClassName = (Name)semanticStack.Pop();
-			//     name = (Name)semanticStack.Pop();
-			//     semanticStack.Push(new SmalltalkClass(name, superClassName.Value, classVariableList, variableList, funDefList));
-			//     break;
-			//
+			case '#methodDefList':
+				funDefList = semanticStack.pop() as ISmalltalkFunctionDefinition[];
+				funDef = semanticStack.pop() as ISmalltalkFunctionDefinition;
+				funDefList.unshift(funDef);
+				semanticStack.push(funDefList);
+				break;
+
+			case '#emptyMethodDefList':
+				semanticStack.push([] as ISmalltalkFunctionDefinition[]);
+				break;
+
+			case '#classDefinition':
+				funDefList = semanticStack.pop() as ISmalltalkFunctionDefinition[];
+				funDef = semanticStack.pop() as ISmalltalkFunctionDefinition;
+				funDefList.unshift(funDef);
+				variableList = semanticStack.pop() as ISmalltalkVariable[];
+				classVariableList = semanticStack.pop() as ISmalltalkVariable[];
+				superClassName = semanticStack.pop() as Name;
+				name = semanticStack.pop() as Name;
+				semanticStack.push(
+					new SmalltalkClass(
+						name.value,
+						superClassName.value,
+						classVariableList,
+						variableList,
+						funDefList,
+						name.line,
+						name.column
+					)
+				);
+				break;
+
 			// case '#symbol':
 			//     name = (Name)semanticStack.Pop();
 			//     semanticStack.Push(new SmalltalkSymbolValue(name.Value));
@@ -654,7 +649,6 @@ export class SmalltalkGrammar extends GrammarBase {
 				throw new GrammarException(`Smalltalk: Unrecognized semantic action: ${action}`);
 		}
 	}
-	/* eslint-enable @typescript-eslint/no-unused-vars */
 
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
