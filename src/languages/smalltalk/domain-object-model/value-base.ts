@@ -10,13 +10,10 @@ import {
 	ISmalltalkValue
 	// , ISmalltalkVariable
 } from './interfaces/iexpression';
-// import { ISmalltalkValue } from './interfaces/ivalue';
 
 // import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkExpression {
-	// public SmalltalkClass owner { get; private set; }
-
 	constructor(public owner: ISmalltalkClass | undefined = undefined) {}
 
 	public abstract getTypename(): string;
@@ -49,13 +46,21 @@ export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkE
 		return false;
 	}
 
-	public abstract toInteger(): number | undefined;
+	public toInteger(): number | undefined {
+		return undefined;
+	}
 
-	public abstract toFloat(): number | undefined;
+	public toFloat(): number | undefined {
+		return undefined;
+	}
 
-	public abstract toStringX(): string | undefined;
+	public toStringX(): string | undefined {
+		return undefined;
+	}
 
-	public abstract toUserValue(): ISmalltalkUserValue | undefined;
+	public toUserValue(): ISmalltalkUserValue | undefined {
+		return undefined;
+	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(

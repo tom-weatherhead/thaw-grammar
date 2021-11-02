@@ -598,14 +598,33 @@ import {
 	ISmalltalkClass,
 	ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
+	ISmalltalkUserValue,
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-// import { ISmalltalkValue } from './interfaces/ivalue';
+import { isSmalltalkBlock } from './block';
+
+import { SmalltalkClass } from './class';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import { SmalltalkIntegerValue } from './integer';
+
+import { SmalltalkUserValue } from './user-value';
+
+import { SmalltalkVariable } from './variable';
+
+export const selfVar = new SmalltalkVariable('self', 0, 0);
+export const objectClass = new SmalltalkClass('Object', undefined, [], [selfVar], []);
+
+export function unblockValue(value: ISmalltalkValue): ISmalltalkValue {
+	if (isSmalltalkBlock(value)) {
+		// I.e. value is a SmalltalkBlock (a suspended computation)
+		return value.unblock();
+	} else {
+		return value;
+	}
+}
 
 export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
 	private readonly zeroValueForAccessor = new SmalltalkIntegerValue(0);
@@ -614,6 +633,27 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 	public readonly globalEnvironment = new SmalltalkEnvironmentFrame();
 	public readonly functionDefinitions = new Map<string, ISmalltalkFunctionDefinition>();
 	public readonly classDict = new Map<string, ISmalltalkClass>();
+	public readonly objectInstance: ISmalltalkUserValue; // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.
+
+	constructor() {
+		// Tokenizer = t;
+		// Parser = p;
+
+		// These are temporary values for FalseVal and TrueVal; hopefully they are not used.
+		//FalseVal = ZeroValue;
+		//TrueVal = new SmalltalkIntegerValue(1);
+
+		// const objectClass = SmalltalkObjectClassKeeper.ObjectClass;
+		const objectInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+
+		// objectClass.AddFunction(t, p, string.Format("(define isNil () {0})", FalseVariableName));
+		// objectClass.AddFunction(t, p, string.Format("(define notNil () {0})", TrueVariableName));
+
+		this.classDict.set(objectClass.className, objectClass);
+		objectInstanceEnvFrame.add(selfVar, this.zeroValue);
+		this.objectInstance = new SmalltalkUserValue(objectClass, objectInstanceEnvFrame);
+		this.objectInstance.value.dict.set(selfVar.name, this.objectInstance);
+	}
 
 	public get zeroValue(): ISmalltalkValue {
 		return this.zeroValueForAccessor;

@@ -41,6 +41,7 @@ export interface ISmalltalkGlobalInfo {
 	readonly globalEnvironment: ISmalltalkEnvironmentFrame;
 	readonly functionDefinitions: Map<string, ISmalltalkFunctionDefinition>;
 	readonly classDict: Map<string, ISmalltalkClass>;
+	readonly objectInstance: ISmalltalkUserValue;
 	// dynamicScoping: boolean;
 	// debug: boolean;
 
@@ -77,6 +78,7 @@ export interface ISmalltalkGlobalInfo {
 }
 
 export interface ISmalltalkVariable {
+	readonly typename: string;
 	readonly name: string;
 }
 
@@ -91,6 +93,7 @@ export interface ISmalltalkEnvironmentFrame {
 
 export interface ISmalltalkClass extends ISmalltalkExpression {
 	readonly className: string;
+	readonly superClassName: string | undefined;
 	superClass: ISmalltalkClass | undefined;
 	readonly clRep: ISmalltalkVariable[];
 
@@ -102,7 +105,11 @@ export interface ISmalltalkClass extends ISmalltalkExpression {
 	trySetClassVariableValue(variable: ISmalltalkVariable, value: ISmalltalkValue): boolean;
 }
 
-export interface ISmalltalkUserValue {
+export interface ISmalltalkStringValue extends ISmalltalkValue {
+	readonly value: string;
+}
+
+export interface ISmalltalkUserValue extends ISmalltalkValue {
 	readonly value: ISmalltalkEnvironmentFrame;
 }
 
@@ -112,7 +119,7 @@ export interface ISmalltalkExpression {
 	evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
 		receiver: ISmalltalkValue,
-		c: ISmalltalkClass,
+		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue;
 }

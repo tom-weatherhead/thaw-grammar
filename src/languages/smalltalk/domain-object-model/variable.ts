@@ -18,7 +18,20 @@ import {
 } from './interfaces/iexpression';
 // import { ISmalltalkValue } from './interfaces/ivalue';
 
+const typenameSmalltalkVariable = 'SmalltalkVariable';
+
+export function isSmalltalkVariable(obj: unknown): obj is ISmalltalkVariable {
+	const v = obj as ISmalltalkVariable;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameSmalltalkVariable
+	);
+}
+
 export class SmalltalkVariable implements ISmalltalkExpression, ISmalltalkVariable {
+	public readonly typename: string = typenameSmalltalkVariable;
 	public readonly name: string;
 	// public readonly line: number;
 	// public readonly column: number;

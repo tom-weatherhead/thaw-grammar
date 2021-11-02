@@ -28,7 +28,7 @@ export class SmalltalkClass implements ISmalltalkClass {
 
 	constructor(
 		public readonly className: string,
-		public readonly superClassName: string,
+		public readonly superClassName: string | undefined,
 		public readonly classVariableList: ISmalltalkVariable[],
 		public readonly clRep: ISmalltalkVariable[],
 		private exportedList: ISmalltalkFunctionDefinition[]
@@ -135,22 +135,24 @@ export class SmalltalkClass implements ISmalltalkClass {
 		// TODO 2014/12/09 : Throw an exception if ClassName == SuperClassName
 		// else
 
-		const superClass = globalInfo.classDict.get(this.superClassName);
+		if (typeof this.superClassName !== 'undefined') {
+			const superClass = globalInfo.classDict.get(this.superClassName);
 
-		if (typeof superClass === 'undefined') {
-			// throw new EvaluationException(
-			//     string.Format("SmalltalkClass.Evaluate() : Class {0} : Unknown SuperClass {1}", ClassName, SuperClassName),
-			//     LineNumber, ColumnNumber);
-			throw new Error(
-				`SmalltalkClass.Evaluate() : Class ${this.className} : Unknown SuperClass ${this.superClassName}`
-			);
-		}
+			if (typeof superClass === 'undefined') {
+				// throw new EvaluationException(
+				//     string.Format("SmalltalkClass.Evaluate() : Class {0} : Unknown SuperClass {1}", ClassName, SuperClassName),
+				//     LineNumber, ColumnNumber);
+				throw new Error(
+					`SmalltalkClass.Evaluate() : Class ${this.className} : Unknown SuperClass ${this.superClassName}`
+				);
+			}
 
-		this.superClass = superClass;
-		// this.clRep.AddRange(this.superClass.clRep);
+			this.superClass = superClass;
+			// this.clRep.AddRange(this.superClass.clRep);
 
-		for (const v of this.superClass.clRep) {
-			this.clRep.push(v);
+			for (const v of this.superClass.clRep) {
+				this.clRep.push(v);
+			}
 		}
 
 		for (const exportedFuncDef of this.exportedList) {

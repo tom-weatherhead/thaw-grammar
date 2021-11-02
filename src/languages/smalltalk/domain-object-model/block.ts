@@ -4,61 +4,94 @@
 
 // SmalltalkBlock objects are immutable.
 
-// public class SmalltalkBlock : SmalltalkValueBase
-// {
-//     public readonly ISmalltalkExpression Expression;
-//     public readonly SmalltalkEnvironmentFrame LocalEnvironment;
-//     public readonly ISmalltalkValue Receiver;
-//     public readonly SmalltalkClass Class;
-//     public readonly SmalltalkGlobalInfo GlobalInfo;
-//
-//     public SmalltalkBlock(ISmalltalkExpression expression, SmalltalkEnvironmentFrame localEnvironment,
-//         ISmalltalkValue receiver, SmalltalkClass c, SmalltalkGlobalInfo globalInfo)
-//         : base(SmalltalkObjectClassKeeper.ObjectClass)
-//     {
-//         Expression = expression;
-//         LocalEnvironment = localEnvironment;
-//         Receiver = receiver;
-//         Class = c;
-//         GlobalInfo = globalInfo;
-//     }
-//
-//     public override string ToString()
-//     {
-//         return "<block>";
-//     }
-//
-//     public override bool Equals(object obj)
-//     {
-//         return object.ReferenceEquals(this, obj);
-//     }
-//
-//     public override int GetHashCode()
-//     {
-//         return 0;
-//     }
-//
-//     public override string GetTypename()
-//     {
-//         return "block";
-//     }
-//
-//     public ISmalltalkValue Unblock()
-//     {
-//         ISmalltalkValue result = this;
-//
-//         for (; ;)
-//         {
-//             var block = result as SmalltalkBlock;
-//
-//             if (block == null)
-//             {
-//                 break;
-//             }
-//
-//             result = block.Expression.Evaluate(block.LocalEnvironment, block.Receiver, block.Class, block.GlobalInfo);
-//         }
-//
-//         return result;
-//     }
-// }
+import {
+	ISmalltalkClass,
+	ISmalltalkEnvironmentFrame,
+	ISmalltalkExpression,
+	// ISmalltalkFunctionDefinition,
+	ISmalltalkGlobalInfo,
+	ISmalltalkValue
+} from './interfaces/iexpression';
+
+// import { SmalltalkEnvironmentFrame } from './environment-frame';
+
+import { objectClass } from './global-info';
+
+import { SmalltalkValueBase } from './value-base';
+
+const typenameSmalltalkBlock = 'SmalltalkBlock';
+
+export function isSmalltalkBlock(obj: unknown): obj is SmalltalkBlock {
+	const v = obj as SmalltalkBlock;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameSmalltalkBlock
+	);
+}
+
+export class SmalltalkBlock extends SmalltalkValueBase {
+	public readonly typename: string = typenameSmalltalkBlock;
+	// public readonly ISmalltalkExpression expression;
+	// public readonly ISmalltalkEnvironmentFrame localEnvironment;
+	// public readonly ISmalltalkValue receiver;
+	// public readonly ISmalltalkClass classX;
+	// public readonly ISmalltalkGlobalInfo globalInfo;
+
+	constructor(
+		public readonly expression: ISmalltalkExpression,
+		public readonly localEnvironment: ISmalltalkEnvironmentFrame | undefined,
+		public readonly receiver: ISmalltalkValue,
+		public readonly classX: ISmalltalkClass | undefined,
+		public readonly globalInfo: ISmalltalkGlobalInfo
+	) {
+		super(objectClass);
+
+		// Expression = expression;
+		// LocalEnvironment = localEnvironment;
+		// Receiver = receiver;
+		// Class = c;
+		// GlobalInfo = globalInfo;
+	}
+
+	public override toString(): string {
+		return '<block>';
+	}
+
+	// public override bool Equals(object obj)
+	// {
+	//     return object.ReferenceEquals(this, obj);
+	// }
+
+	// public override int GetHashCode()
+	// {
+	//     return 0;
+	// }
+
+	public override getTypename(): string {
+		return 'block';
+	}
+
+	public unblock(): ISmalltalkValue {
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
+		let result: ISmalltalkValue = this;
+
+		for (;;) {
+			const block = result as SmalltalkBlock;
+
+			if (!isSmalltalkBlock(block)) {
+				break;
+			}
+
+			result = block.expression.evaluate(
+				block.localEnvironment,
+				block.receiver,
+				block.classX,
+				block.globalInfo
+			);
+		}
+
+		return result;
+	}
+}

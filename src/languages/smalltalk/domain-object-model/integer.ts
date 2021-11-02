@@ -161,20 +161,13 @@
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
 // import { ISmalltalkClass, ISmalltalkEnvironmentFrame, ISmalltalkExpression, ISmalltalkGlobalInfo, ISmalltalkValue } from './interfaces/iexpression';
-import {
-	ISmalltalkExpression,
-	ISmalltalkUserValue,
-	ISmalltalkValue
-} from './interfaces/iexpression';
+// import { ISmalltalkUserValue } from './interfaces/iexpression';
 
 // import { ISmalltalkValue } from './interfaces/ivalue';
 
 import { SmalltalkValueBase } from './value-base';
 
-export class SmalltalkIntegerValue
-	extends SmalltalkValueBase
-	implements ISmalltalkExpression, ISmalltalkValue
-{
+export class SmalltalkIntegerValue extends SmalltalkValueBase {
 	public readonly value: number;
 	// public readonly line: number;
 	// public readonly column: number;
@@ -222,21 +215,21 @@ export class SmalltalkIntegerValue
 		return true;
 	}
 
-	public toInteger(): number | undefined {
+	public override toInteger(): number | undefined {
 		return this.value;
 	}
 
-	public toFloat(): number | undefined {
+	public override toFloat(): number | undefined {
 		return this.value;
 	}
 
-	public toStringX(): string | undefined {
-		return undefined;
-	}
-
-	public toUserValue(): ISmalltalkUserValue | undefined {
-		return undefined;
-	}
+	// public toStringX(): string | undefined {
+	// 	return undefined;
+	// }
+	//
+	// public toUserValue(): ISmalltalkUserValue | undefined {
+	// 	return undefined;
+	// }
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	// public evaluate(

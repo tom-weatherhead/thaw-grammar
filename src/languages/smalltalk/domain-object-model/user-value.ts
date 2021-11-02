@@ -54,26 +54,26 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 	}
 
 	public override getTypename(): string {
-		return this.owner.className;
+		return typeof this.owner !== 'undefined' ? this.owner.className : '<No owner>';
 	}
 
 	public override isObject(): boolean {
 		return true;
 	}
 
-	public toInteger(): number | undefined {
-		return undefined;
-	}
+	// public toInteger(): number | undefined {
+	// 	return undefined;
+	// }
+	//
+	// public toFloat(): number | undefined {
+	// 	return undefined;
+	// }
+	//
+	// public toStringX(): string | undefined {
+	// 	return undefined;
+	// }
 
-	public toFloat(): number | undefined {
-		return undefined;
-	}
-
-	public toStringX(): string | undefined {
-		return undefined;
-	}
-
-	public toUserValue(): ISmalltalkUserValue | undefined {
+	public override toUserValue(): ISmalltalkUserValue | undefined {
 		return this;
 	}
 }

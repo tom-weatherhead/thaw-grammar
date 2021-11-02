@@ -22,7 +22,7 @@ import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-int
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
-import { ExpressionList } from '../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 // import { IExpression }  from '../../common/domain-object-model/iexpression';
 import { Name } from '../../common/domain-object-model/name';
 // import { Variable }  from '../../common/domain-object-model/variable';
@@ -40,7 +40,10 @@ import { Name } from '../../common/domain-object-model/name';
 
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 
-import { ISmalltalkExpression, ISmalltalkValue } from './domain-object-model/interfaces/iexpression';
+import {
+	ISmalltalkExpression // ,
+	// ISmalltalkValue
+} from './domain-object-model/interfaces/iexpression';
 // import { ISmalltalkValue } from './domain-object-model/interfaces/ivalue';
 
 import { SmalltalkIntegerValue } from './domain-object-model/integer';
@@ -465,7 +468,7 @@ export class SmalltalkGrammar extends GrammarBase {
 		let expression: ISmalltalkExpression;
 		// let expression2: ISmalltalkExpression;
 		// let expressionList: ISmalltalkExpression[];
-		let expressionList: ExpressionList<ISmalltalkValue>;
+		let expressionList: ISmalltalkExpression[];
 		// SmalltalkFunctionDefinition funDef;
 		// List<SmalltalkFunctionDefinition> funDefList;
 		// List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>> exprPairList;
@@ -522,23 +525,23 @@ export class SmalltalkGrammar extends GrammarBase {
 
 			case '#operatorUsage':
 				// expressionList = semanticStack.pop() as ISmalltalkExpression[];
-				expressionList = semanticStack.pop() as ExpressionList<ISmalltalkValue>;
+				expressionList = semanticStack.pop() as ISmalltalkExpression[];
 				name = semanticStack.pop() as Name;
 				semanticStack.push(new SmalltalkOperatorUsage(name, expressionList));
 				break;
 
 			case '#expressionList':
 				// expressionList = semanticStack.pop() as ISmalltalkExpression[];
-				expressionList = semanticStack.pop() as ExpressionList<ISmalltalkValue>;
+				expressionList = semanticStack.pop() as ISmalltalkExpression[];
 				expression = semanticStack.pop() as ISmalltalkExpression;
 				// expressionList.unshift(expression);
-				expressionList.value.unshift(expression);
+				expressionList.unshift(expression);
 				semanticStack.push(expressionList);
 				break;
 
 			case '#emptyExpressionList':
 				// semanticStack.push([] as ISmalltalkExpression[]);
-				semanticStack.push(new ExpressionList<ISmalltalkValue>());
+				semanticStack.push([] as ISmalltalkExpression[]);
 				break;
 
 			case '#variable':

@@ -121,9 +121,10 @@ export class SmalltalkEnvironmentFrame implements ISmalltalkEnvironmentFrame {
 	}
 
 	public compose(keys: ISmalltalkVariable[], values: ISmalltalkValue[]): void {
-
 		if (keys.length !== values.length) {
-			throw new Error('SmalltalkEnvironmentFrame.Compose() : The keys list and the values list have different lengths.');
+			throw new Error(
+				'SmalltalkEnvironmentFrame.Compose() : The keys list and the values list have different lengths.'
+			);
 		}
 
 		for (let i = 0; i < keys.length; ++i) {
