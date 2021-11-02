@@ -40,8 +40,8 @@ import { Name } from '../../common/domain-object-model/name';
 
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 
-import { ISmalltalkExpression } from './domain-object-model/interfaces/iexpression';
-import { ISmalltalkValue } from './domain-object-model/interfaces/ivalue';
+import { ISmalltalkExpression, ISmalltalkValue } from './domain-object-model/interfaces/iexpression';
+// import { ISmalltalkValue } from './domain-object-model/interfaces/ivalue';
 
 import { SmalltalkIntegerValue } from './domain-object-model/integer';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';

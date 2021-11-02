@@ -6,7 +6,12 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 // import { createParser /*, SyntaxException */ } from 'thaw-parser';
 //
-import { EnvironmentFrame, ISmalltalkExpression, ISmalltalkValue, SmalltalkGlobalInfo } from '../../..';
+import {
+	EnvironmentFrame,
+	ISmalltalkExpression,
+	ISmalltalkValue,
+	SmalltalkGlobalInfo
+} from '../../..';
 
 import {
 	createFnParser,
