@@ -574,21 +574,9 @@
 // 	{
 // 		return false;
 // 	}
-//
-// 	public static ISmalltalkValue UnblockValue(ISmalltalkValue value)
-// 	{
-// 		var block = value as SmalltalkBlock;
-//
-// 		if (block != null)
-// 		{
-// 			return block.Unblock();
-// 		}
-// 		else
-// 		{
-// 			return value;
-// 		}
-// 	}
 // }
+
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
 
 // import { IGlobalInfoOps } from '../../../common/domain-object-model/iglobal-info-ops';
 
@@ -602,9 +590,7 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { isSmalltalkBlock, objectClass, selfVar } from './block';
-
-// import { SmalltalkClass } from './class';
+import { objectClass, selfVar } from './block';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
@@ -612,19 +598,16 @@ import { SmalltalkIntegerValue } from './integer';
 
 import { SmalltalkUserValue } from './user-value';
 
-// import { SmalltalkVariable } from './variable';
+// const nilVariableName = 'nil';
+// const nilValueAsString = 'nil';
 
-// export const selfVar = new SmalltalkVariable('self', 0, 0);
-// export const objectClass = new SmalltalkClass('Object', undefined, [], [selfVar], []);
+// const falseValueClassName = 'FalseValue';
+const falseVariableName = 'false';
+// const falseValueAsString = 'false';
 
-export function unblockValue(value: ISmalltalkValue): ISmalltalkValue {
-	if (isSmalltalkBlock(value)) {
-		// I.e. value is a SmalltalkBlock (a suspended computation)
-		return value.unblock();
-	} else {
-		return value;
-	}
-}
+// const trueValueClassName = 'TrueValue';
+const trueVariableName = 'true';
+// const trueValueAsString = 'true';
 
 export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
 	private readonly zeroValueForAccessor = new SmalltalkIntegerValue(0);
@@ -635,7 +618,12 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 	public readonly classDict = new Map<string, ISmalltalkClass>();
 	public readonly objectInstance: ISmalltalkUserValue; // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.
 
-	constructor() {
+	constructor(
+		options: {
+			parser?: IParser;
+			tokenizer?: ITokenizer;
+		} = {}
+	) {
 		// Tokenizer = t;
 		// Parser = p;
 
@@ -646,8 +634,18 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		// const objectClass = SmalltalkObjectClassKeeper.ObjectClass;
 		const objectInstanceEnvFrame = new SmalltalkEnvironmentFrame();
 
-		// objectClass.AddFunction(t, p, string.Format("(define isNil () {0})", FalseVariableName));
-		// objectClass.AddFunction(t, p, string.Format("(define notNil () {0})", TrueVariableName));
+		if (typeof options.parser !== 'undefined' && typeof options.tokenizer !== 'undefined') {
+			objectClass.addFunction(
+				options.tokenizer,
+				options.parser,
+				`(define isNil () ${falseVariableName})`
+			);
+			objectClass.addFunction(
+				options.tokenizer,
+				options.parser,
+				`(define notNil () ${trueVariableName})`
+			);
+		}
 
 		this.classDict.set(objectClass.className, objectClass);
 		objectInstanceEnvFrame.add(selfVar, this.zeroValue);

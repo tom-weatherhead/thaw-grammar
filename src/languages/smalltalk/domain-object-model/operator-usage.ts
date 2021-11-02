@@ -14,11 +14,9 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { selfVar, SmalltalkBlock } from './block';
+import { selfVar, SmalltalkBlock, unblockValue } from './block';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
-
-import { unblockValue } from './global-info';
 
 import { SmalltalkIntegerValue } from './integer';
 

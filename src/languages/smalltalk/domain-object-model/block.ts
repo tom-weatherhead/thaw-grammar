@@ -15,10 +15,6 @@ import {
 
 import { SmalltalkClass } from './class';
 
-// import { SmalltalkEnvironmentFrame } from './environment-frame';
-
-// import { objectClass } from './global-info';
-
 import { SmalltalkValueBase } from './value-base';
 
 import { SmalltalkVariable } from './variable';
@@ -36,6 +32,15 @@ export function isSmalltalkBlock(obj: unknown): obj is SmalltalkBlock {
 		typeof v.typename !== 'undefined' &&
 		v.typename === typenameSmalltalkBlock
 	);
+}
+
+export function unblockValue(value: ISmalltalkValue): ISmalltalkValue {
+	if (isSmalltalkBlock(value)) {
+		// I.e. value is a SmalltalkBlock (a suspended computation)
+		return value.unblock();
+	} else {
+		return value;
+	}
 }
 
 export class SmalltalkBlock extends SmalltalkValueBase {

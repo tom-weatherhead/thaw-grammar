@@ -6,6 +6,8 @@
 // 	ISmalltalkValue Evaluate(SmalltalkEnvironmentFrame localEnvironment, ISmalltalkValue receiver, SmalltalkClass c, SmalltalkGlobalInfo globalInfo);
 // }
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 // import { IExpression } from '../../../../common/domain-object-model/iexpression';
 
 // import { IGlobalInfo } from '../../../../common/domain-object-model/iglobal-info';
@@ -97,6 +99,7 @@ export interface ISmalltalkClass extends ISmalltalkExpression {
 	superClass: ISmalltalkClass | undefined;
 	readonly clRep: ISmalltalkVariable[];
 
+	addFunction(tokenizer: ITokenizer, parser: IParser, functionAsString: string): void;
 	findMethod(methodName: string): {
 		method: ISmalltalkFunctionDefinition | undefined;
 		classInWhichMethodWasFound: ISmalltalkClass | undefined;

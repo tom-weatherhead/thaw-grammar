@@ -1,5 +1,7 @@
 // class.ts
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
@@ -105,12 +107,13 @@ export class SmalltalkClass implements ISmalltalkClass {
 		}
 	}
 
-	// public void AddFunction(ITokenizer tokenizer, IParser parser, string functionAsString)
-	// {
-	//     var funcDef = (SmalltalkFunctionDefinition)parser.Parse(tokenizer.Tokenize(functionAsString));
-	//
-	//     ExportedDict[funcDef.FunctionName] = funcDef;
-	// }
+	public addFunction(tokenizer: ITokenizer, parser: IParser, functionAsString: string): void {
+		const funcDef = parser.parse(
+			tokenizer.tokenize(functionAsString)
+		) as ISmalltalkFunctionDefinition;
+
+		this.exportedDict.set(funcDef.functionName, funcDef);
+	}
 
 	/* eslint-disable no-unused-vars */
 	public evaluate(
