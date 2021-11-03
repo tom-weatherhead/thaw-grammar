@@ -550,7 +550,8 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 	public readonly classDict = new Map<string, ISmalltalkClass>();
 	public readonly objectInstance: ISmalltalkUserValue; // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.
 
-	constructor() { // } = {} // 	tokenizer?: ITokenizer; // 	parser?: IParser; // options: {
+	constructor() {
+		// } = {} // 	tokenizer?: ITokenizer; // 	parser?: IParser; // options: {
 		// These are temporary values for FalseVal and TrueVal; hopefully they are not used.
 		//FalseVal = ZeroValue;
 		//TrueVal = new SmalltalkIntegerValue(1);

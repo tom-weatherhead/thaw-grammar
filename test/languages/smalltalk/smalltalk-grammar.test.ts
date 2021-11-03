@@ -22,15 +22,45 @@ import {
 
 const ls = LanguageSelector.Smalltalk;
 
-export function createFnEval(): (str: string) => ISmalltalkValue {
+function createFnEval(): (str: string) => ISmalltalkValue {
 	const { tokenizer, parser } = createInfrastructure(ls);
 	const globalInfo = new SmalltalkGlobalInfo();
 
 	globalInfo.loadPresets(tokenizer, parser);
 
-	return (str: string) => (parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression).evaluate(undefined,
-	globalInfo.objectInstance,
-	undefined, globalInfo);
+	return (str: string) =>
+		(parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression).evaluate(
+			undefined,
+			globalInfo.objectInstance,
+			undefined,
+			globalInfo
+		);
+}
+
+function evalStringsToValues(strs: string[], n = 1): ISmalltalkValue[] {
+	const f = createFnEval();
+
+	return strs.map(f).slice(-n);
+}
+
+function evalStringsToValue(strs: string[]): ISmalltalkValue {
+	const values = evalStringsToValues(strs, 1);
+
+	if (values.length < 1) {
+		throw new Error('evalToValue() : values.length is zero.');
+	}
+
+	return values[0];
+}
+
+function evaluateStringToInteger(str: string): number | undefined {
+	// 	const f = createFnParser<ISmalltalkExpression>(ls);
+	// 	const localEnvironment = new SmalltalkEnvironmentFrame();
+	// 	const globalInfo = new SmalltalkGlobalInfo();
+	//
+	// 	return f(str).evaluate(localEnvironment, undefined, undefined, globalInfo).toInteger();
+
+	return evalStringsToValue([str]).toInteger();
 }
 
 test('SmalltalkGrammar instance creation test', () => {
@@ -106,14 +136,6 @@ test('SmalltalkGrammar recognize test', () => {
 //         )"));
 // }
 
-function evaluateToInteger(str: string): number | undefined {
-	const f = createFnParser<ISmalltalkExpression>(ls);
-	const localEnvironment = new SmalltalkEnvironmentFrame();
-	const globalInfo = new SmalltalkGlobalInfo();
-
-	return f(str).evaluate(localEnvironment, undefined, undefined, globalInfo).toInteger();
-}
-
 test('SmalltalkGrammar addition test', () => {
 	const localEnvironment = new SmalltalkEnvironmentFrame();
 	const globalInfo = new SmalltalkGlobalInfo();
@@ -138,7 +160,7 @@ test('SmalltalkGrammar addition test', () => {
 	expect(actualSmalltalkValue.toInteger()).toBe(a + b);
 
 	// Evaluation: Method 2:
-	expect(evaluateToInteger(str)).toBe(a + b);
+	expect(evaluateStringToInteger(str)).toBe(a + b);
 });
 
 test('SmalltalkGrammar function definition test', () => {
