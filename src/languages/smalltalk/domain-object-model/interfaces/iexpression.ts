@@ -1,18 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/interfaces/iexpression.ts
 
-// public interface ISmalltalkExpression
-// {
-// 	//"SmalltalkClass c" was added here as the third parameter in order to support "super"; see Exercise 11 on pages 347-348.
-// 	ISmalltalkValue Evaluate(SmalltalkEnvironmentFrame localEnvironment, ISmalltalkValue receiver, SmalltalkClass c, SmalltalkGlobalInfo globalInfo);
-// }
-
 import { IParser, ITokenizer } from 'thaw-interpreter-types';
-
-// import { IExpression } from '../../../../common/domain-object-model/iexpression';
-
-// import { IGlobalInfo } from '../../../../common/domain-object-model/iglobal-info';
-
-// import { ISmalltalkValue } from './ivalue';
 
 export interface ISmalltalkValue extends ISmalltalkExpression {
 	isInteger: boolean;
@@ -116,12 +104,11 @@ export interface ISmalltalkUserValue extends ISmalltalkValue {
 	readonly value: ISmalltalkEnvironmentFrame;
 }
 
-// export type ISmalltalkExpression = IExpression<ISmalltalkValue>;
-
 export interface ISmalltalkExpression {
 	evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
 		receiver: ISmalltalkValue | undefined,
+		// "SmalltalkClass c" was added here as the third parameter in order to support "super"; see Exercise 11 on pages 347-348.
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue;

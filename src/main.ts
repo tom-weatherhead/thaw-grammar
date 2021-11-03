@@ -44,7 +44,7 @@ export { SASLGlobalInfo } from './languages/sasl/domain-object-model/global-info
 // export { CLUGlobalInfo } from './languages/clu/domain-object-model/global-info';
 
 // Smalltalk (Kamin 7/8)
-export { ISmalltalkExpression } from './languages/smalltalk/domain-object-model/interfaces/iexpression';
+export * from './languages/smalltalk/domain-object-model/interfaces/iexpression';
 export { SmalltalkGlobalInfo } from './languages/smalltalk/domain-object-model/global-info';
 export { SmalltalkEnvironmentFrame } from './languages/smalltalk/domain-object-model/environment-frame';
 

@@ -6,7 +6,6 @@ import { Name } from 'thaw-interpreter-core';
 
 import { GlobalInfoBase } from '../../../src/common/domain-object-model/global-info-base';
 import { IGlobalInfo } from '../../../src/common/domain-object-model/iglobal-info';
-// import { Name } from '../../../src/common/domain-object-model/name';
 
 import { FloatLiteral } from '../../../src/languages/lisp/domain-object-model/float-literal';
 import { IntegerLiteral } from '../../../src/languages/lisp/domain-object-model/integer-literal';
@@ -20,12 +19,12 @@ import { SExpressionList } from '../../../src/languages/lisp/domain-object-model
 import { PrimOp } from '../../../src/languages/scheme/domain-object-model/primitive-operator';
 import { SchemeGlobalInfo } from '../../../src/languages/scheme/domain-object-model/scheme-global-info';
 
-test('Dummy test', () => {
-	// Arrange
-	// Act
-	// Assert
-	expect(true).toBeTruthy();
-});
+// test('Dummy test', () => {
+// 	// Arrange
+// 	// Act
+// 	// Assert
+// 	expect(true).toBeTruthy();
+// });
 
 test('SchemeGlobalInfo number to and from IntegerLiteral and FloatLiteral test', () => {
 	// Arrange

@@ -15,14 +15,28 @@ import {
 
 import { SmalltalkClass } from './class';
 
+import { SmalltalkFunctionDefinition } from './function-definition';
+
 import { SmalltalkValueBase } from './value-base';
 
 import { SmalltalkVariable } from './variable';
 
-const typenameSmalltalkBlock = 'SmalltalkBlock';
+const falseVariableName = 'false';
+const trueVariableName = 'true';
 
-export const selfVar = new SmalltalkVariable('self', 0, 0);
-export const objectClass = new SmalltalkClass('Object', undefined, [], [selfVar], []);
+export const selfVar = new SmalltalkVariable('self');
+export const objectClass = new SmalltalkClass(
+	'Object',
+	undefined,
+	[],
+	[selfVar],
+	[
+		new SmalltalkFunctionDefinition('isNil', [], new SmalltalkVariable(falseVariableName)),
+		new SmalltalkFunctionDefinition('notNil', [], new SmalltalkVariable(trueVariableName))
+	]
+);
+
+const typenameSmalltalkBlock = 'SmalltalkBlock';
 
 export function isSmalltalkBlock(obj: unknown): obj is SmalltalkBlock {
 	const v = obj as SmalltalkBlock;

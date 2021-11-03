@@ -9,7 +9,7 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 import {
 	// EnvironmentFrame,
 	ISmalltalkExpression,
-	// ISmalltalkValue,
+	ISmalltalkValue,
 	SmalltalkEnvironmentFrame,
 	SmalltalkGlobalInfo
 } from '../../..';
@@ -21,6 +21,17 @@ import {
 } from '../../create-infrastructure';
 
 const ls = LanguageSelector.Smalltalk;
+
+export function createFnEval(): (str: string) => ISmalltalkValue {
+	const { tokenizer, parser } = createInfrastructure(ls);
+	const globalInfo = new SmalltalkGlobalInfo();
+
+	globalInfo.loadPresets(tokenizer, parser);
+
+	return (str: string) => (parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression).evaluate(undefined,
+	globalInfo.objectInstance,
+	undefined, globalInfo);
+}
 
 test('SmalltalkGrammar instance creation test', () => {
 	// Arrange

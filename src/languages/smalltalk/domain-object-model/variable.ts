@@ -36,7 +36,7 @@ export class SmalltalkVariable implements ISmalltalkExpression, ISmalltalkVariab
 	// public readonly line: number;
 	// public readonly column: number;
 
-	constructor(name: string, public readonly line: number, public readonly column: number) {
+	constructor(name: string, public readonly line = 0, public readonly column = 0) {
 		if (!name) {
 			throw new ArgumentNullException('A Variable cannot have a null or empty name', 'name');
 		}
