@@ -22,8 +22,6 @@ import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-int
 
 import { GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
-// import { Name } from '../../common/domain-object-model/name';
-
 import { ArgumentException } from '../../common/exceptions/argument-exception';
 
 import {
@@ -66,6 +64,7 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalDivide);
 		this.terminals.push(GrammarSymbol.terminalEquals);
 		this.terminals.push(GrammarSymbol.terminalLessThan);
+		this.terminals.push(GrammarSymbol.terminalGreaterThan);
 		this.terminals.push(GrammarSymbol.terminalPrint);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
@@ -281,10 +280,7 @@ export class SmalltalkGrammar extends GrammarBase {
 
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLessThan]);
 
-		// //Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_GreaterThan }, 27));
-		// this.addProduction(GrammarSymbol.nonterminalValueOp, [
-		// 	GrammarSymbol.terminalGreaterThan
-		// ]);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalGreaterThan]);
 
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPrint]);
 
@@ -775,31 +771,31 @@ export class SmalltalkGrammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case GrammarSymbol.terminalID:
-			case GrammarSymbol.terminalPrint:
-			case GrammarSymbol.terminalPlus:
-			case GrammarSymbol.terminalMinus:
-			case GrammarSymbol.terminalMultiply:
-			case GrammarSymbol.terminalDivide:
-			case GrammarSymbol.terminalEquals:
-			case GrammarSymbol.terminalLessThan:
+			// case GrammarSymbol.terminalID:
+			// case GrammarSymbol.terminalPrint:
+			// case GrammarSymbol.terminalPlus:
+			// case GrammarSymbol.terminalMinus:
+			// case GrammarSymbol.terminalMultiply:
+			// case GrammarSymbol.terminalDivide:
+			// case GrammarSymbol.terminalEquals:
+			// case GrammarSymbol.terminalLessThan:
 			//case GrammarSymbol.terminalGreaterThan:
-			case GrammarSymbol.terminalLet:
-			case GrammarSymbol.terminalLetStar:
+			// case GrammarSymbol.terminalLet:
+			// case GrammarSymbol.terminalLetStar:
 
 			case GrammarSymbol.terminalNumberPred:
 			case GrammarSymbol.terminalSymbolPred:
 			case GrammarSymbol.terminalStringPred:
 			case GrammarSymbol.terminalObjectPred:
-			case GrammarSymbol.terminalRandom:
+			// case GrammarSymbol.terminalRandom:
 			case GrammarSymbol.terminalToString:
 			case GrammarSymbol.terminalStringToSymbol:
-			case GrammarSymbol.terminalPow:
-			case GrammarSymbol.terminalExp:
-			case GrammarSymbol.terminalLn:
-			case GrammarSymbol.terminalSin:
-			case GrammarSymbol.terminalCos:
-			case GrammarSymbol.terminalTan:
+			// case GrammarSymbol.terminalPow:
+			// case GrammarSymbol.terminalExp:
+			// case GrammarSymbol.terminalLn:
+			// case GrammarSymbol.terminalSin:
+			// case GrammarSymbol.terminalCos:
+			// case GrammarSymbol.terminalTan:
 			case GrammarSymbol.terminalAtan2:
 			case GrammarSymbol.terminalFloor:
 			case GrammarSymbol.terminalThrow:

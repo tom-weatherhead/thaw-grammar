@@ -242,38 +242,33 @@ test('SmalltalkGrammar class definition test 1', () => {
 	expect(actualSmalltalkValue.toInteger()).toBe(3);
 });
 
-// test('SmalltalkGrammar if test', () => {
-//     // Assert.AreEqual("5", Evaluate("(if (= 2 2) 5 7)"));
-// 	expect(evaluateStringToInteger('(if (= 2 2) 5 7)')).toBe(5);
-//     // Assert.AreEqual("7", Evaluate("(if (= 2 3) 5 7)"));
-// 	expect(evaluateStringToInteger('(if (= 2 3) 5 7)')).toBe(7);
-// });
+test('SmalltalkGrammar if test', () => {
+	expect(evaluateStringToInteger('(if (= 2 2) 5 7)')).toBe(5);
+	expect(evaluateStringToInteger('(if (= 2 3) 5 7)')).toBe(7);
+});
 
-// test('SmalltalkGrammar while test', () => {
-//     const str1 = [
-// 		'(define powInt (x y)',
-// 		'	(let ((result 1))',
-// 		'		(begin',
-// 		'			(while (> y 0)',
-// 		'				(begin',
-// 		'					(set result (* result x))',
-// 		'					(set y (- y 1))',
-// 		'				)',
-// 		'			)',
-// 		'			result',
-// 		'		)',
-// 		'	)',
-// 		')'
-// 	].join(' ');
-//
-// 	const actualSmalltalkValue = evalStringsToValue([
-// 		str1,
-// 		'(powInt 3 4)'
-// 	]);
-//
-// 	expect(actualSmalltalkValue.isInteger).toBe(true);
-// 	expect(actualSmalltalkValue.toInteger()).toBe(81);
-// });
+test('SmalltalkGrammar while test', () => {
+	const str1 = [
+		'(define powInt (x y)',
+		'	(let ((result 1))',
+		'		(begin',
+		'			(while (> y 0)',
+		'				(begin',
+		'					(set result (* result x))',
+		'					(set y (- y 1))',
+		'				)',
+		'			)',
+		'			result',
+		'		)',
+		'	)',
+		')'
+	].join(' ');
+
+	const actualSmalltalkValue = evalStringsToValue([str1, '(powInt 3 4)']);
+
+	expect(actualSmalltalkValue.isInteger).toBe(true);
+	expect(actualSmalltalkValue.toInteger()).toBe(81);
+});
 
 // test('SmalltalkGrammar cond test', () => {
 //     Evaluate("(define condtest (n) (cond ((= n 1) #First) ((= n 2) #Second) ((= n 3) #Third) (true #Other)))");

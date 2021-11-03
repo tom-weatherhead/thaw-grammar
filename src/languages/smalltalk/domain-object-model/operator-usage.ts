@@ -257,52 +257,64 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 	// private cachedClassReference: ISmalltalkClass | undefined;
 	// private cachedMethodReference: ISmalltalkFunctionDefinition | undefined;
 	// private static readonly HashSet<string> OperatorsThatTakeEitherIntOrFloatArgs = new HashSet<string>() { "<", /* ">", */ "+", "-", "*", "/" };
+
 	private readonly valueOpNames = [
-		'print',
+		// Arithmetic:
 		'=',
 		'<',
+		'>',
+		'+',
+		'-',
+		'*',
+		'/',
+
+		// Math functions:
+		'pow',
 		'exp',
 		'ln',
 		'sin',
 		'cos',
 		'tan',
-		'+',
-		'-',
-		'*',
-		'/',
-		'pow',
 		'atan2',
-		'strcat',
+		'random',
+		'floor',
+
+		// Type predicates
 		'number?',
 		'symbol?',
 		'char?',
 		'string?',
 		'object?',
 		'array?',
-		'random',
+
+		'typename',
+		// 'hash',
+		// 'ref=',
+
+		// String functions
 		'tostring',
 		'stringtosymbol',
-		'floor',
-		'throw',
-		'strlen',
-		'typename',
-		'hash',
-		'newarray',
-		'arraylength',
 		'string<',
-		'ref=',
-		'arrayget',
+		'strlen',
 		'stridx',
 		'substr',
-		'arrayset'
+		'strcat',
+
+		// Array functions
+		'newarray',
+		'arraylength',
+		'arrayget',
+		'arrayset',
+
+		// Utility functions
+		'print',
+		'throw'
 	];
 
 	constructor(
 		private readonly operatorName: Name,
 		public readonly expressionList: ISmalltalkExpression[]
 	) {
-		// OperatorName = operatorName;
-		// ExpressionList = expressionList;
 		// CachedClassReference = null;
 		// CachedMethodReference = null;
 	}
@@ -383,6 +395,21 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 
 			case '/':
 				return new SmalltalkIntegerValue(Math.floor(firstArgAsInt / secondArgAsInt));
+
+			case '=':
+				return firstArgAsInt === secondArgAsInt
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
+
+			case '<':
+				return firstArgAsInt < secondArgAsInt
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
+
+			case '>':
+				return firstArgAsInt > secondArgAsInt
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			default:
 				throw new Error(
