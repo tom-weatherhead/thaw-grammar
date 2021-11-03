@@ -7,7 +7,6 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 // import { SyntaxException } from 'thaw-parser';
 
 import {
-	// EnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkValue,
 	SmalltalkEnvironmentFrame,
@@ -29,12 +28,6 @@ function createFnEval(): (str: string) => ISmalltalkValue {
 	globalInfo.loadPresets(tokenizer, parser);
 
 	return (str: string) =>
-		// (parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression).evaluate(
-		// 	undefined,
-		// 	globalInfo.objectInstance,
-		// 	undefined,
-		// 	globalInfo
-		// );
 		globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression);
 }
 
@@ -55,12 +48,6 @@ function evalStringsToValue(strs: string[]): ISmalltalkValue {
 }
 
 function evaluateStringToInteger(str: string): number | undefined {
-	// 	const f = createFnParser<ISmalltalkExpression>(ls);
-	// 	const localEnvironment = new SmalltalkEnvironmentFrame();
-	// 	const globalInfo = new SmalltalkGlobalInfo();
-	//
-	// 	return f(str).evaluate(localEnvironment, undefined, undefined, globalInfo).toInteger();
-
 	return evalStringsToValue([str]).toInteger();
 }
 
@@ -167,24 +154,8 @@ test('SmalltalkGrammar addition test', () => {
 });
 
 test('SmalltalkGrammar function definition test', () => {
-	// const localEnvironment = new SmalltalkEnvironmentFrame();
-	// const globalInfo = new SmalltalkGlobalInfo();
-	//
-	// const f = createFnParser<ISmalltalkExpression>(ls);
 	const a = 2;
 	const b = 3;
-
-	// const str1 = '(define add (x y) (+ x y))';
-	// const str2 = `(add ${a} ${b})`;
-
-	// f(str1).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	//
-	// const actualSmalltalkValue = f(str2).evaluate(
-	// 	localEnvironment,
-	// 	undefined,
-	// 	undefined,
-	// 	globalInfo
-	// );
 
 	const actualSmalltalkValue = evalStringsToValue([
 		'(define add (x y) (+ x y))',
@@ -196,11 +167,6 @@ test('SmalltalkGrammar function definition test', () => {
 });
 
 test('SmalltalkGrammar class definition test 1', () => {
-	// const localEnvironment = new SmalltalkEnvironmentFrame();
-	// const globalInfo = new SmalltalkGlobalInfo();
-	//
-	// const f = createFnParser<ISmalltalkExpression>(ls);
-
 	const str1 = [
 		'(class Counter Object ()',
 		'	(x)',
@@ -209,25 +175,6 @@ test('SmalltalkGrammar class definition test 1', () => {
 		'	(define inc () (set x (+ x 1)))',
 		')'
 	].join(' ');
-
-	// const str2 = '(set c (init (new Counter)))';
-	// const str3 = '(inc c)';
-	// const str4 = '(inc c)';
-	// const str5 = '(inc c)';
-	// const str6 = '(get c)';
-	//
-	// f(str1).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	// f(str2).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	// f(str3).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	// f(str4).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	// f(str5).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	//
-	// const actualSmalltalkValue = f(str6).evaluate(
-	// 	localEnvironment,
-	// 	undefined,
-	// 	undefined,
-	// 	globalInfo
-	// );
 
 	const actualSmalltalkValue = evalStringsToValue([
 		str1,

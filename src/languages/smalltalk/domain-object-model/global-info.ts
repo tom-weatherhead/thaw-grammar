@@ -515,6 +515,7 @@ import { ArgumentException } from '../../../common/exceptions/argument-exception
 
 import {
 	ISmalltalkClass,
+	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
@@ -686,11 +687,17 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 	// Evaluate("(define gcd (m n) (if (= n 0) m (gcd n (mod m n))))");
 	// Evaluate("(define abs (n) (if (< n 0) (- 0 n) n))");
 
-	public evaluate(expr: ISmalltalkExpression): ISmalltalkValue {
+	public evaluate(
+		expr: ISmalltalkExpression,
+		options: {
+			localEnvironment?: ISmalltalkEnvironmentFrame;
+			c?: ISmalltalkClass;
+		} = {}
+	): ISmalltalkValue {
 		return expr.evaluate(
-			undefined, // Or this.globalEnvironment ?
+			options.localEnvironment, // undefined, // Or this.globalEnvironment ?
 			this.objectInstance,
-			undefined,
+			options.c, // undefined,
 			this
 		);
 	}

@@ -65,7 +65,7 @@ export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkE
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue | undefined,
+		receiver: ISmalltalkValue, // | undefined,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {

@@ -36,7 +36,7 @@ export class SmalltalkIfUsage implements ISmalltalkExpression {
 
 	public evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue | undefined,
+		receiver: ISmalltalkValue, // | undefined,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {

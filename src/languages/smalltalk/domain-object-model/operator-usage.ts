@@ -907,7 +907,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 	private evaluateMethod(
 		method: ISmalltalkFunctionDefinition,
 		evaluatedArguments: ISmalltalkValue[],
-		receiver: ISmalltalkValue | undefined,
+		receiver: ISmalltalkValue, // | undefined,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {

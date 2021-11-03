@@ -35,7 +35,7 @@ export class SmalltalkFunctionDefinition implements ISmalltalkFunctionDefinition
 	/* eslint-disable no-unused-vars */
 	public evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue | undefined,
+		receiver: ISmalltalkValue, // | undefined,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {

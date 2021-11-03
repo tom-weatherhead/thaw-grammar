@@ -109,7 +109,7 @@ export interface ISmalltalkUserValue extends ISmalltalkValue {
 export interface ISmalltalkExpression {
 	evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue | undefined,
+		receiver: ISmalltalkValue, // | undefined,
 		// "SmalltalkClass c" was added here as the third parameter in order to support "super"; see Exercise 11 on pages 347-348.
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
