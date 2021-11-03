@@ -6,8 +6,6 @@ import {
 	ISmalltalkUserValue
 } from './interfaces/iexpression';
 
-// import { SmalltalkEnvironmentFrame } from './environment-frame';
-
 import { SmalltalkValueBase } from './value-base';
 
 export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalkUserValue {
@@ -60,18 +58,6 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 	public override isObject(): boolean {
 		return true;
 	}
-
-	// public toInteger(): number | undefined {
-	// 	return undefined;
-	// }
-	//
-	// public toFloat(): number | undefined {
-	// 	return undefined;
-	// }
-	//
-	// public toStringX(): string | undefined {
-	// 	return undefined;
-	// }
 
 	public override toUserValue(): ISmalltalkUserValue | undefined {
 		return this;

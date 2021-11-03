@@ -45,8 +45,8 @@ export { SASLGlobalInfo } from './languages/sasl/domain-object-model/global-info
 
 // Smalltalk (Kamin 7/8)
 export { ISmalltalkExpression } from './languages/smalltalk/domain-object-model/interfaces/iexpression';
-// export { ISmalltalkValue } from './languages/smalltalk/domain-object-model/interfaces/ivalue';
 export { SmalltalkGlobalInfo } from './languages/smalltalk/domain-object-model/global-info';
+export { SmalltalkEnvironmentFrame } from './languages/smalltalk/domain-object-model/environment-frame';
 
 // Prolog (Kamin 8/8)
 export { PrologClause } from './languages/prolog/domain-object-model/prolog-clause';

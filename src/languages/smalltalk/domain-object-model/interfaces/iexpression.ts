@@ -121,7 +121,7 @@ export interface ISmalltalkUserValue extends ISmalltalkValue {
 export interface ISmalltalkExpression {
 	evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue,
+		receiver: ISmalltalkValue | undefined,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue;

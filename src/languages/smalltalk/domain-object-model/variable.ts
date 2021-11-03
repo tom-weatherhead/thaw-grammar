@@ -76,12 +76,12 @@ export class SmalltalkVariable implements ISmalltalkExpression, ISmalltalkVariab
 
 	public evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue,
+		receiver: ISmalltalkValue | undefined,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {
 		// See Kamin page 295.
-		const userVal = receiver.toUserValue();
+		const userVal = typeof receiver !== 'undefined' ? receiver.toUserValue() : undefined;
 
 		if (typeof localEnvironment !== 'undefined' && localEnvironment.isDefined(this)) {
 			// TODO: Stop this Lookup (and IsDefined above) from searching the GlobalEnvironment.

@@ -24,62 +24,6 @@
 
 // SmalltalkIntegerValue objects are immutable.
 
-// public class SmalltalkIntegerValue : SmalltalkNumberBase
-// {
-// 	public readonly int Value;
-//
-// 	public SmalltalkIntegerValue(int value)
-// 		: base(SmalltalkObjectClassKeeper.ObjectClass)
-// 	{
-// 		Value = value;
-// 	}
-//
-// 	public override string ToString()
-// 	{
-// 		return Value.ToString();
-// 	}
-//
-// 	public override bool Equals(object obj)
-// 	{
-//
-// 		if (object.ReferenceEquals(this, obj))
-// 		{
-// 			return true;
-// 		}
-//
-// 		var otherIntVal = obj as SmalltalkIntegerValue;
-//
-// 		return otherIntVal != null && Value == otherIntVal.Value;
-// 	}
-//
-// 	public override int GetHashCode()
-// 	{
-// 		return Value.GetHashCode();
-// 	}
-//
-// 	public override string GetTypename()
-// 	{
-// 		return "int";
-// 	}
-//
-// 	public override int ToInteger()
-// 	{
-// 		return Value;
-// 	}
-//
-// 	public override double ToDouble()
-// 	{
-// 		return Convert.ToDouble(Value);
-// 	}
-//
-// 	/*
-// 	public override ISmalltalkValue Evaluate(SmalltalkEnvironmentFrame localEnvironment, ISmalltalkValue receiver, SmalltalkClass c, SmalltalkGlobalInfo globalInfo)
-// 	{
-// 		return this;
-// 	}
-// 	 */
-// }
-
 // SmalltalkFloatValue objects are immutable.
 
 // public class SmalltalkFloatValue : SmalltalkNumberBase
@@ -155,22 +99,12 @@
 // 	 */
 // }
 
-// import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { IExpression } from '../../../common/domain-object-model/iexpression';
-// import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
-
-// import { ISmalltalkClass, ISmalltalkEnvironmentFrame, ISmalltalkExpression, ISmalltalkGlobalInfo, ISmalltalkValue } from './interfaces/iexpression';
-// import { ISmalltalkUserValue } from './interfaces/iexpression';
-
-// import { ISmalltalkValue } from './interfaces/ivalue';
 
 import { SmalltalkValueBase } from './value-base';
 
 export class SmalltalkIntegerValue extends SmalltalkValueBase {
 	public readonly value: number;
-	// public readonly line: number;
-	// public readonly column: number;
 
 	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
 		super();
@@ -193,8 +127,6 @@ export class SmalltalkIntegerValue extends SmalltalkValueBase {
 		}
 
 		this.value = value as number;
-		// this.line = line;
-		// this.column = column;
 	}
 
 	public override toString(): string {
@@ -222,21 +154,4 @@ export class SmalltalkIntegerValue extends SmalltalkValueBase {
 	public override toFloat(): number | undefined {
 		return this.value;
 	}
-
-	// public toStringX(): string | undefined {
-	// 	return undefined;
-	// }
-	//
-	// public toUserValue(): ISmalltalkUserValue | undefined {
-	// 	return undefined;
-	// }
-
-	/* eslint-disable @typescript-eslint/no-unused-vars */
-	// public evaluate(
-	// 	localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-	// 	receiver: ISmalltalkValue, c: ISmalltalkClass, globalInfo: ISmalltalkGlobalInfo
-	// ): ISmalltalkValue {
-	// 	return this;
-	// }
-	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

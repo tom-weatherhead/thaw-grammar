@@ -871,7 +871,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 	private evaluateMethod(
 		method: ISmalltalkFunctionDefinition,
 		evaluatedArguments: ISmalltalkValue[],
-		receiver: ISmalltalkValue,
+		receiver: ISmalltalkValue | undefined,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {
@@ -903,9 +903,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 			// if (variable != null && variable.Name == "super") {
 			if (isSmalltalkVariable(expr0) && expr0.name === 'super') {
 				if (typeof c === 'undefined') {
-					// throw new EvaluationException(
-					// 	string.Format("{0}: super usage: c is null", OperatorName.Value),
-					// 	OperatorName.Line, OperatorName.Column);
 					throw new EvaluationException(
 						`${this.operatorName.value}: super usage: c is undefined`,
 						this.operatorName.line,
@@ -914,9 +911,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				}
 
 				if (typeof c.superClass === 'undefined') {
-					// throw new EvaluationException(
-					// 	string.Format("{0}: super usage: c.SuperClass is null", OperatorName.Value),
-					// 	OperatorName.Line, OperatorName.Column);
 					throw new EvaluationException(
 						`${this.operatorName.value}: super usage: c.superClass is undefined`,
 						this.operatorName.line,
@@ -929,9 +923,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				);
 
 				if (typeof method === 'undefined') {
-					// throw new EvaluationException(
-					// 	string.Format("super usage: Method '{0}' not found", OperatorName.Value),
-					// 	OperatorName.Line, OperatorName.Column);
 					throw new EvaluationException(
 						`${this.operatorName.value}: super usage: Method '${this.operatorName.value}' not found`,
 						this.operatorName.line,
@@ -939,7 +930,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 					);
 				}
 
-				// const selfValue = SmalltalkObjectClassKeeper.selfVar.evaluate(localEnvironment, receiver, c, globalInfo);
 				const selfValue = selfVar.evaluate(localEnvironment, receiver, c, globalInfo);
 
 				evaluatedArguments = this.expressionList
@@ -977,8 +967,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		if (evaluatedArguments.length === 0) {
 			result = this.evaluateGlobalFunction(evaluatedArguments, globalInfo);
 		} else {
-			// evaluatedArguments[0] = SmalltalkGlobalInfo.UnblockValue(evaluatedArguments[0]);
-
 			evaluatedArguments[0] = unblockValue(evaluatedArguments[0]);
 
 			let method: ISmalltalkFunctionDefinition | undefined;
@@ -1015,8 +1003,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				result = this.evaluateGlobalFunction(evaluatedArguments, globalInfo);
 			}
 		}
-
-		// return SmalltalkGlobalInfo.UnblockValue(result);
 
 		return unblockValue(result);
 	}

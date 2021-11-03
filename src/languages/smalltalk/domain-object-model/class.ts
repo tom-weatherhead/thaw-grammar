@@ -120,7 +120,7 @@ export class SmalltalkClass implements ISmalltalkClass {
 	/* eslint-disable no-unused-vars */
 	public evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue,
+		receiver: ISmalltalkValue | undefined,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {

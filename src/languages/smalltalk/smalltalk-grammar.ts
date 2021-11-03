@@ -876,6 +876,7 @@ export class SmalltalkGrammar extends GrammarBase {
 
 			case GrammarSymbol.terminalLeftBracket:
 			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalDefine:
 			case GrammarSymbol.terminalEOF:
 				// For these terminals, push nothing onto the semantic stack.
 				break;
