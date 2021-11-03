@@ -16,7 +16,6 @@ import {
 	ISmalltalkValue,
 	ISmalltalkVariable
 } from './interfaces/iexpression';
-// import { ISmalltalkValue } from './interfaces/ivalue';
 
 const typenameSmalltalkVariable = 'SmalltalkVariable';
 

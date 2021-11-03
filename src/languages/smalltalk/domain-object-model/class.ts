@@ -1,4 +1,4 @@
-// class.ts
+// tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/class.ts
 
 import { IParser, ITokenizer } from 'thaw-interpreter-types';
 

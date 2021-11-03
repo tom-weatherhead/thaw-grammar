@@ -1,4 +1,4 @@
-// block.ts
+// tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/block.ts
 
 // A SmalltalkBlock is a lot like an SASL Thunk (a suspended computation).
 
@@ -13,28 +13,9 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { SmalltalkClass } from './class';
-
-import { SmalltalkFunctionDefinition } from './function-definition';
+import { objectClass } from './bootstrap';
 
 import { SmalltalkValueBase } from './value-base';
-
-import { SmalltalkVariable } from './variable';
-
-const falseVariableName = 'false';
-const trueVariableName = 'true';
-
-export const selfVar = new SmalltalkVariable('self');
-export const objectClass = new SmalltalkClass(
-	'Object',
-	undefined,
-	[],
-	[selfVar],
-	[
-		new SmalltalkFunctionDefinition('isNil', [], new SmalltalkVariable(falseVariableName)),
-		new SmalltalkFunctionDefinition('notNil', [], new SmalltalkVariable(trueVariableName))
-	]
-);
 
 const typenameSmalltalkBlock = 'SmalltalkBlock';
 

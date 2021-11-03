@@ -6,13 +6,8 @@ import {
 	ISmalltalkVariable
 } from './interfaces/iexpression';
 
-// import { ISmalltalkValue } from './interfaces/ivalue';
-
-// import { SmalltalkVariable } from './variable';
-
 export class SmalltalkEnvironmentFrame implements ISmalltalkEnvironmentFrame {
 	public readonly dict = new Map<string, ISmalltalkValue>();
-	// public readonly next: ISmalltalkEnvironmentFrame;
 
 	constructor(public readonly next: ISmalltalkEnvironmentFrame | undefined = undefined) {}
 

@@ -523,24 +523,13 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { objectClass, selfVar } from './block';
+import { objectClass, selfVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import { SmalltalkIntegerValue } from './integer';
 
 import { SmalltalkUserValue } from './user-value';
-
-// const nilVariableName = 'nil';
-// const nilValueAsString = 'nil';
-
-// const falseValueClassName = 'FalseValue';
-// const falseVariableName = 'false';
-// const falseValueAsString = 'false';
-
-// const trueValueClassName = 'TrueValue';
-// const trueVariableName = 'true';
-// const trueValueAsString = 'true';
 
 export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
 	private readonly zeroValueForAccessor = new SmalltalkIntegerValue(0);

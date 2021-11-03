@@ -4,28 +4,18 @@ import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
-	// ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
-	ISmalltalkValue // ,
-	// ISmalltalkVariable
+	ISmalltalkValue
 } from './interfaces/iexpression';
 
 import { unblockValue } from './block';
 
 export class SmalltalkIfUsage implements ISmalltalkExpression {
-	// public readonly ISmalltalkExpression Condition;
-	// public readonly ISmalltalkExpression IfBody;
-	// public readonly ISmalltalkExpression ElseBody;
-
 	constructor(
 		public readonly condition: ISmalltalkExpression,
 		public readonly ifBody: ISmalltalkExpression,
 		public readonly elseBody: ISmalltalkExpression
-	) {
-		// Condition = condition;
-		// IfBody = ifBody;
-		// ElseBody = elseBody;
-	}
+	) {}
 
 	/*
     public override string ToString()

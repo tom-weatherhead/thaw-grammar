@@ -1,4 +1,4 @@
-// user-value.ts
+// tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/user-value.ts
 
 import {
 	ISmalltalkClass,

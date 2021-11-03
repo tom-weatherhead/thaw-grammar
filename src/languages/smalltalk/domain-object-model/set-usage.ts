@@ -4,7 +4,6 @@ import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
-	// ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
 	ISmalltalkValue,
 	ISmalltalkVariable
@@ -13,16 +12,10 @@ import {
 import { unblockValue } from './block';
 
 export class SmalltalkSetUsage implements ISmalltalkExpression {
-	// public readonly SmalltalkVariable VariableName;
-	// public readonly ISmalltalkExpression Expression;
-
 	constructor(
 		public readonly variableName: ISmalltalkVariable,
 		public readonly expression: ISmalltalkExpression
-	) {
-		// VariableName = variableName;
-		// Expression = expression;
-	}
+	) {}
 
 	/*
     public override string ToString()

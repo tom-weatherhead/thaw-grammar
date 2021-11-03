@@ -14,7 +14,9 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { selfVar, SmalltalkBlock, unblockValue } from './block';
+import { SmalltalkBlock, unblockValue } from './block';
+
+import { selfVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 

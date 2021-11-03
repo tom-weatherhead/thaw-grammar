@@ -1,17 +1,13 @@
-// value-base.ts
+// tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/value-base.ts
 
 import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
-	// ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
 	ISmalltalkUserValue,
 	ISmalltalkValue
-	// , ISmalltalkVariable
 } from './interfaces/iexpression';
-
-// import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkExpression {
 	constructor(public owner: ISmalltalkClass | undefined = undefined) {}

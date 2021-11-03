@@ -11,19 +11,11 @@ import {
 } from './interfaces/iexpression';
 
 export class SmalltalkFunctionDefinition implements ISmalltalkFunctionDefinition {
-	// public readonly string FunctionName;
-	// public readonly List<SmalltalkVariable> ArgList;
-	// public readonly ISmalltalkExpression Body;
-
 	constructor(
 		public readonly functionName: string,
 		public readonly argList: ISmalltalkVariable[],
 		public readonly body: ISmalltalkExpression
-	) {
-		// FunctionName = functionName;
-		// ArgList = argList;
-		// Body = body;
-	}
+	) {}
 
 	/*
     public override string ToString()
