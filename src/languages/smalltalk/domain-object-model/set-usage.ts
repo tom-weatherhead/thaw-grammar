@@ -1,41 +1,64 @@
-// set-usage.ts
+// tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/set-usage.ts
 
-// public class SmalltalkSetUsage : ISmalltalkExpression
-// {
-//     public readonly SmalltalkVariable VariableName;
-//     public readonly ISmalltalkExpression Expression;
-//
-//     public SmalltalkSetUsage(SmalltalkVariable variableName, ISmalltalkExpression expression)
-//     {
-//         VariableName = variableName;
-//         Expression = expression;
-//     }
-//
-//     /*
-//     public override string ToString()
-//     {
-//         return string.Format("(set {0} {1})", VariableName, Expression);
-//     }
-//      */
-//
-//     public ISmalltalkValue Evaluate(SmalltalkEnvironmentFrame localEnvironment, ISmalltalkValue receiver, SmalltalkClass c, SmalltalkGlobalInfo globalInfo)
-//     {
-//         var expressionValue = SmalltalkGlobalInfo.UnblockValue(Expression.Evaluate(localEnvironment, receiver, c, globalInfo));
-//         var userVal = receiver as SmalltalkUserValue;
-//
-//         if (localEnvironment != null && localEnvironment.IsDefined(VariableName))
-//         {
-//             localEnvironment.AddBubbleDown(VariableName, expressionValue);
-//         }
-//         else if (userVal != null && userVal.Value.Dict.ContainsKey(VariableName))
-//         {
-//             userVal.Value.Dict[VariableName] = expressionValue;
-//         }
-//         else if (c == null || !c.TrySetClassVariableValue(VariableName, expressionValue))
-//         {
-//             globalInfo.GlobalEnvironment.Dict[VariableName] = expressionValue;
-//         }
-//
-//         return expressionValue;
-//     }
-// }
+import {
+	ISmalltalkClass,
+	ISmalltalkEnvironmentFrame,
+	ISmalltalkExpression,
+	// ISmalltalkFunctionDefinition,
+	ISmalltalkGlobalInfo,
+	ISmalltalkValue,
+	ISmalltalkVariable
+} from './interfaces/iexpression';
+
+import { unblockValue } from './block';
+
+export class SmalltalkSetUsage implements ISmalltalkExpression {
+	// public readonly SmalltalkVariable VariableName;
+	// public readonly ISmalltalkExpression Expression;
+
+	constructor(
+		public readonly variableName: ISmalltalkVariable,
+		public readonly expression: ISmalltalkExpression
+	) {
+		// VariableName = variableName;
+		// Expression = expression;
+	}
+
+	/*
+    public override string ToString()
+    {
+        return string.Format("(set {0} {1})", VariableName, Expression);
+    }
+     */
+
+	public evaluate(
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
+		receiver: ISmalltalkValue | undefined,
+		c: ISmalltalkClass | undefined,
+		globalInfo: ISmalltalkGlobalInfo
+	): ISmalltalkValue {
+		const expressionValue = unblockValue(
+			this.expression.evaluate(localEnvironment, receiver, c, globalInfo)
+		);
+		const userVal = typeof receiver !== 'undefined' ? receiver.toUserValue() : undefined;
+
+		if (
+			typeof localEnvironment !== 'undefined' &&
+			localEnvironment.isDefined(this.variableName)
+		) {
+			localEnvironment.addBubbleDown(this.variableName, expressionValue);
+		} else if (
+			typeof userVal !== 'undefined' &&
+			userVal.value.dict.has(this.variableName.name)
+		) {
+			userVal.value.dict.set(this.variableName.name, expressionValue);
+		} else if (
+			typeof c === 'undefined' ||
+			!c.trySetClassVariableValue(this.variableName, expressionValue)
+		) {
+			globalInfo.globalEnvironment.dict.set(this.variableName.name, expressionValue);
+		}
+
+		return expressionValue;
+	}
+}

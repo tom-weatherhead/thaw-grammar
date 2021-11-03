@@ -10,8 +10,6 @@ import {
 	ISmalltalkVariable
 } from './interfaces/iexpression';
 
-// import { ISmalltalkValue } from './interfaces/ivalue';
-
 export class SmalltalkFunctionDefinition implements ISmalltalkFunctionDefinition {
 	// public readonly string FunctionName;
 	// public readonly List<SmalltalkVariable> ArgList;

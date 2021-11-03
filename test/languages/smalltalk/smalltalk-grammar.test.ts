@@ -154,6 +154,44 @@ test('SmalltalkGrammar function definition test', () => {
 	expect(actualSmalltalkValue.toInteger()).toBe(a + b);
 });
 
+test('SmalltalkGrammar class definition test 1', () => {
+	const localEnvironment = new SmalltalkEnvironmentFrame();
+	const globalInfo = new SmalltalkGlobalInfo();
+
+	const f = createFnParser<ISmalltalkExpression>(ls);
+
+	const str1 = [
+		'(class Counter Object ()',
+		'	(x)',
+		'	(define init () (begin (set x 0) self))',
+		'	(define get () x)',
+		'	(define inc () (set x (+ x 1)))',
+		')'
+	].join(' ');
+
+	const str2 = '(set c (init (new Counter)))';
+	const str3 = '(inc c)';
+	const str4 = '(inc c)';
+	const str5 = '(inc c)';
+	const str6 = '(get c)';
+
+	f(str1).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	f(str2).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	f(str3).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	f(str4).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	f(str5).evaluate(localEnvironment, undefined, undefined, globalInfo);
+
+	const actualSmalltalkValue = f(str6).evaluate(
+		localEnvironment,
+		undefined,
+		undefined,
+		globalInfo
+	);
+
+	expect(actualSmalltalkValue.isInteger).toBe(true);
+	expect(actualSmalltalkValue.toInteger()).toBe(3);
+});
+
 // [Test]
 // public void PlusTest()
 // {

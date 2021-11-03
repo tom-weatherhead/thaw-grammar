@@ -33,10 +33,13 @@ import {
 	ISmalltalkVariable
 } from './domain-object-model/interfaces/iexpression';
 
+SmalltalkBeginUsage;
+import { SmalltalkBeginUsage } from './domain-object-model/begin-usage';
 import { SmalltalkClass } from './domain-object-model/class';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 import { SmalltalkIntegerValue } from './domain-object-model/integer';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
+import { SmalltalkSetUsage } from './domain-object-model/set-usage';
 import { SmalltalkVariable } from './domain-object-model/variable';
 
 export class SmalltalkGrammar extends GrammarBase {
@@ -499,18 +502,18 @@ export class SmalltalkGrammar extends GrammarBase {
 			//     expression = (ISmalltalkExpression)semanticStack.Pop();
 			//     semanticStack.Push(new SmalltalkWhileUsage(expression, expression2));
 			//     break;
-			//
-			// case '#set':
-			//     expression = (ISmalltalkExpression)semanticStack.Pop();
-			//     variable = (SmalltalkVariable)semanticStack.Pop();
-			//     semanticStack.Push(new SmalltalkSetUsage(variable, expression));
-			//     break;
-			//
-			// case '#begin':
-			//     expressionList = (List<ISmalltalkExpression>)semanticStack.Pop();
-			//     expression = (ISmalltalkExpression)semanticStack.Pop();
-			//     semanticStack.Push(new SmalltalkBeginUsage(expression, expressionList));
-			//     break;
+
+			case '#set':
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				variable = semanticStack.pop() as ISmalltalkVariable;
+				semanticStack.push(new SmalltalkSetUsage(variable, expression));
+				break;
+
+			case '#begin':
+				expressionList = semanticStack.pop() as ISmalltalkExpression[];
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				semanticStack.push(new SmalltalkBeginUsage(expression, expressionList));
+				break;
 
 			case '#operatorUsage':
 				expressionList = semanticStack.pop() as ISmalltalkExpression[];
@@ -876,7 +879,10 @@ export class SmalltalkGrammar extends GrammarBase {
 
 			case GrammarSymbol.terminalLeftBracket:
 			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalBegin:
+			case GrammarSymbol.terminalClass:
 			case GrammarSymbol.terminalDefine:
+			case GrammarSymbol.terminalSet:
 			case GrammarSymbol.terminalEOF:
 				// For these terminals, push nothing onto the semantic stack.
 				break;
