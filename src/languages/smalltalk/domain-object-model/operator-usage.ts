@@ -4,8 +4,6 @@ import { Name } from 'thaw-interpreter-core';
 
 import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
-// import { Name } from '../../../common/domain-object-model/name';
-
 import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
@@ -376,6 +374,15 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		switch (this.operatorName.value) {
 			case '+':
 				return new SmalltalkIntegerValue(firstArgAsInt + secondArgAsInt);
+
+			case '-':
+				return new SmalltalkIntegerValue(firstArgAsInt - secondArgAsInt);
+
+			case '*':
+				return new SmalltalkIntegerValue(firstArgAsInt * secondArgAsInt);
+
+			case '/':
+				return new SmalltalkIntegerValue(Math.floor(firstArgAsInt / secondArgAsInt));
 
 			default:
 				throw new Error(

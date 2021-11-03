@@ -64,6 +64,10 @@ function evaluateStringToInteger(str: string): number | undefined {
 	return evalStringsToValue([str]).toInteger();
 }
 
+function evaluateStringsToInteger(strs: string[]): number | undefined {
+	return evalStringsToValue(strs).toInteger();
+}
+
 test('SmalltalkGrammar instance creation test', () => {
 	// Arrange
 	const { grammar } = createInfrastructure(ls);
@@ -238,6 +242,67 @@ test('SmalltalkGrammar class definition test 1', () => {
 	expect(actualSmalltalkValue.toInteger()).toBe(3);
 });
 
+// test('SmalltalkGrammar if test', () => {
+//     // Assert.AreEqual("5", Evaluate("(if (= 2 2) 5 7)"));
+// 	expect(evaluateStringToInteger('(if (= 2 2) 5 7)')).toBe(5);
+//     // Assert.AreEqual("7", Evaluate("(if (= 2 3) 5 7)"));
+// 	expect(evaluateStringToInteger('(if (= 2 3) 5 7)')).toBe(7);
+// });
+
+// test('SmalltalkGrammar while test', () => {
+//     const str1 = [
+// 		'(define powInt (x y)',
+// 		'	(let ((result 1))',
+// 		'		(begin',
+// 		'			(while (> y 0)',
+// 		'				(begin',
+// 		'					(set result (* result x))',
+// 		'					(set y (- y 1))',
+// 		'				)',
+// 		'			)',
+// 		'			result',
+// 		'		)',
+// 		'	)',
+// 		')'
+// 	].join(' ');
+//
+// 	const actualSmalltalkValue = evalStringsToValue([
+// 		str1,
+// 		'(powInt 3 4)'
+// 	]);
+//
+// 	expect(actualSmalltalkValue.isInteger).toBe(true);
+// 	expect(actualSmalltalkValue.toInteger()).toBe(81);
+// });
+
+// test('SmalltalkGrammar cond test', () => {
+//     Evaluate("(define condtest (n) (cond ((= n 1) #First) ((= n 2) #Second) ((= n 3) #Third) (true #Other)))");
+//
+//     Assert.AreEqual("Other", Evaluate("(condtest 0)"));
+//     Assert.AreEqual("First", Evaluate("(condtest 1)"));
+//     Assert.AreEqual("Second", Evaluate("(condtest 2)"));
+//     Assert.AreEqual("Third", Evaluate("(condtest 3)"));
+//     Assert.AreEqual("Other", Evaluate("(condtest 4)"));
+// });
+
+test('SmalltalkGrammar let test 1', () => {
+	// Assert.AreEqual("5", Evaluate("(let ((n (+ 2 3))) n)"));
+	expect(evaluateStringToInteger('(let ((n (+ 2 3))) n)')).toBe(5);
+});
+
+test('SmalltalkGrammar let test 2', () => {
+	const str1 = ['(define increment (n)', '	(let ((m 1))', '		(+ n m)', '	)', ')'].join(' ');
+	const str2 = '(increment 7)';
+
+	// Assert.AreEqual("8", Evaluate("(increment 7)"));
+	expect(evaluateStringsToInteger([str1, str2])).toBe(8);
+});
+
+test('SmalltalkGrammar let* test', () => {
+	// Assert.AreEqual("25", Evaluate("(let* ((x (+ 2 3)) (y (* x x))) y)"));
+	expect(evaluateStringToInteger('(let* ((x (+ 2 3)) (y (* x x))) y)')).toBe(25);
+});
+
 // [Test]
 // public void PlusTest()
 // {
@@ -260,40 +325,6 @@ test('SmalltalkGrammar class definition test 1', () => {
 // {
 //     Assert.AreEqual("8", Evaluate("(gcd 16384 24)"));
 //     Assert.AreEqual("1", Evaluate("(gcd 100 81)"));
-// }
-//
-// [Test]
-// public void CondTest()
-// {
-//     Evaluate("(define condtest (n) (cond ((= n 1) #First) ((= n 2) #Second) ((= n 3) #Third) (true #Other)))");
-//
-//     Assert.AreEqual("Other", Evaluate("(condtest 0)"));
-//     Assert.AreEqual("First", Evaluate("(condtest 1)"));
-//     Assert.AreEqual("Second", Evaluate("(condtest 2)"));
-//     Assert.AreEqual("Third", Evaluate("(condtest 3)"));
-//     Assert.AreEqual("Other", Evaluate("(condtest 4)"));
-// }
-//
-// [Test]
-// public void LetTest()
-// {
-//     Assert.AreEqual("5", Evaluate("(let ((n (+ 2 3))) n)"));
-// }
-//
-// [Test]
-// public void LetTest2()
-// {
-//     Evaluate(@"
-// (define increment (n)
-// (let ((m 1))
-// (+ n m)))");
-//     Assert.AreEqual("8", Evaluate("(increment 7)"));
-// }
-//
-// [Test]
-// public void LetStarTest()
-// {
-//     Assert.AreEqual("25", Evaluate("(let* ((x (+ 2 3)) (y (* x x))) y)"));
 // }
 //
 // [Test]
@@ -1471,34 +1502,6 @@ test('SmalltalkGrammar class definition test 1', () => {
 //     Assert.AreEqual(trueValueAsString, Evaluate("(isEmpty q)"));
 //     Assert.AreEqual("nil", Evaluate("(peek q)"));
 //     Assert.AreEqual("nil", Evaluate("(dequeue q)"));
-// }
-//
-// [Test]
-// public void WhileTest()
-// {
-//     Evaluate(@"
-// (define powInt (x y)
-// (let ((result 1))
-// (begin
-//     (while (> y 0)
-//         (begin
-//             (set result (* result x))
-//             (set y (- y 1))
-//         )
-//     )
-//     result
-// )
-// )
-// )");
-//
-//     Assert.AreEqual("81", Evaluate("(powInt 3 4)"));
-// }
-//
-// [Test]
-// public void IfTest()
-// {
-//     Assert.AreEqual("5", Evaluate("(if (= 2 2) 5 7)"));
-//     Assert.AreEqual("7", Evaluate("(if (= 2 3) 5 7)"));
 // }
 //
 // [Test]
