@@ -1,37 +1,53 @@
-// if-usage.ts
+// tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/if-usage.ts
 
-// public class SmalltalkIfUsage : ISmalltalkExpression
-// {
-//     public readonly ISmalltalkExpression Condition;
-//     public readonly ISmalltalkExpression IfBody;
-//     public readonly ISmalltalkExpression ElseBody;
-//
-//     public SmalltalkIfUsage(ISmalltalkExpression condition, ISmalltalkExpression ifBody, ISmalltalkExpression elseBody)
-//     {
-//         Condition = condition;
-//         IfBody = ifBody;
-//         ElseBody = elseBody;
-//     }
-//
-//     /*
-//     public override string ToString()
-//     {
-//         return string.Format("(if {0} {1} {2})", Condition, IfBody, ElseBody);
-//     }
-//      */
-//
-//     public ISmalltalkValue Evaluate(SmalltalkEnvironmentFrame localEnvironment, ISmalltalkValue receiver, SmalltalkClass c, SmalltalkGlobalInfo globalInfo)
-//     {
-//         ISmalltalkValue conditionValue = SmalltalkGlobalInfo.UnblockValue(Condition.Evaluate(localEnvironment, receiver, c, globalInfo));
-//
-//         //if (!conditionValue.Equals(globalInfo.FalseValue))
-//         if (!globalInfo.ValueIsFalse(conditionValue))
-//         {
-//             return IfBody.Evaluate(localEnvironment, receiver, c, globalInfo);
-//         }
-//         else
-//         {
-//             return ElseBody.Evaluate(localEnvironment, receiver, c, globalInfo);
-//         }
-//     }
-// }
+import {
+	ISmalltalkClass,
+	ISmalltalkEnvironmentFrame,
+	ISmalltalkExpression,
+	// ISmalltalkFunctionDefinition,
+	ISmalltalkGlobalInfo,
+	ISmalltalkValue // ,
+	// ISmalltalkVariable
+} from './interfaces/iexpression';
+
+import { unblockValue } from './block';
+
+export class SmalltalkIfUsage implements ISmalltalkExpression {
+	// public readonly ISmalltalkExpression Condition;
+	// public readonly ISmalltalkExpression IfBody;
+	// public readonly ISmalltalkExpression ElseBody;
+
+	constructor(
+		public readonly condition: ISmalltalkExpression,
+		public readonly ifBody: ISmalltalkExpression,
+		public readonly elseBody: ISmalltalkExpression
+	) {
+		// Condition = condition;
+		// IfBody = ifBody;
+		// ElseBody = elseBody;
+	}
+
+	/*
+    public override string ToString()
+    {
+        return string.Format("(if {0} {1} {2})", Condition, IfBody, ElseBody);
+    }
+     */
+
+	public evaluate(
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
+		receiver: ISmalltalkValue | undefined,
+		c: ISmalltalkClass | undefined,
+		globalInfo: ISmalltalkGlobalInfo
+	): ISmalltalkValue {
+		const conditionValue = unblockValue(
+			this.condition.evaluate(localEnvironment, receiver, c, globalInfo)
+		);
+
+		if (!globalInfo.valueIsFalse(conditionValue)) {
+			return this.ifBody.evaluate(localEnvironment, receiver, c, globalInfo);
+		} else {
+			return this.elseBody.evaluate(localEnvironment, receiver, c, globalInfo);
+		}
+	}
+}

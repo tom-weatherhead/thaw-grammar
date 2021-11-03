@@ -36,11 +36,14 @@ import {
 SmalltalkBeginUsage;
 import { SmalltalkBeginUsage } from './domain-object-model/begin-usage';
 import { SmalltalkClass } from './domain-object-model/class';
+import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
+import { SmalltalkIfUsage } from './domain-object-model/if-usage';
 import { SmalltalkIntegerValue } from './domain-object-model/integer';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
 import { SmalltalkSetUsage } from './domain-object-model/set-usage';
 import { SmalltalkVariable } from './domain-object-model/variable';
+import { SmalltalkWhileUsage } from './domain-object-model/while-usage';
 
 export class SmalltalkGrammar extends GrammarBase {
 	// The Smalltalk grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -64,9 +67,9 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalPrint);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		// this.terminals.push(GrammarSymbol.terminalCond);
-		// this.terminals.push(GrammarSymbol.terminalLet);
-		// this.terminals.push(GrammarSymbol.terminalLetStar);
+		this.terminals.push(GrammarSymbol.terminalCond);
+		this.terminals.push(GrammarSymbol.terminalLet);
+		this.terminals.push(GrammarSymbol.terminalLetStar);
 
 		this.terminals.push(GrammarSymbol.terminalRandom);
 		this.terminals.push(GrammarSymbol.terminalToString);
@@ -121,9 +124,9 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
 		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalClassDef);
 		this.nonTerminals.push(GrammarSymbol.nonterminalClass);
@@ -292,38 +295,52 @@ export class SmalltalkGrammar extends GrammarBase {
 
 		// cond
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
-		//     GrammarSymbol.terminalCond,
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_Expression,
-		//     Symbol.N_Expression,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_ExprPairList, "#condUsage" }, 31));
-		// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() {
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_Expression,
-		//     Symbol.N_Expression,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_ExprPairList, "#exprPairList" }, 32));
-		// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() { Symbol.Lambda, "#emptyExprPairList" }, 33));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalCond,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExprPairList,
+			'#condUsage'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalExprPairList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExprPairList,
+			'#exprPairList'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalExprPairList, [
+			GrammarSymbol.Lambda,
+			'#emptyExprPairList'
+		]);
 
 		// let and let*
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
-		//     Symbol.N_LetKeyword,
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_VarExprList,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_Expression, "#letUsage" }, 34));
-		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLet }, 35));
-		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLetStar }, 36));
-		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() {
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_Variable,
-		//     Symbol.N_Expression,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_VarExprList, "#varExprList" }, 37));
-		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, "#emptyVarExprList" }, 38));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.nonterminalLetKeyword,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVarExprList,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExpression,
+			'#letUsage'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLet]);
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLetStar]);
+		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalVarExprList,
+			'#varExprList'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
+			GrammarSymbol.Lambda,
+			'#emptyVarExprList'
+		]);
 
 		// Smalltalk Productions
 
@@ -337,7 +354,7 @@ export class SmalltalkGrammar extends GrammarBase {
 		//     Symbol.N_InstVars,
 		//     Symbol.N_MethodDef,
 		//     Symbol.N_MethodDefList,
-		//     GrammarSymbol.terminalRightBracket, "#classDefinition" }, 40));
+		//     GrammarSymbol.terminalRightBracket, '#classDefinition' }, 40));
 		this.addProduction(GrammarSymbol.nonterminalBracketedInput, [
 			GrammarSymbol.terminalClass,
 			GrammarSymbol.nonterminalClass,
@@ -430,22 +447,26 @@ export class SmalltalkGrammar extends GrammarBase {
 		return 'Smalltalk';
 	}
 
-	// private ISmalltalkExpression CreateLetUsage(string letKeyword,
-	//     List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>> varExprList, ISmalltalkExpression expression)
-	// {
-	//
-	//     switch (letKeyword)
-	//     {
-	//         case "let":
-	//             return new SmalltalkLetUsage(varExprList, expression);
-	//
-	//         case "let*":
-	//             return new SmalltalkLetStarUsage(varExprList, expression);
-	//
-	//         default:
-	//             throw new ArgumentException(string.Format("SmalltalkGrammar.CreateLetUsage() : Unknown 'let' keyword '{0}'.", letKeyword));
-	//     }
-	// }
+	/* eslint-disable @typescript-eslint/no-unused-vars */
+	private createLetUsage(
+		letKeyword: string,
+		varExprList: [ISmalltalkVariable, ISmalltalkExpression][],
+		expression: ISmalltalkExpression
+	): ISmalltalkExpression {
+		throw new Error('createLetUsage() : Not yet implemented.');
+
+		// switch (letKeyword) {
+		// 	case 'let':
+		// 		return new SmalltalkLetUsage(varExprList, expression);
+		//
+		// 	case 'let*':
+		// 		return new SmalltalkLetStarUsage(varExprList, expression);
+		//
+		// 	default:
+		// 		throw new ArgumentException(`SmalltalkGrammar.CreateLetUsage() : Unknown 'let' keyword '${letKeyword}'.`, 'letKeyword');
+		// }
+	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;
@@ -457,12 +478,13 @@ export class SmalltalkGrammar extends GrammarBase {
 		let classVariableList: ISmalltalkVariable[];
 		let body: ISmalltalkExpression;
 		let expression: ISmalltalkExpression;
-		// let expression2: ISmalltalkExpression;
+		let expression2: ISmalltalkExpression;
+		let expression3: ISmalltalkExpression;
 		let expressionList: ISmalltalkExpression[];
 		let funDef: ISmalltalkFunctionDefinition;
 		let funDefList: ISmalltalkFunctionDefinition[];
-		// List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>> exprPairList;
-		// List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>> varExprList;
+		let exprPairList: [ISmalltalkExpression, ISmalltalkExpression][];
+		let varExprList: [ISmalltalkVariable, ISmalltalkExpression][];
 		// let literalList: ISmalltalkValue[];
 
 		switch (action) {
@@ -487,21 +509,20 @@ export class SmalltalkGrammar extends GrammarBase {
 				semanticStack.push([] as ISmalltalkVariable[]);
 				break;
 
-			// 	// #if DEAD_CODE
-			// case '#if':
-			//     var expression3 = (ISmalltalkExpression)semanticStack.Pop();
-			//
-			//     expression2 = (ISmalltalkExpression)semanticStack.Pop();
-			//     expression = (ISmalltalkExpression)semanticStack.Pop();
-			//     semanticStack.Push(new SmalltalkIfUsage(expression, expression2, expression3));
-			//     break;
-			// 	// #endif
-			//
-			// case '#while':
-			//     expression2 = (ISmalltalkExpression)semanticStack.Pop();
-			//     expression = (ISmalltalkExpression)semanticStack.Pop();
-			//     semanticStack.Push(new SmalltalkWhileUsage(expression, expression2));
-			//     break;
+			// #if DEAD_CODE
+			case '#if':
+				expression3 = semanticStack.pop() as ISmalltalkExpression;
+				expression2 = semanticStack.pop() as ISmalltalkExpression;
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				semanticStack.push(new SmalltalkIfUsage(expression, expression2, expression3));
+				break;
+			// #endif
+
+			case '#while':
+				expression2 = semanticStack.pop() as ISmalltalkExpression;
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				semanticStack.push(new SmalltalkWhileUsage(expression, expression2));
+				break;
 
 			case '#set':
 				expression = semanticStack.pop() as ISmalltalkExpression;
@@ -573,48 +594,54 @@ export class SmalltalkGrammar extends GrammarBase {
 			//     name = (Name)semanticStack.Pop();
 			//     semanticStack.Push(new SmalltalkSymbolValue(name.Value));
 			//     break;
-			//
-			// case '#condUsage':
-			//     exprPairList = (List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>)semanticStack.Pop();
-			//     expression2 = (ISmalltalkExpression)semanticStack.Pop();
-			//     expression = (ISmalltalkExpression)semanticStack.Pop();
-			//     exprPairList.Insert(0, new KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>(expression, expression2));
-			//     semanticStack.Push(new SmalltalkCondUsage(exprPairList));
-			//     break;
-			//
-			// case '#exprPairList':
-			//     exprPairList = (List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>)semanticStack.Pop();
-			//     expression2 = (ISmalltalkExpression)semanticStack.Pop();
-			//     expression = (ISmalltalkExpression)semanticStack.Pop();
-			//     exprPairList.Insert(0, new KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>(expression, expression2));
-			//     semanticStack.Push(exprPairList);
-			//     break;
-			//
-			// case '#emptyExprPairList':
-			//     semanticStack.Push(new List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>>());
-			//     break;
-			//
-			// case '#letUsage':
-			//     expression = (ISmalltalkExpression)semanticStack.Pop();
-			//     varExprList = (List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>)semanticStack.Pop();
-			//
-			//     var letName = (Name)semanticStack.Pop();
-			//
-			//     semanticStack.Push(CreateLetUsage(letName.Value, varExprList, expression));
-			//     break;
-			//
-			// case '#varExprList':
-			//     varExprList = (List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>)semanticStack.Pop();
-			//     expression = (ISmalltalkExpression)semanticStack.Pop();
-			//     variable = (SmalltalkVariable)semanticStack.Pop();
-			//     varExprList.Insert(0, new KeyValuePair<SmalltalkVariable, ISmalltalkExpression>(variable, expression));
-			//     semanticStack.Push(varExprList);
-			//     break;
-			//
-			// case '#emptyVarExprList':
-			//     semanticStack.Push(new List<KeyValuePair<SmalltalkVariable, ISmalltalkExpression>>());
-			//     break;
-			//
+
+			case '#condUsage':
+				exprPairList = semanticStack.pop() as [
+					ISmalltalkExpression,
+					ISmalltalkExpression
+				][];
+				expression2 = semanticStack.pop() as ISmalltalkExpression;
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				exprPairList.unshift([expression, expression2]);
+				semanticStack.push(new SmalltalkCondUsage(exprPairList));
+				break;
+
+			case '#exprPairList':
+				exprPairList = semanticStack.pop() as [
+					ISmalltalkExpression,
+					ISmalltalkExpression
+				][];
+				expression2 = semanticStack.pop() as ISmalltalkExpression;
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				exprPairList.unshift([expression, expression2]);
+				semanticStack.push(exprPairList);
+				break;
+
+			case '#emptyExprPairList':
+				semanticStack.push([] as [ISmalltalkExpression, ISmalltalkExpression][]);
+				break;
+
+			case '#letUsage':
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				varExprList = semanticStack.pop() as [ISmalltalkVariable, ISmalltalkExpression][];
+
+				name = semanticStack.pop() as Name; // Either 'let' or 'let*'
+
+				semanticStack.push(this.createLetUsage(name.value, varExprList, expression));
+				break;
+
+			case '#varExprList':
+				varExprList = semanticStack.pop() as [ISmalltalkVariable, ISmalltalkExpression][];
+				expression = semanticStack.pop() as ISmalltalkExpression;
+				variable = semanticStack.pop() as ISmalltalkVariable;
+				varExprList.unshift([variable, expression]);
+				semanticStack.push(varExprList);
+				break;
+
+			case '#emptyVarExprList':
+				semanticStack.push([] as [ISmalltalkVariable, ISmalltalkExpression][]);
+				break;
+
 			// case '#emptyLiteralList':
 			//     semanticStack.Push(new List<ISmalltalkValue>());
 			//     break;
@@ -881,8 +908,11 @@ export class SmalltalkGrammar extends GrammarBase {
 			case GrammarSymbol.terminalRightBracket:
 			case GrammarSymbol.terminalBegin:
 			case GrammarSymbol.terminalClass:
+			case GrammarSymbol.terminalCond:
 			case GrammarSymbol.terminalDefine:
+			case GrammarSymbol.terminalIf:
 			case GrammarSymbol.terminalSet:
+			case GrammarSymbol.terminalWhile:
 			case GrammarSymbol.terminalEOF:
 				// For these terminals, push nothing onto the semantic stack.
 				break;
