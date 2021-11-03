@@ -65,6 +65,8 @@ export interface ISmalltalkGlobalInfo {
 	// clearPrintedText(): void;
 	// print(evaluatedArguments: ISmalltalkValue[]): void;
 	// getPrintedText(): string;
+
+	evaluate(expr: ISmalltalkExpression): ISmalltalkValue;
 }
 
 export interface ISmalltalkVariable {

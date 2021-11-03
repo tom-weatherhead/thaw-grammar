@@ -635,52 +635,63 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 
 		f('(define +1 (x) (+ x 1))');
 	}
+
+	// More code to put into loadPresets() :
+
+	// GlobalEnvironment.Add(new SmalltalkVariable("e" /*, 0, 0 */), new SmalltalkFloatValue(Math.E));
+	// GlobalEnvironment.Add(new SmalltalkVariable("pi" /*, 0, 0 */), new SmalltalkFloatValue(Math.PI));
+
+	// 		Evaluate(string.Format(@"
+	// (class {0} Object ()
+	// (stringValue) ; stringValue is used as the value of the object of this class when it is converted to a string.
+	// (define init () (begin (set stringValue '{1}') self))
+	// (define if (trueBlock falseBlock) falseBlock)
+	// (define and (x) {2})
+	// (define or (x) x)
+	// (define xor (x) x)
+	// (define not () {3})
+	// )", FalseValueClassName, FalseValueAsString, FalseVariableName, TrueVariableName));
+	// 		Evaluate(string.Format(@"
+	// (class {0} Object ()
+	// (stringValue) ; stringValue is used as the value of the object of this class when it is converted to a string.
+	// (define init () (begin (set stringValue '{1}') self))
+	// (define if (trueBlock falseBlock) trueBlock)
+	// (define and (x) x)
+	// (define or (x) {2})
+	// (define xor (x) (not x))
+	// (define not () {3})
+	// )", TrueValueClassName, TrueValueAsString, TrueVariableName, FalseVariableName));
+	// 		Evaluate(string.Format("(set {0} (init (new {1})))", FalseVariableName, FalseValueClassName));
+	// 		Evaluate(string.Format("(set {0} (init (new {1})))", TrueVariableName, TrueValueClassName));
+	// 		FalseVal = GlobalEnvironment.Dict[new SmalltalkVariable(FalseVariableName)];
+	// 		TrueVal = GlobalEnvironment.Dict[new SmalltalkVariable(TrueVariableName)];
+	//
+	// 		Evaluate(string.Format(@"
+	// (class UndefinedObject Object ()
+	// (stringValue) ; stringValue (#nil) is used as the value of the object of this class when it is converted to a string.
+	// (define init () (begin (set stringValue '{0}') self))
+	// (define isNil () {1})
+	// (define notNil () {2})
+	// )", NilValueAsString, TrueVariableName, FalseVariableName));
+	// 		Evaluate("(set nil (init (new UndefinedObject)))");
+
+	// Evaluate("(define > (x y) (< y x))");
+	//Evaluate("(define and (x y) (if x y x))");
+	//Evaluate("(define or (x y) (if x x y))");
+	//Evaluate(string.Format("(define not (x) (if x {0} {1}))", FalseVariableName, TrueVariableName));
+	// Evaluate("(define <> (x y) (not (= x y)))");
+	// Evaluate("(define <= (x y) (not (> x y)))");
+	// Evaluate("(define >= (x y) (not (< x y)))");
+	// Evaluate("(define mod (m n) (- m (* n (/ m n))))");
+	// Evaluate("(define gcd (m n) (if (= n 0) m (gcd n (mod m n))))");
+	// Evaluate("(define abs (n) (if (< n 0) (- 0 n) n))");
+
+	public evaluate(expr: ISmalltalkExpression): ISmalltalkValue {
+		return expr.evaluate(
+			undefined, // Or this.globalEnvironment ?
+			this.objectInstance,
+			undefined,
+			this
+		);
+	}
 }
-
-// GlobalEnvironment.Add(new SmalltalkVariable("e" /*, 0, 0 */), new SmalltalkFloatValue(Math.E));
-// GlobalEnvironment.Add(new SmalltalkVariable("pi" /*, 0, 0 */), new SmalltalkFloatValue(Math.PI));
-
-// 		Evaluate(string.Format(@"
-// (class {0} Object ()
-// (stringValue) ; stringValue is used as the value of the object of this class when it is converted to a string.
-// (define init () (begin (set stringValue '{1}') self))
-// (define if (trueBlock falseBlock) falseBlock)
-// (define and (x) {2})
-// (define or (x) x)
-// (define xor (x) x)
-// (define not () {3})
-// )", FalseValueClassName, FalseValueAsString, FalseVariableName, TrueVariableName));
-// 		Evaluate(string.Format(@"
-// (class {0} Object ()
-// (stringValue) ; stringValue is used as the value of the object of this class when it is converted to a string.
-// (define init () (begin (set stringValue '{1}') self))
-// (define if (trueBlock falseBlock) trueBlock)
-// (define and (x) x)
-// (define or (x) {2})
-// (define xor (x) (not x))
-// (define not () {3})
-// )", TrueValueClassName, TrueValueAsString, TrueVariableName, FalseVariableName));
-// 		Evaluate(string.Format("(set {0} (init (new {1})))", FalseVariableName, FalseValueClassName));
-// 		Evaluate(string.Format("(set {0} (init (new {1})))", TrueVariableName, TrueValueClassName));
-// 		FalseVal = GlobalEnvironment.Dict[new SmalltalkVariable(FalseVariableName)];
-// 		TrueVal = GlobalEnvironment.Dict[new SmalltalkVariable(TrueVariableName)];
-//
-// 		Evaluate(string.Format(@"
-// (class UndefinedObject Object ()
-// (stringValue) ; stringValue (#nil) is used as the value of the object of this class when it is converted to a string.
-// (define init () (begin (set stringValue '{0}') self))
-// (define isNil () {1})
-// (define notNil () {2})
-// )", NilValueAsString, TrueVariableName, FalseVariableName));
-// 		Evaluate("(set nil (init (new UndefinedObject)))");
-
-// Evaluate("(define > (x y) (< y x))");
-//Evaluate("(define and (x y) (if x y x))");
-//Evaluate("(define or (x y) (if x x y))");
-//Evaluate(string.Format("(define not (x) (if x {0} {1}))", FalseVariableName, TrueVariableName));
-// Evaluate("(define <> (x y) (not (= x y)))");
-// Evaluate("(define <= (x y) (not (> x y)))");
-// Evaluate("(define >= (x y) (not (< x y)))");
-// Evaluate("(define mod (m n) (- m (* n (/ m n))))");
-// Evaluate("(define gcd (m n) (if (= n 0) m (gcd n (mod m n))))");
-// Evaluate("(define abs (n) (if (< n 0) (- 0 n) n))");

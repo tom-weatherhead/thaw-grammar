@@ -29,12 +29,13 @@ function createFnEval(): (str: string) => ISmalltalkValue {
 	globalInfo.loadPresets(tokenizer, parser);
 
 	return (str: string) =>
-		(parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression).evaluate(
-			undefined,
-			globalInfo.objectInstance,
-			undefined,
-			globalInfo
-		);
+		// (parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression).evaluate(
+		// 	undefined,
+		// 	globalInfo.objectInstance,
+		// 	undefined,
+		// 	globalInfo
+		// );
+		globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression);
 }
 
 function evalStringsToValues(strs: string[], n = 1): ISmalltalkValue[] {
@@ -153,8 +154,6 @@ test('SmalltalkGrammar addition test', () => {
 		globalInfo
 	);
 
-	// console.log('actualSmalltalkValue is', actualSmalltalkValue);
-
 	// Evaluation: Method 1:
 	expect(actualSmalltalkValue.isInteger).toBe(true);
 	expect(actualSmalltalkValue.toInteger()).toBe(a + b);
@@ -164,34 +163,39 @@ test('SmalltalkGrammar addition test', () => {
 });
 
 test('SmalltalkGrammar function definition test', () => {
-	const localEnvironment = new SmalltalkEnvironmentFrame();
-	const globalInfo = new SmalltalkGlobalInfo();
-
-	const f = createFnParser<ISmalltalkExpression>(ls);
+	// const localEnvironment = new SmalltalkEnvironmentFrame();
+	// const globalInfo = new SmalltalkGlobalInfo();
+	//
+	// const f = createFnParser<ISmalltalkExpression>(ls);
 	const a = 2;
 	const b = 3;
 
-	const str1 = '(define add (x y) (+ x y))';
-	const str2 = `(add ${a} ${b})`;
+	// const str1 = '(define add (x y) (+ x y))';
+	// const str2 = `(add ${a} ${b})`;
 
-	f(str1).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	// f(str1).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	//
+	// const actualSmalltalkValue = f(str2).evaluate(
+	// 	localEnvironment,
+	// 	undefined,
+	// 	undefined,
+	// 	globalInfo
+	// );
 
-	const actualSmalltalkValue = f(str2).evaluate(
-		localEnvironment,
-		undefined,
-		undefined,
-		globalInfo
-	);
+	const actualSmalltalkValue = evalStringsToValue([
+		'(define add (x y) (+ x y))',
+		`(add ${a} ${b})`
+	]);
 
 	expect(actualSmalltalkValue.isInteger).toBe(true);
 	expect(actualSmalltalkValue.toInteger()).toBe(a + b);
 });
 
 test('SmalltalkGrammar class definition test 1', () => {
-	const localEnvironment = new SmalltalkEnvironmentFrame();
-	const globalInfo = new SmalltalkGlobalInfo();
-
-	const f = createFnParser<ISmalltalkExpression>(ls);
+	// const localEnvironment = new SmalltalkEnvironmentFrame();
+	// const globalInfo = new SmalltalkGlobalInfo();
+	//
+	// const f = createFnParser<ISmalltalkExpression>(ls);
 
 	const str1 = [
 		'(class Counter Object ()',
@@ -202,24 +206,33 @@ test('SmalltalkGrammar class definition test 1', () => {
 		')'
 	].join(' ');
 
-	const str2 = '(set c (init (new Counter)))';
-	const str3 = '(inc c)';
-	const str4 = '(inc c)';
-	const str5 = '(inc c)';
-	const str6 = '(get c)';
+	// const str2 = '(set c (init (new Counter)))';
+	// const str3 = '(inc c)';
+	// const str4 = '(inc c)';
+	// const str5 = '(inc c)';
+	// const str6 = '(get c)';
+	//
+	// f(str1).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	// f(str2).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	// f(str3).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	// f(str4).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	// f(str5).evaluate(localEnvironment, undefined, undefined, globalInfo);
+	//
+	// const actualSmalltalkValue = f(str6).evaluate(
+	// 	localEnvironment,
+	// 	undefined,
+	// 	undefined,
+	// 	globalInfo
+	// );
 
-	f(str1).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	f(str2).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	f(str3).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	f(str4).evaluate(localEnvironment, undefined, undefined, globalInfo);
-	f(str5).evaluate(localEnvironment, undefined, undefined, globalInfo);
-
-	const actualSmalltalkValue = f(str6).evaluate(
-		localEnvironment,
-		undefined,
-		undefined,
-		globalInfo
-	);
+	const actualSmalltalkValue = evalStringsToValue([
+		str1,
+		'(set c (init (new Counter)))',
+		'(inc c)',
+		'(inc c)',
+		'(inc c)',
+		'(get c)'
+	]);
 
 	expect(actualSmalltalkValue.isInteger).toBe(true);
 	expect(actualSmalltalkValue.toInteger()).toBe(3);
