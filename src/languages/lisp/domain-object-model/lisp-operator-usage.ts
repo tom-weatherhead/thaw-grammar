@@ -2,10 +2,12 @@
 
 import { createSet } from 'thaw-common-utilities.ts';
 
+import { Name } from 'thaw-interpreter-core';
+
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-import { Name } from '../../../common/domain-object-model/name';
+// import { Name } from '../../../common/domain-object-model/name';
 import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';
 
 import { EvaluationException } from '../../../common/exceptions/evaluation-exception';

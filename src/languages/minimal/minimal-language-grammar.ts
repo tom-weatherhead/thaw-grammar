@@ -13,11 +13,11 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { createProduction } from 'thaw-interpreter-core';
+import { createProduction, Name } from 'thaw-interpreter-core';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
-import { Name } from '../../common/domain-object-model/name';
+// import { Name } from '../../common/domain-object-model/name';
 
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
@@ -168,7 +168,7 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		);
 	}
 
-	public pushTokenOntoSemanticStack(
+	public override pushTokenOntoSemanticStack(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,

@@ -1,9 +1,10 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/function-definition.ts
 
+import { Name } from 'thaw-interpreter-core';
+
 import { EnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
-import { Name } from './name';
 import { VariableList } from './variable-list';
 
 export class FunctionDefinition<T> implements IExpression<T> {

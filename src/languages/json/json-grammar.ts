@@ -42,7 +42,7 @@ export class JSONGrammar extends GrammarBase {
 	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
-	public pushTokenOntoSemanticStack(
+	public override pushTokenOntoSemanticStack(
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: GrammarSymbol,
 		token: IToken

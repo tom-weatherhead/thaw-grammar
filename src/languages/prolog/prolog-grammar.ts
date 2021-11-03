@@ -784,7 +784,7 @@ export class PrologGrammar extends GrammarBase {
 		);
 	}
 
-	public pushTokenOntoSemanticStack(
+	public override pushTokenOntoSemanticStack(
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: GrammarSymbol,
 		token: IToken

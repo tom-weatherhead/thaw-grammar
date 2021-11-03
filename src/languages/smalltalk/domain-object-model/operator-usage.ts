@@ -1,8 +1,10 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/operator-usage.ts
 
+import { Name } from 'thaw-interpreter-core';
+
 import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
-import { Name } from '../../../common/domain-object-model/name';
+// import { Name } from '../../../common/domain-object-model/name';
 
 import {
 	ISmalltalkClass,

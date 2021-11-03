@@ -2,9 +2,11 @@
 
 'use strict';
 
+import { Name } from 'thaw-interpreter-core';
+
 import { GlobalInfoBase } from '../../../src/common/domain-object-model/global-info-base';
 import { IGlobalInfo } from '../../../src/common/domain-object-model/iglobal-info';
-import { Name } from '../../../src/common/domain-object-model/name';
+// import { Name } from '../../../src/common/domain-object-model/name';
 
 import { FloatLiteral } from '../../../src/languages/lisp/domain-object-model/float-literal';
 import { IntegerLiteral } from '../../../src/languages/lisp/domain-object-model/integer-literal';

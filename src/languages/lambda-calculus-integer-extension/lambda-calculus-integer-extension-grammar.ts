@@ -8,7 +8,9 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { Name } from '../../common/domain-object-model/name';
+import { Name } from 'thaw-interpreter-core';
+
+// import { Name } from '../../common/domain-object-model/name';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
@@ -266,7 +268,7 @@ export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 		}
 	}
 
-	public pushTokenOntoSemanticStack(
+	public override pushTokenOntoSemanticStack(
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: GrammarSymbol,
 		token: IToken

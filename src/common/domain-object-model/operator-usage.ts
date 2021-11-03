@@ -1,12 +1,14 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/operator-usage.ts
 
+import { Name } from 'thaw-interpreter-core';
+
 import { EvaluationException } from '../exceptions/evaluation-exception';
 import { EnvironmentFrame } from './environment-frame';
 import { ExpressionList } from './expression-list';
 import { FunctionDefinition } from './function-definition';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
-import { Name } from './name';
+// import { Name } from './name';
 
 export class OperatorUsage<T> implements IExpression<T> {
 	public readonly operatorName: Name;

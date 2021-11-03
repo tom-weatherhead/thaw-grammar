@@ -20,11 +20,11 @@
 
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
-import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
+import { GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
-import { Name } from '../../common/domain-object-model/name';
+// import { Name } from '../../common/domain-object-model/name';
 
-// import { ArgumentException } from '../../common/exceptions/argument-exception';
+import { ArgumentException } from '../../common/exceptions/argument-exception';
 
 import {
 	ISmalltalkExpression,
@@ -40,6 +40,8 @@ import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 import { SmalltalkIfUsage } from './domain-object-model/if-usage';
 import { SmalltalkIntegerValue } from './domain-object-model/integer';
+import { SmalltalkLetStarUsage } from './domain-object-model/let-star-usage';
+import { SmalltalkLetUsage } from './domain-object-model/let-usage';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
 import { SmalltalkSetUsage } from './domain-object-model/set-usage';
 import { SmalltalkVariable } from './domain-object-model/variable';
@@ -453,18 +455,21 @@ export class SmalltalkGrammar extends GrammarBase {
 		varExprList: [ISmalltalkVariable, ISmalltalkExpression][],
 		expression: ISmalltalkExpression
 	): ISmalltalkExpression {
-		throw new Error('createLetUsage() : Not yet implemented.');
+		// throw new Error('createLetUsage() : Not yet implemented.');
 
-		// switch (letKeyword) {
-		// 	case 'let':
-		// 		return new SmalltalkLetUsage(varExprList, expression);
-		//
-		// 	case 'let*':
-		// 		return new SmalltalkLetStarUsage(varExprList, expression);
-		//
-		// 	default:
-		// 		throw new ArgumentException(`SmalltalkGrammar.CreateLetUsage() : Unknown 'let' keyword '${letKeyword}'.`, 'letKeyword');
-		// }
+		switch (letKeyword) {
+			case 'let':
+				return new SmalltalkLetUsage(varExprList, expression);
+
+			case 'let*':
+				return new SmalltalkLetStarUsage(varExprList, expression);
+
+			default:
+				throw new ArgumentException(
+					`SmalltalkGrammar.CreateLetUsage() : Unknown 'let' keyword '${letKeyword}'.`,
+					'letKeyword'
+				);
+		}
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 
@@ -683,167 +688,90 @@ export class SmalltalkGrammar extends GrammarBase {
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
-		switch (token.tokenType) {
-			// case LexicalState.tokenEOF:
-			// 	return GrammarSymbol.terminalEOF;
-			// case LexicalState.tokenLeftBracket:
-			// 	return GrammarSymbol.terminalLeftBracket;
-			// case LexicalState.tokenRightBracket:
-			// 	return GrammarSymbol.terminalRightBracket;
-			// case LexicalState.tokenIntLit:
-			// 	return GrammarSymbol.terminalIntegerLiteral;
-			// case LexicalState.tokenPlus:
-			// 	return GrammarSymbol.terminalPlus;
-			// case LexicalState.tokenMinus:
-			// 	return GrammarSymbol.terminalMinus;
-			// case LexicalState.tokenMult:
-			// 	return GrammarSymbol.terminalMultiply;
-			// case LexicalState.tokenDiv:
-			// 	return GrammarSymbol.terminalDivide;
-			// case LexicalState.tokenEqual:
-			// 	return GrammarSymbol.terminalEquals;
-			// case LexicalState.tokenLess:
-			// 	return GrammarSymbol.terminalLessThan;
-			// case LexicalState.tokenGreater:
-			// 	return GrammarSymbol.terminalGreaterThan; ? or ID?
-			// case LexicalState.tokenOctothorpe:
-			// 	return GrammarSymbol.terminalOctothorpe;
-			// case LexicalState.tokenDollar:
-			// 	return GrammarSymbol.terminalDollar;
-			case LexicalState.tokenIdent:
-				switch (tokenValueAsString) {
-					// case 'define':
-					// 	return GrammarSymbol.terminalDefine;
-					// case 'if':
-					// 	return GrammarSymbol.terminalIf;
+		if (token.tokenType === LexicalState.tokenIdent) {
+			// switch (token.tokenType) {
+			// 	case LexicalState.tokenIdent:
+			switch (tokenValueAsString) {
+				// TODO (when we replace the keyword 'if' with a method) :
+				// (if x y z) -> (x y z)
+				// (true x y) -> x
+				// (false x y) -> y
+				// case 'if': return GrammarSymbol.terminalID;
 
-					// TODO (when we replace the keyword 'if' with a method) :
-					// (if x y z) -> (x y z)
-					// (true x y) -> x
-					// (false x y) -> y
-					// case 'if': return GrammarSymbol.terminalID;
+				// case 'list?':
+				// 	return GrammarSymbol.terminalListPred;
+				// case '=>':
+				// 	return GrammarSymbol.terminalThickArrow;
+				//case '>': return GrammarSymbol.terminalGreaterThan;
+				case 'class':
+					return GrammarSymbol.terminalClass;
+				case 'number?':
+					return GrammarSymbol.terminalNumberPred;
+				case 'symbol?':
+					return GrammarSymbol.terminalSymbolPred;
+				case 'string?':
+					return GrammarSymbol.terminalStringPred;
+				case 'object?':
+					return GrammarSymbol.terminalObjectPred;
+				case 'random':
+					return GrammarSymbol.terminalRandom;
+				case 'tostring':
+					return GrammarSymbol.terminalToString;
+				case 'stringtosymbol':
+					return GrammarSymbol.terminalStringToSymbol;
+				case 'atan2':
+					return GrammarSymbol.terminalAtan2;
+				case 'floor':
+					return GrammarSymbol.terminalFloor;
+				case 'throw':
+					return GrammarSymbol.terminalThrow;
+				case 'string<':
+					return GrammarSymbol.terminalStringLessThan;
+				case 'strlen':
+					return GrammarSymbol.terminalStrlen;
+				case 'substr':
+					return GrammarSymbol.terminalSubstr;
+				case 'typename':
+					return GrammarSymbol.terminalTypename;
+				// case 'hash':
+				// 	return GrammarSymbol.terminalHash;
+				// case 'ref=':
+				// 	return GrammarSymbol.terminalReferenceEquals;
+				case 'strcat':
+					return GrammarSymbol.terminalStrcat;
+				case 'newarray':
+					return GrammarSymbol.terminalNewArray;
+				case 'arraylength':
+					return GrammarSymbol.terminalArrayLength;
+				case 'arrayget':
+					return GrammarSymbol.terminalArrayGet;
+				case 'arrayset':
+					return GrammarSymbol.terminalArraySet;
+				case 'array?':
+					return GrammarSymbol.terminalArrayPred;
+				case 'char?':
+					return GrammarSymbol.terminalCharPred;
+				case 'stridx':
+					return GrammarSymbol.terminalStringIndex;
+				default:
+					break;
+			}
 
-					// case 'while':
-					// 	return GrammarSymbol.terminalWhile;
-					// case 'set':
-					// 	return GrammarSymbol.terminalSet;
-					// case 'begin':
-					// 	return GrammarSymbol.terminalBegin;
-					// case 'print':
-					// 	return GrammarSymbol.terminalPrint;
-					// case '+':
-					// 	return GrammarSymbol.terminalPlus;
-					// case '-':
-					// 	return GrammarSymbol.terminalMinus;
-					// case '*':
-					// 	return GrammarSymbol.terminalMultiply;
-					// case '/':
-					// 	return GrammarSymbol.terminalDivide;
-					// case '=':
-					// 	return GrammarSymbol.terminalEquals;
-					// case '<':
-					// 	return GrammarSymbol.terminalLessThan;
-					// case 'cond':
-					// 	return GrammarSymbol.terminalCond;
-					// case 'let':
-					// 	return GrammarSymbol.terminalLet;
-					// case 'let*':
-					// 	return GrammarSymbol.terminalLetStar;
-					// case 'list?':
-					// 	return GrammarSymbol.terminalListPred;
-					// case '=>':
-					// 	return GrammarSymbol.terminalThickArrow;
-					//case '>': return GrammarSymbol.terminalGreaterThan;
-					case 'class':
-						return GrammarSymbol.terminalClass;
-					case 'number?':
-						return GrammarSymbol.terminalNumberPred;
-					case 'symbol?':
-						return GrammarSymbol.terminalSymbolPred;
-					case 'string?':
-						return GrammarSymbol.terminalStringPred;
-					case 'object?':
-						return GrammarSymbol.terminalObjectPred;
-					case 'random':
-						return GrammarSymbol.terminalRandom;
-					case 'tostring':
-						return GrammarSymbol.terminalToString;
-					case 'stringtosymbol':
-						return GrammarSymbol.terminalStringToSymbol;
-					// case 'pow':
-					// 	return GrammarSymbol.terminalPow;
-					// case 'exp':
-					// 	return GrammarSymbol.terminalExp;
-					// case 'ln':
-					// 	return GrammarSymbol.terminalLn;
-					// case 'sin':
-					// 	return GrammarSymbol.terminalSin;
-					// case 'cos':
-					// 	return GrammarSymbol.terminalCos;
-					// case 'tan':
-					// 	return GrammarSymbol.terminalTan;
-					case 'atan2':
-						return GrammarSymbol.terminalAtan2;
-					case 'floor':
-						return GrammarSymbol.terminalFloor;
-					case 'throw':
-						return GrammarSymbol.terminalThrow;
-					case 'string<':
-						return GrammarSymbol.terminalStringLessThan;
-					case 'strlen':
-						return GrammarSymbol.terminalStrlen;
-					case 'substr':
-						return GrammarSymbol.terminalSubstr;
-					case 'typename':
-						return GrammarSymbol.terminalTypename;
-					// case 'hash':
-					// 	return GrammarSymbol.terminalHash;
-					// case 'ref=':
-					// 	return GrammarSymbol.terminalReferenceEquals;
-					case 'strcat':
-						return GrammarSymbol.terminalStrcat;
-					case 'newarray':
-						return GrammarSymbol.terminalNewArray;
-					case 'arraylength':
-						return GrammarSymbol.terminalArrayLength;
-					case 'arrayget':
-						return GrammarSymbol.terminalArrayGet;
-					case 'arrayset':
-						return GrammarSymbol.terminalArraySet;
-					case 'array?':
-						return GrammarSymbol.terminalArrayPred;
-					case 'char?':
-						return GrammarSymbol.terminalCharPred;
-					case 'stridx':
-						return GrammarSymbol.terminalStringIndex;
-					default:
-						// return GrammarSymbol.terminalID;
-						break;
-				}
-
-				break;
-
-			default:
-				// throw new GrammarException(
-				// 	`SmalltalkGrammar.tokenToSymbol() : No grammar symbol matches token ${
-				// 		token.tokenType
-				// 	} ${LexicalState[token.tokenType]} (value '${token.tokenValue}')`,
-				// 	token.line,
-				// 	token.column
-				// );
-				break;
+			// 		break;
+			//
+			// 	default:
+			// 		break;
+			// }
 		}
 
 		return super.tokenToSymbol(token);
 	}
 
-	public pushTokenOntoSemanticStack(
+	public override pushTokenOntoSemanticStack(
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: GrammarSymbol,
 		token: IToken
 	): void {
-		// throw new Error('SmalltalkGrammar.pushTokenOntoSemanticStack() : Not yet implemented.');
-
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
@@ -919,11 +847,12 @@ export class SmalltalkGrammar extends GrammarBase {
 
 			default:
 				// break;
-				throw new GrammarException(
-					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
-					token.line,
-					token.column
-				);
+				// throw new GrammarException(
+				// 	`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
+				// 	token.line,
+				// 	token.column
+				// );
+				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
 		}
 	}
 }

@@ -24,13 +24,13 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { createProduction } from 'thaw-interpreter-core';
+import { createProduction, Name } from 'thaw-interpreter-core';
 
 // import { LexicalState, Token } from 'thaw-lexical-analyzer';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
-import { Name } from '../../common/domain-object-model/name';
+// import { Name } from '../../common/domain-object-model/name';
 import { Variable } from '../../common/domain-object-model/variable';
 import { VariableList } from '../../common/domain-object-model/variable-list';
 
@@ -1364,7 +1364,7 @@ export class SchemeGrammar extends GrammarBase {
 		);
 	}
 
-	public pushTokenOntoSemanticStack(
+	public override pushTokenOntoSemanticStack(
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,
 		token: IToken

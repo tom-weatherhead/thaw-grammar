@@ -462,7 +462,7 @@ export class APLGrammar extends GrammarBase {
 	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
-	public pushTokenOntoSemanticStack(
+	public override pushTokenOntoSemanticStack(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,
