@@ -1,14 +1,26 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/object-instance.ts
 
-// **** BEGIN Bootstrapping Code Part 2: Set up objectInstance ****
+// **** BEGIN Bootstrapping Code Part 2 ****
 
-import { objectClass, nilClass, selfVar } from './bootstrap';
+import { SmalltalkBeginUsage } from './begin-usage';
+
+import { falseVar, objectClass, objectClassName, selfVar, trueVar } from './bootstrap';
+
+import { SmalltalkClass } from './class';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
+import { SmalltalkFunctionDefinition } from './function-definition';
+
 import { SmalltalkIntegerValue } from './integer';
 
+import { SmalltalkSetUsage } from './set-usage';
+
+import { SmalltalkStringValue } from './string';
+
 import { SmalltalkUserValue } from './user-value';
+
+import { SmalltalkVariable } from './variable';
 
 // Create objectInstance
 
@@ -21,17 +33,6 @@ export const objectInstance = new SmalltalkUserValue(objectClass, objectInstance
 
 // Tie the self-referential knot:
 objectInstance.value.dict.set(selfVar.name, objectInstance);
-
-// Create nilInstance
-
-const nilInstanceEnvFrame = new SmalltalkEnvironmentFrame();
-
-nilInstanceEnvFrame.add(selfVar, defaultValue);
-
-export const nilInstance = new SmalltalkUserValue(nilClass, nilInstanceEnvFrame);
-
-// Tie the self-referential knot:
-nilInstance.value.dict.set(selfVar.name, nilInstance);
 
 // true and false: Version 1:
 
@@ -54,4 +55,141 @@ export const trueValue = new SmalltalkIntegerValue(1);
 // export const falseValue = new SmalltalkFunctionDefinition(falseVariableName, [x, y], y);
 // export const trueValue = new SmalltalkFunctionDefinition(trueVariableName, [x, y], x);
 
-// **** END Bootstrapping Code Part 2: Set up objectInstance ****
+// From the C# version:
+
+// Evaluate(string.Format(@"
+// (class {0} Object ()
+// (stringValue) ; stringValue is used as the value of the object of this class when it is converted to a string.
+// (define init () (begin (set stringValue '{1}') self))
+// (define if (trueBlock falseBlock) falseBlock)
+// (define and (x) {2})
+// (define or (x) x)
+// (define xor (x) x)
+// (define not () {3})
+// )", FalseValueClassName, FalseValueAsString, FalseVariableName, TrueVariableName));
+// Evaluate(string.Format(@"
+// (class {0} Object ()
+// (stringValue) ; stringValue is used as the value of the object of this class when it is converted to a string.
+// (define init () (begin (set stringValue '{1}') self))
+// (define if (trueBlock falseBlock) trueBlock)
+// (define and (x) x)
+// (define or (x) {2})
+// (define xor (x) (not x))
+// (define not () {3})
+// )", TrueValueClassName, TrueValueAsString, TrueVariableName, FalseVariableName));
+// Evaluate(string.Format("(set {0} (init (new {1})))", FalseVariableName, FalseValueClassName));
+// Evaluate(string.Format("(set {0} (init (new {1})))", TrueVariableName, TrueValueClassName));
+// FalseVal = GlobalEnvironment.Dict[new SmalltalkVariable(FalseVariableName)];
+// TrueVal = GlobalEnvironment.Dict[new SmalltalkVariable(TrueVariableName)];
+
+const nilClassName = 'Nil';
+const nilVariableName = 'nil';
+const nilValueAsString = 'nil';
+
+const falseClassName = 'FalseValue';
+const falseValueAsString = 'false';
+
+const trueClassName = 'TrueValue';
+const trueValueAsString = 'true';
+
+const stringValueVariableName = 'stringValue';
+
+export const nilVar = new SmalltalkVariable(nilVariableName);
+const stringValueVar = new SmalltalkVariable(stringValueVariableName);
+
+const x = new SmalltalkVariable('x');
+const y = new SmalltalkVariable('y');
+
+export const nilClass = new SmalltalkClass(
+	nilClassName,
+	objectClassName,
+	[],
+	[stringValueVar],
+	[
+		new SmalltalkFunctionDefinition(
+			'init',
+			[],
+			new SmalltalkBeginUsage(
+				new SmalltalkSetUsage(stringValueVar, new SmalltalkStringValue(nilValueAsString)),
+				[selfVar]
+			)
+		),
+		new SmalltalkFunctionDefinition('isNil', [], trueVar),
+		new SmalltalkFunctionDefinition('notNil', [], falseVar)
+	]
+);
+
+export const falseClass = new SmalltalkClass(
+	falseClassName,
+	objectClassName,
+	[],
+	[stringValueVar],
+	[
+		// (define init () (begin (set stringValue '{1}') self)) :
+		new SmalltalkFunctionDefinition(
+			'init',
+			[],
+			new SmalltalkBeginUsage(
+				new SmalltalkSetUsage(stringValueVar, new SmalltalkStringValue(falseValueAsString)),
+				[selfVar]
+			)
+		),
+		new SmalltalkFunctionDefinition('if', [x, y], y)
+		// ... and, or, xor, not
+	]
+);
+
+export const trueClass = new SmalltalkClass(
+	trueClassName,
+	objectClassName,
+	[],
+	[stringValueVar],
+	[
+		// (define init () (begin (set stringValue '{1}') self)) :
+		new SmalltalkFunctionDefinition(
+			'init',
+			[],
+			new SmalltalkBeginUsage(
+				new SmalltalkSetUsage(stringValueVar, new SmalltalkStringValue(trueValueAsString)),
+				[selfVar]
+			)
+		),
+		new SmalltalkFunctionDefinition('if', [x, y], x)
+		// ... and, or, xor, not
+	]
+);
+
+// Create nilInstance
+
+const nilInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+
+nilInstanceEnvFrame.add(selfVar, defaultValue);
+
+export const nilInstance = new SmalltalkUserValue(nilClass, nilInstanceEnvFrame);
+
+// Tie the self-referential knot:
+nilInstance.value.dict.set(selfVar.name, nilInstance);
+
+// Create falseInstance ...
+
+const falseInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+
+falseInstanceEnvFrame.add(selfVar, defaultValue);
+
+export const falseInstance = new SmalltalkUserValue(falseClass, falseInstanceEnvFrame);
+
+// Tie the self-referential knot:
+falseInstance.value.dict.set(selfVar.name, falseInstance);
+
+// Create trueInstance ...
+
+const trueInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+
+trueInstanceEnvFrame.add(selfVar, defaultValue);
+
+export const trueInstance = new SmalltalkUserValue(trueClass, trueInstanceEnvFrame);
+
+// Tie the self-referential knot:
+trueInstance.value.dict.set(selfVar.name, trueInstance);
+
+// **** END Bootstrapping Code Part 2 ****

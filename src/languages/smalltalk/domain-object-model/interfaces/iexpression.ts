@@ -43,6 +43,7 @@ export interface ISmalltalkGlobalInfo {
 	// initialize(): void; // Restore the state of the global info object to its newly-created state.
 
 	valueIsFalse(value: ISmalltalkValue): boolean;
+	valueIsTrue(value: ISmalltalkValue): boolean;
 
 	valueIsInteger(value: ISmalltalkValue): boolean;
 	valueAsInteger(value: ISmalltalkValue): number; // Shoud we return Number.NaN if value is not a (safe) integer?

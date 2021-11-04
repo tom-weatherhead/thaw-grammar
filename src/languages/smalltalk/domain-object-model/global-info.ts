@@ -523,33 +523,29 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { falseVar, nilClass, nilVar, objectClass, trueVar } from './bootstrap';
+import { falseVar, objectClass, trueVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import { SmalltalkIntegerValue } from './integer';
 
-import { falseValue, nilInstance, objectInstance, trueValue } from './object-instance';
-
-// import { SmalltalkVariable } from './variable';
+// import { falseClass, falseInstance, falseValue, nilClass, nilInstance, nilVar, objectInstance, trueClass, trueInstance, trueValue } from './object-instance';
+import {
+	falseValue,
+	nilClass,
+	nilInstance,
+	nilVar,
+	objectInstance,
+	trueValue
+} from './object-instance';
 
 export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
-	// private readonly zeroValueForAccessor = new SmalltalkIntegerValue(0);
-	// private readonly falseValueForAccessor = new SmalltalkIntegerValue(0);
-	// private readonly falseValueForAccessor = falseValue;
-	// private readonly trueValueForAccessor = new SmalltalkIntegerValue(1);
-	// private readonly trueValueForAccessor = trueValue;
 	public readonly globalEnvironment = new SmalltalkEnvironmentFrame();
 	public readonly functionDefinitions = new Map<string, ISmalltalkFunctionDefinition>();
 	public readonly classDict = new Map<string, ISmalltalkClass>();
 	public readonly objectInstance: ISmalltalkUserValue; // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.
 
 	constructor() {
-		// } = {} // 	tokenizer?: ITokenizer; // 	parser?: IParser; // options: {
-		// These are temporary values for FalseVal and TrueVal; hopefully they are not used.
-		//FalseVal = ZeroValue;
-		//TrueVal = new SmalltalkIntegerValue(1);
-
 		// if (typeof options.parser !== 'undefined' && typeof options.tokenizer !== 'undefined') {
 		// 	// new SmalltalkFunctionDefinition('isNil', [], new SmalltalkVariable('false'));
 		// 	objectClass.addFunction(
@@ -566,34 +562,44 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		// 	);
 		// }
 
-		this.classDict.set(nilClass.className, nilClass);
+		// Set up the class dictionary:
+
+		// The Mother Of All Classes: Object
 		this.classDict.set(objectClass.className, objectClass);
 
+		// When you are ready to make the switch from if-usage to 'if as a method',
+		// then uncomment A, B, and C, and delete D:
+
+		// A: this.classDict.set(falseClass.className, falseClass);
+		this.classDict.set(nilClass.className, nilClass);
+		// B: this.classDict.set(trueClass.className, trueClass);
+
+		// Set up the global environment:
+
+		// The objectInstance is special; it is used as a receiver all over the place.
 		this.objectInstance = objectInstance;
 
 		this.globalEnvironment.add(nilVar, nilInstance);
-		this.globalEnvironment.add(falseVar, falseValue);
-		this.globalEnvironment.add(trueVar, trueValue);
+		this.globalEnvironment.add(falseVar, falseValue); // D
+		this.globalEnvironment.add(trueVar, trueValue); // D
+		// C: this.globalEnvironment.add(falseVar, falseInstance);
+		// C: this.globalEnvironment.add(trueVar, trueInstance);
 	}
 
-	// public get zeroValue(): ISmalltalkValue {
-	// 	return this.zeroValueForAccessor;
-	// }
-
 	public get falseValue(): ISmalltalkValue {
-		// return this.falseValueForAccessor;
-
 		return falseValue;
 	}
 
 	public get trueValue(): ISmalltalkValue {
-		// return this.trueValueForAccessor;
-
 		return trueValue;
 	}
 
 	public valueIsFalse(value: ISmalltalkValue): boolean {
 		return value.toInteger() === 0;
+	}
+
+	public valueIsTrue(value: ISmalltalkValue): boolean {
+		return !this.valueIsFalse(value);
 	}
 
 	public valueIsInteger(value: ISmalltalkValue): boolean {
