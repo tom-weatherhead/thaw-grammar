@@ -4,7 +4,9 @@
 
 import { ISmalltalkValue } from './interfaces/iexpression';
 
-import { objectClass, zeroValue } from './bootstrap';
+import { objectClass } from './bootstrap';
+
+import { defaultValue } from './object-instance';
 
 import { SmalltalkValueBase } from './value-base';
 
@@ -20,7 +22,7 @@ export class SmalltalkArrayValue extends SmalltalkValueBase /* implements ISmall
 		}
 
 		for (let i = 0; i < size; ++i) {
-			this.value.push(zeroValue);
+			this.value.push(defaultValue);
 		}
 	}
 
