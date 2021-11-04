@@ -10,7 +10,7 @@ import {
 } from './interfaces/iexpression';
 
 export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkExpression {
-	constructor(public owner: ISmalltalkClass | undefined = undefined) {}
+	constructor(public readonly owner: ISmalltalkClass | undefined = undefined) {}
 
 	public abstract getTypename(): string;
 
@@ -61,7 +61,7 @@ export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkE
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
+		receiver: ISmalltalkValue,
 		c: ISmalltalkClass | undefined,
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {

@@ -27,14 +27,16 @@ import { ArgumentException } from '../../common/exceptions/argument-exception';
 import {
 	ISmalltalkExpression,
 	ISmalltalkFunctionDefinition,
-	// ISmalltalkValue,
+	ISmalltalkValue,
 	ISmalltalkVariable
 } from './domain-object-model/interfaces/iexpression';
 
-SmalltalkBeginUsage;
+import { SmalltalkArrayValue } from './domain-object-model/array';
 import { SmalltalkBeginUsage } from './domain-object-model/begin-usage';
+import { SmalltalkCharacterValue } from './domain-object-model/character';
 import { SmalltalkClass } from './domain-object-model/class';
 import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
+import { SmalltalkFloatValue } from './domain-object-model/float';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 import { SmalltalkIfUsage } from './domain-object-model/if-usage';
 import { SmalltalkIntegerValue } from './domain-object-model/integer';
@@ -42,6 +44,8 @@ import { SmalltalkLetStarUsage } from './domain-object-model/let-star-usage';
 import { SmalltalkLetUsage } from './domain-object-model/let-usage';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
 import { SmalltalkSetUsage } from './domain-object-model/set-usage';
+import { SmalltalkStringValue } from './domain-object-model/string';
+import { SmalltalkSymbolValue } from './domain-object-model/symbol';
 import { SmalltalkVariable } from './domain-object-model/variable';
 import { SmalltalkWhileUsage } from './domain-object-model/while-usage';
 
@@ -68,6 +72,8 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalPrint);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
+		this.terminals.push(GrammarSymbol.terminalFloatLiteral);
+		this.terminals.push(GrammarSymbol.terminalStringLiteral);
 		this.terminals.push(GrammarSymbol.terminalCond);
 		this.terminals.push(GrammarSymbol.terminalLet);
 		this.terminals.push(GrammarSymbol.terminalLetStar);
@@ -101,8 +107,6 @@ export class SmalltalkGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalArrayPred);
 		this.terminals.push(GrammarSymbol.terminalClass);
 		this.terminals.push(GrammarSymbol.terminalOctothorpe);
-		this.terminals.push(GrammarSymbol.terminalFloatLiteral);
-		this.terminals.push(GrammarSymbol.terminalStringLiteral);
 		this.terminals.push(GrammarSymbol.terminalNumberPred);
 		this.terminals.push(GrammarSymbol.terminalSymbolPred);
 		this.terminals.push(GrammarSymbol.terminalStringPred);
@@ -342,22 +346,11 @@ export class SmalltalkGrammar extends GrammarBase {
 
 		// Smalltalk Productions
 
-		// Productions.Add(new Production(Symbol.N_Input, new List<object>() { Symbol.N_ClassDef }, 39));
-		// Productions.Add(new Production(Symbol.N_ClassDef, new List<object>() {
-		//     GrammarSymbol.terminalLeftBracket,
-		//     GrammarSymbol.terminalClass,
-		//     Symbol.N_Class,
-		//     Symbol.N_Class,
-		//     Symbol.N_InstVars,  // Actually the class variables; see Exercise 10 on page 347.
-		//     Symbol.N_InstVars,
-		//     Symbol.N_MethodDef,
-		//     Symbol.N_MethodDefList,
-		//     GrammarSymbol.terminalRightBracket, '#classDefinition' }, 40));
 		this.addProduction(GrammarSymbol.nonterminalBracketedInput, [
 			GrammarSymbol.terminalClass,
 			GrammarSymbol.nonterminalClass,
 			GrammarSymbol.nonterminalClass,
-			GrammarSymbol.nonterminalInstVars,
+			GrammarSymbol.nonterminalInstVars, // Actually the class variables; see Exercise 10 on page 347.
 			GrammarSymbol.nonterminalInstVars,
 			GrammarSymbol.nonterminalMethodDef,
 			GrammarSymbol.nonterminalMethodDefList,
@@ -390,8 +383,14 @@ export class SmalltalkGrammar extends GrammarBase {
 		]);
 
 		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.N_Symbol }, 45));
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.nonterminalSymbol]);
 
 		// Productions.Add(new Production(Symbol.N_Symbol, new List<object>() { GrammarSymbol.terminalOctothorpe, GrammarSymbol.terminalID, "#symbol" }, 46));
+		this.addProduction(GrammarSymbol.nonterminalSymbol, [
+			GrammarSymbol.terminalOctothorpe,
+			GrammarSymbol.terminalID,
+			'#symbol'
+		]);
 
 		// // This next production allows us to redefine built-in value ops (such as +) in classes.
 		// Productions.Add(new Production(Symbol.N_FunDef, new List<object>() {
@@ -401,51 +400,122 @@ export class SmalltalkGrammar extends GrammarBase {
 		//     Symbol.N_ArgList,
 		//     Symbol.N_Expression,
 		//     GrammarSymbol.terminalRightBracket, "#functionDefinition" }, 48));
-		//
+
 		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { GrammarSymbol.terminalFloatLiteral }, 49));
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalFloatLiteral]);
+
 		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { GrammarSymbol.terminalStringLiteral }, 50));
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalStringLiteral]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalRandom }, 51));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalRandom]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalToString }, 52));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalStringToSymbol }, 53));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalPow }, 54));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPow]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalExp }, 55));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalExp]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalLn }, 56));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLn]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalSin }, 57));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalSin]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalCos }, 58));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCos]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalTan }, 59));
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalTan]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalFloor }, 60));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalAtan2 }, 61));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalThrow }, 62));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalStringLessThan }, 63));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalNumberPred }, 64));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalSymbolPred }, 65));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalStringPred }, 66));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalObjectPred }, 67));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalStrlen }, 68));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalSubstr }, 69));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalTypename }, 70));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalHash }, 71));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalReferenceEquals }, 72));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalStrcat }, 73));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalNewArray }, 74));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalArrayLength }, 75));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalArrayGet }, 76));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalArraySet }, 77));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminal...]);
+
 		// Productions.Add(new Production(Symbol.N_Value, new List<object>() {
 		//     GrammarSymbol.terminalOctothorpe, GrammarSymbol.terminalLeftBracket, Symbol.N_LiteralList, GrammarSymbol.terminalRightBracket, "#arrayLiteral" }, 78));
+
 		// Productions.Add(new Production(Symbol.N_LiteralList, new List<object>() { Symbol.Lambda, "#emptyLiteralList" }, 79));
+
 		// Productions.Add(new Production(Symbol.N_LiteralList, new List<object>() { Symbol.N_Value, Symbol.N_LiteralList, "#literalList" }, 80));
+
 		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { GrammarSymbol.terminalDollar, GrammarSymbol.terminalID, "#characterLiteral" }, 81));
+		this.addProduction(GrammarSymbol.nonterminalValue, [
+			GrammarSymbol.terminalDollar,
+			GrammarSymbol.terminalID,
+			'#characterLiteral'
+		]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalCharPred }, 82));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCharPred]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalStringIndex }, 83));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalStringIndex]);
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { GrammarSymbol.terminalArrayPred }, 84));
+		// this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalArrayPred]);
 	}
 
 	public get languageName(): string {
 		return 'Smalltalk';
 	}
 
-	/* eslint-disable @typescript-eslint/no-unused-vars */
 	private createLetUsage(
 		letKeyword: string,
 		varExprList: [ISmalltalkVariable, ISmalltalkExpression][],
@@ -467,7 +537,6 @@ export class SmalltalkGrammar extends GrammarBase {
 				);
 		}
 	}
-	/* eslint-enable @typescript-eslint/no-unused-vars */
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;
@@ -486,7 +555,9 @@ export class SmalltalkGrammar extends GrammarBase {
 		let funDefList: ISmalltalkFunctionDefinition[];
 		let exprPairList: [ISmalltalkExpression, ISmalltalkExpression][];
 		let varExprList: [ISmalltalkVariable, ISmalltalkExpression][];
-		// let literalList: ISmalltalkValue[];
+		let literal: ISmalltalkValue;
+		let literalList: ISmalltalkValue[];
+		let array: SmalltalkArrayValue;
 
 		switch (action) {
 			case '#functionDefinition':
@@ -591,10 +662,10 @@ export class SmalltalkGrammar extends GrammarBase {
 				);
 				break;
 
-			// case '#symbol':
-			//     name = (Name)semanticStack.Pop();
-			//     semanticStack.Push(new SmalltalkSymbolValue(name.Value));
-			//     break;
+			case '#symbol':
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new SmalltalkSymbolValue(name.value, name.line, name.column));
+				break;
 
 			case '#condUsage':
 				exprPairList = semanticStack.pop() as [
@@ -643,36 +714,33 @@ export class SmalltalkGrammar extends GrammarBase {
 				semanticStack.push([] as [ISmalltalkVariable, ISmalltalkExpression][]);
 				break;
 
-			// case '#emptyLiteralList':
-			//     semanticStack.Push(new List<ISmalltalkValue>());
-			//     break;
-			//
-			// case '#literalList':
-			//     literalList = (List<ISmalltalkValue>)semanticStack.Pop();
-			//
-			//     var literal = (ISmalltalkValue)semanticStack.Pop();
-			//
-			//     literalList.Insert(0, literal);
-			//     semanticStack.Push(literalList);
-			//     break;
-			//
-			// case '#arrayLiteral':
-			//     literalList = (List<ISmalltalkValue>)semanticStack.Pop();
-			//
-			//     var array = new SmalltalkArrayValue(literalList.Count);
-			//
-			//     for (var i = 0; i < literalList.Count; ++i)
-			//     {
-			//         array.Value[i] = literalList[i];
-			//     }
-			//
-			//     semanticStack.Push(array);
-			//     break;
-			//
-			// case '#characterLiteral':
-			//     name = (Name)semanticStack.Pop();
-			//     semanticStack.Push(new SmalltalkCharacterValue(name.Value[0]));
-			//     break;
+			case '#emptyLiteralList':
+				semanticStack.push([] as ISmalltalkValue[]);
+				break;
+
+			case '#literalList':
+				literalList = semanticStack.pop() as ISmalltalkValue[];
+				literal = semanticStack.pop() as ISmalltalkValue;
+				literalList.unshift(literal);
+				semanticStack.push(literalList);
+				break;
+
+			case '#arrayLiteral':
+				literalList = semanticStack.pop() as ISmalltalkValue[];
+
+				array = new SmalltalkArrayValue(literalList.length);
+
+				for (let i = 0; i < literalList.length; ++i) {
+					array.value[i] = literalList[i];
+				}
+
+				semanticStack.push(array);
+				break;
+
+			case '#characterLiteral':
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new SmalltalkCharacterValue(name.value[0]));
+				break;
 
 			default:
 				// base.ExecuteSemanticAction(semanticStack, action);
@@ -782,20 +850,20 @@ export class SmalltalkGrammar extends GrammarBase {
 			//case GrammarSymbol.terminalGreaterThan:
 			// case GrammarSymbol.terminalLet:
 			// case GrammarSymbol.terminalLetStar:
-
-			case GrammarSymbol.terminalNumberPred:
-			case GrammarSymbol.terminalSymbolPred:
-			case GrammarSymbol.terminalStringPred:
-			case GrammarSymbol.terminalObjectPred:
 			// case GrammarSymbol.terminalRandom:
-			case GrammarSymbol.terminalToString:
-			case GrammarSymbol.terminalStringToSymbol:
 			// case GrammarSymbol.terminalPow:
 			// case GrammarSymbol.terminalExp:
 			// case GrammarSymbol.terminalLn:
 			// case GrammarSymbol.terminalSin:
 			// case GrammarSymbol.terminalCos:
 			// case GrammarSymbol.terminalTan:
+
+			case GrammarSymbol.terminalNumberPred:
+			case GrammarSymbol.terminalSymbolPred:
+			case GrammarSymbol.terminalStringPred:
+			case GrammarSymbol.terminalObjectPred:
+			case GrammarSymbol.terminalToString:
+			case GrammarSymbol.terminalStringToSymbol:
 			case GrammarSymbol.terminalAtan2:
 			case GrammarSymbol.terminalFloor:
 			case GrammarSymbol.terminalThrow:
@@ -814,19 +882,21 @@ export class SmalltalkGrammar extends GrammarBase {
 			case GrammarSymbol.terminalCharPred:
 			case GrammarSymbol.terminalStringIndex:
 				semanticStack.push(new Name(value as string, token.line, token.column));
+				// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
+				// Or: semanticStack.push(new Name(`${value}`, token.line, token.column));
 				break;
 
 			case GrammarSymbol.terminalIntegerLiteral:
-				semanticStack.push(new SmalltalkIntegerValue(value));
+				semanticStack.push(new SmalltalkIntegerValue(value, token.line, token.column));
 				break;
 
-			// case GrammarSymbol.terminalFloatLiteral:
-			//     semanticStack.push(new SmalltalkFloatValue((double)value));
-			//     break;
-			//
-			// case GrammarSymbol.terminalStringLiteral:
-			//     semanticStack.push(new SmalltalkStringValue((string)value));
-			//     break;
+			case GrammarSymbol.terminalFloatLiteral:
+				semanticStack.push(new SmalltalkFloatValue(value, token.line, token.column));
+				break;
+
+			case GrammarSymbol.terminalStringLiteral:
+				semanticStack.push(new SmalltalkStringValue(value, token.line, token.column));
+				break;
 
 			case GrammarSymbol.terminalLeftBracket:
 			case GrammarSymbol.terminalRightBracket:
@@ -842,12 +912,6 @@ export class SmalltalkGrammar extends GrammarBase {
 				break;
 
 			default:
-				// break;
-				// throw new GrammarException(
-				// 	`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
-				// 	token.line,
-				// 	token.column
-				// );
 				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
 		}
 	}

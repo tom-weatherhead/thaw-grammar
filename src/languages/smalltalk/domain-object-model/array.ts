@@ -19,10 +19,6 @@ export class SmalltalkArrayValue extends SmalltalkValueBase /* implements ISmall
 			throw new Error('SmalltalkStringValue constructor: size < 0');
 		}
 
-		// Value = new ISmalltalkValue[size];
-
-		// const zero = new SmalltalkIntegerValue(0);
-
 		for (let i = 0; i < size; ++i) {
 			this.value.push(zeroValue);
 		}

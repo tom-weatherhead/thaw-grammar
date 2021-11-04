@@ -2,6 +2,8 @@
 
 // SmalltalkStringValue objects are immutable.
 
+import { ArgumentException } from '../../../common/exceptions/argument-exception';
+
 import { objectClass } from './bootstrap';
 
 import { SmalltalkValueBase } from './value-base';
@@ -9,7 +11,9 @@ import { SmalltalkValueBase } from './value-base';
 // TODO: Is this class identical to SmalltalkSymbolValue?
 
 export class SmalltalkStringValue extends SmalltalkValueBase /* implements ISmalltalkStringValue */ {
-	constructor(public readonly value: string) {
+	public readonly value: string;
+
+	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
 		super(objectClass);
 
 		// if (value == null) // 2013/12/05 : We will allow an empty string, but not a null reference.
@@ -18,6 +22,15 @@ export class SmalltalkStringValue extends SmalltalkValueBase /* implements ISmal
 		// }
 		//
 		// Value = value;
+
+		if (typeof value !== 'string') {
+			throw new ArgumentException(
+				`SmalltalkStringValue constructor: typeof value is not 'string'; it is '${typeof value}'.`,
+				'value'
+			);
+		}
+
+		this.value = value as string;
 	}
 
 	public override toString(): string {

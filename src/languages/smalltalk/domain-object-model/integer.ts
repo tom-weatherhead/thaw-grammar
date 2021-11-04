@@ -101,13 +101,15 @@
 
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
+import { objectClass } from './bootstrap';
+
 import { SmalltalkValueBase } from './value-base';
 
 export class SmalltalkIntegerValue extends SmalltalkValueBase {
 	public readonly value: number;
 
 	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
-		super();
+		super(objectClass);
 
 		if (typeof value !== 'number') {
 			throw new ArgumentException(

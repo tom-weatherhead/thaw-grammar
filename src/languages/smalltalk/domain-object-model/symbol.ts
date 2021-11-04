@@ -7,7 +7,11 @@ import { objectClass } from './bootstrap';
 import { SmalltalkValueBase } from './value-base';
 
 export class SmalltalkSymbolValue extends SmalltalkValueBase /* implements ISmalltalkSymbolValue */ {
-	constructor(public readonly value: string) {
+	constructor(
+		public readonly value: string,
+		public readonly line = 0,
+		public readonly column = 0
+	) {
 		super(objectClass);
 
 		// if (string.IsNullOrEmpty(value)) {
