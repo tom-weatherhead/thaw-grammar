@@ -904,7 +904,9 @@ export class SmalltalkGrammar extends GrammarBase {
 			case GrammarSymbol.terminalClass:
 			case GrammarSymbol.terminalCond:
 			case GrammarSymbol.terminalDefine:
+			case GrammarSymbol.terminalDollar:
 			case GrammarSymbol.terminalIf:
+			case GrammarSymbol.terminalOctothorpe:
 			case GrammarSymbol.terminalSet:
 			case GrammarSymbol.terminalWhile:
 			case GrammarSymbol.terminalEOF:

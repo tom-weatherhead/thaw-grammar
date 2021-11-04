@@ -523,13 +523,17 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { objectClass, selfVar } from './bootstrap';
+import { objectClass } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import { SmalltalkIntegerValue } from './integer';
 
-import { SmalltalkUserValue } from './user-value';
+import { objectInstance } from './object-instance';
+
+// import { SmalltalkUserValue } from './user-value';
+
+import { SmalltalkVariable } from './variable';
 
 export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
 	private readonly zeroValueForAccessor = new SmalltalkIntegerValue(0);
@@ -547,7 +551,7 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		//TrueVal = new SmalltalkIntegerValue(1);
 
 		// const objectClass = SmalltalkObjectClassKeeper.ObjectClass;
-		const objectInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+		// const objectInstanceEnvFrame = new SmalltalkEnvironmentFrame();
 
 		// if (typeof options.parser !== 'undefined' && typeof options.tokenizer !== 'undefined') {
 		// 	// new SmalltalkFunctionDefinition('isNil', [], new SmalltalkVariable('false'));
@@ -566,11 +570,17 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		// }
 
 		this.classDict.set(objectClass.className, objectClass);
-		objectInstanceEnvFrame.add(selfVar, this.zeroValue);
-		this.objectInstance = new SmalltalkUserValue(objectClass, objectInstanceEnvFrame);
+
+		this.objectInstance = objectInstance;
+		// objectInstanceEnvFrame.add(selfVar, this.zeroValue);
+		// this.objectInstance = new SmalltalkUserValue(objectClass, objectInstanceEnvFrame);
 
 		// Tie the self-referential knot:
-		this.objectInstance.value.dict.set(selfVar.name, this.objectInstance);
+		// this.objectInstance.value.dict.set(selfVar.name, this.objectInstance);
+
+		this.globalEnvironment.add(new SmalltalkVariable('false'), new SmalltalkIntegerValue(0));
+
+		this.globalEnvironment.add(new SmalltalkVariable('true'), new SmalltalkIntegerValue(1));
 	}
 
 	public get zeroValue(): ISmalltalkValue {

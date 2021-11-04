@@ -104,12 +104,15 @@ test('SmalltalkGrammar recognize test', () => {
 	f('(set r (init (new Rand)))');
 	f('(nextRand r)');
 	f('(nextRand r)');
-	// f('');
 
-	f('0');
-	f('x');
-	f('(define add (x y) (+ x y))');
-	f('(+ 2 3)');
+	f('0'); // An integer
+	f('0.5'); // A floating-point number
+	f('#symbol');
+	f('$c'); // A character
+	f('x'); // A variable
+
+	f('(define add (x y) (+ x y))'); // A function definition
+	f('(+ 2 3)'); // An operator usage
 
 	// expect(() => f('')).toThrow(SyntaxException);
 });
@@ -217,15 +220,29 @@ test('SmalltalkGrammar while test', () => {
 	expect(actualSmalltalkValue.toInteger()).toBe(81);
 });
 
-// test('SmalltalkGrammar cond test', () => {
-//     Evaluate("(define condtest (n) (cond ((= n 1) #First) ((= n 2) #Second) ((= n 3) #Third) (true #Other)))");
-//
-//     Assert.AreEqual("Other", Evaluate("(condtest 0)"));
-//     Assert.AreEqual("First", Evaluate("(condtest 1)"));
-//     Assert.AreEqual("Second", Evaluate("(condtest 2)"));
-//     Assert.AreEqual("Third", Evaluate("(condtest 3)"));
-//     Assert.AreEqual("Other", Evaluate("(condtest 4)"));
-// });
+test('SmalltalkGrammar cond test', () => {
+	// Evaluate("(define condtest (n) (cond ((= n 1) #First) ((= n 2) #Second) ((= n 3) #Third) (true #Other)))");
+	//
+	// Assert.AreEqual("Other", Evaluate("(condtest 0)"));
+	// Assert.AreEqual("First", Evaluate("(condtest 1)"));
+	// Assert.AreEqual("Second", Evaluate("(condtest 2)"));
+	// Assert.AreEqual("Third", Evaluate("(condtest 3)"));
+	// Assert.AreEqual("Other", Evaluate("(condtest 4)"));
+
+	const actualValues = evalStringsToValues(
+		[
+			'(define condtest (n) (cond ((= n 1) #First) ((= n 2) #Second) ((= n 3) #Third) (true #Other)))',
+			'(condtest 0)',
+			'(condtest 1)',
+			'(condtest 2)',
+			'(condtest 3)',
+			'(condtest 4)'
+		],
+		5
+	).map((value) => value.toString());
+
+	expect(actualValues.length).toBe(5);
+});
 
 test('SmalltalkGrammar let test 1', () => {
 	// Assert.AreEqual("5", Evaluate("(let ((n (+ 2 3))) n)"));
