@@ -531,8 +531,6 @@ import { SmalltalkIntegerValue } from './integer';
 
 import { objectInstance } from './object-instance';
 
-// import { SmalltalkUserValue } from './user-value';
-
 import { SmalltalkVariable } from './variable';
 
 export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
@@ -549,9 +547,6 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		// These are temporary values for FalseVal and TrueVal; hopefully they are not used.
 		//FalseVal = ZeroValue;
 		//TrueVal = new SmalltalkIntegerValue(1);
-
-		// const objectClass = SmalltalkObjectClassKeeper.ObjectClass;
-		// const objectInstanceEnvFrame = new SmalltalkEnvironmentFrame();
 
 		// if (typeof options.parser !== 'undefined' && typeof options.tokenizer !== 'undefined') {
 		// 	// new SmalltalkFunctionDefinition('isNil', [], new SmalltalkVariable('false'));
@@ -572,11 +567,6 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		this.classDict.set(objectClass.className, objectClass);
 
 		this.objectInstance = objectInstance;
-		// objectInstanceEnvFrame.add(selfVar, this.zeroValue);
-		// this.objectInstance = new SmalltalkUserValue(objectClass, objectInstanceEnvFrame);
-
-		// Tie the self-referential knot:
-		// this.objectInstance.value.dict.set(selfVar.name, this.objectInstance);
 
 		this.globalEnvironment.add(new SmalltalkVariable('false'), new SmalltalkIntegerValue(0));
 

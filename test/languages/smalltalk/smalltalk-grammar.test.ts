@@ -55,6 +55,10 @@ function evaluateStringsToInteger(strs: string[]): number | undefined {
 	return evalStringsToValue(strs).toInteger();
 }
 
+function evaluateStringsToIntegers(strs: string[], n = 1): Array<number | undefined> {
+	return evalStringsToValues(strs, n).map(value => value.toInteger());
+}
+
 test('SmalltalkGrammar instance creation test', () => {
 	// Arrange
 	const { grammar } = createInfrastructure(ls);
@@ -221,14 +225,6 @@ test('SmalltalkGrammar while test', () => {
 });
 
 test('SmalltalkGrammar cond test', () => {
-	// Evaluate("(define condtest (n) (cond ((= n 1) #First) ((= n 2) #Second) ((= n 3) #Third) (true #Other)))");
-	//
-	// Assert.AreEqual("Other", Evaluate("(condtest 0)"));
-	// Assert.AreEqual("First", Evaluate("(condtest 1)"));
-	// Assert.AreEqual("Second", Evaluate("(condtest 2)"));
-	// Assert.AreEqual("Third", Evaluate("(condtest 3)"));
-	// Assert.AreEqual("Other", Evaluate("(condtest 4)"));
-
 	const actualValues = evalStringsToValues(
 		[
 			'(define condtest (n) (cond ((= n 1) #First) ((= n 2) #Second) ((= n 3) #Third) (true #Other)))',
@@ -242,10 +238,15 @@ test('SmalltalkGrammar cond test', () => {
 	).map((value) => value.toString());
 
 	expect(actualValues.length).toBe(5);
+
+	expect(actualValues[0]).toBe('Other');
+	expect(actualValues[1]).toBe('First');
+	expect(actualValues[2]).toBe('Second');
+	expect(actualValues[3]).toBe('Third');
+	expect(actualValues[4]).toBe('Other');
 });
 
 test('SmalltalkGrammar let test 1', () => {
-	// Assert.AreEqual("5", Evaluate("(let ((n (+ 2 3))) n)"));
 	expect(evaluateStringToInteger('(let ((n (+ 2 3))) n)')).toBe(5);
 });
 
@@ -253,12 +254,10 @@ test('SmalltalkGrammar let test 2', () => {
 	const str1 = ['(define increment (n)', '	(let ((m 1))', '		(+ n m)', '	)', ')'].join(' ');
 	const str2 = '(increment 7)';
 
-	// Assert.AreEqual("8", Evaluate("(increment 7)"));
 	expect(evaluateStringsToInteger([str1, str2])).toBe(8);
 });
 
 test('SmalltalkGrammar let* test', () => {
-	// Assert.AreEqual("25", Evaluate("(let* ((x (+ 2 3)) (y (* x x))) y)"));
 	expect(evaluateStringToInteger('(let* ((x (+ 2 3)) (y (* x x))) y)')).toBe(25);
 });
 
@@ -272,23 +271,23 @@ test('SmalltalkGrammar let* test', () => {
 //     Assert.AreEqual("5.0", Evaluate("(+ 2.0 3.0)"));
 //     Assert.AreEqual("6.0", Evaluate("(+ 2.5 3.5)"));
 // }
-//
+
 // [Test]
 // public void UserDefFuncTest()
 // {
 //     Assert.AreEqual("14", Evaluate("(+1 13)"));
 // }
-//
+
 // [Test]
 // public void GCDTest()
 // {
 //     Assert.AreEqual("8", Evaluate("(gcd 16384 24)"));
 //     Assert.AreEqual("1", Evaluate("(gcd 100 81)"));
 // }
-//
-// [Test]
-// public void VariablePrecedenceTest()    // See Kamin page 295.
-// {
+
+test('SmalltalkGrammar variable precedence test', () => {
+	// See Kamin page 295.
+
 //     Evaluate("(set x 1)");
 //     Evaluate(@"
 // (class C Object ()
@@ -302,8 +301,30 @@ test('SmalltalkGrammar let* test', () => {
 //     Assert.AreEqual("1", Evaluate("x"));
 //     Assert.AreEqual("2", Evaluate("(f a)"));
 //     Assert.AreEqual("3", Evaluate("(g a 3)"));
-// }
-//
+
+	const actualResults = evaluateStringsToIntegers([
+		'(set x 1)',
+		[
+			'(class C Object ()',
+			'	(x)',
+			'	(define init () (begin (set x 2) self))',
+			'	(define f () x)',
+			'	(define g (x) x)',
+			')'
+		].join(' '),
+		'(set a (init (new C)))',
+		'x',
+		'(f a)',
+		'(g a 3)'
+	], 3);
+
+	expect(actualResults.length).toBe(3);
+
+	expect(actualResults[0]).toBe(1);
+	expect(actualResults[1]).toBe(2);
+	expect(actualResults[2]).toBe(3);
+});
+
 // [Test]
 // public void ObjectEqualityTest()
 // {
