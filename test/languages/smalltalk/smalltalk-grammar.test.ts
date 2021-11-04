@@ -56,7 +56,7 @@ function evaluateStringsToInteger(strs: string[]): number | undefined {
 }
 
 function evaluateStringsToIntegers(strs: string[], n = 1): Array<number | undefined> {
-	return evalStringsToValues(strs, n).map(value => value.toInteger());
+	return evalStringsToValues(strs, n).map((value) => value.toInteger());
 }
 
 test('SmalltalkGrammar instance creation test', () => {
@@ -288,35 +288,24 @@ test('SmalltalkGrammar let* test', () => {
 test('SmalltalkGrammar variable precedence test', () => {
 	// See Kamin page 295.
 
-//     Evaluate("(set x 1)");
-//     Evaluate(@"
-// (class C Object ()
-// (x)
-// (define init () (begin (set x 2) self))
-// (define f () x)
-// (define g (x) x)
-// )");
-//     Evaluate("(set a (init (new C)))");
-//
-//     Assert.AreEqual("1", Evaluate("x"));
-//     Assert.AreEqual("2", Evaluate("(f a)"));
-//     Assert.AreEqual("3", Evaluate("(g a 3)"));
-
-	const actualResults = evaluateStringsToIntegers([
-		'(set x 1)',
+	const actualResults = evaluateStringsToIntegers(
 		[
-			'(class C Object ()',
-			'	(x)',
-			'	(define init () (begin (set x 2) self))',
-			'	(define f () x)',
-			'	(define g (x) x)',
-			')'
-		].join(' '),
-		'(set a (init (new C)))',
-		'x',
-		'(f a)',
-		'(g a 3)'
-	], 3);
+			'(set x 1)',
+			[
+				'(class C Object ()',
+				'	(x)',
+				'	(define init () (begin (set x 2) self))',
+				'	(define f () x)',
+				'	(define g (x) x)',
+				')'
+			].join(' '),
+			'(set a (init (new C)))',
+			'x',
+			'(f a)',
+			'(g a 3)'
+		],
+		3
+	);
 
 	expect(actualResults.length).toBe(3);
 
@@ -440,25 +429,20 @@ test('SmalltalkGrammar variable precedence test', () => {
 //     Assert.AreEqual("nil", Evaluate("(next L)"));
 //     Assert.AreEqual("a", Evaluate("(at: L 2)"));
 // }
-//
-// [Test]
-// public void InheritanceTest()
-// {
-//     // From Kamin page 279.
-//     const string classC = @"
-// (class C Object () ()
-// (define m1 () (m2 self))
-// (define m2 () #C))";
-//     const string classD = @"
-// (class D C () ()
-// (define m2 () #D))";
-//
-//     Evaluate(classC);
-//     Evaluate(classD);
-//     Evaluate("(set x (new D))");
-//     Assert.AreEqual("D", Evaluate("(m1 x)"));
-// }
-//
+
+test('SmalltalkGrammar class inheritance test', () => {
+	// From Kamin page 279.
+
+	const actualResult = evalStringsToValue([
+		['(class C Object () ()', '	(define m1 () (m2 self))', '	(define m2 () #C)', ')'].join(' '),
+		['(class D C () ()', '	(define m2 () #D)', ')'].join(' '),
+		'(set x (new D))',
+		'(m1 x)'
+	]).toString();
+
+	expect(actualResult).toBe('D');
+});
+
 // [Test]
 // public void SuperTest1()
 // {
