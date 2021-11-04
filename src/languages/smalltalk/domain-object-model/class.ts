@@ -165,10 +165,10 @@ export class SmalltalkClass implements ISmalltalkClass {
 		}
 
 		for (const classVariable of this.classVariableList) {
-			this.classVariableEnvFrame.add(classVariable, globalInfo.zeroValue);
+			this.classVariableEnvFrame.add(classVariable, globalInfo.falseValue);
 		}
 
-		return globalInfo.zeroValue;
+		return globalInfo.falseValue;
 	}
 	/* eslint-enable no-unused-vars */
 }

@@ -33,7 +33,7 @@ export class SmalltalkFunctionDefinition implements ISmalltalkFunctionDefinition
 	): ISmalltalkValue {
 		globalInfo.functionDefinitions.set(this.functionName, this);
 
-		return globalInfo.zeroValue;
+		return globalInfo.falseValue;
 	}
 	/* eslint-enable no-unused-vars */
 }

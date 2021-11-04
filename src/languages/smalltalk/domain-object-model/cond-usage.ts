@@ -37,6 +37,6 @@ export class SmalltalkCondUsage implements ISmalltalkExpression {
 		}
 
 		//return falseValue;
-		return globalInfo.zeroValue;
+		return globalInfo.falseValue;
 	}
 }

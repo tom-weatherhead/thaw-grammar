@@ -10,7 +10,9 @@ import { SmalltalkFunctionDefinition } from './function-definition';
 
 import { SmalltalkVariable } from './variable';
 
-// const nilVariableName = 'nil';
+const objectClassName = 'Object';
+
+const nilClassName = 'Nil';
 // const nilValueAsString = 'nil';
 
 // const falseValueClassName = 'FalseValue';
@@ -20,19 +22,17 @@ import { SmalltalkVariable } from './variable';
 // const trueValueAsString = 'true';
 
 const selfVariableName = 'self';
-
-// const nilVariableName = 'nil';
-
+const nilVariableName = 'nil';
 const falseVariableName = 'false';
 const trueVariableName = 'true';
 
 export const selfVar = new SmalltalkVariable(selfVariableName);
-
+export const nilVar = new SmalltalkVariable(nilVariableName);
 export const falseVar = new SmalltalkVariable(falseVariableName);
 export const trueVar = new SmalltalkVariable(trueVariableName);
 
 export const objectClass = new SmalltalkClass(
-	'Object',
+	objectClassName,
 	undefined,
 	[],
 	[selfVar],
@@ -42,14 +42,15 @@ export const objectClass = new SmalltalkClass(
 	]
 );
 
-// const objectInstanceEnvFrame = new SmalltalkEnvironmentFrame();
-// export const zeroValue = new SmalltalkIntegerValue(0);
-//
-// objectInstanceEnvFrame.add(selfVar, zeroValue);
-//
-// export const objectInstance = new SmalltalkUserValue(objectClass, objectInstanceEnvFrame);
-//
-// // Tie the self-referential knot:
-// objectInstance.value.dict.set(selfVar.name, objectInstance);
+export const nilClass = new SmalltalkClass(
+	nilClassName,
+	objectClassName,
+	[],
+	[],
+	[
+		new SmalltalkFunctionDefinition('isNil', [], trueVar),
+		new SmalltalkFunctionDefinition('notNil', [], falseVar)
+	]
+);
 
 // **** END Bootstrapping Code Part 1: Set up objectClass ****

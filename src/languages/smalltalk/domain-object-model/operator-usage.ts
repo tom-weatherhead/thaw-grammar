@@ -359,7 +359,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		const env = new SmalltalkEnvironmentFrame();
 
 		for (const memberVariable of smalltalkClass.clRep) {
-			env.dict.set(memberVariable.name, globalInfo.zeroValue);
+			env.dict.set(memberVariable.name, globalInfo.falseValue);
 			// Or: env.add(memberVariable, globalInfo.zeroValue);
 		}
 

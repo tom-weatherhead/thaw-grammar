@@ -523,20 +523,22 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { objectClass } from './bootstrap';
+import { falseVar, nilClass, nilVar, objectClass, trueVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import { SmalltalkIntegerValue } from './integer';
 
-import { objectInstance } from './object-instance';
+import { falseValue, nilInstance, objectInstance, trueValue } from './object-instance';
 
-import { SmalltalkVariable } from './variable';
+// import { SmalltalkVariable } from './variable';
 
 export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
-	private readonly zeroValueForAccessor = new SmalltalkIntegerValue(0);
-	private readonly falseValueForAccessor = new SmalltalkIntegerValue(0);
-	private readonly trueValueForAccessor = new SmalltalkIntegerValue(1);
+	// private readonly zeroValueForAccessor = new SmalltalkIntegerValue(0);
+	// private readonly falseValueForAccessor = new SmalltalkIntegerValue(0);
+	// private readonly falseValueForAccessor = falseValue;
+	// private readonly trueValueForAccessor = new SmalltalkIntegerValue(1);
+	// private readonly trueValueForAccessor = trueValue;
 	public readonly globalEnvironment = new SmalltalkEnvironmentFrame();
 	public readonly functionDefinitions = new Map<string, ISmalltalkFunctionDefinition>();
 	public readonly classDict = new Map<string, ISmalltalkClass>();
@@ -564,25 +566,30 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		// 	);
 		// }
 
+		this.classDict.set(nilClass.className, nilClass);
 		this.classDict.set(objectClass.className, objectClass);
 
 		this.objectInstance = objectInstance;
 
-		this.globalEnvironment.add(new SmalltalkVariable('false'), new SmalltalkIntegerValue(0));
-
-		this.globalEnvironment.add(new SmalltalkVariable('true'), new SmalltalkIntegerValue(1));
+		this.globalEnvironment.add(nilVar, nilInstance);
+		this.globalEnvironment.add(falseVar, falseValue);
+		this.globalEnvironment.add(trueVar, trueValue);
 	}
 
-	public get zeroValue(): ISmalltalkValue {
-		return this.zeroValueForAccessor;
-	}
+	// public get zeroValue(): ISmalltalkValue {
+	// 	return this.zeroValueForAccessor;
+	// }
 
 	public get falseValue(): ISmalltalkValue {
-		return this.falseValueForAccessor;
+		// return this.falseValueForAccessor;
+
+		return falseValue;
 	}
 
 	public get trueValue(): ISmalltalkValue {
-		return this.trueValueForAccessor;
+		// return this.trueValueForAccessor;
+
+		return trueValue;
 	}
 
 	public valueIsFalse(value: ISmalltalkValue): boolean {

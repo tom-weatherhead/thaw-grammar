@@ -56,7 +56,7 @@ export class SmalltalkWhileUsage implements ISmalltalkExpression {
 			this.body.evaluate(localEnvironment, receiver, c, globalInfo);
 		}
 
-		return globalInfo.zeroValue;
+		return globalInfo.falseValue;
 		// #endif
 	}
 }

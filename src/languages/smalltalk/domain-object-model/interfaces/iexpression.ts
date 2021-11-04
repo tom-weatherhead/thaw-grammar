@@ -35,7 +35,7 @@ export interface ISmalltalkGlobalInfo {
 	// dynamicScoping: boolean;
 	// debug: boolean;
 
-	zeroValue: ISmalltalkValue;
+	// zeroValue: ISmalltalkValue;
 	falseValue: ISmalltalkValue;
 	trueValue: ISmalltalkValue;
 
