@@ -50,27 +50,9 @@ export class SmalltalkSymbol extends SmalltalkValueBase /* implements ISmalltalk
 		return this.value;
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	//
-	//     if (object.ReferenceEquals(this, obj))
-	//     {
-	//         return true;
-	//     }
-	//
-	//     var otherSymbol = obj as SmalltalkSymbol;
-	//
-	//     return otherSymbol != null && Value == otherSymbol.Value;
-	// }
-
 	public equals(other: unknown): boolean {
 		return isSmalltalkSymbol(other) && other.value === this.value;
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return Value.GetHashCode();
-	// }
 
 	public override getTypename(): string {
 		return 'symbol';

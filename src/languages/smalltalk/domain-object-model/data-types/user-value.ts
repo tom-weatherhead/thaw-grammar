@@ -59,16 +59,6 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 		return false; // 2021-11-04 : Temporary hack.
 	}
 
-	//     public override int GetHashCode()
-	//     {
-	// #if DEAD_CODE
-	//         return Owner.GetHashCode() * 101 + Value.GetHashCode();
-	// #else
-	//         // 2014/01/30
-	//         return 0;
-	// #endif
-	//     }
-
 	public override getTypename(): string {
 		return typeof this.owner !== 'undefined' ? this.owner.className : '<No owner>';
 	}

@@ -10,13 +10,15 @@ export interface ISmalltalkValue extends IEqualityComparable, ISmalltalkExpressi
 	readonly owner: ISmalltalkClass | undefined;
 
 	getTypename(): string;
-	isNumber(): boolean;
-	isSymbol(): boolean;
-	isCharacter(): boolean;
-	isString(): boolean;
-	isObject(): boolean;
-	isArray(): boolean;
 
+	isArray(): boolean;
+	isCharacter(): boolean;
+	isNumber(): boolean;
+	isObject(): boolean;
+	isString(): boolean;
+	isSymbol(): boolean;
+
+	toArray(): ISmalltalkValue[] | undefined;
 	toInteger(): number | undefined;
 	toFloat(): number | undefined;
 	toStringX(): string | undefined;

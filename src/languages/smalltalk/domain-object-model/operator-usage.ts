@@ -14,15 +14,23 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
+import { SmalltalkArray } from './data-types/array';
+
 import { SmalltalkBlock, unblockValue } from './data-types/block';
+
+import { isSmalltalkCharacter } from './data-types/character';
+
+import { SmalltalkInteger } from './data-types/integer';
+
+import { isSmalltalkString, SmalltalkString } from './data-types/string';
+
+import { isSmalltalkSymbol } from './data-types/symbol';
+
+import { SmalltalkUserValue } from './data-types/user-value';
 
 import { selfVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
-
-import { SmalltalkInteger } from './data-types/integer';
-
-import { SmalltalkUserValue } from './data-types/user-value';
 
 import { isSmalltalkVariable } from './variable';
 
@@ -253,11 +261,10 @@ import { isSmalltalkVariable } from './variable';
 // }
 
 export class SmalltalkOperatorUsage implements ISmalltalkExpression {
-	// private readonly operatorName: Name;
-	// public readonly expressionList: ISmalltalkExpression[];
 	// The method reference cache, as described in Exercise 12 on page 348:
 	// private cachedClassReference: ISmalltalkClass | undefined;
 	// private cachedMethodReference: ISmalltalkFunctionDefinition | undefined;
+
 	// private static readonly HashSet<string> OperatorsThatTakeEitherIntOrFloatArgs = new HashSet<string>() { "<", /* ">", */ "+", "-", "*", "/" };
 
 	private readonly valueOpNames = [
@@ -313,6 +320,15 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		'throw'
 	];
 
+	// private readonly operatorsThatTakeEitherIntOrFloatArgs = [
+	// 	'<',
+	// 	'>',
+	// 	'+',
+	// 	'-',
+	// 	'*',
+	// 	'/'
+	// ];
+
 	constructor(
 		private readonly operatorName: Name,
 		public readonly expressionList: ISmalltalkExpression[]
@@ -330,10 +346,8 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 			);
 		}
 
-		// ExpressionList[0] is a SmalltalkVariable; its name is the name of the class of which we will create an instance.
-		const expr0 = this.expressionList[0]; // as SmalltalkVariable;
+		const expr0 = this.expressionList[0];
 
-		// if (typeof variable === 'undefined') {
 		if (!isSmalltalkVariable(expr0)) {
 			throw new EvaluationException(
 				'EvaluateNew() : The first argument is not in the form of a variable.',
@@ -342,6 +356,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 			);
 		}
 
+		// expr0 is an ISmalltalkVariable; its name is the name of the class of which we will create an instance.
 		const className = expr0.name;
 		const smalltalkClass = globalInfo.classDict.get(className);
 
@@ -353,7 +368,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 			);
 		}
 
-		// var smalltalkClass = globalInfo.classDict[className];
 		const env = new SmalltalkEnvironmentFrame();
 
 		for (const memberVariable of smalltalkClass.clRep) {
@@ -534,7 +548,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 			case '*':
 			case '/':
 			//case '<':
-			//case '>':
+			case '>':
 			case 'pow':
 			case 'atan2':
 				if (!evaluatedArguments[0].isNumber()) {
@@ -559,6 +573,12 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				break;
 
 			case 'random': // 2014/02/01: TODO: Should we insist that random's argument be an integer?
+				if (!evaluatedArguments[0].isInteger) {
+					exceptionMessage = 'Argument is not an integer';
+				}
+
+				break;
+
 			case 'exp':
 			case 'ln':
 			case 'sin':
@@ -623,7 +643,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				break;
 
 			case 'newarray':
-				// if (!(evaluatedArguments[0] is SmalltalkInteger))
 				if (!evaluatedArguments[0].isInteger) {
 					exceptionMessage = 'Argument is not an integer';
 				}
@@ -669,11 +688,17 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		}
 
 		// Now evaluate.
+		let a: ISmalltalkValue[] | undefined;
+		let f: number | undefined;
+		let n: number | undefined;
+		let s: string | undefined;
 
 		try {
 			switch (this.operatorName.value) {
-				// case '=':
-				// 	return evaluatedArguments[0].Equals(evaluatedArguments[1]) ? globalInfo.trueValue : globalInfo.falseValue;
+				case '=':
+					return evaluatedArguments[0].equals(evaluatedArguments[1])
+						? globalInfo.trueValue
+						: globalInfo.falseValue;
 
 				case 'print':
 					console.log(evaluatedArguments[0]);
@@ -712,40 +737,50 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 
 				// case 'random':
 				// 	return new SmalltalkInteger(globalInfo.RandomNumberGenerator.Next(globalInfo.ValueAsInteger(evaluatedArguments[0])));
-				//
-				// case 'tostring':
-				// 	return new SmalltalkStringValue(evaluatedArguments[0].ToString());
-				//
+
+				case 'tostring':
+					return new SmalltalkString(evaluatedArguments[0].toString());
+
 				// case 'stringtosymbol':
 				// 	var str2sym = (SmalltalkStringValue)evaluatedArguments[0];
 				//
 				// 	return new SmalltalkSymbolValue(str2sym.Value);
-				//
-				// case 'floor':
-				// 	return new SmalltalkInteger(((ISmalltalkNumber)evaluatedArguments[0]).ToInteger());
-				//
+
+				case 'floor':
+					f = evaluatedArguments[0].toFloat();
+
+					if (typeof f === 'undefined') {
+						throw new Error('floor: Argument is not a number.');
+					}
+
+					return new SmalltalkInteger(f);
+
 				// case 'throw':
 				// 	throw new SmalltalkException(((SmalltalkStringValue)evaluatedArguments[0]).Value, OperatorName.Line, OperatorName.Column);
 				//
 				// case 'string<': // See page 54.  Deprecated; see <
 				// 	return ((SmalltalkStringValue)evaluatedArguments[0]).Value.CompareTo(((SmalltalkStringValue)evaluatedArguments[1]).Value) < 0
 				// 		? globalInfo.TrueValue : globalInfo.FalseValue;
-				//
-				// case 'strlen':
-				// 	var strForLen = (SmalltalkStringValue)evaluatedArguments[0];
-				//
-				// 	return new SmalltalkInteger(strForLen.Value.Length);
-				//
+
+				case 'strlen':
+					s = evaluatedArguments[0].toStringX();
+
+					if (typeof s === 'undefined') {
+						throw new Error('strlen: Argument is not a string.');
+					}
+
+					return new SmalltalkInteger(s.length);
+
 				// case 'substr':
 				// 	var strForSubstr = (SmalltalkStringValue)evaluatedArguments[0];
 				// 	var startForSubstr = globalInfo.ValueAsInteger(evaluatedArguments[1]);
 				// 	var lengthForSubstr = globalInfo.ValueAsInteger(evaluatedArguments[2]);
 				//
 				// 	return new SmalltalkStringValue(strForSubstr.Value.Substring(startForSubstr, lengthForSubstr));
-				//
-				// case 'typename':
-				// 	return new SmalltalkStringValue(evaluatedArguments[0].GetTypename());
-				//
+
+				case 'typename':
+					return new SmalltalkString(evaluatedArguments[0].getTypename());
+
 				// case 'hash':
 				// 	// ThAW 2014/01/28 : For now, we will avoid calling GetHashCode() on Smalltalk objects.
 				// 	// Of course, Smalltalk classes are free to implement their own hash functions.
@@ -758,10 +793,10 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				// 	}
 				//
 				// 	return new SmalltalkInteger(hashResult);
-				//
+
 				// case 'ref=':
 				// 	return object.ReferenceEquals(evaluatedArguments[0], evaluatedArguments[1]) ? globalInfo.TrueValue : globalInfo.FalseValue;
-				//
+
 				// case 'strcat': // TODO 2014/12/09 : Use string.Join() instead of a StringBuilder?
 				// 	var sb = new StringBuilder();
 				//
@@ -771,41 +806,71 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				// 	}
 				//
 				// 	return new SmalltalkStringValue(sb.ToString());
-				//
-				// case 'newarray':
-				// 	return new SmalltalkArrayValue(((SmalltalkInteger)evaluatedArguments[0]).Value);
-				//
-				// case 'arraylength':
-				// 	return new SmalltalkInteger(((SmalltalkArrayValue)evaluatedArguments[0]).Value.Length);
-				//
+
+				case 'newarray':
+					n = evaluatedArguments[0].toInteger();
+
+					if (typeof n === 'undefined') {
+						throw new Error('newarray: Argument is not an integer.');
+					}
+
+					return new SmalltalkArray(n);
+
+				case 'arraylength':
+					a = evaluatedArguments[0].toArray();
+
+					if (typeof a === 'undefined') {
+						throw new Error('arraylength: Argument is not an array.');
+					}
+
+					return new SmalltalkInteger(a.length);
+
 				// case 'arrayget':
 				// 	return ((SmalltalkArrayValue)evaluatedArguments[0]).GetElement(((SmalltalkInteger)evaluatedArguments[1]).Value);
-				//
+
 				// case 'arrayset':
 				// 	return ((SmalltalkArrayValue)evaluatedArguments[0]).SetElement(
 				// 		((SmalltalkInteger)evaluatedArguments[1]).Value, evaluatedArguments[2]);
-				//
+
 				// case 'stridx':
 				// 	return ((SmalltalkStringValue)evaluatedArguments[0]).Index(evaluatedArguments[1]);
 
 				default:
-					// if (this.operatorName.value === '<') {
-					//
-					// 	if (evaluatedArguments[0].isSymbol()) {
-					// 		return ((SmalltalkSymbolValue)evaluatedArguments[0]).value.CompareTo(((SmalltalkSymbolValue)evaluatedArguments[1]).value) < 0
-					// 			? globalInfo.trueValue : globalInfo.falseValue;
-					// 	}
-					// 	else if (evaluatedArguments[0].isCharacter())
-					// 	{
-					// 		return ((SmalltalkCharacterValue)evaluatedArguments[0]).Value < ((SmalltalkCharacterValue)evaluatedArguments[1]).Value
-					// 			? globalInfo.TrueValue : globalInfo.FalseValue;
-					// 	}
-					// 	else if (evaluatedArguments[0].isString())
-					// 	{
-					// 		return ((SmalltalkStringValue)evaluatedArguments[0]).Value.CompareTo(((SmalltalkStringValue)evaluatedArguments[1]).Value) < 0
-					// 			? globalInfo.TrueValue : globalInfo.FalseValue;
-					// 	}
-					// }
+					if (this.operatorName.value === '<') {
+						const arg0 = evaluatedArguments[0];
+						const arg1 = evaluatedArguments[1];
+
+						// if (evaluatedArguments[0].isSymbol()) {
+						if (isSmalltalkCharacter(arg0) && isSmalltalkCharacter(arg1)) {
+							// return ((SmalltalkSymbolValue)evaluatedArguments[0]).value.CompareTo(((SmalltalkSymbolValue)evaluatedArguments[1]).value) < 0
+							// 	? globalInfo.trueValue : globalInfo.falseValue;
+							return arg0.value < arg1.value
+								? globalInfo.trueValue
+								: globalInfo.falseValue;
+						} else if (isSmalltalkString(arg0) && isSmalltalkString(arg1)) {
+							// return ((SmalltalkSymbolValue)evaluatedArguments[0]).value.CompareTo(((SmalltalkSymbolValue)evaluatedArguments[1]).value) < 0
+							// 	? globalInfo.trueValue : globalInfo.falseValue;
+							return arg0.value < arg1.value
+								? globalInfo.trueValue
+								: globalInfo.falseValue;
+						} else if (isSmalltalkSymbol(arg0) && isSmalltalkSymbol(arg1)) {
+							// return ((SmalltalkSymbolValue)evaluatedArguments[0]).value.CompareTo(((SmalltalkSymbolValue)evaluatedArguments[1]).value) < 0
+							// 	? globalInfo.trueValue : globalInfo.falseValue;
+							return arg0.value < arg1.value
+								? globalInfo.trueValue
+								: globalInfo.falseValue;
+						}
+						// else if (evaluatedArguments[0].isCharacter())
+						// {
+						// 	return ((SmalltalkCharacterValue)evaluatedArguments[0]).Value < ((SmalltalkCharacterValue)evaluatedArguments[1]).Value
+						// 		? globalInfo.TrueValue : globalInfo.FalseValue;
+						// }
+						// else if (evaluatedArguments[0].isString())
+						// {
+						// 	return ((SmalltalkStringValue)evaluatedArguments[0]).Value.CompareTo(((SmalltalkStringValue)evaluatedArguments[1]).Value) < 0
+						// 		? globalInfo.TrueValue : globalInfo.FalseValue;
+						// }
+					}
 
 					// if (OperatorsThatTakeEitherIntOrFloatArgs.Contains(this.operatorName.value))
 					if (['+', '-', '*', '/', '=', '<', '>'].indexOf(this.operatorName.value) >= 0) {

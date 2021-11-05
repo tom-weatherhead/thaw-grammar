@@ -42,27 +42,9 @@ export class SmalltalkCharacter extends SmalltalkValueBase /* implements ISmallt
 		return this.value;
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	//
-	//     if (object.ReferenceEquals(this, obj))
-	//     {
-	//         return true;
-	//     }
-	//
-	//     SmalltalkCharacter otherCharVal = obj as SmalltalkCharacter;
-	//
-	//     return otherCharVal != null && Value == otherCharVal.Value;
-	// }
-
 	public equals(other: unknown): boolean {
 		return isSmalltalkCharacter(other) && other.value === this.value;
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return Value.GetHashCode();
-	// }
 
 	public override getTypename(): string {
 		return 'char';

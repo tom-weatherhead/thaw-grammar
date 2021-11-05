@@ -8,7 +8,6 @@ import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
-	// ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
 	ISmalltalkValue
 } from '../interfaces/iexpression';
@@ -55,20 +54,10 @@ export class SmalltalkBlock extends SmalltalkValueBase {
 		return '<block>';
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	//     return object.ReferenceEquals(this, obj);
-	// }
-
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public equals(other: unknown): boolean {
 		return false;
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return 0;
-	// }
 
 	public override getTypename(): string {
 		return 'block';

@@ -2,46 +2,12 @@
 
 // public class SmalltalkGlobalInfo : IGlobalInfoOps
 // {
-// 	private readonly ITokenizer Tokenizer;
-// 	private readonly IParser Parser;
-// 	public readonly ISmalltalkValue ZeroValue = new SmalltalkIntegerValue(0);
-// 	private ISmalltalkValue FalseVal = null;
-// 	private ISmalltalkValue TrueVal = null;
 // 	public readonly SmalltalkEnvironmentFrame GlobalEnvironment = new SmalltalkEnvironmentFrame(null);
 // 	public readonly Dictionary<string, SmalltalkFunctionDefinition> FunctionDefinitions = new Dictionary<string, SmalltalkFunctionDefinition>();
 // 	public readonly Dictionary<string, SmalltalkClass> ClassDict = new Dictionary<string, SmalltalkClass>();
 // 	public readonly SmalltalkUserValue ObjectInstance;  // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.
 // 	public readonly Random RandomNumberGenerator = new Random();
-// 	private const string NilVariableName = "nil";
-// 	public const string NilValueAsString = "nil";
-// 	private const string FalseValueClassName = "FalseValue";
-// 	private const string FalseVariableName = "false";
-// 	public const string FalseValueAsString = "false"; //"0"; // Change this to "false"
-// 	private const string TrueValueClassName = "TrueValue";
-// 	private const string TrueVariableName = "true";
-// 	public const string TrueValueAsString = "true"; //"1"; // Change this to "true"
 // 	private readonly HashSet<string> LoadedPresets = new HashSet<string>();
-//
-// 	public SmalltalkGlobalInfo(ITokenizer t, IParser p)
-// 	{
-// 		Tokenizer = t;
-// 		Parser = p;
-//
-// 		// These are temporary values for FalseVal and TrueVal; hopefully they are not used.
-// 		//FalseVal = ZeroValue;
-// 		//TrueVal = new SmalltalkIntegerValue(1);
-//
-// 		var objectClass = SmalltalkObjectClassKeeper.ObjectClass;
-// 		var objectInstanceEnvFrame = new SmalltalkEnvironmentFrame(null);
-//
-// 		objectClass.AddFunction(t, p, string.Format("(define isNil () {0})", FalseVariableName));
-// 		objectClass.AddFunction(t, p, string.Format("(define notNil () {0})", TrueVariableName));
-//
-// 		ClassDict[objectClass.ClassName] = objectClass;
-// 		objectInstanceEnvFrame.Add(SmalltalkObjectClassKeeper.SelfVar, ZeroValue);
-// 		ObjectInstance = new SmalltalkUserValue(objectClass, objectInstanceEnvFrame);
-// 		ObjectInstance.Value.Dict[SmalltalkObjectClassKeeper.SelfVar] = ObjectInstance;
-// 	}
 //
 // 	public void Clear()
 // 	{
@@ -51,18 +17,6 @@
 // 		LoadedPresets.Clear();
 //
 // 		ClassDict[SmalltalkObjectClassKeeper.ObjectClass.ClassName] = SmalltalkObjectClassKeeper.ObjectClass;
-// 	}
-//
-// 	private void Evaluate(string input)
-// 	{
-// 		var expr = Parser.Parse(Tokenizer.Tokenize(input)) as ISmalltalkExpression;
-//
-// 		if (expr == null)
-// 		{
-// 			throw new Exception(string.Format("SmalltalkGlobalInfo.Evaluate() : Parse failed; input is: {0}", input));
-// 		}
-//
-// 		expr.Evaluate(null, ObjectInstance, null, this);
 // 	}
 //
 // 	public string LoadPreset(string presetName)
@@ -428,73 +382,6 @@
 // 		LoadedPresets.Add(presetNameToLower);
 // 		return string.Format("The preset '{0}' has been successfully loaded.", presetName);
 // 	}
-
-// 	public ISmalltalkValue FalseValue
-// 	{
-// 		get
-// 		{
-//
-// 			if (FalseVal == null)
-// 			{
-// 				throw new Exception("FalseValue was used before being defined");
-// 			}
-//
-// 			return FalseVal;
-// 		}
-// 	}
-//
-// 	public ISmalltalkValue TrueValue
-// 	{
-// 		get
-// 		{
-//
-// 			if (TrueVal == null)
-// 			{
-// 				throw new Exception("TrueValue was used before being defined");
-// 			}
-//
-// 			return TrueVal;
-// 		}
-// 	}
-//
-// 	public bool ValueIsFalse(ISmalltalkValue value)
-// 	{
-// 		//return value.Owner.Equals(ClassDict["FalseValue"]);
-// 		return value.Owner.ClassName == FalseValueClassName;
-// 	}
-//
-// 	public bool ValueIsInteger(ISmalltalkValue value)
-// 	{
-// 		return value is SmalltalkIntegerValue;
-// 	}
-//
-// 	public int ValueAsInteger(ISmalltalkValue value)
-// 	{
-// #if DEAD_CODE
-// 		if (!ValueIsInteger(value))
-// 		{
-// 			throw new ArgumentException("ValueAsInteger() : value is not an integer");
-// 		}
-//
-// 		var prim = (SmalltalkIntegerValue)value;
-//
-// 		return prim.Value;
-// #else
-// 		var valueAsNumber = value as ISmalltalkNumber;
-//
-// 		if (valueAsNumber == null)
-// 		{
-// 			throw new ArgumentException("ValueAsInteger() : The value is not an ISmalltalkNumber.");
-// 		}
-//
-// 		return valueAsNumber.ToInteger();
-// #endif
-// 	}
-//
-// 	public ISmalltalkValue IntegerAsValue(int value)
-// 	{
-// 		return new SmalltalkIntegerValue(value);
-// 	}
 //
 // 	public bool SetScoping(bool dynamicScoping)
 // 	{
@@ -637,6 +524,17 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 			);
 
 		f('(define +1 (x) (+ x 1))');
+
+		// Evaluate("(define > (x y) (< y x))");
+		//Evaluate("(define and (x y) (if x y x))");
+		//Evaluate("(define or (x y) (if x x y))");
+		//Evaluate(string.Format("(define not (x) (if x {0} {1}))", FalseVariableName, TrueVariableName));
+		// Evaluate("(define <> (x y) (not (= x y)))");
+		// Evaluate("(define <= (x y) (not (> x y)))");
+		// Evaluate("(define >= (x y) (not (< x y)))");
+		// Evaluate("(define mod (m n) (- m (* n (/ m n))))");
+		// Evaluate("(define gcd (m n) (if (= n 0) m (gcd n (mod m n))))");
+		// Evaluate("(define abs (n) (if (< n 0) (- 0 n) n))");
 	}
 
 	// More code to put into loadPresets() :
@@ -678,17 +576,6 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 	// )", NilValueAsString, TrueVariableName, FalseVariableName));
 	// 		Evaluate("(set nil (init (new UndefinedObject)))");
 
-	// Evaluate("(define > (x y) (< y x))");
-	//Evaluate("(define and (x y) (if x y x))");
-	//Evaluate("(define or (x y) (if x x y))");
-	//Evaluate(string.Format("(define not (x) (if x {0} {1}))", FalseVariableName, TrueVariableName));
-	// Evaluate("(define <> (x y) (not (= x y)))");
-	// Evaluate("(define <= (x y) (not (> x y)))");
-	// Evaluate("(define >= (x y) (not (< x y)))");
-	// Evaluate("(define mod (m n) (- m (* n (/ m n))))");
-	// Evaluate("(define gcd (m n) (if (= n 0) m (gcd n (mod m n))))");
-	// Evaluate("(define abs (n) (if (< n 0) (- 0 n) n))");
-
 	public evaluate(
 		expr: ISmalltalkExpression,
 		options: {
@@ -696,11 +583,6 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 			c?: ISmalltalkClass;
 		} = {}
 	): ISmalltalkValue {
-		return expr.evaluate(
-			options.localEnvironment, // undefined, // Or this.globalEnvironment ?
-			this.objectInstance,
-			options.c, // undefined,
-			this
-		);
+		return expr.evaluate(options.localEnvironment, this.objectInstance, options.c, this);
 	}
 }

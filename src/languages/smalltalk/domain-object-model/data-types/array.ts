@@ -35,10 +35,6 @@ export class SmalltalkArray extends SmalltalkValueBase implements ISmalltalkArra
 			throw new ArgumentException('SmalltalkStringValue constructor: size < 0', 'size');
 		}
 
-		// for (let i = 0; i < size; ++i) {
-		// 	this.value.push(defaultValue);
-		// }
-
 		this.value = new Array(size).fill(defaultValue);
 	}
 
@@ -47,11 +43,6 @@ export class SmalltalkArray extends SmalltalkValueBase implements ISmalltalkArra
 
 		return '<array>';
 	}
-
-	// public override bool Equals(object obj)
-	// {
-	//     return object.ReferenceEquals(this, obj);
-	// }
 
 	// // Uncomment this method once ISmalltalkValue extends IEqualityComparable from common-utils.
 
@@ -68,17 +59,16 @@ export class SmalltalkArray extends SmalltalkValueBase implements ISmalltalkArra
 		// return false;
 	}
 
-	// public override int GetHashCode()
-	// {
-	//     return 0;
-	// }
-
 	public override getTypename(): string {
 		return 'array';
 	}
 
 	public override isArray(): boolean {
 		return true;
+	}
+
+	public override toArray(): ISmalltalkValue[] | undefined {
+		return this.value;
 	}
 
 	public getElement(i: number): ISmalltalkValue {

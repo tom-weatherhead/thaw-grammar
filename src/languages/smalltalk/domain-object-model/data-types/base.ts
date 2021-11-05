@@ -20,15 +20,7 @@ export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkE
 
 	public abstract equals(other: unknown): boolean;
 
-	public isNumber(): boolean {
-		return false;
-	}
-
-	public get isInteger(): boolean {
-		return false;
-	}
-
-	public isSymbol(): boolean {
+	public isArray(): boolean {
 		return false;
 	}
 
@@ -36,7 +28,11 @@ export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkE
 		return false;
 	}
 
-	public isString(): boolean {
+	public get isInteger(): boolean {
+		return false;
+	}
+
+	public isNumber(): boolean {
 		return false;
 	}
 
@@ -44,15 +40,23 @@ export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkE
 		return false;
 	}
 
-	public isArray(): boolean {
+	public isString(): boolean {
 		return false;
 	}
 
-	public toInteger(): number | undefined {
+	public isSymbol(): boolean {
+		return false;
+	}
+
+	public toArray(): ISmalltalkValue[] | undefined {
 		return undefined;
 	}
 
 	public toFloat(): number | undefined {
+		return undefined;
+	}
+
+	public toInteger(): number | undefined {
 		return undefined;
 	}
 

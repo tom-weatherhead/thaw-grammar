@@ -52,27 +52,9 @@ export class SmalltalkString extends SmalltalkValueBase implements ISmalltalkStr
 		return this.value;
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	//
-	//     if (object.ReferenceEquals(this, obj))
-	//     {
-	//         return true;
-	//     }
-	//
-	//     SmalltalkString otherStringVal = obj as SmalltalkString;
-	//
-	//     return otherStringVal != null && Value == otherStringVal.Value;
-	// }
-
 	public equals(other: unknown): boolean {
 		return isSmalltalkString(other) && other.value === this.value;
 	}
-
-	// public override int GetHashCode()
-	// {
-	//     return Value.GetHashCode();
-	// }
 
 	public override getTypename(): string {
 		return 'string';
