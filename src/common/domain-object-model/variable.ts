@@ -1,7 +1,9 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/variable.ts
 
-import { ArgumentNullException } from '../exceptions/argument-null-exception';
-import { EvaluationException } from '../exceptions/evaluation-exception';
+import { ArgumentException, EvaluationException } from 'thaw-interpreter-core';
+
+// import { ArgumentNullException } from '../exceptions/argument-null-exception';
+// import { EvaluationException } from '../exceptions/evaluation-exception';
 // import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
 
 import { EnvironmentFrame } from './environment-frame';
@@ -16,7 +18,7 @@ export class Variable<T> implements IExpression<T> {
 
 	constructor(name: string, line: number, column: number) {
 		if (!name) {
-			throw new ArgumentNullException('A Variable cannot have a null or empty name', 'name');
+			throw new ArgumentException('A Variable cannot have an empty name', 'name');
 		}
 
 		// Console.WriteLine("Creating a Variable named '{0}'.", name);

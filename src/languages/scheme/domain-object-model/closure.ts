@@ -1,5 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/closure.ts
 
+import { EvaluationException } from 'thaw-interpreter-core';
+
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
@@ -7,7 +9,6 @@ import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { VariableList } from '../../../common/domain-object-model/variable-list';
 
 // import { ArgumentException } from '../../../common/exceptions/argument-exception';
-import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 import { SExpressionBase } from '../../lisp/domain-object-model/sexpression-base';

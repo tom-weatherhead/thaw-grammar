@@ -1,11 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/main.ts
 
 // Exceptions
-export { ArgumentException } from './common/exceptions/argument-exception';
-export { ArgumentNullException } from './common/exceptions/argument-null-exception';
-export { EvaluationException } from './common/exceptions/evaluation-exception';
 export { KeyNotFoundException } from './common/exceptions/key-not-found-exception';
-export { NotImplementedException } from './common/exceptions/not-implemented-exception';
+// export { NotImplementedException } from './common/exceptions/not-implemented-exception';
 
 // Common DOM (Domain Object Model)
 export { EnvironmentFrame } from './common/domain-object-model/environment-frame';

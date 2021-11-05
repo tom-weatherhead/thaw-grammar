@@ -1,7 +1,10 @@
+// tom-weatherhead/thaw-grammar/src/languages/chapter1/domain-object-model/integer-literal.ts
+
+import { ArgumentException } from 'thaw-interpreter-core';
+
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
 export class IntegerLiteral implements IExpression<number> {
 	public readonly value: number;

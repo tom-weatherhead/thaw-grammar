@@ -1,8 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-integer-extension/domain-object-model/integer-literal.ts
 
-import { ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
+import { ArgumentException } from 'thaw-interpreter-core';
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+import { ifDefinedThenElse, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import {
 	ILCExpression,

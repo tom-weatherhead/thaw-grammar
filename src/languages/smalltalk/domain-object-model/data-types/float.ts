@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/float.ts
 
-import { ArgumentException } from '../../../../common/exceptions/argument-exception';
+import { ArgumentException } from 'thaw-interpreter-core';
 
 import { objectClass } from '../bootstrap';
 

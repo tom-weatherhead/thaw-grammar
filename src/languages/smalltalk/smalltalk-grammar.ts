@@ -20,9 +20,9 @@
 
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
-import { GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
+import { ArgumentException, GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
-import { ArgumentException } from '../../common/exceptions/argument-exception';
+// import { ArgumentException } from '../../common/exceptions/argument-exception';
 
 import {
 	ISmalltalkExpression,

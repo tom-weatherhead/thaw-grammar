@@ -9,9 +9,8 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { createProduction } from 'thaw-interpreter-core';
+import { ArgumentException, createProduction } from 'thaw-interpreter-core';
 
-import { ArgumentException } from '../../common/exceptions/argument-exception';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';

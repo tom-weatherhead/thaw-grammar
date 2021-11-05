@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/chapter1/chapter1-grammar.ts
 
-// import { Stack } from 'thaw-common-utilities.ts';
-
 import {
 	GrammarSymbol,
 	IToken,
@@ -12,11 +10,8 @@ import {
 
 import { createProduction, Name } from 'thaw-interpreter-core';
 
-// import { LexicalState, Token } from 'thaw-lexical-analyzer';
-
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
-// import { Name } from '../../common/domain-object-model/name';
 import { Variable } from '../../common/domain-object-model/variable';
 import { VariableList } from '../../common/domain-object-model/variable-list';
 
@@ -29,10 +24,6 @@ import { WhileUsage } from '../../common/domain-object-model/while-usage';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
-// import { ParserSelector } from '../../common/parser-selectors';
-// import { createProduction } from '../../common/production';
-
-// import { Symbol } from '../../common/symbol';
 
 import { IntegerLiteral } from './domain-object-model/integer-literal';
 import { Chapter1OperatorUsage } from './domain-object-model/operator-usage';

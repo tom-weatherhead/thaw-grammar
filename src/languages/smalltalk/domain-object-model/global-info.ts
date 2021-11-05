@@ -396,9 +396,9 @@
 
 import { IParser, ITokenizer } from 'thaw-interpreter-types';
 
-// import { IGlobalInfoOps } from '../../../common/domain-object-model/iglobal-info-ops';
+import { ArgumentException } from 'thaw-interpreter-core';
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+// import { IGlobalInfoOps } from '../../../common/domain-object-model/iglobal-info-ops';
 
 import {
 	ISmalltalkClass,

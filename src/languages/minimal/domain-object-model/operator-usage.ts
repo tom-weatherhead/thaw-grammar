@@ -1,4 +1,6 @@
-import { Name } from 'thaw-interpreter-core';
+// tom-weatherhead/thaw-grammar/src/languages/minimal/domain-object-model/operator-usage.ts
+
+import { ArgumentException, EvaluationException, Name } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
@@ -7,9 +9,6 @@ import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 // import { Name } from '../../../common/domain-object-model/name';
 // import { Variable } from './variable';
-
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
-import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 export class OperatorUsage implements IExpression<number> {
 	public readonly operatorName: Name;

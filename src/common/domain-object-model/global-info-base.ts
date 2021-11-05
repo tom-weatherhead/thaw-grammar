@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/global-info-base.ts
 
-import { ArgumentException } from '../exceptions/argument-exception';
+import { ArgumentException } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame } from './environment-frame';
 import { FunctionDefinition } from './function-definition';

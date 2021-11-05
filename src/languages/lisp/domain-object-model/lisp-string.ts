@@ -1,6 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/lisp-string.ts
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+import { ArgumentException } from 'thaw-interpreter-core';
+
 import { SExpressionBase } from './sexpression-base';
 
 export class LISPString extends SExpressionBase {

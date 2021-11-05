@@ -1,6 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/environment-frame.ts
 
-import { ArgumentException } from '../exceptions/argument-exception';
+import { ArgumentException } from 'thaw-interpreter-core';
+
 import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
 
 import { Variable } from './variable';

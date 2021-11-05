@@ -24,7 +24,7 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { createProduction, Name } from 'thaw-interpreter-core';
+import { ArgumentException, createProduction, Name } from 'thaw-interpreter-core';
 
 // import { LexicalState, Token } from 'thaw-lexical-analyzer';
 
@@ -42,7 +42,6 @@ import { LetUsage } from '../../common/domain-object-model/let-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
-import { ArgumentException } from '../../common/exceptions/argument-exception';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';

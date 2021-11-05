@@ -1,6 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/variable.ts
 
-import { ArgumentNullException } from '../../../common/exceptions/argument-null-exception';
+import { ArgumentException } from 'thaw-interpreter-core';
+
+// import { ArgumentNullException } from '../../../common/exceptions/argument-null-exception';
 // import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 // import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
 
@@ -37,7 +39,7 @@ export class SmalltalkVariable implements ISmalltalkExpression, ISmalltalkVariab
 
 	constructor(name: string, public readonly line = 0, public readonly column = 0) {
 		if (!name) {
-			throw new ArgumentNullException('A Variable cannot have a null or empty name', 'name');
+			throw new ArgumentException('A Variable cannot have an empty name', 'name');
 		}
 
 		// Console.WriteLine("Creating a Variable named '{0}'.", name);

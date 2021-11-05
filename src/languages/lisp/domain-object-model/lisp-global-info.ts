@@ -1,8 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/lisp-global-info.ts
 
-import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
+import { ArgumentException } from 'thaw-interpreter-core';
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 import { IntegerLiteral } from './integer-literal';
 // import { INumber } from './inumber';

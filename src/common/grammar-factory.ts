@@ -2,6 +2,8 @@
 
 import { IGrammar, LanguageSelector } from 'thaw-interpreter-types';
 
+import { ArgumentException } from 'thaw-interpreter-core';
+
 import { APLGrammar } from '../languages/apl/apl-grammar';
 import { Chapter1Grammar } from '../languages/chapter1/chapter1-grammar';
 import { CluGrammar } from '../languages/clu/clu-grammar';
@@ -17,8 +19,6 @@ import { PrologGrammar } from '../languages/prolog/prolog-grammar';
 import { SASLGrammar } from '../languages/sasl/sasl-grammar';
 import { SchemeGrammar } from '../languages/scheme/scheme-grammar';
 import { SmalltalkGrammar } from '../languages/smalltalk/smalltalk-grammar';
-
-import { ArgumentException } from './exceptions/argument-exception';
 
 export function createGrammar(ls: LanguageSelector): IGrammar {
 	switch (ls) {

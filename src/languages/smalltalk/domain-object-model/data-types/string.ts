@@ -2,7 +2,7 @@
 
 // SmalltalkString objects are immutable.
 
-import { ArgumentException } from '../../../../common/exceptions/argument-exception';
+import { ArgumentException } from 'thaw-interpreter-core';
 
 import { ISmalltalkString, ISmalltalkValue } from '../interfaces/iexpression';
 

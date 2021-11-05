@@ -1,11 +1,11 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/call-cc-usage.ts
 
+import { EvaluationException } from 'thaw-interpreter-core';
+
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-
-import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 

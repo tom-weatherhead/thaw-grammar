@@ -1,13 +1,14 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/evaluable-expression.ts
 
+import { EvaluationException } from 'thaw-interpreter-core';
+
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { Variable } from '../../../common/domain-object-model/variable';
 
-// import { ArgumentException } from '../../../common/exceptions/argument-exception';
-import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
+// import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 

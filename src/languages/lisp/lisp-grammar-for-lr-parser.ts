@@ -204,13 +204,10 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { createProduction, Name } from 'thaw-interpreter-core';
-
-// import { LexicalState, Token } from 'thaw-lexical-analyzer';
+import { ArgumentException, createProduction, Name } from 'thaw-interpreter-core';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
-// import { Name } from '../../common/domain-object-model/name';
 import { Variable } from '../../common/domain-object-model/variable';
 import { VariableList } from '../../common/domain-object-model/variable-list';
 
@@ -224,14 +221,9 @@ import { LetUsage } from '../../common/domain-object-model/let-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
-import { ArgumentException } from '../../common/exceptions/argument-exception';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
-// import { ParserSelector } from '../../common/parser-selectors';
-// import { createProduction } from '../../common/production';
-
-// import { Symbol } from '../../common/symbol';
 
 import { FloatLiteral } from './domain-object-model/float-literal';
 import { IntegerLiteral } from './domain-object-model/integer-literal';

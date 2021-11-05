@@ -2,7 +2,7 @@
 
 // SmalltalkArray objects are mutable.
 
-import { ArgumentException } from '../../../../common/exceptions/argument-exception';
+import { ArgumentException } from 'thaw-interpreter-core';
 
 import { ISmalltalkArray, ISmalltalkValue } from '../interfaces/iexpression';
 

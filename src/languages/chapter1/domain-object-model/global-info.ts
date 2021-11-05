@@ -1,3 +1,5 @@
+// tom-weatherhead/thaw-grammar/src/languages/chapter1/domain-object-model/global-info.ts
+
 // import { ITokenizer } from 'thaw-lexical-analyzer';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';

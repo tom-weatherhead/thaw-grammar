@@ -1,9 +1,10 @@
-// tom-weatherhead/thaw-ll1-parser/src/chapter1/domain-model/operator-usage.ts
+// tom-weatherhead/thaw-grammar/src/languages/chapter1/domain-object-model/operator-usage.ts
+
+import { EvaluationException } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';
-import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 export class Chapter1OperatorUsage extends OperatorUsage<number> {
 	protected override tryGetExpectedNumArgs(globalInfo: IGlobalInfo<number>): number | undefined {

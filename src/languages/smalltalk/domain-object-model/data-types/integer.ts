@@ -24,7 +24,7 @@
 
 // SmalltalkInteger objects are immutable.
 
-import { ArgumentException } from '../../../../common/exceptions/argument-exception';
+import { ArgumentException } from 'thaw-interpreter-core';
 
 import { objectClass } from '../bootstrap';
 

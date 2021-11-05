@@ -1,3 +1,5 @@
+// tom-weatherhead/thaw-grammar/src/languages/minimal/domain-object-model/global-info.ts
+
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 export class MinimalLanguageGlobalInfo extends GlobalInfoBase<number> {

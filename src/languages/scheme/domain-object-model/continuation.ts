@@ -1,10 +1,10 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/continuation.ts
 
+import { EvaluationException } from 'thaw-interpreter-core';
+
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-
-import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 import { SExpressionBase } from '../../lisp/domain-object-model/sexpression-base';

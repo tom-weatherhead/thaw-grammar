@@ -1,8 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/float-literal.ts
 
+import { ArgumentException, EvaluationException } from 'thaw-interpreter-core';
+
 import { IExpression } from '../../../common/domain-object-model/iexpression';
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
-import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 import { INumber } from './inumber';
 import { ISExpression } from './isexpression';
 import { SExpressionBase } from './sexpression-base';
