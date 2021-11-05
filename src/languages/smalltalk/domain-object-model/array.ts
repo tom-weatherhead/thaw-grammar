@@ -58,7 +58,14 @@ export class SmalltalkArray extends SmalltalkValueBase implements ISmalltalkArra
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public equals(other: unknown): boolean {
 		// return isSmalltalkArray(other) && other.value.length === this.value.length && other.value.every((element: ISmalltalkValue, i: number) => element.equals(this.value[i]));
-		return false;
+
+		return (
+			isSmalltalkArray(other) &&
+			other.value.length === this.value.length &&
+			other.value.every((element, i) => element.equals(this.value[i]))
+		);
+
+		// return false;
 	}
 
 	// public override int GetHashCode()
