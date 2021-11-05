@@ -11,11 +11,11 @@ import {
 	// ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
 	ISmalltalkValue
-} from './interfaces/iexpression';
+} from '../interfaces/iexpression';
 
-import { objectClass } from './bootstrap';
+import { objectClass } from '../bootstrap';
 
-import { SmalltalkValueBase } from './value-base';
+import { SmalltalkValueBase } from './base';
 
 const typenameSmalltalkBlock = 'SmalltalkBlock';
 

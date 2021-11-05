@@ -12,13 +12,13 @@ import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import { SmalltalkFunctionDefinition } from './function-definition';
 
-import { SmalltalkInteger } from './integer';
+import { SmalltalkInteger } from './data-types/integer';
 
 import { SmalltalkSetUsage } from './set-usage';
 
-import { SmalltalkString } from './string';
+import { SmalltalkString } from './data-types/string';
 
-import { SmalltalkUserValue } from './user-value';
+import { SmalltalkUserValue } from './data-types/user-value';
 
 import { SmalltalkVariable } from './variable';
 

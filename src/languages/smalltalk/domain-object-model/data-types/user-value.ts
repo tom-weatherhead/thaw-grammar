@@ -4,9 +4,9 @@ import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkUserValue
-} from './interfaces/iexpression';
+} from '../interfaces/iexpression';
 
-import { SmalltalkValueBase } from './value-base';
+import { SmalltalkValueBase } from './base';
 
 const typenameSmalltalkUserValue = 'SmalltalkUserValue';
 

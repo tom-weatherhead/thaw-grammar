@@ -31,21 +31,21 @@ import {
 	ISmalltalkVariable
 } from './domain-object-model/interfaces/iexpression';
 
-import { SmalltalkArray } from './domain-object-model/array';
+import { SmalltalkArray } from './domain-object-model/data-types/array';
 import { SmalltalkBeginUsage } from './domain-object-model/begin-usage';
-import { SmalltalkCharacter } from './domain-object-model/character';
+import { SmalltalkCharacter } from './domain-object-model/data-types/character';
 import { SmalltalkClass } from './domain-object-model/class';
 import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
-import { SmalltalkFloat } from './domain-object-model/float';
+import { SmalltalkFloat } from './domain-object-model/data-types/float';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 import { SmalltalkIfUsage } from './domain-object-model/if-usage';
-import { SmalltalkInteger } from './domain-object-model/integer';
+import { SmalltalkInteger } from './domain-object-model/data-types/integer';
 import { SmalltalkLetStarUsage } from './domain-object-model/let-star-usage';
 import { SmalltalkLetUsage } from './domain-object-model/let-usage';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
 import { SmalltalkSetUsage } from './domain-object-model/set-usage';
-import { SmalltalkString } from './domain-object-model/string';
-import { SmalltalkSymbol } from './domain-object-model/symbol';
+import { SmalltalkString } from './domain-object-model/data-types/string';
+import { SmalltalkSymbol } from './domain-object-model/data-types/symbol';
 import { SmalltalkVariable } from './domain-object-model/variable';
 import { SmalltalkWhileUsage } from './domain-object-model/while-usage';
 

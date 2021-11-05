@@ -1,10 +1,10 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/float.ts
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+import { ArgumentException } from '../../../../common/exceptions/argument-exception';
 
-import { objectClass } from './bootstrap';
+import { objectClass } from '../bootstrap';
 
-import { SmalltalkValueBase } from './value-base';
+import { SmalltalkValueBase } from './base';
 
 const typenameSmalltalkFloat = 'SmalltalkFloat';
 

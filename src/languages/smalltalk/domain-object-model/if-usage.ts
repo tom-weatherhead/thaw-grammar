@@ -8,7 +8,7 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { unblockValue } from './block';
+import { unblockValue } from './data-types/block';
 
 export class SmalltalkIfUsage implements ISmalltalkExpression {
 	constructor(

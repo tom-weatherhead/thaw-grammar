@@ -527,7 +527,7 @@ import { falseVar, objectClass, trueVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
-import { SmalltalkInteger } from './integer';
+import { SmalltalkInteger } from './data-types/integer';
 
 // import { falseClass, falseInstance, falseValue, nilClass, nilInstance, nilVar, objectInstance, trueClass, trueInstance, trueValue } from './object-instance';
 import {

@@ -2,15 +2,15 @@
 
 // SmalltalkString objects are immutable.
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+import { ArgumentException } from '../../../../common/exceptions/argument-exception';
 
-import { ISmalltalkString, ISmalltalkValue } from './interfaces/iexpression';
+import { ISmalltalkString, ISmalltalkValue } from '../interfaces/iexpression';
 
-import { objectClass } from './bootstrap';
+import { objectClass } from '../bootstrap';
 
 import { SmalltalkCharacter } from './character';
 
-import { SmalltalkValueBase } from './value-base';
+import { SmalltalkValueBase } from './base';
 
 const typenameSmalltalkString = 'SmalltalkString';
 

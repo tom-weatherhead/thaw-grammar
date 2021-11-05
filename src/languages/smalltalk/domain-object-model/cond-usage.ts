@@ -10,7 +10,7 @@ import {
 	// ISmalltalkVariable
 } from './interfaces/iexpression';
 
-import { unblockValue } from './block';
+import { unblockValue } from './data-types/block';
 
 export class SmalltalkCondUsage implements ISmalltalkExpression {
 	// public readonly List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>> ExprPairList;

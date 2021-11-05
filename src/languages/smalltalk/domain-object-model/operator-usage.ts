@@ -14,15 +14,15 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
-import { SmalltalkBlock, unblockValue } from './block';
+import { SmalltalkBlock, unblockValue } from './data-types/block';
 
 import { selfVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
-import { SmalltalkInteger } from './integer';
+import { SmalltalkInteger } from './data-types/integer';
 
-import { SmalltalkUserValue } from './user-value';
+import { SmalltalkUserValue } from './data-types/user-value';
 
 import { isSmalltalkVariable } from './variable';
 

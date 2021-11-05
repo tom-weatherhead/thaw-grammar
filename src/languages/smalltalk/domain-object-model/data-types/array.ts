@@ -2,15 +2,15 @@
 
 // SmalltalkArray objects are mutable.
 
-import { ArgumentException } from '../../../common/exceptions/argument-exception';
+import { ArgumentException } from '../../../../common/exceptions/argument-exception';
 
-import { ISmalltalkArray, ISmalltalkValue } from './interfaces/iexpression';
+import { ISmalltalkArray, ISmalltalkValue } from '../interfaces/iexpression';
 
-import { objectClass } from './bootstrap';
+import { objectClass } from '../bootstrap';
 
-import { defaultValue } from './object-instance';
+import { defaultValue } from '../object-instance';
 
-import { SmalltalkValueBase } from './value-base';
+import { SmalltalkValueBase } from './base';
 
 const typenameSmalltalkArray = 'SmalltalkArray';
 

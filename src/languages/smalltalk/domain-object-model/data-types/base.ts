@@ -7,7 +7,7 @@ import {
 	ISmalltalkGlobalInfo,
 	ISmalltalkUserValue,
 	ISmalltalkValue
-} from './interfaces/iexpression';
+} from '../interfaces/iexpression';
 
 export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkExpression {
 	public abstract readonly typename: string;
