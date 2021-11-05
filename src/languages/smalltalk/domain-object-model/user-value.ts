@@ -8,13 +8,33 @@ import {
 
 import { SmalltalkValueBase } from './value-base';
 
+const typenameSmalltalkUserValue = 'SmalltalkUserValue';
+
+export function isSmalltalkUserValue(obj: unknown): obj is SmalltalkUserValue {
+	const v = obj as SmalltalkUserValue;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameSmalltalkUserValue
+	);
+}
+
 export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalkUserValue {
+	public readonly typename: string = typenameSmalltalkUserValue;
 	public readonly value: ISmalltalkEnvironmentFrame;
 
 	constructor(owner: ISmalltalkClass, environmentFrame: ISmalltalkEnvironmentFrame) {
 		super(owner);
 
 		this.value = environmentFrame;
+	}
+
+	public override toString(): string {
+		// Avoid looking up the value of "self", as that would cause an infinite loop.
+		// return string.Join("\r\n", Owner.ClRep.Where(v => !v.Equals(SmalltalkObjectClassKeeper.SelfVar)).Select(v => Value.Lookup(v)));
+
+		return `<SmalltalkUserValue of type ${this.getTypename()}>`;
 	}
 
 	//     public override bool Equals(object obj)
@@ -34,6 +54,11 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 	// #endif
 	//     }
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public equals(other: unknown): boolean {
+		return false; // 2021-11-04 : Temporary hack.
+	}
+
 	//     public override int GetHashCode()
 	//     {
 	// #if DEAD_CODE
@@ -43,13 +68,6 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 	//         return 0;
 	// #endif
 	//     }
-
-	public override toString(): string {
-		// Avoid looking up the value of "self", as that would cause an infinite loop.
-		// return string.Join("\r\n", Owner.ClRep.Where(v => !v.Equals(SmalltalkObjectClassKeeper.SelfVar)).Select(v => Value.Lookup(v)));
-
-		return `<SmalltalkUserValue of type ${this.getTypename()}>`;
-	}
 
 	public override getTypename(): string {
 		return typeof this.owner !== 'undefined' ? this.owner.className : '<No owner>';

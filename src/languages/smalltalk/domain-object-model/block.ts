@@ -60,6 +60,11 @@ export class SmalltalkBlock extends SmalltalkValueBase {
 	//     return object.ReferenceEquals(this, obj);
 	// }
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public equals(other: unknown): boolean {
+		return false;
+	}
+
 	// public override int GetHashCode()
 	// {
 	//     return 0;

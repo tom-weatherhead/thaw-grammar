@@ -30,7 +30,20 @@ import { objectClass } from './bootstrap';
 
 import { SmalltalkValueBase } from './value-base';
 
+const typenameSmalltalkInteger = 'SmalltalkInteger';
+
+export function isSmalltalkInteger(obj: unknown): obj is SmalltalkInteger {
+	const v = obj as SmalltalkInteger;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameSmalltalkInteger
+	);
+}
+
 export class SmalltalkInteger extends SmalltalkValueBase {
+	public readonly typename: string = typenameSmalltalkInteger;
 	public readonly value: number;
 
 	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
@@ -60,6 +73,10 @@ export class SmalltalkInteger extends SmalltalkValueBase {
 		// Do not allow the output to be formatted as scientific notation.
 
 		return `${this.value}`;
+	}
+
+	public equals(other: unknown): boolean {
+		return isSmalltalkInteger(other) && other.value === this.value;
 	}
 
 	public override getTypename(): string {

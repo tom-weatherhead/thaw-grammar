@@ -8,7 +8,21 @@ import { objectClass } from './bootstrap';
 
 import { SmalltalkValueBase } from './value-base';
 
+const typenameSmalltalkCharacter = 'SmalltalkCharacter';
+
+export function isSmalltalkCharacter(obj: unknown): obj is SmalltalkCharacter {
+	const v = obj as SmalltalkCharacter;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameSmalltalkCharacter
+	);
+}
+
 export class SmalltalkCharacter extends SmalltalkValueBase /* implements ISmalltalkCharacter */ {
+	public readonly typename: string = typenameSmalltalkCharacter;
+
 	constructor(public readonly value: string) {
 		super(objectClass);
 
@@ -40,7 +54,11 @@ export class SmalltalkCharacter extends SmalltalkValueBase /* implements ISmallt
 	//
 	//     return otherCharVal != null && Value == otherCharVal.Value;
 	// }
-	//
+
+	public equals(other: unknown): boolean {
+		return isSmalltalkCharacter(other) && other.value === this.value;
+	}
+
 	// public override int GetHashCode()
 	// {
 	//     return Value.GetHashCode();

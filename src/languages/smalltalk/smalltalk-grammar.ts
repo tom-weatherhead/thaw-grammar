@@ -45,7 +45,7 @@ import { SmalltalkLetUsage } from './domain-object-model/let-usage';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
 import { SmalltalkSetUsage } from './domain-object-model/set-usage';
 import { SmalltalkString } from './domain-object-model/string';
-import { SmalltalkSymbolValue } from './domain-object-model/symbol';
+import { SmalltalkSymbol } from './domain-object-model/symbol';
 import { SmalltalkVariable } from './domain-object-model/variable';
 import { SmalltalkWhileUsage } from './domain-object-model/while-usage';
 
@@ -664,7 +664,7 @@ export class SmalltalkGrammar extends GrammarBase {
 
 			case '#symbol':
 				name = semanticStack.pop() as Name;
-				semanticStack.push(new SmalltalkSymbolValue(name.value, name.line, name.column));
+				semanticStack.push(new SmalltalkSymbol(name.value, name.line, name.column));
 				break;
 
 			case '#condUsage':

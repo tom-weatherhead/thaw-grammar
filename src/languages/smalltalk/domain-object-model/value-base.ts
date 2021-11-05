@@ -10,9 +10,15 @@ import {
 } from './interfaces/iexpression';
 
 export abstract class SmalltalkValueBase implements ISmalltalkValue, ISmalltalkExpression {
+	public abstract readonly typename: string;
+
 	constructor(public readonly owner: ISmalltalkClass | undefined = undefined) {}
 
 	public abstract getTypename(): string;
+
+	public abstract toString(): string;
+
+	public abstract equals(other: unknown): boolean;
 
 	public isNumber(): boolean {
 		return false;

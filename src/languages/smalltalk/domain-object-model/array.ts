@@ -52,7 +52,15 @@ export class SmalltalkArray extends SmalltalkValueBase implements ISmalltalkArra
 	// {
 	//     return object.ReferenceEquals(this, obj);
 	// }
-	//
+
+	// // Uncomment this method once ISmalltalkValue extends IEqualityComparable from common-utils.
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public equals(other: unknown): boolean {
+		// return isSmalltalkArray(other) && other.value.length === this.value.length && other.value.every((element: ISmalltalkValue, i: number) => element.equals(this.value[i]));
+		return false;
+	}
+
 	// public override int GetHashCode()
 	// {
 	//     return 0;

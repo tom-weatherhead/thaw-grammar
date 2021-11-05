@@ -12,9 +12,20 @@ import { SmalltalkCharacter } from './character';
 
 import { SmalltalkValueBase } from './value-base';
 
-// TODO: Is this class identical to SmalltalkSymbolValue?
+const typenameSmalltalkString = 'SmalltalkString';
+
+export function isSmalltalkString(obj: unknown): obj is SmalltalkString {
+	const v = obj as SmalltalkString;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameSmalltalkString
+	);
+}
 
 export class SmalltalkString extends SmalltalkValueBase implements ISmalltalkString {
+	public readonly typename: string = typenameSmalltalkString;
 	public readonly value: string;
 
 	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
@@ -53,7 +64,11 @@ export class SmalltalkString extends SmalltalkValueBase implements ISmalltalkStr
 	//
 	//     return otherStringVal != null && Value == otherStringVal.Value;
 	// }
-	//
+
+	public equals(other: unknown): boolean {
+		return isSmalltalkString(other) && other.value === this.value;
+	}
+
 	// public override int GetHashCode()
 	// {
 	//     return Value.GetHashCode();

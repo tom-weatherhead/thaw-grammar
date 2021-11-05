@@ -1,9 +1,11 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/interfaces/iexpression.ts
 
+import { IEqualityComparable, IStringifiable } from 'thaw-common-utilities.ts';
+
 import { IParser, ITokenizer } from 'thaw-interpreter-types';
 
-export interface ISmalltalkValue extends ISmalltalkExpression {
-	// readonly typename: string; // TODO?
+export interface ISmalltalkValue extends IEqualityComparable, ISmalltalkExpression, IStringifiable {
+	readonly typename: string;
 	isInteger: boolean;
 	readonly owner: ISmalltalkClass | undefined;
 
