@@ -6,7 +6,7 @@ import { objectClass } from './bootstrap';
 
 import { SmalltalkValueBase } from './value-base';
 
-export class SmalltalkFloatValue extends SmalltalkValueBase {
+export class SmalltalkFloat extends SmalltalkValueBase {
 	public readonly value: number;
 
 	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
@@ -14,12 +14,12 @@ export class SmalltalkFloatValue extends SmalltalkValueBase {
 
 		if (typeof value !== 'number') {
 			throw new ArgumentException(
-				`SmalltalkFloatValue constructor: typeof value is not 'number'; it is '${typeof value}'.`,
+				`SmalltalkFloat constructor: typeof value is not 'number'; it is '${typeof value}'.`,
 				'value'
 			);
 		} else if (Number.isNaN(value)) {
 			throw new ArgumentException(
-				'SmalltalkFloatValue constructor: value is not a number (NaN).',
+				'SmalltalkFloat constructor: value is not a number (NaN).',
 				'value'
 			);
 		}

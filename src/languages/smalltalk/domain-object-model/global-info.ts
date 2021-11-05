@@ -527,7 +527,7 @@ import { falseVar, objectClass, trueVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
-import { SmalltalkIntegerValue } from './integer';
+import { SmalltalkInteger } from './integer';
 
 // import { falseClass, falseInstance, falseValue, nilClass, nilInstance, nilVar, objectInstance, trueClass, trueInstance, trueValue } from './object-instance';
 import {
@@ -620,7 +620,7 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 	}
 
 	public integerAsValue(value: number): ISmalltalkValue {
-		return new SmalltalkIntegerValue(value);
+		return new SmalltalkInteger(value);
 	}
 
 	public loadPresets(tokenizer: ITokenizer, parser: IParser): void {

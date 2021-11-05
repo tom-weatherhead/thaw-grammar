@@ -12,11 +12,11 @@ import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import { SmalltalkFunctionDefinition } from './function-definition';
 
-import { SmalltalkIntegerValue } from './integer';
+import { SmalltalkInteger } from './integer';
 
 import { SmalltalkSetUsage } from './set-usage';
 
-import { SmalltalkStringValue } from './string';
+import { SmalltalkString } from './string';
 
 import { SmalltalkUserValue } from './user-value';
 
@@ -25,7 +25,7 @@ import { SmalltalkVariable } from './variable';
 // Create objectInstance
 
 const objectInstanceEnvFrame = new SmalltalkEnvironmentFrame();
-export const defaultValue = new SmalltalkIntegerValue(0);
+export const defaultValue = new SmalltalkInteger(0);
 
 objectInstanceEnvFrame.add(selfVar, defaultValue);
 
@@ -36,8 +36,8 @@ objectInstance.value.dict.set(selfVar.name, objectInstance);
 
 // true and false: Version 1:
 
-export const falseValue = new SmalltalkIntegerValue(0);
-export const trueValue = new SmalltalkIntegerValue(1);
+export const falseValue = new SmalltalkInteger(0);
+export const trueValue = new SmalltalkInteger(1);
 
 // true and false: Version 2:
 
@@ -51,7 +51,9 @@ export const trueValue = new SmalltalkIntegerValue(1);
 // const x = new SmalltalkVariable('x');
 // const y = new SmalltalkVariable('y');
 //
-// // Note: This will not work; a function definition is not a value. We need closures.
+// // Note: This will not work; a function definition is not a value. We need closures...
+// // Or use Blocks, and unblock only one of the two parameters.
+// // E.g. in the case of 'true', unblock x but not y.
 // export const falseValue = new SmalltalkFunctionDefinition(falseVariableName, [x, y], y);
 // export const trueValue = new SmalltalkFunctionDefinition(trueVariableName, [x, y], x);
 
@@ -110,7 +112,7 @@ export const nilClass = new SmalltalkClass(
 			'init',
 			[],
 			new SmalltalkBeginUsage(
-				new SmalltalkSetUsage(stringValueVar, new SmalltalkStringValue(nilValueAsString)),
+				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(nilValueAsString)),
 				[selfVar]
 			)
 		),
@@ -130,7 +132,7 @@ export const falseClass = new SmalltalkClass(
 			'init',
 			[],
 			new SmalltalkBeginUsage(
-				new SmalltalkSetUsage(stringValueVar, new SmalltalkStringValue(falseValueAsString)),
+				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(falseValueAsString)),
 				[selfVar]
 			)
 		),
@@ -150,7 +152,7 @@ export const trueClass = new SmalltalkClass(
 			'init',
 			[],
 			new SmalltalkBeginUsage(
-				new SmalltalkSetUsage(stringValueVar, new SmalltalkStringValue(trueValueAsString)),
+				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(trueValueAsString)),
 				[selfVar]
 			)
 		),

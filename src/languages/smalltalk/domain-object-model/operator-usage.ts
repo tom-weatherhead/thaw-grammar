@@ -20,7 +20,7 @@ import { selfVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
-import { SmalltalkIntegerValue } from './integer';
+import { SmalltalkInteger } from './integer';
 
 import { SmalltalkUserValue } from './user-value';
 
@@ -335,8 +335,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 
 		// if (typeof variable === 'undefined') {
 		if (!isSmalltalkVariable(expr0)) {
-			// throw new EvaluationException("EvaluateNew() : The first argument is not in the form of a variable.",
-			// 	OperatorName.Line, OperatorName.Column);
 			throw new EvaluationException(
 				'EvaluateNew() : The first argument is not in the form of a variable.',
 				this.operatorName.line,
@@ -387,16 +385,16 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 
 		switch (this.operatorName.value) {
 			case '+':
-				return new SmalltalkIntegerValue(firstArgAsInt + secondArgAsInt);
+				return new SmalltalkInteger(firstArgAsInt + secondArgAsInt);
 
 			case '-':
-				return new SmalltalkIntegerValue(firstArgAsInt - secondArgAsInt);
+				return new SmalltalkInteger(firstArgAsInt - secondArgAsInt);
 
 			case '*':
-				return new SmalltalkIntegerValue(firstArgAsInt * secondArgAsInt);
+				return new SmalltalkInteger(firstArgAsInt * secondArgAsInt);
 
 			case '/':
-				return new SmalltalkIntegerValue(Math.floor(firstArgAsInt / secondArgAsInt));
+				return new SmalltalkInteger(Math.floor(firstArgAsInt / secondArgAsInt));
 
 			case '=':
 				return firstArgAsInt === secondArgAsInt
@@ -421,7 +419,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 
 		// if (IntegerOperatorKeeper.TwoArgumentOperators.ContainsKey(OperatorName.Value))
 		// {
-		// 	return new SmalltalkIntegerValue(IntegerOperatorKeeper.TwoArgumentOperators[OperatorName.Value](firstArgAsInt, secondArgAsInt));
+		// 	return new SmalltalkInteger(IntegerOperatorKeeper.TwoArgumentOperators[OperatorName.Value](firstArgAsInt, secondArgAsInt));
 		// }
 		// else if (IntegerOperatorKeeper.TwoArgumentPredicates.ContainsKey(OperatorName.Value))
 		// {
@@ -625,7 +623,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				break;
 
 			case 'newarray':
-				// if (!(evaluatedArguments[0] is SmalltalkIntegerValue))
+				// if (!(evaluatedArguments[0] is SmalltalkInteger))
 				if (!evaluatedArguments[0].isInteger) {
 					exceptionMessage = 'Argument is not an integer';
 				}
@@ -713,7 +711,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 						: globalInfo.falseValue;
 
 				// case 'random':
-				// 	return new SmalltalkIntegerValue(globalInfo.RandomNumberGenerator.Next(globalInfo.ValueAsInteger(evaluatedArguments[0])));
+				// 	return new SmalltalkInteger(globalInfo.RandomNumberGenerator.Next(globalInfo.ValueAsInteger(evaluatedArguments[0])));
 				//
 				// case 'tostring':
 				// 	return new SmalltalkStringValue(evaluatedArguments[0].ToString());
@@ -724,7 +722,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				// 	return new SmalltalkSymbolValue(str2sym.Value);
 				//
 				// case 'floor':
-				// 	return new SmalltalkIntegerValue(((ISmalltalkNumber)evaluatedArguments[0]).ToInteger());
+				// 	return new SmalltalkInteger(((ISmalltalkNumber)evaluatedArguments[0]).ToInteger());
 				//
 				// case 'throw':
 				// 	throw new SmalltalkException(((SmalltalkStringValue)evaluatedArguments[0]).Value, OperatorName.Line, OperatorName.Column);
@@ -736,7 +734,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				// case 'strlen':
 				// 	var strForLen = (SmalltalkStringValue)evaluatedArguments[0];
 				//
-				// 	return new SmalltalkIntegerValue(strForLen.Value.Length);
+				// 	return new SmalltalkInteger(strForLen.Value.Length);
 				//
 				// case 'substr':
 				// 	var strForSubstr = (SmalltalkStringValue)evaluatedArguments[0];
@@ -759,7 +757,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				// 		hashResult = evaluatedArguments[0].GetHashCode();
 				// 	}
 				//
-				// 	return new SmalltalkIntegerValue(hashResult);
+				// 	return new SmalltalkInteger(hashResult);
 				//
 				// case 'ref=':
 				// 	return object.ReferenceEquals(evaluatedArguments[0], evaluatedArguments[1]) ? globalInfo.TrueValue : globalInfo.FalseValue;
@@ -775,17 +773,17 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				// 	return new SmalltalkStringValue(sb.ToString());
 				//
 				// case 'newarray':
-				// 	return new SmalltalkArrayValue(((SmalltalkIntegerValue)evaluatedArguments[0]).Value);
+				// 	return new SmalltalkArrayValue(((SmalltalkInteger)evaluatedArguments[0]).Value);
 				//
 				// case 'arraylength':
-				// 	return new SmalltalkIntegerValue(((SmalltalkArrayValue)evaluatedArguments[0]).Value.Length);
+				// 	return new SmalltalkInteger(((SmalltalkArrayValue)evaluatedArguments[0]).Value.Length);
 				//
 				// case 'arrayget':
-				// 	return ((SmalltalkArrayValue)evaluatedArguments[0]).GetElement(((SmalltalkIntegerValue)evaluatedArguments[1]).Value);
+				// 	return ((SmalltalkArrayValue)evaluatedArguments[0]).GetElement(((SmalltalkInteger)evaluatedArguments[1]).Value);
 				//
 				// case 'arrayset':
 				// 	return ((SmalltalkArrayValue)evaluatedArguments[0]).SetElement(
-				// 		((SmalltalkIntegerValue)evaluatedArguments[1]).Value, evaluatedArguments[2]);
+				// 		((SmalltalkInteger)evaluatedArguments[1]).Value, evaluatedArguments[2]);
 				//
 				// case 'stridx':
 				// 	return ((SmalltalkStringValue)evaluatedArguments[0]).Index(evaluatedArguments[1]);

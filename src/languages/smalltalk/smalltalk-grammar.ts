@@ -14,7 +14,7 @@
 
 // Then isInteger(value: IDOMValue) can be implemented as: typeof toInteger(value) !== 'undefined'
 
-// ... and fromInteger(value: number) can be implemented as: new SmalltalkIntegerValue(value)
+// ... and fromInteger(value: number) can be implemented as: new SmalltalkInteger(value)
 
 // ****
 
@@ -31,20 +31,20 @@ import {
 	ISmalltalkVariable
 } from './domain-object-model/interfaces/iexpression';
 
-import { SmalltalkArrayValue } from './domain-object-model/array';
+import { SmalltalkArray } from './domain-object-model/array';
 import { SmalltalkBeginUsage } from './domain-object-model/begin-usage';
-import { SmalltalkCharacterValue } from './domain-object-model/character';
+import { SmalltalkCharacter } from './domain-object-model/character';
 import { SmalltalkClass } from './domain-object-model/class';
 import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
-import { SmalltalkFloatValue } from './domain-object-model/float';
+import { SmalltalkFloat } from './domain-object-model/float';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 import { SmalltalkIfUsage } from './domain-object-model/if-usage';
-import { SmalltalkIntegerValue } from './domain-object-model/integer';
+import { SmalltalkInteger } from './domain-object-model/integer';
 import { SmalltalkLetStarUsage } from './domain-object-model/let-star-usage';
 import { SmalltalkLetUsage } from './domain-object-model/let-usage';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
 import { SmalltalkSetUsage } from './domain-object-model/set-usage';
-import { SmalltalkStringValue } from './domain-object-model/string';
+import { SmalltalkString } from './domain-object-model/string';
 import { SmalltalkSymbolValue } from './domain-object-model/symbol';
 import { SmalltalkVariable } from './domain-object-model/variable';
 import { SmalltalkWhileUsage } from './domain-object-model/while-usage';
@@ -557,7 +557,7 @@ export class SmalltalkGrammar extends GrammarBase {
 		let varExprList: [ISmalltalkVariable, ISmalltalkExpression][];
 		let literal: ISmalltalkValue;
 		let literalList: ISmalltalkValue[];
-		let array: SmalltalkArrayValue;
+		let array: SmalltalkArray;
 
 		switch (action) {
 			case '#functionDefinition':
@@ -728,7 +728,7 @@ export class SmalltalkGrammar extends GrammarBase {
 			case '#arrayLiteral':
 				literalList = semanticStack.pop() as ISmalltalkValue[];
 
-				array = new SmalltalkArrayValue(literalList.length);
+				array = new SmalltalkArray(literalList.length);
 
 				for (let i = 0; i < literalList.length; ++i) {
 					array.value[i] = literalList[i];
@@ -739,7 +739,7 @@ export class SmalltalkGrammar extends GrammarBase {
 
 			case '#characterLiteral':
 				name = semanticStack.pop() as Name;
-				semanticStack.push(new SmalltalkCharacterValue(name.value[0]));
+				semanticStack.push(new SmalltalkCharacter(name.value[0]));
 				break;
 
 			default:
@@ -887,15 +887,15 @@ export class SmalltalkGrammar extends GrammarBase {
 				break;
 
 			case GrammarSymbol.terminalIntegerLiteral:
-				semanticStack.push(new SmalltalkIntegerValue(value, token.line, token.column));
+				semanticStack.push(new SmalltalkInteger(value, token.line, token.column));
 				break;
 
 			case GrammarSymbol.terminalFloatLiteral:
-				semanticStack.push(new SmalltalkFloatValue(value, token.line, token.column));
+				semanticStack.push(new SmalltalkFloat(value, token.line, token.column));
 				break;
 
 			case GrammarSymbol.terminalStringLiteral:
-				semanticStack.push(new SmalltalkStringValue(value, token.line, token.column));
+				semanticStack.push(new SmalltalkString(value, token.line, token.column));
 				break;
 
 			case GrammarSymbol.terminalLeftBracket:

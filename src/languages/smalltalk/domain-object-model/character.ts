@@ -1,28 +1,27 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/character.ts
 
-// SmalltalkCharacterValue objects are immutable.
+// SmalltalkCharacter objects are immutable.
+
+import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
 import { objectClass } from './bootstrap';
 
 import { SmalltalkValueBase } from './value-base';
 
-export class SmalltalkCharacterValue extends SmalltalkValueBase /* implements ISmalltalkCharacterValue */ {
-	// public readonly char Value;
-
+export class SmalltalkCharacter extends SmalltalkValueBase /* implements ISmalltalkCharacter */ {
 	constructor(public readonly value: string) {
 		super(objectClass);
 
 		// if (value == '\0') {
-		//     throw new ArgumentException("SmalltalkCharacterValue constructor: value is the null character.", "value");
+		//     throw new ArgumentException("SmalltalkCharacter constructor: value is the null character.", "value");
 		// }
 
-		if (value.length !== 1) {
-			throw new Error(
-				`SmalltalkCharacterValue constructor: Length of '${this.value}' is not 1.`
+		if (this.value.length !== 1) {
+			throw new ArgumentException(
+				`SmalltalkCharacter constructor: Length of '${this.value}' is not 1.`,
+				'value'
 			);
 		}
-
-		// Value = value;
 	}
 
 	public override toString(): string {
@@ -37,7 +36,7 @@ export class SmalltalkCharacterValue extends SmalltalkValueBase /* implements IS
 	//         return true;
 	//     }
 	//
-	//     SmalltalkCharacterValue otherCharVal = obj as SmalltalkCharacterValue;
+	//     SmalltalkCharacter otherCharVal = obj as SmalltalkCharacter;
 	//
 	//     return otherCharVal != null && Value == otherCharVal.Value;
 	// }

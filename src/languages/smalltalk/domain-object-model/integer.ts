@@ -22,82 +22,7 @@
 // 	public abstract double ToDouble();
 // }
 
-// SmalltalkIntegerValue objects are immutable.
-
-// SmalltalkFloatValue objects are immutable.
-
-// public class SmalltalkFloatValue : SmalltalkNumberBase
-// {
-// 	public readonly double Value;
-//
-// 	public SmalltalkFloatValue(double value)
-// 		: base(SmalltalkObjectClassKeeper.ObjectClass)
-// 	{
-// 		/*
-// 		if (!(value is double))
-// 		{
-// 			throw new ArgumentException("FloatLiteral constructor: value is not a double.", "value");
-// 		}
-//
-// 		Value = (double)value;
-// 		 */
-// 		Value = value;
-// 	}
-//
-// 	public override string ToString()
-// 	{
-// 		// E.g. If d == 13.0, we want the string to be "13.0" rather than just "13", so that we can distinguish it from an integer.
-// 		// Note: d == (tan (/ pi 4)) is a good test case; it should yield "1.0", not "1".
-// 		var result = Value.ToString();
-//
-// 		if (result.IndexOf('.') < 0 && result.IndexOf('E') < 0) // I.e. If result does not contain either '.' or 'E'.
-// 		{
-// 			result = result + ".0";
-// 		}
-//
-// 		return result;
-// 	}
-//
-// 	public override bool Equals(object obj)
-// 	{
-//
-// 		if (object.ReferenceEquals(this, obj))
-// 		{
-// 			return true;
-// 		}
-//
-// 		SmalltalkFloatValue otherFltVal = obj as SmalltalkFloatValue;
-//
-// 		return otherFltVal != null && Value == otherFltVal.Value;
-// 	}
-//
-// 	public override int GetHashCode()
-// 	{
-// 		return Value.GetHashCode();
-// 	}
-//
-// 	public override string GetTypename()
-// 	{
-// 		return "float";
-// 	}
-//
-// 	public override int ToInteger()
-// 	{
-// 		return Convert.ToInt32(Math.Floor(Value));
-// 	}
-//
-// 	public override double ToDouble()
-// 	{
-// 		return Value;
-// 	}
-//
-// 	/*
-// 	public override ISmalltalkValue Evaluate(SmalltalkEnvironmentFrame localEnvironment, ISmalltalkValue receiver, SmalltalkClass c, SmalltalkGlobalInfo globalInfo)
-// 	{
-// 		return this;
-// 	}
-// 	 */
-// }
+// SmalltalkInteger objects are immutable.
 
 import { ArgumentException } from '../../../common/exceptions/argument-exception';
 
@@ -105,7 +30,7 @@ import { objectClass } from './bootstrap';
 
 import { SmalltalkValueBase } from './value-base';
 
-export class SmalltalkIntegerValue extends SmalltalkValueBase {
+export class SmalltalkInteger extends SmalltalkValueBase {
 	public readonly value: number;
 
 	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
@@ -113,17 +38,17 @@ export class SmalltalkIntegerValue extends SmalltalkValueBase {
 
 		if (typeof value !== 'number') {
 			throw new ArgumentException(
-				`SmalltalkIntegerValue constructor: typeof value is not 'number'; it is '${typeof value}'.`,
+				`SmalltalkInteger constructor: typeof value is not 'number'; it is '${typeof value}'.`,
 				'value'
 			);
 		} else if (Number.isNaN(value)) {
 			throw new ArgumentException(
-				'SmalltalkIntegerValue constructor: value is not a number (NaN).',
+				'SmalltalkInteger constructor: value is not a number (NaN).',
 				'value'
 			);
 		} else if (Math.floor(value) !== value) {
 			throw new ArgumentException(
-				'SmalltalkIntegerValue constructor: value is not an integer.',
+				'SmalltalkInteger constructor: value is not an integer.',
 				'value'
 			);
 		}

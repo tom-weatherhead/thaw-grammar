@@ -40,11 +40,6 @@ export function unblockValue(value: ISmalltalkValue): ISmalltalkValue {
 
 export class SmalltalkBlock extends SmalltalkValueBase {
 	public readonly typename: string = typenameSmalltalkBlock;
-	// public readonly ISmalltalkExpression expression;
-	// public readonly ISmalltalkEnvironmentFrame localEnvironment;
-	// public readonly ISmalltalkValue receiver;
-	// public readonly ISmalltalkClass classX;
-	// public readonly ISmalltalkGlobalInfo globalInfo;
 
 	constructor(
 		public readonly expression: ISmalltalkExpression,
@@ -54,12 +49,6 @@ export class SmalltalkBlock extends SmalltalkValueBase {
 		public readonly globalInfo: ISmalltalkGlobalInfo
 	) {
 		super(objectClass);
-
-		// Expression = expression;
-		// LocalEnvironment = localEnvironment;
-		// Receiver = receiver;
-		// Class = c;
-		// GlobalInfo = globalInfo;
 	}
 
 	public override toString(): string {

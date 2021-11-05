@@ -3,8 +3,9 @@
 import { IParser, ITokenizer } from 'thaw-interpreter-types';
 
 export interface ISmalltalkValue extends ISmalltalkExpression {
+	// readonly typename: string; // TODO?
 	isInteger: boolean;
-	owner: ISmalltalkClass | undefined;
+	readonly owner: ISmalltalkClass | undefined;
 
 	getTypename(): string;
 	isNumber(): boolean;
@@ -18,6 +19,15 @@ export interface ISmalltalkValue extends ISmalltalkExpression {
 	toFloat(): number | undefined;
 	toStringX(): string | undefined;
 	toUserValue(): ISmalltalkUserValue | undefined;
+}
+
+export interface ISmalltalkArray extends ISmalltalkValue {
+	getElement(i: number): ISmalltalkValue;
+	setElement(i: number, elementValue: ISmalltalkValue): ISmalltalkValue;
+}
+
+export interface ISmalltalkString extends ISmalltalkValue {
+	index(idx: ISmalltalkValue): ISmalltalkValue;
 }
 
 export interface ISmalltalkFunctionDefinition {
