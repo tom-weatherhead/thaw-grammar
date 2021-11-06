@@ -132,8 +132,8 @@ export class OperatorUsage<T> implements IExpression<T> {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	protected checkArgTypes(evaluatedArguments: T[]): string | null {
-		return null;
+	protected checkArgTypes(evaluatedArguments: T[]): string | undefined {
+		return undefined;
 	}
 
 	// protected virtual bool TryInvokeMacro(

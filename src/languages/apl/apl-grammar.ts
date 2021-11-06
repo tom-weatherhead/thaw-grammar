@@ -4,6 +4,20 @@ import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-int
 
 import { GrammarBase /*, GrammarException */ } from 'thaw-interpreter-core';
 
+// import { ArgumentException, Name } from 'thaw-interpreter-core';
+
+// import { EnvironmentFrame } from '../../common/domain-object-model/environment-frame';
+//
+// import { IExpression } from '../../common/domain-object-model/iexpression';
+//
+// import { GlobalInfoBase } from '../../common/domain-object-model/global-info-base';
+//
+// import { Variable } from '../../common/domain-object-model/variable';
+//
+// import { IAPLValue } from './domain-object-model/interfaces/ivalue';
+//
+// import { APLValue } from './domain-object-model/data-types/value';
+
 export class APLGrammar extends GrammarBase {
 	// The APL grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
 

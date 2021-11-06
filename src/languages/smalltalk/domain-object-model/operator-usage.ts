@@ -476,9 +476,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		evaluatedArguments: ISmalltalkValue[],
 		globalInfo: ISmalltalkGlobalInfo
 	): ISmalltalkValue {
-		for (let i = 0; i < evaluatedArguments.length; ++i) {
-			evaluatedArguments[i] = unblockValue(evaluatedArguments[i]);
-		}
+		evaluatedArguments = evaluatedArguments.map((arg) => unblockValue(arg));
 
 		// First, verify the number of arguments.
 		let expectedNumArgs = -1;
@@ -487,12 +485,12 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		// Note: We only check DoubleOperatorKeeper here (and not IntegerOperatorKeeper) because
 		// the integer operators are a subset of the double operators.
 
-		// if (DoubleOperatorKeeper.OneArgumentOperators.ContainsKey(this.operatorName.value)) {
-		// 	expectedNumArgs = 1;
-		// } else if (DoubleOperatorKeeper.TwoArgumentOperators.ContainsKey(this.operatorName.value) ||
-		// 	DoubleOperatorKeeper.TwoArgumentPredicates.ContainsKey(this.operatorName.value)) {
-		// 	expectedNumArgs = 2;
-		if (['+', '-', '*', '/', '=', '<', '>'].indexOf(this.operatorName.value) >= 0) {
+		if (oneArgumentDoubleOperators.has(this.operatorName.value)) {
+			expectedNumArgs = 1;
+		} else if (
+			twoArgumentDoublePredicates.has(this.operatorName.value) ||
+			twoArgumentDoubleOperators.has(this.operatorName.value)
+		) {
 			expectedNumArgs = 2;
 		} else {
 			switch (this.operatorName.value) {

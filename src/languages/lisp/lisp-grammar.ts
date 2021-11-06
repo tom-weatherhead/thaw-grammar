@@ -1,5 +1,13 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/lisp-grammar.ts
 
+// On macOS, to install a standard Lisp: $ brew install clisp
+
+// From https://theory.stanford.edu/~amitp/yapps/yapps-doc/node2.html
+
+// expr:   ID | STR | NUM | list
+// list:   ( seq )
+// seq:    lambda | expr seq
+
 // **** BEGIN : From the C# version in the Inference project ****
 
 // Terminals.UnionWith(new HashSet<Symbol>() {

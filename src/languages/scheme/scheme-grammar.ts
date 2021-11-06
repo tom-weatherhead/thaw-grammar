@@ -1,6 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/scheme-grammar.ts
 
-// From the book:
+// On macOS, to install a standard Scheme: $ brew install mit-scheme
+
+// From the book (Kamin) :
 
 // BracketedExpression -> Expression ExpressionList
 // Value-Op -> primop?

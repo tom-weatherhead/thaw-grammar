@@ -95,14 +95,14 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	// return IsListOfStrings(argAsList.Tail);
 	// }
 
-	protected override checkArgTypes(evaluatedArguments: ISExpression[]): string | null {
+	protected override checkArgTypes(evaluatedArguments: ISExpression[]): string | undefined {
 		switch (this.operatorName.value) {
 			case 'number?':
 			case 'symbol?':
 			case 'list?':
 			case 'null?':
 			case 'string?':
-				return null; // Type predicates take one argument of any type.
+				return undefined; // Type predicates take one argument of any type.
 
 			case '+':
 			case '-':
@@ -184,7 +184,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				return super.checkArgTypes(evaluatedArguments);
 		}
 
-		return null;
+		return undefined;
 	}
 
 	// protected TryInvokeMacro(
