@@ -319,7 +319,6 @@ export class APLGrammar extends GrammarBase {
 
 		// An empty vector is an int vector.
 
-		// Productions.Add(new Production(Symbol.N_VectorConst, new List<object>() { Symbol.T_Apostrophe, Symbol.T_LeftBracket, Symbol.N_IntegerLiteralList, Symbol.T_RightBracket, "#makeIntVector" }, 58));
 		this.addProduction(GrammarSymbol.nonterminalVectorConst, [
 			GrammarSymbol.terminalApostrophe,
 			GrammarSymbol.terminalLeftBracket,
@@ -330,14 +329,12 @@ export class APLGrammar extends GrammarBase {
 
 		// Productions.Add(new Production(Symbol.N_VectorConst, new List<object>() { Symbol.T_Apostrophe, Symbol.T_LeftBracket, Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, Symbol.T_RightBracket, "#makeFloatVector" }, 59));
 
-		// Productions.Add(new Production(Symbol.N_IntegerLiteralList, new List<object>() { Symbol.T_IntegerLiteral, Symbol.N_IntegerLiteralList, "#intList" }, 60));
 		this.addProduction(GrammarSymbol.nonterminalIntegerLiteralList, [
 			GrammarSymbol.terminalIntegerLiteral,
 			GrammarSymbol.nonterminalIntegerLiteralList,
 			'#intList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_IntegerLiteralList, new List<object>() { Symbol.Lambda, "#emptyIntList" }, 61));
 		this.addProduction(GrammarSymbol.nonterminalIntegerLiteralList, [
 			GrammarSymbol.Lambda,
 			'#emptyIntList'
@@ -346,8 +343,11 @@ export class APLGrammar extends GrammarBase {
 		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, "#floatList" }, 62));
 		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.Lambda, "#emptyFloatList" }, 63));
 		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Assign, Symbol.N_Variable, Symbol.N_Expression, Symbol.N_Expression, "#vecassign" }, 64));
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_DoubleSubscripting }, 65));
+
 		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.T_FloatLiteral }, 66));
+
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Random }, 67));
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Pow }, 68));
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Exp }, 69));

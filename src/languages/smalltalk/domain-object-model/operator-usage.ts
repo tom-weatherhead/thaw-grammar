@@ -18,11 +18,13 @@ import { SmalltalkBlock, unblockValue } from './data-types/block';
 
 import { isSmalltalkCharacter } from './data-types/character';
 
+import { SmalltalkFloat } from './data-types/float';
+
 import { SmalltalkInteger } from './data-types/integer';
 
 import { isSmalltalkString, SmalltalkString } from './data-types/string';
 
-import { isSmalltalkSymbol } from './data-types/symbol';
+import { isSmalltalkSymbol, SmalltalkSymbol } from './data-types/symbol';
 
 import { SmalltalkUserValue } from './data-types/user-value';
 
@@ -258,12 +260,28 @@ import { isSmalltalkVariable } from './variable';
 // 	}
 // }
 
+const operatorsThatTakeEitherIntOrFloatArgs = ['=', '<', '>', '+', '-', '*', '/'];
+
+const oneArgumentDoubleOperators = new Map<string, (x: number) => number>();
+const twoArgumentDoublePredicates = new Map<string, (x: number, y: number) => boolean>();
+const twoArgumentDoubleOperators = new Map<string, (x: number, y: number) => number>();
+
+oneArgumentDoubleOperators.set('exp', (x: number) => Math.exp(x));
+oneArgumentDoubleOperators.set('ln', (x: number) => Math.log(x));
+oneArgumentDoubleOperators.set('sin', (x: number) => Math.sin(x));
+oneArgumentDoubleOperators.set('cos', (x: number) => Math.cos(x));
+oneArgumentDoubleOperators.set('tan', (x: number) => Math.tan(x));
+
+twoArgumentDoublePredicates.set('<', (x: number, y: number) => x < y);
+twoArgumentDoublePredicates.set('>', (x: number, y: number) => x > y);
+
+twoArgumentDoubleOperators.set('pow', (x: number, y: number) => Math.pow(x, y));
+twoArgumentDoubleOperators.set('atan2', (x: number, y: number) => Math.atan2(y, x));
+
 export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 	// The method reference cache, as described in Exercise 12 on page 348:
 	// private cachedClassReference: ISmalltalkClass | undefined;
 	// private cachedMethodReference: ISmalltalkFunctionDefinition | undefined;
-
-	// private static readonly HashSet<string> OperatorsThatTakeEitherIntOrFloatArgs = new HashSet<string>() { "<", /* ">", */ "+", "-", "*", "/" };
 
 	private readonly valueOpNames = [
 		// Arithmetic:
@@ -317,15 +335,6 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		'print',
 		'throw'
 	];
-
-	// private readonly operatorsThatTakeEitherIntOrFloatArgs = [
-	// 	'<',
-	// 	'>',
-	// 	'+',
-	// 	'-',
-	// 	'*',
-	// 	'/'
-	// ];
 
 	constructor(
 		private readonly operatorName: Name,
@@ -460,8 +469,8 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 	// 		// Internal error:
 	// 		throw new Exception(string.Format("SmalltalkOperatorUsage.EvaluateAuxFloat() : Invalid operator {0}", OperatorName.Value));
 	// 	}
-	//
-	// 	// TODO 2014/02/04: Split EvaluateGlobalFunction() into EvaluateValueOp() and a new, much smaller EvaluateGlobalFunction() (i.e. user-defined functions).
+
+	// TODO 2014/02/04: Split EvaluateGlobalFunction() into EvaluateValueOp() and a new, much smaller EvaluateGlobalFunction() (i.e. user-defined functions).
 
 	private evaluateValueOp(
 		evaluatedArguments: ISmalltalkValue[],
@@ -733,16 +742,26 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 						? globalInfo.trueValue
 						: globalInfo.falseValue;
 
-				// case 'random':
-				// 	return new SmalltalkInteger(globalInfo.RandomNumberGenerator.Next(globalInfo.ValueAsInteger(evaluatedArguments[0])));
+				case 'random':
+					n = evaluatedArguments[0].toInteger();
+
+					if (typeof n === 'undefined') {
+						throw new Error('random: Argument is not an integer.');
+					}
+
+					return new SmalltalkInteger(Math.floor(n * Math.random()));
 
 				case 'tostring':
 					return new SmalltalkString(evaluatedArguments[0].toString());
 
-				// case 'stringtosymbol':
-				// 	var str2sym = (SmalltalkStringValue)evaluatedArguments[0];
-				//
-				// 	return new SmalltalkSymbolValue(str2sym.Value);
+				case 'stringtosymbol':
+					s = evaluatedArguments[0].toStringX();
+
+					if (typeof s === 'undefined') {
+						throw new Error('strlen: Argument is not a string.');
+					}
+
+					return new SmalltalkSymbol(s);
 
 				case 'floor':
 					f = evaluatedArguments[0].toFloat();
@@ -755,9 +774,9 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 
 				// case 'throw':
 				// 	throw new SmalltalkException(((SmalltalkStringValue)evaluatedArguments[0]).Value, OperatorName.Line, OperatorName.Column);
-				//
+
 				// case 'string<': // See page 54.  Deprecated; see <
-				// 	return ((SmalltalkStringValue)evaluatedArguments[0]).Value.CompareTo(((SmalltalkStringValue)evaluatedArguments[1]).Value) < 0
+				// 	return ((SmalltalkStringValue)evaluatedArguments[0]).Value.localeCompare(((SmalltalkStringValue)evaluatedArguments[1]).Value) < 0
 				// 		? globalInfo.TrueValue : globalInfo.FalseValue;
 
 				case 'strlen':
@@ -838,57 +857,65 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 						const arg0 = evaluatedArguments[0];
 						const arg1 = evaluatedArguments[1];
 
-						// if (evaluatedArguments[0].isSymbol()) {
 						if (isSmalltalkCharacter(arg0) && isSmalltalkCharacter(arg1)) {
-							// return ((SmalltalkSymbolValue)evaluatedArguments[0]).value.CompareTo(((SmalltalkSymbolValue)evaluatedArguments[1]).value) < 0
-							// 	? globalInfo.trueValue : globalInfo.falseValue;
-							return arg0.value < arg1.value
+							return arg0.value.localeCompare(arg1.value) < 0
 								? globalInfo.trueValue
 								: globalInfo.falseValue;
 						} else if (isSmalltalkString(arg0) && isSmalltalkString(arg1)) {
-							// return ((SmalltalkSymbolValue)evaluatedArguments[0]).value.CompareTo(((SmalltalkSymbolValue)evaluatedArguments[1]).value) < 0
-							// 	? globalInfo.trueValue : globalInfo.falseValue;
-							return arg0.value < arg1.value
+							return arg0.value.localeCompare(arg1.value) < 0
 								? globalInfo.trueValue
 								: globalInfo.falseValue;
 						} else if (isSmalltalkSymbol(arg0) && isSmalltalkSymbol(arg1)) {
-							// return ((SmalltalkSymbolValue)evaluatedArguments[0]).value.CompareTo(((SmalltalkSymbolValue)evaluatedArguments[1]).value) < 0
-							// 	? globalInfo.trueValue : globalInfo.falseValue;
-							return arg0.value < arg1.value
+							return arg0.value.localeCompare(arg1.value) < 0
 								? globalInfo.trueValue
 								: globalInfo.falseValue;
 						}
-						// else if (evaluatedArguments[0].isCharacter())
-						// {
-						// 	return ((SmalltalkCharacterValue)evaluatedArguments[0]).Value < ((SmalltalkCharacterValue)evaluatedArguments[1]).Value
-						// 		? globalInfo.TrueValue : globalInfo.FalseValue;
-						// }
-						// else if (evaluatedArguments[0].isString())
-						// {
-						// 	return ((SmalltalkStringValue)evaluatedArguments[0]).Value.CompareTo(((SmalltalkStringValue)evaluatedArguments[1]).Value) < 0
-						// 		? globalInfo.TrueValue : globalInfo.FalseValue;
-						// }
 					}
 
-					// if (OperatorsThatTakeEitherIntOrFloatArgs.Contains(this.operatorName.value))
-					if (['+', '-', '*', '/', '=', '<', '>'].indexOf(this.operatorName.value) >= 0) {
-						// if (evaluatedArguments.Any(arg => arg is SmalltalkFloatValue)) {
-						// 	return EvaluateAuxFloat(evaluatedArguments, globalInfo);
-						// } else {
-						return this.evaluateAuxInt(evaluatedArguments, globalInfo);
-						// }
+					if (
+						operatorsThatTakeEitherIntOrFloatArgs.indexOf(this.operatorName.value) >= 0
+					) {
+						if (evaluatedArguments.every((arg) => arg.isInteger)) {
+							return this.evaluateAuxInt(evaluatedArguments, globalInfo);
+							// } else {
+							// 	// return this.evaluateAuxFloat(evaluatedArguments, globalInfo);
+							// 	throw new Error('evaluateAuxFloat() not yet implemented.');
+						}
 					}
-					// The next two cases involve operators that must take arguments as doubles, not ints.
-					// else if (DoubleOperatorKeeper.OneArgumentOperators.ContainsKey(OperatorName.Value))
-					// {
-					// 	return new SmalltalkFloatValue(DoubleOperatorKeeper.OneArgumentOperators[OperatorName.Value](((ISmalltalkNumber)evaluatedArguments[0]).ToDouble()));
-					// }
-					// else if (DoubleOperatorKeeper.TwoArgumentOperators.ContainsKey(OperatorName.Value))
-					// {
-					// 	return new SmalltalkFloatValue(DoubleOperatorKeeper.TwoArgumentOperators[OperatorName.Value](
-					// 		((ISmalltalkNumber)evaluatedArguments[0]).ToDouble(),
-					// 		((ISmalltalkNumber)evaluatedArguments[1]).ToDouble()));
-					// }
+
+					f = evaluatedArguments.length > 0 ? evaluatedArguments[0].toFloat() : undefined;
+
+					if (typeof f !== 'undefined') {
+						const oneArgumentDoubleOperator = oneArgumentDoubleOperators.get(
+							this.operatorName.value
+						);
+
+						if (typeof oneArgumentDoubleOperator !== 'undefined') {
+							return new SmalltalkFloat(oneArgumentDoubleOperator(f));
+						}
+
+						const f2 =
+							evaluatedArguments.length > 1
+								? evaluatedArguments[1].toFloat()
+								: undefined;
+
+						if (typeof f2 !== 'undefined') {
+							const twoArgumentDoublePredicate = twoArgumentDoublePredicates.get(
+								this.operatorName.value
+							);
+							const twoArgumentDoubleOperator = twoArgumentDoubleOperators.get(
+								this.operatorName.value
+							);
+
+							if (typeof twoArgumentDoublePredicate !== 'undefined') {
+								return twoArgumentDoublePredicate(f, f2)
+									? globalInfo.trueValue
+									: globalInfo.falseValue;
+							} else if (typeof twoArgumentDoubleOperator !== 'undefined') {
+								return new SmalltalkFloat(twoArgumentDoubleOperator(f, f2));
+							}
+						}
+					}
 
 					// #if DEAD_CODE
 					// // Evaluate a user-defined function.
