@@ -2,21 +2,23 @@
 
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
-import { GrammarBase /*, GrammarException */ } from 'thaw-interpreter-core';
+import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
-// import { ArgumentException, Name } from 'thaw-interpreter-core';
+import { Name } from 'thaw-interpreter-core';
 
 // import { EnvironmentFrame } from '../../common/domain-object-model/environment-frame';
-//
-// import { IExpression } from '../../common/domain-object-model/iexpression';
-//
-// import { GlobalInfoBase } from '../../common/domain-object-model/global-info-base';
-//
+
+import { ExpressionList } from '../../common/domain-object-model/expression-list';
+
+import { IExpression } from '../../common/domain-object-model/iexpression';
+
 // import { Variable } from '../../common/domain-object-model/variable';
-//
-// import { IAPLValue } from './domain-object-model/interfaces/ivalue';
-//
-// import { APLValue } from './domain-object-model/data-types/value';
+
+import { IAPLValue } from './domain-object-model/interfaces/ivalue';
+
+import { APLValue } from './domain-object-model/data-types/value';
+
+import { APLOperatorUsage } from './domain-object-model/operator-usage';
 
 export class APLGrammar extends GrammarBase {
 	// The APL grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -375,9 +377,48 @@ export class APLGrammar extends GrammarBase {
 		return 'APL';
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
-		throw new Error('APLGrammar.executeSemanticAction() : Not yet implemented.');
+		let name: Name;
+		let expression: IExpression<IAPLValue>;
+		let expressionList: ExpressionList<IAPLValue>;
+
+		switch (action) {
+			case '#operatorUsage':
+				expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new APLOperatorUsage(name, expressionList));
+				break;
+
+			case '#expressionList':
+				expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
+				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				expressionList.value.unshift(expression);
+				semanticStack.push(expressionList);
+				break;
+
+			case '#emptyExpressionList':
+				// semanticStack.push([] as IExpression<IAPLValue>[]);
+				semanticStack.push(new ExpressionList<IAPLValue>());
+				break;
+
+			// case '#':
+			// 	break;
+
+			// case '#functionDefinition':
+			// 	body = semanticStack.pop() as ISmalltalkExpression;
+			// 	argumentList = semanticStack.pop() as ISmalltalkVariable[];
+			//
+			// 	functionName = semanticStack.pop() as Name;
+			// 	semanticStack.push(
+			// 		new SmalltalkFunctionDefinition(functionName.value, argumentList, body)
+			// 	);
+			// 	break;
+
+			default:
+				// base.ExecuteSemanticAction(semanticStack, action);
+				// break;
+				throw new GrammarException(`APL: Unrecognized semantic action: ${action}`);
+		}
 	}
 
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
@@ -475,14 +516,89 @@ export class APLGrammar extends GrammarBase {
 		return super.tokenToSymbol(token);
 	}
 
-	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public override pushTokenOntoSemanticStack(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: SemanticStackType,
-		tokenAsSymbol: number,
+		tokenAsSymbol: GrammarSymbol,
 		token: IToken
 	): void {
-		throw new Error('APLGrammar.pushTokenOntoSemanticStack() : Not yet implemented.');
+		const value = token.tokenValue;
+
+		switch (tokenAsSymbol) {
+			// case GrammarSymbol.terminalID:
+			// case GrammarSymbol.terminalPrint:
+			// case GrammarSymbol.terminalPlus:
+			// case GrammarSymbol.terminalMinus:
+			// case GrammarSymbol.terminalMultiply:
+			// case GrammarSymbol.terminalDivide:
+			// case GrammarSymbol.terminalEquals:
+			// case GrammarSymbol.terminalLessThan:
+			//case GrammarSymbol.terminalGreaterThan:
+			// case GrammarSymbol.terminalLet:
+			// case GrammarSymbol.terminalLetStar:
+			// case GrammarSymbol.terminalRandom:
+			// case GrammarSymbol.terminalPow:
+			// case GrammarSymbol.terminalExp:
+			// case GrammarSymbol.terminalLn:
+			// case GrammarSymbol.terminalSin:
+			// case GrammarSymbol.terminalCos:
+			// case GrammarSymbol.terminalTan:
+
+			case GrammarSymbol.terminalNumberPred:
+			case GrammarSymbol.terminalSymbolPred:
+			case GrammarSymbol.terminalStringPred:
+			case GrammarSymbol.terminalObjectPred:
+			case GrammarSymbol.terminalToString:
+			case GrammarSymbol.terminalStringToSymbol:
+			case GrammarSymbol.terminalAtan2:
+			case GrammarSymbol.terminalFloor:
+			case GrammarSymbol.terminalThrow:
+			case GrammarSymbol.terminalStringLessThan:
+			case GrammarSymbol.terminalStrlen:
+			case GrammarSymbol.terminalSubstr:
+			case GrammarSymbol.terminalTypename:
+			// case GrammarSymbol.terminalHash:
+			// case GrammarSymbol.terminalReferenceEquals:
+			case GrammarSymbol.terminalStrcat:
+			case GrammarSymbol.terminalNewArray:
+			case GrammarSymbol.terminalArrayLength:
+			case GrammarSymbol.terminalArrayGet:
+			case GrammarSymbol.terminalArraySet:
+			case GrammarSymbol.terminalArrayPred:
+			case GrammarSymbol.terminalCharPred:
+			case GrammarSymbol.terminalStringIndex:
+				semanticStack.push(new Name(value as string, token.line, token.column));
+				// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
+				// Or: semanticStack.push(new Name(`${value}`, token.line, token.column));
+				break;
+
+			case GrammarSymbol.terminalIntegerLiteral:
+				semanticStack.push(
+					APLValue.createScalar(value as number /*, token.line, token.column */)
+				);
+				break;
+
+			// case GrammarSymbol.terminalFloatLiteral:
+			// 	semanticStack.push(new SmalltalkFloat(value, token.line, token.column));
+			// 	break;
+			//
+			// case GrammarSymbol.terminalStringLiteral:
+			// 	semanticStack.push(new SmalltalkString(value, token.line, token.column));
+			// 	break;
+
+			case GrammarSymbol.terminalLeftBracket:
+			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalBegin:
+			case GrammarSymbol.terminalCond:
+			case GrammarSymbol.terminalDefine:
+			case GrammarSymbol.terminalIf:
+			case GrammarSymbol.terminalSet:
+			case GrammarSymbol.terminalWhile:
+			case GrammarSymbol.terminalEOF:
+				// For these terminals, push nothing onto the semantic stack.
+				break;
+
+			default:
+				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
+		}
 	}
-	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

@@ -3,6 +3,8 @@
 import { IExpression } from '../../../../common/domain-object-model/iexpression';
 
 export interface IAPLValue extends IExpression<IAPLValue> {
+	readonly scalars: number[];
+
 	isNull: boolean;
 	isScalar: boolean;
 	isVector: boolean;
@@ -15,6 +17,9 @@ export interface IAPLValue extends IExpression<IAPLValue> {
 	numberOfDimensions: number;
 
 	areShapesEqual(otherValue: IAPLValue): boolean;
+	getFirstScalar(): number;
 	getShape(): IAPLValue; // APLValue<int>;
 	convertToIntegerEquivalent(): IAPLValue; // APLValue<int>;
+	toScalarIfPossible(): IAPLValue;
+	toVector(): IAPLValue;
 }

@@ -1,6 +1,6 @@
 // thaw-grammar/src/languages/apl/domain-object-model/data-types/value.ts
 
-import { product } from 'thaw-common-utilities.ts';
+// import { product } from 'thaw-common-utilities.ts';
 
 import { EnvironmentFrame } from '../../../../common/domain-object-model/environment-frame';
 
@@ -29,6 +29,9 @@ export class APLValue implements IAPLValue {
 	public readonly steps: number[] = [];
 
 	constructor(public readonly shape: number[], srcList?: number[]) {
+		console.log(`shape (length ${shape.length}) is:`, shape);
+		console.log('srcList is', typeof srcList, srcList);
+
 		if (this.shape.some((s) => s < 0)) {
 			throw new Error(
 				'APLValue constructor: Shape vector contains one or more negative elements'
@@ -37,13 +40,12 @@ export class APLValue implements IAPLValue {
 
 		// Shape.AddRange(srcShape);
 
-		// this.numberOfContainedScalars = 1;
-		//
-		// foreach (var s in Shape)
-		// {
-		// 	NumberOfContainedScalars *= s;
-		// }
-		this.numberOfContainedScalars = product(...this.shape);
+		this.numberOfContainedScalars = 1;
+
+		for (const s of this.shape) {
+			this.numberOfContainedScalars *= s;
+		}
+		// this.numberOfContainedScalars = product(...this.shape);
 
 		if (this.shape.length > 0) {
 			this.steps.push(1);
@@ -237,7 +239,11 @@ export class APLValue implements IAPLValue {
 		// ToStringHelper(sb, new List<int>(), 0, true);
 		// return sb.ToString();
 
-		return '<APLValue>';
+		// return '<APLValue>';
+
+		return `<APLValue: shape is [${this.shape.join(' ')}]; scalars are [${this.scalars.join(
+			' '
+		)}]>`;
 	}
 
 	public getShape(): IAPLValue {
@@ -274,16 +280,13 @@ export class APLValue implements IAPLValue {
 		);
 	}
 
-	// public APLValue<T> ToScalarIfPossible()
-	// {
-	//
-	// 	if (NumberOfContainedScalars != 1)
-	// 	{
-	// 		return this;
-	// 	}
-	//
-	// 	return APLValue<T>.CreateScalar(GetFirstScalar());
-	// }
+	public toScalarIfPossible(): IAPLValue {
+		if (this.numberOfContainedScalars !== 1) {
+			return this;
+		}
+
+		return APLValue.createScalar(this.getFirstScalar());
+	}
 
 	public toVector(): IAPLValue {
 		// I.e. ravel

@@ -23,7 +23,9 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		super(operatorName, expressionList);
 	}
 
-	protected tryGetExpectedNumArgs(globalInfo: IGlobalInfo<IAPLValue>): number | undefined {
+	protected override tryGetExpectedNumArgs(
+		globalInfo: IGlobalInfo<IAPLValue>
+	): number | undefined {
 		switch (this.operatorName.value) {
 			case '+/':
 			case '-/':
@@ -92,8 +94,8 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 				} */
 					return 'The second argument is a scalar';
 				} else if (
-					evaluatedArguments[0].getShape().scalars[0] !==
-					evaluatedArguments[1].getShape().scalars[0]
+					(evaluatedArguments[0].getShape() as APLValue).scalars[0] !==
+					(evaluatedArguments[1].getShape() as APLValue).scalars[0]
 				) {
 					return 'The length of the first argument is not equal to the number of slices in the second argument';
 				}
@@ -214,37 +216,37 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	// 	}
 	// }
 
-	private dyadicOperatorMustReturnInt(operatorName: string): boolean {
-		switch (operatorName) {
-			case 'or':
-			case 'and':
-			case '=':
-			case '<':
-				//case '>':
-				return true;
+	// private dyadicOperatorMustReturnInt(operatorName: string): boolean {
+	// 	switch (operatorName) {
+	// 		case 'or':
+	// 		case 'and':
+	// 		case '=':
+	// 		case '<':
+	// 			//case '>':
+	// 			return true;
+	//
+	// 		default:
+	// 			return false;
+	// 	}
+	// }
 
-			default:
-				return false;
-		}
-	}
-
-	private getDyadicOperatorNameFromReductionName(reductionName: string): string {
-		switch (reductionName) {
-			case '+/':
-			case '-/':
-			case '*/':
-			case '//':
-			case 'max/':
-			case 'or/':
-			case 'and/':
-				return reductionName.substring(0, reductionName.length - 1);
-
-			default:
-				throw new Error(
-					`getDyadicOperatorNameFromReductionName() : Unknown reduction operator '${reductionName}'.`
-				);
-		}
-	}
+	// private getDyadicOperatorNameFromReductionName(reductionName: string): string {
+	// 	switch (reductionName) {
+	// 		case '+/':
+	// 		case '-/':
+	// 		case '*/':
+	// 		case '//':
+	// 		case 'max/':
+	// 		case 'or/':
+	// 		case 'and/':
+	// 			return reductionName.substring(0, reductionName.length - 1);
+	//
+	// 		default:
+	// 			throw new Error(
+	// 				`getDyadicOperatorNameFromReductionName() : Unknown reduction operator '${reductionName}'.`
+	// 			);
+	// 	}
+	// }
 
 	private evaluateDyadicExpressionHelper(
 		arg1: IAPLValue,
@@ -257,39 +259,62 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		const arg1AsValue = arg1.toScalarIfPossible(); // as APLValue<T1>;
 		const arg2AsValue = arg2.toScalarIfPossible(); // as APLValue<T2>;
 
-		if (arg1AsValue.isScalar) {
-			// var convertedValue1 = conversionLambda1(arg1AsValue.GetFirstScalar());
+		console.log(
+			`evaluateDyadicExpressionHelper: arg1AsValue is ${arg1AsValue}; arg2AsValue is ${arg2AsValue}.`
+		);
 
-			// return new APLValue<TOut>(arg2AsValue.GetShape().Scalars,
-			// 	arg2AsValue.Scalars.Select(n2 => operatorLambda(convertedValue1, conversionLambda2(n2))).ToList());
+		const fs1 = arg1AsValue.getFirstScalar();
+		const fs2 = arg2AsValue.getFirstScalar();
 
-			return new APLValue(
-				arg2AsValue.getShape().scalars,
-				arg2AsValue.scalars.map((n2: number) => operatorLambda(arg1AsValue, n2))
-			);
-		} else if (arg2AsValue.isScalar) {
-			// var convertedValue2 = conversionLambda2(arg2AsValue.GetFirstScalar());
+		console.log(`evaluateDyadicExpressionHelper: fs1 is ${fs1}; fs2 is ${fs2}.`);
 
-			// return new APLValue<TOut>(arg1AsValue.GetShape().Scalars,
-			// 	arg1AsValue.Scalars.Select(n1 => operatorLambda(conversionLambda1(n1), convertedValue2)).ToList());
+		const resultScalar = operatorLambda(fs1, fs2);
 
-			return new APLValue(
-				arg1AsValue.getShape().scalars,
-				arg1AsValue.scalars.map((n1: number) => operatorLambda(n1, arg2AsValue))
-			);
-		} else if (arg1AsValue.areShapesEqual(arg2AsValue)) {
-			const newScalars: number[] = [];
+		console.log(`evaluateDyadicExpressionHelper: resultScalar is ${resultScalar}.`);
 
-			for (let i = 0; i < arg1AsValue.scalars.length; ++i) {
-				newScalars.push(operatorLambda(arg1AsValue.scalars[i], arg2AsValue.scalars[i]));
-			}
+		const result = APLValue.createScalar(resultScalar);
 
-			return new APLValue(arg1AsValue.getShape().scalars, newScalars);
-		} else {
-			throw new Error(
-				'Cannot perform a dyadic operation; neither value is a scalar, and the shapes are unequal.'
-			);
-		}
+		console.log(`evaluateDyadicExpressionHelper: result is ${result}.`);
+
+		return result;
+
+		// if (arg1AsValue.isScalar) {
+		// 	// var convertedValue1 = conversionLambda1(arg1AsValue.GetFirstScalar());
+		//
+		// 	// return new APLValue<TOut>(arg2AsValue.GetShape().Scalars,
+		// 	// 	arg2AsValue.Scalars.Select(n2 => operatorLambda(convertedValue1, conversionLambda2(n2))).ToList());
+		//
+		// 	return new APLValue(
+		// 		arg2AsValue.getShape().scalars,
+		// 		arg2AsValue.scalars.map((n2: number) =>
+		// 			operatorLambda(arg1AsValue.getFirstScalar(), n2)
+		// 		)
+		// 	);
+		// } else if (arg2AsValue.isScalar) {
+		// 	// var convertedValue2 = conversionLambda2(arg2AsValue.GetFirstScalar());
+		//
+		// 	// return new APLValue<TOut>(arg1AsValue.GetShape().Scalars,
+		// 	// 	arg1AsValue.Scalars.Select(n1 => operatorLambda(conversionLambda1(n1), convertedValue2)).ToList());
+		//
+		// 	return new APLValue(
+		// 		arg1AsValue.getShape().scalars,
+		// 		arg1AsValue.scalars.map((n1: number) =>
+		// 			operatorLambda(n1, arg2AsValue.getFirstScalar())
+		// 		)
+		// 	);
+		// } else if (arg1AsValue.areShapesEqual(arg2AsValue)) {
+		// 	const newScalars: number[] = [];
+		//
+		// 	for (let i = 0; i < arg1AsValue.scalars.length; ++i) {
+		// 		newScalars.push(operatorLambda(arg1AsValue.scalars[i], arg2AsValue.scalars[i]));
+		// 	}
+		//
+		// 	return new APLValue(arg1AsValue.getShape().scalars, newScalars);
+		// } else {
+		// 	throw new Error(
+		// 		'Cannot perform a dyadic operation; neither value is a scalar, and the shapes are unequal.'
+		// 	);
+		// }
 	}
 
 	// private IAPLValue EvaluateDyadicExpression(List<IAPLValue> evaluatedArguments, string operatorName)

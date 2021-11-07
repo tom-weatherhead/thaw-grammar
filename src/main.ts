@@ -28,7 +28,8 @@ export { LISPGlobalInfo } from './languages/lisp/domain-object-model/lisp-global
 export { LISPGrammarForLRParser } from './languages/lisp/lisp-grammar-for-lr-parser';
 
 // APL (Kamin 3/8)
-// export { APLGlobalInfo } from './languages/apl/domain-object-model/global-info';
+export { IAPLValue } from './languages/apl/domain-object-model/interfaces/ivalue';
+export { APLGlobalInfo } from './languages/apl/domain-object-model/global-info';
 
 // Scheme (Kamin 4/8)
 export { PrimOp } from './languages/scheme/domain-object-model/primitive-operator';
