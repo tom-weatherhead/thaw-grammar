@@ -29,8 +29,8 @@ export class APLValue implements IAPLValue {
 	public readonly steps: number[] = [];
 
 	constructor(public readonly shape: number[], srcList?: number[]) {
-		console.log(`shape (length ${shape.length}) is:`, shape);
-		console.log('srcList is', typeof srcList, srcList);
+		// console.log(`shape (length ${shape.length}) is:`, shape);
+		// console.log('srcList is', typeof srcList, srcList);
 
 		if (this.shape.some((s) => s < 0)) {
 			throw new Error(
@@ -87,15 +87,21 @@ export class APLValue implements IAPLValue {
 	}
 
 	public get isNull(): boolean {
+		// TODO: How do we create a null APLValue? And what should a null value's shape be?
+		// How about: null APLValue := new APLValue([], []);
 		return this.numberOfContainedScalars === 0;
 	}
 
 	public get isScalar(): boolean {
-		return this.numberOfDimensions === 0;
+		return this.numberOfDimensions === 0; // TODO? : return this.numberOfContainedScalars === 1; Or this.scalars.length === 1;
+	}
+
+	public get valueIfScalar(): number | undefined {
+		return this.isScalar ? this.scalars[0] : undefined;
 	}
 
 	public get isVector(): boolean {
-		return this.numberOfDimensions === 1;
+		return this.numberOfDimensions === 1; // && this.numberOfContainedScalars > 1; ?
 	}
 
 	public get isMatrix(): boolean {
@@ -115,135 +121,140 @@ export class APLValue implements IAPLValue {
 	}
 
 	public areShapesEqual(otherValue: IAPLValue): boolean {
-		// const otherShape = (otherValue.getShape() as APLValue).scalars;
-
-		// if (this.shape.length !== otherShape.length) {
-		// 	return false;
-		// }
-		//
-		// for (var i = 0; i < this.shape.length; ++i)
-		// {
-		//
-		// 	if (Shape[i] != otherShape[i])
-		// 	{
-		// 		return false;
-		// 	}
-		// }
-
 		return (
 			this.shape.length === otherValue.shape.length &&
 			this.shape.every((n, i) => n === otherValue.shape[i])
 		);
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	//
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-	//
-	// 	var otherValue = obj as APLValue<T>;
-	//
-	// 	if (otherValue == null || !AreShapesEqual(otherValue))
-	// 	{
-	// 		return false;
-	// 	}
-	//
-	// 	for (var i = 0; i < Scalars.Count; ++i)
-	// 	{
-	//
-	// 		if (!Scalars[i].Equals(otherValue.Scalars[i]))
-	// 		{
-	// 			return false;
-	// 		}
-	// 	}
-	//
-	// 	return true;
-	// }
+	public /* override */ equals(other: unknown): boolean {
+		//
+		// 	if (object.ReferenceEquals(this, obj))
+		// 	{
+		// 		return true;
+		// 	}
+		//
+		// 	var otherValue = obj as APLValue<T>;
+		//
+		// 	if (otherValue == null || !AreShapesEqual(otherValue))
+		// 	{
+		// 		return false;
+		// 	}
+		//
+		// 	for (var i = 0; i < Scalars.Count; ++i)
+		// 	{
+		//
+		// 		if (!Scalars[i].Equals(otherValue.Scalars[i]))
+		// 		{
+		// 			return false;
+		// 		}
+		// 	}
+		//
+		// 	return true;
 
-	// private string ValueToString(T value)
-	// {
-	//
-	// 	if (this is APLValue<double>)
-	// 	{
-	// 		return APLGlobalInfo.APLDoubleToString(Convert.ToDouble(value));
-	// 	}
-	//
-	// 	return value.ToString();
-	// }
+		const otherValue = other as IAPLValue;
 
-	// private void ToStringHelper(StringBuilder sb, List<int> offsetVector, int offset, bool firstSlice)
-	// {
-	// 	var dimNum = offsetVector.Count;
-	//
-	// 	switch (NumberOfDimensions - dimNum)
-	// 	{
-	// 		case 0:
-	// 			sb.Append(ValueToString(Scalars[offset]));
-	// 			break;
-	//
-	// 		case 1:
-	// 			sb.Append(string.Join(" ", Scalars.Skip(offset).Take(Shape[dimNum]).Select(n => ValueToString(n))));
-	// 			break;
-	//
-	// 		case 2:
-	//
-	// 			if (dimNum > 0)
-	// 			{
-	//
-	// 				if (!firstSlice)
-	// 				{
-	// 					sb.AppendLine();    // This one provides a CR/LF after the previous slice's last row.
-	// 					sb.AppendLine();    // This one provides a blank line between the slices.
-	// 				}
-	//
-	// 				sb.AppendLine(string.Format("Slice ({0}) :", string.Join(", ", offsetVector)));
-	// 			}
-	//
-	// 			for (var row = 0; row < Shape[dimNum]; ++row)
-	// 			{
-	//
-	// 				if (row > 0)
-	// 				{
-	// 					sb.AppendLine();
-	// 				}
-	//
-	// 				sb.Append(string.Join(" ", Scalars.Skip(offset).Take(Shape[dimNum + 1]).Select(n => ValueToString(n))));
-	// 				offset += Steps[dimNum];
-	// 			}
-	//
-	// 			break;
-	//
-	// 		default:
-	// 			var newOffsetVector = new List<int>(offsetVector);
-	//
-	// 			newOffsetVector.Add(0);
-	//
-	// 			for (var slice = 0; slice < Shape[dimNum]; ++slice)
-	// 			{
-	// 				newOffsetVector[newOffsetVector.Count - 1] = slice;
-	// 				ToStringHelper(sb, newOffsetVector, offset, firstSlice);
-	// 				offset += Steps[dimNum];
-	// 				firstSlice = false;
-	// 			}
-	//
-	// 			break;
-	// 	}
-	// }
+		return (
+			typeof otherValue !== 'undefined' &&
+			typeof otherValue.shape !== 'undefined' &&
+			typeof otherValue.scalars !== 'undefined' &&
+			this.areShapesEqual(otherValue) &&
+			otherValue.scalars.length === this.scalars.length &&
+			this.scalars.every((n, i) => n === otherValue.scalars[i])
+		);
+	}
+
+	private valueToString(value: number | IAPLValue): string {
+		// if (this is APLValue<double>)
+		// {
+		// 	return APLGlobalInfo.APLDoubleToString(Convert.ToDouble(value));
+		// }
+
+		return value.toString();
+	}
+
+	private toStringHelper(
+		sb: string,
+		offsetVector: number[],
+		offset: number,
+		firstSlice: boolean
+	): string {
+		const dimNum = offsetVector.length;
+
+		switch (this.numberOfDimensions - dimNum) {
+			case 0:
+				sb = sb + this.valueToString(this.scalars[offset]);
+				break;
+
+			case 1:
+				// sb = sb + string.Join(" ", this.scalars.Skip(offset).Take(this.shape[dimNum]).map(n => this.valueToString(n))));
+				sb =
+					sb +
+					this.scalars
+						.slice(offset, offset + this.shape[dimNum])
+						.map((n) => this.valueToString(n))
+						.join(' ');
+				break;
+
+			case 2:
+				if (dimNum > 0) {
+					if (!firstSlice) {
+						// sb.AppendLine();    // This one provides a CR/LF after the previous slice's last row.
+						// sb.AppendLine();    // This one provides a blank line between the slices.
+						sb = sb + '\n\n';
+					}
+
+					// sb = sb + string.Format("Slice ({0}) :", string.Join(", ", offsetVector)));
+					sb = sb + `Slice (${offsetVector.join(', ')}) :\n`;
+				}
+
+				for (let row = 0; row < this.shape[dimNum]; ++row) {
+					if (row > 0) {
+						sb = sb + '\n';
+					}
+
+					// sb = sb + string.Join(" ", this.scalars.slice(offset).Take(this.shape[dimNum + 1]).map(n => this.valueToString(n)));
+
+					sb =
+						sb +
+						this.scalars
+							.slice(offset, offset + this.shape[dimNum + 1])
+							.map((n) => this.valueToString(n))
+							.join(' ');
+
+					offset += this.steps[dimNum];
+				}
+
+				break;
+
+			default:
+				const newOffsetVector = offsetVector.slice(0); // Clone offsetVector
+
+				newOffsetVector.push(0);
+
+				for (let slice = 0; slice < this.shape[dimNum]; ++slice) {
+					newOffsetVector[newOffsetVector.length - 1] = slice;
+					sb = this.toStringHelper(sb, newOffsetVector, offset, firstSlice);
+					offset += this.steps[dimNum];
+					firstSlice = false;
+				}
+
+				break;
+		}
+
+		return sb;
+	}
 
 	public /* override */ toString(): string {
 		// var sb = new StringBuilder();
 		//
 		// ToStringHelper(sb, new List<int>(), 0, true);
-		// return sb.ToString();
 
-		// return '<APLValue>';
+		return this.toStringHelper('', [], 0, true);
 
-		return `<APLValue: shape is [${this.shape.join(' ')}]; scalars are [${this.scalars.join(
-			' '
-		)}]>`;
+		// return `<APLValue: shape is [${this.shape.join(' ')}]; scalars are [${this.scalars.join(
+		// 	' '
+		// )}]>`;
 	}
 
 	public getShape(): IAPLValue {

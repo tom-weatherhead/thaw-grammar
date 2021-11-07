@@ -720,6 +720,8 @@ export class APLGrammar extends GrammarBase {
 			case GrammarSymbol.terminalArrayPred:
 			case GrammarSymbol.terminalCharPred:
 			case GrammarSymbol.terminalStringIndex:
+			// APL:
+			case GrammarSymbol.terminalRestruct:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
 				// Or: semanticStack.push(new Name(`${value}`, token.line, token.column));

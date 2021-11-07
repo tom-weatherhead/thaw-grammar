@@ -258,6 +258,7 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	): IAPLValue {
 		// console.log(`evaluateDyadicExpressionHelper: arg1 is ${arg1}; arg2 is ${arg2}.`);
 
+		// TODO: Use valueIfScalar
 		const arg1AsValue = arg1.toScalarIfPossible(); // as APLValue<T1>;
 		const arg2AsValue = arg2.toScalarIfPossible(); // as APLValue<T2>;
 
@@ -530,60 +531,58 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	// 	}
 	// }
 
-	// private evaluateRavelHelper(arg: IAPLValue): IAPLValue {
-	private evaluateRavel(arg: IAPLValue): IAPLValue {
+	private evaluateRavelHelper(arg: IAPLValue): IAPLValue {
 		return arg.toVector();
 	}
 
-	// private evaluateRavel(arg: IAPLValue): IAPLValue {
-	//
-	// 	if (arg is APLValue<int>)
-	// 	{
-	// 		return EvaluateRavelHelper((APLValue<int>)arg);
-	// 	}
-	// 	else
-	// 	{
-	// 		return EvaluateRavelHelper((APLValue<double>)arg);
-	// 	}
-	// }
+	private evaluateRavel(arg: IAPLValue): IAPLValue {
+		//
+		// 	if (arg is APLValue<int>)
+		// 	{
+		// 		return EvaluateRavelHelper((APLValue<int>)arg);
+		// 	}
+		// 	else
+		// 	{
+		// 		return EvaluateRavelHelper((APLValue<double>)arg);
+		// 	}
 
-	// private IAPLValue EvaluateRestructHelper<T2>(APLValue<int> arg1, APLValue<T2> arg2)
-	// {
-	//
-	// 	if (arg1.IsMatrix)
-	// 	{
-	// 		throw new Exception("EvaluateRestruct() : First argument must not be a matrix.");
-	// 	}
-	//
-	// 	if (arg2.IsNull)
-	// 	{
-	// 		throw new Exception("EvaluateRestruct() : Second argument must not be null.");
-	// 	}
-	//
-	// 	var shapeVector = (APLValue<int>)arg1.ToVector();
-	// 	var arg2Ravel = EvaluateRavelHelper(arg2);
-	//
-	// 	return new APLValue<T2>(shapeVector.Scalars, arg2Ravel.Scalars);
-	// }
+		return this.evaluateRavelHelper(arg);
+	}
 
-	// private IAPLValue EvaluateRestruct(IAPLValue arg1, IAPLValue arg2)
-	// {
-	// 	var arg1AsIntType = arg1 as APLValue<int>;
-	//
-	// 	if (arg1AsIntType == null)
-	// 	{
-	// 		throw new Exception("EvaluateRestruct() : arg1 is not an APLValue<int>");
-	// 	}
-	//
-	// 	if (arg2 is APLValue<int>)
-	// 	{
-	// 		return EvaluateRestructHelper(arg1AsIntType, (APLValue<int>)arg2);
-	// 	}
-	// 	else
-	// 	{
-	// 		return EvaluateRestructHelper(arg1AsIntType, (APLValue<double>)arg2);
-	// 	}
-	// }
+	private evaluateRestructHelper(arg1: IAPLValue, arg2: IAPLValue): IAPLValue {
+		if (arg1.isMatrix) {
+			throw new Error('EvaluateRestruct() : First argument must not be a matrix.');
+		}
+
+		if (arg2.isNull) {
+			throw new Error('EvaluateRestruct() : Second argument must not be null.');
+		}
+
+		const shapeVector = arg1.toVector();
+		const arg2Ravel = this.evaluateRavelHelper(arg2);
+
+		return new APLValue(shapeVector.scalars, arg2Ravel.scalars);
+	}
+
+	private evaluateRestruct(arg1: IAPLValue, arg2: IAPLValue): IAPLValue {
+		// var arg1AsIntType = arg1 as APLValue<int>;
+		//
+		// if (arg1AsIntType == null)
+		// {
+		// 	throw new Exception("EvaluateRestruct() : arg1 is not an APLValue<int>");
+		// }
+		//
+		// if (arg2 is APLValue<int>)
+		// {
+		// 	return EvaluateRestructHelper(arg1AsIntType, (APLValue<int>)arg2);
+		// }
+		// else
+		// {
+		// 	return EvaluateRestructHelper(arg1AsIntType, (APLValue<double>)arg2);
+		// }
+
+		return this.evaluateRestructHelper(arg1, arg2);
+	}
 
 	// private APLValue<T> EvaluateCatHelper<T>(APLValue<T> arg1, APLValue<T> arg2)
 	// {
@@ -830,9 +829,9 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			case 'ravel':
 				return this.evaluateRavel(evaluatedArguments[0]);
 
-			// case 'restruct':
-			// 	return EvaluateRestruct(evaluatedArguments[0], evaluatedArguments[1]);
-			//
+			case 'restruct':
+				return this.evaluateRestruct(evaluatedArguments[0], evaluatedArguments[1]);
+
 			// case 'cat':
 			// 	return EvaluateCat(evaluatedArguments[0], evaluatedArguments[1]);
 			//

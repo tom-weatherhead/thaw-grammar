@@ -1,8 +1,10 @@
 // thaw-grammar/src/languages/apl/domain-object-model/interfaces/ivalue.ts
 
+import { IEqualityComparable, IStringifiable } from 'thaw-common-utilities.ts';
+
 import { IExpression } from '../../../../common/domain-object-model/iexpression';
 
-export interface IAPLValue extends IExpression<IAPLValue> {
+export interface IAPLValue extends IEqualityComparable, IExpression<IAPLValue>, IStringifiable {
 	readonly scalars: number[];
 	readonly shape: number[];
 
@@ -16,6 +18,7 @@ export interface IAPLValue extends IExpression<IAPLValue> {
 	containsIntegersOnly: boolean;
 	isFirstScalarEqualToZero: boolean;
 	numberOfDimensions: number;
+	valueIfScalar: number | undefined;
 
 	areShapesEqual(otherValue: IAPLValue): boolean;
 	getFirstScalar(): number;
