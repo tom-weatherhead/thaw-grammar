@@ -381,6 +381,8 @@ export class APLGrammar extends GrammarBase {
 		let name: Name;
 		let expression: IExpression<IAPLValue>;
 		let expressionList: ExpressionList<IAPLValue>;
+		let intList: number[];
+		let intScalar: IAPLValue;
 
 		switch (action) {
 			case '#operatorUsage':
@@ -397,8 +399,23 @@ export class APLGrammar extends GrammarBase {
 				break;
 
 			case '#emptyExpressionList':
-				// semanticStack.push([] as IExpression<IAPLValue>[]);
 				semanticStack.push(new ExpressionList<IAPLValue>());
+				break;
+
+			case '#makeIntVector':
+				intList = semanticStack.pop() as number[];
+				semanticStack.push(APLValue.createVector1(intList));
+				break;
+
+			case '#intList':
+				intList = semanticStack.pop() as number[];
+				intScalar = semanticStack.pop() as IAPLValue;
+				intList.unshift(intScalar.getFirstScalar());
+				semanticStack.push(intList);
+				break;
+
+			case '#emptyIntList':
+				semanticStack.push([] as number[]);
 				break;
 
 			// case '#':
@@ -412,6 +429,143 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.push(
 			// 		new SmalltalkFunctionDefinition(functionName.value, argumentList, body)
 			// 	);
+			// 	break;
+
+			// From C#:
+
+			// case "#functionDefinition":
+			// 	var body = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	var argList = (VariableList<IAPLValue>)semanticStack.Pop();
+			// 	var functionName = (Name)semanticStack.Pop();
+			//
+			// 	semanticStack.Push(new FunctionDefinition<IAPLValue>(functionName, argList, body));
+			// 	break;
+			//
+			// case "#variableList":
+			// 	variableList = (VariableList<IAPLValue>)semanticStack.Pop();
+			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
+			// 	variableList.Value.Insert(0, variable);
+			// 	semanticStack.Push(variableList);
+			// 	break;
+			//
+			// case "#emptyVariableList":
+			// 	semanticStack.Push(new VariableList<IAPLValue>());
+			// 	break;
+			//
+			// case "#if":
+			// 	var expression3 = (IExpression<IAPLValue>)semanticStack.Pop();
+			//
+			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	semanticStack.Push(new APLIfUsage(expression, expression2, expression3));
+			// 	break;
+			//
+			// case "#while":
+			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	semanticStack.Push(new APLWhileUsage(expression, expression2));
+			// 	break;
+			//
+			// case "#set":
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
+			// 	semanticStack.Push(new SetUsage<IAPLValue>(variable, expression));
+			// 	break;
+			//
+			// case "#begin":
+			// 	expressionList = (ExpressionList<IAPLValue>)semanticStack.Pop();
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	semanticStack.Push(new BeginUsage<IAPLValue>(expression, expressionList));
+			// 	break;
+			//
+			// case "#operatorUsage":
+			// 	expressionList = (ExpressionList<IAPLValue>)semanticStack.Pop();
+			//
+			// 	var operatorName = (Name)semanticStack.Pop();
+			//
+			// 	semanticStack.Push(new APLOperatorUsage(operatorName, expressionList));
+			// 	break;
+			//
+			// case "#expressionList":
+			// 	expressionList = (ExpressionList<IAPLValue>)semanticStack.Pop();
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	expressionList.Value.Insert(0, expression);
+			// 	semanticStack.Push(expressionList);
+			// 	break;
+			//
+			// case "#emptyExpressionList":
+			// 	semanticStack.Push(new ExpressionList<IAPLValue>());
+			// 	break;
+			//
+			// case "#variable":
+			// 	name = (Name)semanticStack.Pop();
+			// 	semanticStack.Push(new Variable<IAPLValue>(name.Value, name.Line, name.Column));
+			// 	break;
+
+			// case "#makeFloatVector":
+			// 	floatList = (List<double>)semanticStack.Pop();
+			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
+			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
+			// 	semanticStack.Push(APLValue<double>.CreateVector(floatList));
+			// 	break;
+			//
+			// case "#floatList":
+			// 	floatList = (List<double>)semanticStack.Pop();
+			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
+			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
+			// 	semanticStack.Push(floatList);
+			// 	break;
+			//
+			// case "#emptyFloatList":
+			// 	semanticStack.Push(new List<double>());
+			// 	break;
+			//
+			// case "#vecassign":
+			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
+			// 	semanticStack.Push(new VectorAssignmentUsage(variable, expression, expression2));
+			// 	break;
+			//
+			// case "#condUsage":
+			// 	exprPairList = (List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
+			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	exprPairList.Insert(0, new KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>(expression, expression2));
+			// 	semanticStack.Push(new APLCondUsage(exprPairList));
+			// 	break;
+			//
+			// case "#exprPairList":
+			// 	exprPairList = (List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
+			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	exprPairList.Insert(0, new KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>(expression, expression2));
+			// 	semanticStack.Push(exprPairList);
+			// 	break;
+			//
+			// case "#emptyExprPairList":
+			// 	semanticStack.Push(new List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>());
+			// 	break;
+			//
+			// case "#letUsage":
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
+			//
+			// 	var letName = (Name)semanticStack.Pop();
+			//
+			// 	semanticStack.Push(CreateLetUsage(letName.Value, varExprList, expression));
+			// 	break;
+			//
+			// case "#varExprList":
+			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
+			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
+			// 	varExprList.Insert(0, new KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>(variable, expression));
+			// 	semanticStack.Push(varExprList);
+			// 	break;
+			//
+			// case "#emptyVarExprList":
+			// 	semanticStack.Push(new List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>());
 			// 	break;
 
 			default:
@@ -587,6 +741,7 @@ export class APLGrammar extends GrammarBase {
 
 			case GrammarSymbol.terminalLeftBracket:
 			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalApostrophe:
 			case GrammarSymbol.terminalBegin:
 			case GrammarSymbol.terminalCond:
 			case GrammarSymbol.terminalDefine:

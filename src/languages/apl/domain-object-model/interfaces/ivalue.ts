@@ -4,6 +4,7 @@ import { IExpression } from '../../../../common/domain-object-model/iexpression'
 
 export interface IAPLValue extends IExpression<IAPLValue> {
 	readonly scalars: number[];
+	readonly shape: number[];
 
 	isNull: boolean;
 	isScalar: boolean;

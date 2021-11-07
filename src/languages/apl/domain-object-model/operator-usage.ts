@@ -256,27 +256,66 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		// Func<TOut, TOut, TOut> operatorLambda
 		operatorLambda: (x: number, y: number) => number
 	): IAPLValue {
+		// console.log(`evaluateDyadicExpressionHelper: arg1 is ${arg1}; arg2 is ${arg2}.`);
+
 		const arg1AsValue = arg1.toScalarIfPossible(); // as APLValue<T1>;
 		const arg2AsValue = arg2.toScalarIfPossible(); // as APLValue<T2>;
 
-		console.log(
-			`evaluateDyadicExpressionHelper: arg1AsValue is ${arg1AsValue}; arg2AsValue is ${arg2AsValue}.`
-		);
+		// console.log(
+		// 	`evaluateDyadicExpressionHelper: arg1AsValue is ${arg1AsValue}; arg2AsValue is ${arg2AsValue}.`
+		// );
+		// console.log(`evaluateDyadicExpressionHelper: arg1AsValue is ${arg1AsValue}.`);
 
-		const fs1 = arg1AsValue.getFirstScalar();
-		const fs2 = arg2AsValue.getFirstScalar();
+		if (arg1AsValue.isScalar) {
+			const fs1 = arg1AsValue.getFirstScalar();
+			// const fs2 = arg2AsValue.getFirstScalar();
 
-		console.log(`evaluateDyadicExpressionHelper: fs1 is ${fs1}; fs2 is ${fs2}.`);
+			// console.log(`evaluateDyadicExpressionHelper: fs1 is ${fs1}; fs2 is ${fs2}.`);
+			// console.log(`evaluateDyadicExpressionHelper: fs1 is ${fs1}.`);
 
-		const resultScalar = operatorLambda(fs1, fs2);
+			// const resultScalar = operatorLambda(fs1, fs2);
 
-		console.log(`evaluateDyadicExpressionHelper: resultScalar is ${resultScalar}.`);
+			// console.log(`evaluateDyadicExpressionHelper: resultScalar is ${resultScalar}.`);
 
-		const result = APLValue.createScalar(resultScalar);
+			// const result = APLValue.createScalar(resultScalar);
 
-		console.log(`evaluateDyadicExpressionHelper: result is ${result}.`);
+			// const shape2 = arg2.getShape();
+			//
+			// console.log(`evaluateDyadicExpressionHelper: shape2 is ${shape2}.`);
 
-		return result;
+			const result = new APLValue(
+				arg2.shape, // shape2.scalars,
+				arg2.scalars.map((n2: number) => operatorLambda(fs1, n2))
+			);
+
+			console.log(`evaluateDyadicExpressionHelper: result is ${result}.`);
+
+			return result;
+		} else if (arg2AsValue.isScalar) {
+			const fs2 = arg2AsValue.getFirstScalar();
+
+			return new APLValue(
+				arg1.shape,
+				arg1.scalars.map((n1: number) => operatorLambda(n1, fs2))
+			);
+		} else if (arg1.areShapesEqual(arg2)) {
+			const newScalars = arg1.scalars.map((n1: number, i: number) =>
+				operatorLambda(n1, arg2.scalars[i])
+			);
+
+			// for (let i = 0; i < arg1AsValue.scalars.length; ++i) {
+			// 	newScalars.push(operatorLambda(arg1AsValue.scalars[i], arg2AsValue.scalars[i]));
+			// }
+
+			// return new APLValue(arg1AsValue.getShape().scalars, newScalars);
+
+			return new APLValue(arg1.shape, newScalars);
+		} else {
+			// throw new Error('evaluateDyadicExpressionHelper() : Fscked.');
+			throw new Error(
+				'Cannot perform a dyadic operation; neither value is a scalar, and the shapes are unequal.'
+			);
+		}
 
 		// if (arg1AsValue.isScalar) {
 		// 	// var convertedValue1 = conversionLambda1(arg1AsValue.GetFirstScalar());

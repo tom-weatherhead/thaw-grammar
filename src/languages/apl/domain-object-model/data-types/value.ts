@@ -115,7 +115,7 @@ export class APLValue implements IAPLValue {
 	}
 
 	public areShapesEqual(otherValue: IAPLValue): boolean {
-		const otherShape = (otherValue.getShape() as APLValue).scalars;
+		// const otherShape = (otherValue.getShape() as APLValue).scalars;
 
 		// if (this.shape.length !== otherShape.length) {
 		// 	return false;
@@ -131,8 +131,8 @@ export class APLValue implements IAPLValue {
 		// }
 
 		return (
-			this.shape.length === otherShape.length &&
-			this.shape.every((n, i) => n === otherShape[i])
+			this.shape.length === otherValue.shape.length &&
+			this.shape.every((n, i) => n === otherValue.shape[i])
 		);
 	}
 
