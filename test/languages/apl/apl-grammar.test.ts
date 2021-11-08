@@ -45,6 +45,10 @@ function evalStringsToValues(strs: string[], n = 1): IAPLValue[] {
 	return strs.map(f).slice(-n);
 }
 
+function evalStringsToStrings(strs: string[], n = 1): string[] {
+	return evalStringsToValues(strs, n).map((value) => value.toString());
+}
+
 function evalStringsToValue(strs: string[]): IAPLValue {
 	const values = evalStringsToValues(strs, 1);
 
@@ -113,15 +117,12 @@ test('APLGrammar null value test', () => {
 	// Arrange
 	// Act
 	// Assert
-	// expect(evalStringToString('()')).toBe('');
-
-	// expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe('1 2\n3 4');
 
 	expect(createAPLNullValue().isNull).toBe(true);
 
 	expect(evalStringToValue('7').isNull).toBe(false);
-	expect(evalStringToValue('\'(2 3 5 7)').isNull).toBe(false);
-	expect(evalStringToValue('(restruct \'(2 2) \'(1 2 3 4))').isNull).toBe(false);
+	expect(evalStringToValue("'(2 3 5 7)").isNull).toBe(false);
+	expect(evalStringToValue("(restruct '(2 2) '(1 2 3 4))").isNull).toBe(false);
 });
 
 test('APLGrammar addition test', () => {
@@ -130,13 +131,13 @@ test('APLGrammar addition test', () => {
 	// Assert
 
 	expect(evalStringToString('(+ 2 3)')).toBe('5');
-	expect(evalStringToString('(+ 2 \'(3 6))')).toBe('5 8');
-	expect(evalStringToString('(+ \'(1 2) 10)')).toBe('11 12');
-	expect(evalStringToString('(+ \'(1 2 7) \'(3 4 9))')).toBe('4 6 16');
+	expect(evalStringToString("(+ 2 '(3 6))")).toBe('5 8');
+	expect(evalStringToString("(+ '(1 2) 10)")).toBe('11 12');
+	expect(evalStringToString("(+ '(1 2 7) '(3 4 9))")).toBe('4 6 16');
 
 	// Non-scalars with different shapes cannot be added:
-	expect(() => evalStringToString('(+ \'(1 2) \'(3 4 9))')).toThrow(Error);
-	expect(() => evalStringToString('(+ \'(1 2 7) \'(3 4))')).toThrow(Error);
+	expect(() => evalStringToString("(+ '(1 2) '(3 4 9))")).toThrow(Error);
+	expect(() => evalStringToString("(+ '(1 2 7) '(3 4))")).toThrow(Error);
 });
 
 test('APLGrammar restruct test', () => {
@@ -144,6 +145,22 @@ test('APLGrammar restruct test', () => {
 	// Act
 	// Assert
 
-	expect(evalStringToString('(restruct \'(2 2) \'(1 2 3 4))')).toBe('1 2\n3 4');
-	expect(evalStringToString('(restruct \'(2 2) \'(1 2 3 4))')).toBe(['1 2', '3 4'].join('\n'));
+	expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe('1 2\n3 4');
+	expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe(['1 2', '3 4'].join('\n'));
+});
+
+test('APLGrammar define (user-defined functions) test', () => {
+	// Arrange
+	// Act
+
+	const actualResults = evalStringsToStrings(
+		['(define neg (v) (- 0 v))', '(neg 7)', '(neg -3)', '(neg 0)'],
+		3
+	);
+
+	// Assert
+	expect(actualResults.length).toBe(3);
+	expect(actualResults[0]).toBe('-7');
+	expect(actualResults[1]).toBe('3');
+	expect(actualResults[2]).toBe('0');
 });

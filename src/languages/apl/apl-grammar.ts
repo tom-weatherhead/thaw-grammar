@@ -10,9 +10,13 @@ import { Name } from 'thaw-interpreter-core';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 
+import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
+
 import { IExpression } from '../../common/domain-object-model/iexpression';
 
-// import { Variable } from '../../common/domain-object-model/variable';
+import { Variable } from '../../common/domain-object-model/variable';
+
+import { VariableList } from '../../common/domain-object-model/variable-list';
 
 import { IAPLValue } from './domain-object-model/interfaces/ivalue';
 
@@ -379,10 +383,15 @@ export class APLGrammar extends GrammarBase {
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;
+		let functionName: Name;
 		let expression: IExpression<IAPLValue>;
 		let expressionList: ExpressionList<IAPLValue>;
 		let intList: number[];
 		let intScalar: IAPLValue;
+		let variable: Variable<IAPLValue>;
+		let variableList: VariableList<IAPLValue>;
+		let argumentList: VariableList<IAPLValue>;
+		let body: IExpression<IAPLValue>;
 
 		switch (action) {
 			case '#operatorUsage':
@@ -418,41 +427,34 @@ export class APLGrammar extends GrammarBase {
 				semanticStack.push([] as number[]);
 				break;
 
-			// case '#':
-			// 	break;
+			case '#functionDefinition':
+				body = semanticStack.pop() as IExpression<IAPLValue>;
+				argumentList = semanticStack.pop() as VariableList<IAPLValue>;
+				functionName = semanticStack.pop() as Name;
+				semanticStack.push(
+					new FunctionDefinition<IAPLValue>(functionName, argumentList, body)
+				);
+				break;
 
-			// case '#functionDefinition':
-			// 	body = semanticStack.pop() as ISmalltalkExpression;
-			// 	argumentList = semanticStack.pop() as ISmalltalkVariable[];
-			//
-			// 	functionName = semanticStack.pop() as Name;
-			// 	semanticStack.push(
-			// 		new SmalltalkFunctionDefinition(functionName.value, argumentList, body)
-			// 	);
-			// 	break;
+			case '#variable':
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new Variable<IAPLValue>(name.value, name.line, name.column));
+				break;
+
+			case '#variableList':
+				variableList = semanticStack.pop() as VariableList<IAPLValue>;
+				variable = semanticStack.pop() as Variable<IAPLValue>;
+				variableList.value.unshift(variable);
+				semanticStack.push(variableList);
+				break;
+
+			case '#emptyVariableList':
+				semanticStack.push(new VariableList<IAPLValue>());
+				break;
 
 			// From C#:
 
-			// case "#functionDefinition":
-			// 	var body = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	var argList = (VariableList<IAPLValue>)semanticStack.Pop();
-			// 	var functionName = (Name)semanticStack.Pop();
-			//
-			// 	semanticStack.Push(new FunctionDefinition<IAPLValue>(functionName, argList, body));
-			// 	break;
-			//
-			// case "#variableList":
-			// 	variableList = (VariableList<IAPLValue>)semanticStack.Pop();
-			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
-			// 	variableList.Value.Insert(0, variable);
-			// 	semanticStack.Push(variableList);
-			// 	break;
-			//
-			// case "#emptyVariableList":
-			// 	semanticStack.Push(new VariableList<IAPLValue>());
-			// 	break;
-			//
-			// case "#if":
+			// case '#if':
 			// 	var expression3 = (IExpression<IAPLValue>)semanticStack.Pop();
 			//
 			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
@@ -460,74 +462,50 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.Push(new APLIfUsage(expression, expression2, expression3));
 			// 	break;
 			//
-			// case "#while":
+			// case '#while':
 			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	semanticStack.Push(new APLWhileUsage(expression, expression2));
 			// 	break;
 			//
-			// case "#set":
+			// case '#set':
 			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
 			// 	semanticStack.Push(new SetUsage<IAPLValue>(variable, expression));
 			// 	break;
 			//
-			// case "#begin":
+			// case '#begin':
 			// 	expressionList = (ExpressionList<IAPLValue>)semanticStack.Pop();
 			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	semanticStack.Push(new BeginUsage<IAPLValue>(expression, expressionList));
 			// 	break;
-			//
-			// case "#operatorUsage":
-			// 	expressionList = (ExpressionList<IAPLValue>)semanticStack.Pop();
-			//
-			// 	var operatorName = (Name)semanticStack.Pop();
-			//
-			// 	semanticStack.Push(new APLOperatorUsage(operatorName, expressionList));
-			// 	break;
-			//
-			// case "#expressionList":
-			// 	expressionList = (ExpressionList<IAPLValue>)semanticStack.Pop();
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	expressionList.Value.Insert(0, expression);
-			// 	semanticStack.Push(expressionList);
-			// 	break;
-			//
-			// case "#emptyExpressionList":
-			// 	semanticStack.Push(new ExpressionList<IAPLValue>());
-			// 	break;
-			//
-			// case "#variable":
-			// 	name = (Name)semanticStack.Pop();
-			// 	semanticStack.Push(new Variable<IAPLValue>(name.Value, name.Line, name.Column));
-			// 	break;
 
-			// case "#makeFloatVector":
+			// case '#makeFloatVector':
 			// 	floatList = (List<double>)semanticStack.Pop();
 			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
 			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
 			// 	semanticStack.Push(APLValue<double>.CreateVector(floatList));
 			// 	break;
 			//
-			// case "#floatList":
+			// case '#floatList':
 			// 	floatList = (List<double>)semanticStack.Pop();
 			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
 			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
 			// 	semanticStack.Push(floatList);
 			// 	break;
 			//
-			// case "#emptyFloatList":
+			// case '#emptyFloatList':
 			// 	semanticStack.Push(new List<double>());
 			// 	break;
 			//
-			// case "#vecassign":
+			// case '#vecassign':
 			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
 			// 	semanticStack.Push(new VectorAssignmentUsage(variable, expression, expression2));
 			// 	break;
 			//
-			// case "#condUsage":
+			// case '#condUsage':
 			// 	exprPairList = (List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
 			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
@@ -535,7 +513,7 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.Push(new APLCondUsage(exprPairList));
 			// 	break;
 			//
-			// case "#exprPairList":
+			// case '#exprPairList':
 			// 	exprPairList = (List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
 			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
@@ -543,11 +521,11 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.Push(exprPairList);
 			// 	break;
 			//
-			// case "#emptyExprPairList":
+			// case '#emptyExprPairList':
 			// 	semanticStack.Push(new List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>());
 			// 	break;
 			//
-			// case "#letUsage":
+			// case '#letUsage':
 			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
 			//
@@ -556,7 +534,7 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.Push(CreateLetUsage(letName.Value, varExprList, expression));
 			// 	break;
 			//
-			// case "#varExprList":
+			// case '#varExprList':
 			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
 			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
 			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
@@ -564,7 +542,7 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.Push(varExprList);
 			// 	break;
 			//
-			// case "#emptyVarExprList":
+			// case '#emptyVarExprList':
 			// 	semanticStack.Push(new List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>());
 			// 	break;
 
@@ -576,95 +554,56 @@ export class APLGrammar extends GrammarBase {
 	}
 
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
-		const tokenValueAsString: string = token.tokenValue as string;
+		// const tokenValueAsString: string = token.tokenValue as string;
 
-		switch (token.tokenType) {
-			// case LexicalState.tokenEOF:
-			// 	return GrammarSymbol.terminalEOF;
-			// case LexicalState.tokenLeftBracket:
-			// 	return GrammarSymbol.terminalLeftBracket;
-			// case LexicalState.tokenRightBracket:
-			// 	return GrammarSymbol.terminalRightBracket;
-			// case LexicalState.tokenIntLit:
-			// 	return GrammarSymbol.terminalIntegerLiteral;
-			// case LexicalState.tokenPlus:
-			// 	return GrammarSymbol.terminalPlus;
-			// case LexicalState.tokenMinus:
-			// 	return GrammarSymbol.terminalMinus;
-			// case LexicalState.tokenMult:
-			// 	return GrammarSymbol.terminalMultiply;
-			// case LexicalState.tokenDiv:
-			// 	return GrammarSymbol.terminalDivide;
-			// case LexicalState.tokenEqual:
-			// 	return GrammarSymbol.terminalEquals;
-			// case LexicalState.tokenLess:
-			// 	return GrammarSymbol.terminalLessThan;
-			// case LexicalState.tokenGreater:
-			// 	return GrammarSymbol.terminalGreaterThan;
-			case LexicalState.tokenIdent:
-				switch (tokenValueAsString) {
-					// case 'define':
-					// 	return GrammarSymbol.terminalDefine;
-					// case 'if':
-					// 	return GrammarSymbol.terminalIf;
-					// case 'while':
-					// 	return GrammarSymbol.terminalWhile;
-					// case 'set':
-					// 	return GrammarSymbol.terminalSet;
-					// case 'begin':
-					// 	return GrammarSymbol.terminalBegin;
-					// case 'print':
-					// 	return GrammarSymbol.terminalPrint;
-					case 'max':
-						return GrammarSymbol.terminalMax;
-					case 'or':
-						return GrammarSymbol.terminalOr;
-					case 'and':
-						return GrammarSymbol.terminalAnd;
-					case '+/':
-						return GrammarSymbol.terminalPlusSlash;
-					case '-/':
-						return GrammarSymbol.terminalMinusSlash;
-					case '*/':
-						return GrammarSymbol.terminalMultiplySlash;
-					case '//':
-						return GrammarSymbol.terminalDivideSlash;
-					case 'max/':
-						return GrammarSymbol.terminalMaxSlash;
-					case 'or/':
-						return GrammarSymbol.terminalOrSlash;
-					case 'and/':
-						return GrammarSymbol.terminalAndSlash;
-					case 'compress':
-						return GrammarSymbol.terminalCompress;
-					case 'shape':
-						return GrammarSymbol.terminalShape;
-					case 'ravel':
-						return GrammarSymbol.terminalRavel;
-					case 'restruct':
-						return GrammarSymbol.terminalRestruct;
-					case 'cat':
-						return GrammarSymbol.terminalCat;
-					case 'indx':
-						return GrammarSymbol.terminalIndx;
-					case 'trans':
-						return GrammarSymbol.terminalTrans;
-					case '[]':
-						return GrammarSymbol.terminalSquareBrackets;
-					case "'":
-						return GrammarSymbol.terminalApostrophe;
-					case ':=':
-						return GrammarSymbol.terminalAssign;
-					case '[;]':
-						return GrammarSymbol.terminalDoubleSubscripting;
-					default:
-						break;
-				}
-
-				break;
-
-			default:
-				break;
+		if (token.tokenType === LexicalState.tokenIdent) {
+			// switch (tokenValueAsString) {
+			switch (token.tokenValue as string) {
+				case 'max':
+					return GrammarSymbol.terminalMax;
+				case 'or':
+					return GrammarSymbol.terminalOr;
+				case 'and':
+					return GrammarSymbol.terminalAnd;
+				case '+/':
+					return GrammarSymbol.terminalPlusSlash;
+				case '-/':
+					return GrammarSymbol.terminalMinusSlash;
+				case '*/':
+					return GrammarSymbol.terminalMultiplySlash;
+				case '//':
+					return GrammarSymbol.terminalDivideSlash;
+				case 'max/':
+					return GrammarSymbol.terminalMaxSlash;
+				case 'or/':
+					return GrammarSymbol.terminalOrSlash;
+				case 'and/':
+					return GrammarSymbol.terminalAndSlash;
+				case 'compress':
+					return GrammarSymbol.terminalCompress;
+				case 'shape':
+					return GrammarSymbol.terminalShape;
+				case 'ravel':
+					return GrammarSymbol.terminalRavel;
+				case 'restruct':
+					return GrammarSymbol.terminalRestruct;
+				case 'cat':
+					return GrammarSymbol.terminalCat;
+				case 'indx':
+					return GrammarSymbol.terminalIndx;
+				case 'trans':
+					return GrammarSymbol.terminalTrans;
+				case '[]':
+					return GrammarSymbol.terminalSquareBrackets;
+				case "'":
+					return GrammarSymbol.terminalApostrophe;
+				case ':=':
+					return GrammarSymbol.terminalAssign;
+				case '[;]':
+					return GrammarSymbol.terminalDoubleSubscripting;
+				default:
+					break;
+			}
 		}
 
 		return super.tokenToSymbol(token);
@@ -678,48 +617,30 @@ export class APLGrammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			// case GrammarSymbol.terminalID:
-			// case GrammarSymbol.terminalPrint:
-			// case GrammarSymbol.terminalPlus:
-			// case GrammarSymbol.terminalMinus:
-			// case GrammarSymbol.terminalMultiply:
-			// case GrammarSymbol.terminalDivide:
-			// case GrammarSymbol.terminalEquals:
-			// case GrammarSymbol.terminalLessThan:
-			//case GrammarSymbol.terminalGreaterThan:
-			// case GrammarSymbol.terminalLet:
-			// case GrammarSymbol.terminalLetStar:
-			// case GrammarSymbol.terminalRandom:
-			// case GrammarSymbol.terminalPow:
-			// case GrammarSymbol.terminalExp:
-			// case GrammarSymbol.terminalLn:
-			// case GrammarSymbol.terminalSin:
-			// case GrammarSymbol.terminalCos:
-			// case GrammarSymbol.terminalTan:
-
-			case GrammarSymbol.terminalNumberPred:
-			case GrammarSymbol.terminalSymbolPred:
-			case GrammarSymbol.terminalStringPred:
-			case GrammarSymbol.terminalObjectPred:
-			case GrammarSymbol.terminalToString:
-			case GrammarSymbol.terminalStringToSymbol:
-			case GrammarSymbol.terminalAtan2:
-			case GrammarSymbol.terminalFloor:
-			case GrammarSymbol.terminalThrow:
-			case GrammarSymbol.terminalStringLessThan:
-			case GrammarSymbol.terminalStrlen:
-			case GrammarSymbol.terminalSubstr:
-			case GrammarSymbol.terminalTypename:
+			// case GrammarSymbol.terminalNumberPred:
+			// case GrammarSymbol.terminalSymbolPred:
+			// case GrammarSymbol.terminalStringPred:
+			// case GrammarSymbol.terminalObjectPred:
+			// case GrammarSymbol.terminalToString:
+			// case GrammarSymbol.terminalStringToSymbol:
+			// case GrammarSymbol.terminalAtan2:
+			// case GrammarSymbol.terminalFloor:
+			// case GrammarSymbol.terminalThrow:
+			// case GrammarSymbol.terminalStringLessThan:
+			// case GrammarSymbol.terminalStrlen:
+			// case GrammarSymbol.terminalSubstr:
+			// case GrammarSymbol.terminalTypename:
 			// case GrammarSymbol.terminalHash:
 			// case GrammarSymbol.terminalReferenceEquals:
-			case GrammarSymbol.terminalStrcat:
-			case GrammarSymbol.terminalNewArray:
-			case GrammarSymbol.terminalArrayLength:
-			case GrammarSymbol.terminalArrayGet:
-			case GrammarSymbol.terminalArraySet:
-			case GrammarSymbol.terminalArrayPred:
-			case GrammarSymbol.terminalCharPred:
-			case GrammarSymbol.terminalStringIndex:
+			// case GrammarSymbol.terminalStrcat:
+			// case GrammarSymbol.terminalNewArray:
+			// case GrammarSymbol.terminalArrayLength:
+			// case GrammarSymbol.terminalArrayGet:
+			// case GrammarSymbol.terminalArraySet:
+			// case GrammarSymbol.terminalArrayPred:
+			// case GrammarSymbol.terminalCharPred:
+			// case GrammarSymbol.terminalStringIndex:
+
 			// APL:
 			case GrammarSymbol.terminalMax:
 			case GrammarSymbol.terminalOr:
@@ -760,16 +681,16 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.push(new SmalltalkString(value, token.line, token.column));
 			// 	break;
 
-			case GrammarSymbol.terminalLeftBracket:
-			case GrammarSymbol.terminalRightBracket:
+			// case GrammarSymbol.terminalLeftBracket:
+			// case GrammarSymbol.terminalRightBracket:
 			case GrammarSymbol.terminalApostrophe:
-			case GrammarSymbol.terminalBegin:
-			case GrammarSymbol.terminalCond:
-			case GrammarSymbol.terminalDefine:
-			case GrammarSymbol.terminalIf:
-			case GrammarSymbol.terminalSet:
-			case GrammarSymbol.terminalWhile:
-			case GrammarSymbol.terminalEOF:
+				// case GrammarSymbol.terminalBegin:
+				// case GrammarSymbol.terminalCond:
+				// case GrammarSymbol.terminalDefine:
+				// case GrammarSymbol.terminalIf:
+				// case GrammarSymbol.terminalSet:
+				// case GrammarSymbol.terminalWhile:
+				// case GrammarSymbol.terminalEOF:
 				// For these terminals, push nothing onto the semantic stack.
 				break;
 
