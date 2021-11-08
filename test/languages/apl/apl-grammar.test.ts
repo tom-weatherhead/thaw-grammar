@@ -123,3 +123,27 @@ test('APLGrammar null value test', () => {
 	expect(evalStringToValue('\'(2 3 5 7)').isNull).toBe(false);
 	expect(evalStringToValue('(restruct \'(2 2) \'(1 2 3 4))').isNull).toBe(false);
 });
+
+test('APLGrammar addition test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(+ 2 3)')).toBe('5');
+	expect(evalStringToString('(+ 2 \'(3 6))')).toBe('5 8');
+	expect(evalStringToString('(+ \'(1 2) 10)')).toBe('11 12');
+	expect(evalStringToString('(+ \'(1 2 7) \'(3 4 9))')).toBe('4 6 16');
+
+	// Non-scalars with different shapes cannot be added:
+	expect(() => evalStringToString('(+ \'(1 2) \'(3 4 9))')).toThrow(Error);
+	expect(() => evalStringToString('(+ \'(1 2 7) \'(3 4))')).toThrow(Error);
+});
+
+test('APLGrammar restruct test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(restruct \'(2 2) \'(1 2 3 4))')).toBe('1 2\n3 4');
+	expect(evalStringToString('(restruct \'(2 2) \'(1 2 3 4))')).toBe(['1 2', '3 4'].join('\n'));
+});
