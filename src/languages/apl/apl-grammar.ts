@@ -721,7 +721,26 @@ export class APLGrammar extends GrammarBase {
 			case GrammarSymbol.terminalCharPred:
 			case GrammarSymbol.terminalStringIndex:
 			// APL:
+			case GrammarSymbol.terminalMax:
+			case GrammarSymbol.terminalOr:
+			case GrammarSymbol.terminalAnd:
+			case GrammarSymbol.terminalPlusSlash:
+			case GrammarSymbol.terminalMinusSlash:
+			case GrammarSymbol.terminalMultiplySlash:
+			case GrammarSymbol.terminalDivideSlash:
+			case GrammarSymbol.terminalMaxSlash:
+			case GrammarSymbol.terminalOrSlash:
+			case GrammarSymbol.terminalAndSlash:
+			case GrammarSymbol.terminalCompress:
+			case GrammarSymbol.terminalShape:
+			case GrammarSymbol.terminalRavel:
 			case GrammarSymbol.terminalRestruct:
+			case GrammarSymbol.terminalCat:
+			case GrammarSymbol.terminalIndx:
+			case GrammarSymbol.terminalTrans:
+			case GrammarSymbol.terminalSquareBrackets:
+			case GrammarSymbol.terminalAssign:
+			case GrammarSymbol.terminalDoubleSubscripting:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
 				// Or: semanticStack.push(new Name(`${value}`, token.line, token.column));

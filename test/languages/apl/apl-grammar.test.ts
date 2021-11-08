@@ -5,12 +5,69 @@
 import { LanguageSelector } from 'thaw-interpreter-types';
 
 // import { createParser /*, SyntaxException */ } from 'thaw-parser';
-//
-// import { createGrammar } from '../../..';
 
-import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
+import { APLGlobalInfo, EnvironmentFrame, IAPLExpression, IAPLValue } from '../../..';
+
+import {
+	// createFnParser,
+	createFnRecognizer,
+	createInfrastructure
+} from '../../create-infrastructure';
 
 const ls = LanguageSelector.APL;
+
+function createFnEval(): (str: string) => IAPLValue {
+	const { tokenizer, parser } = createInfrastructure(ls);
+	const localEnvironment = new EnvironmentFrame<IAPLValue>();
+	const globalInfo = new APLGlobalInfo();
+
+	// globalInfo.loadPresets(tokenizer, parser);
+
+	// return (str: string) =>
+	// 	globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as IAPLExpression);
+
+	return (str: string) => {
+		const expr = parser.parse(tokenizer.tokenize(str)) as IAPLExpression;
+
+		return expr.evaluate(localEnvironment, globalInfo);
+	};
+}
+
+function evalStringsToValues(strs: string[], n = 1): IAPLValue[] {
+	const f = createFnEval();
+
+	return strs.map(f).slice(-n);
+}
+
+function evalStringsToValue(strs: string[]): IAPLValue {
+	const values = evalStringsToValues(strs, 1);
+
+	if (values.length < 1) {
+		throw new Error('evalToValue() : values.length is zero.');
+	}
+
+	return values[0];
+}
+
+function evalStringToValue(str: string): IAPLValue {
+	return evalStringsToValue([str]);
+}
+
+function evalStringToString(str: string): string {
+	return evalStringToValue(str).toString();
+}
+
+// function evaluateStringToInteger(str: string): number | undefined {
+// 	return evalStringsToValue([str]).toInteger();
+// }
+//
+// function evaluateStringsToInteger(strs: string[]): number | undefined {
+// 	return evalStringsToValue(strs).toInteger();
+// }
+//
+// function evaluateStringsToIntegers(strs: string[], n = 1): Array<number | undefined> {
+// 	return evalStringsToValues(strs, n).map((value) => value.toInteger());
+// }
 
 test('APLGrammar instance creation test', () => {
 	// Arrange
@@ -44,4 +101,13 @@ test('APLGrammar recognize test', () => {
 	f('(define signum (x) (+ (* (< x 0) -1) (> x 0)))'); // Page 72
 
 	// expect(() => f('')).toThrow(SyntaxException);
+});
+
+test('APLGrammar null value test', () => {
+	// Arrange
+	// Act
+	// Assert
+	// expect(evalStringToString('()')).toBe('');
+	expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe('1 2\n3 4');
+	// expect(evalStringToValue("(restruct '() '())").isNull).toBe(true);
 });

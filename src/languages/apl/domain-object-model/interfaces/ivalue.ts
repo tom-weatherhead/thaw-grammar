@@ -27,3 +27,5 @@ export interface IAPLValue extends IEqualityComparable, IExpression<IAPLValue>, 
 	toScalarIfPossible(): IAPLValue;
 	toVector(): IAPLValue;
 }
+
+export type IAPLExpression = IExpression<IAPLValue>;

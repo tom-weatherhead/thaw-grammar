@@ -822,9 +822,9 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			//
 			// case 'compress':
 			// 	return EvaluateCompress(evaluatedArguments[0], evaluatedArguments[1]);
-			//
-			// case 'shape':
-			// 	return evaluatedArguments[0].GetShape();
+
+			case 'shape':
+				return evaluatedArguments[0].getShape();
 
 			case 'ravel':
 				return this.evaluateRavel(evaluatedArguments[0]);

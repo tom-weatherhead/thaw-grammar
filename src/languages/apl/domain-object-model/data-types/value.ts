@@ -10,6 +10,10 @@ import { IAPLValue } from '../interfaces/ivalue';
 
 // export class APLValue<T> implements IAPLValue, IExpression<IAPLValue> {
 export class APLValue implements IAPLValue {
+	public static createNull(): IAPLValue {
+		return new APLValue([], []);
+	}
+
 	public static createScalar(n: number): IAPLValue {
 		return new APLValue([], [n]);
 	}
@@ -22,9 +26,7 @@ export class APLValue implements IAPLValue {
 		return APLValue.createVector2(srcList.length, srcList);
 	}
 
-	// public readonly scalars: T[] = [];
 	public readonly scalars: number[] = [];
-	// public readonly shape: number[] = [];
 	public readonly numberOfContainedScalars: number;
 	public readonly steps: number[] = [];
 
@@ -62,21 +64,26 @@ export class APLValue implements IAPLValue {
 		}
 
 		if (typeof srcList !== 'undefined') {
-			if (this.numberOfContainedScalars === 0) {
-				throw new Error('APLValue constructor: numberOfContainedScalars === 0');
-			}
+			if (srcList.length === 0 && this.shape.length === 0) {
+				// We are constructing a Null value.
+				this.numberOfContainedScalars = 0;
+			} else {
+				if (this.numberOfContainedScalars === 0) {
+					throw new Error('APLValue constructor: numberOfContainedScalars === 0');
+				}
 
-			if (srcList.length == 0) {
-				throw new Error('APLValue constructor: srcList is empty');
-			}
+				if (srcList.length == 0) {
+					throw new Error('APLValue constructor: srcList is empty');
+				}
 
-			let srcIndex = 0;
+				let srcIndex = 0;
 
-			while (this.scalars.length < this.numberOfContainedScalars) {
-				this.scalars.push(srcList[srcIndex]);
+				while (this.scalars.length < this.numberOfContainedScalars) {
+					this.scalars.push(srcList[srcIndex]);
 
-				if (++srcIndex >= srcList.length) {
-					srcIndex = 0;
+					if (++srcIndex >= srcList.length) {
+						srcIndex = 0;
+					}
 				}
 			}
 		}
@@ -93,7 +100,7 @@ export class APLValue implements IAPLValue {
 	}
 
 	public get isScalar(): boolean {
-		return this.numberOfDimensions === 0; // TODO? : return this.numberOfContainedScalars === 1; Or this.scalars.length === 1;
+		return !this.isNull && this.numberOfDimensions === 0 && this.scalars.length === 1; // TODO? : return this.numberOfContainedScalars === 1; Or this.scalars.length === 1;
 	}
 
 	public get valueIfScalar(): number | undefined {
