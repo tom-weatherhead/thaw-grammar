@@ -311,23 +311,20 @@ export class APLValue implements IAPLValue {
 		return APLValue.createVector2(this.numberOfContainedScalars, this.scalars);
 	}
 
-	// public APLValue<T> CreateSlice(int n)
-	// {
-	//
-	// 	if (NumberOfDimensions == 0)
-	// 	{
-	// 		throw new Exception("APLValue<T>.CreateSlice() : Cannot create a slice of a scalar");
-	// 	}
-	// 	else if (n <= 0 || n > Shape[0])
-	// 	{
-	// 		throw new Exception(string.Format("APLValue<T>.CreateSlice() : Index out of bounds: {0} is not in the range from 1 to {1}",
-	// 			n, Shape[0]));
-	// 	}
-	//
-	// 	var step = Steps[0];
-	//
-	// 	return new APLValue<T>(Shape.Skip(1).ToList(), Scalars.Skip((n - 1) * step).Take(step).ToList());
-	// }
+	public createSlice(n: number): IAPLValue {
+		if (this.numberOfDimensions === 0) {
+			throw new Error('APLValue.createSlice() : Cannot create a slice of a scalar');
+		} else if (n <= 0 || n > this.shape[0]) {
+			throw new Error(
+				`APLValue.createSlice() : Index out of bounds: ${n} is not in the range from 1 to ${this.shape[0]}`
+			);
+		}
+
+		const step = this.steps[0];
+		const start = (n - 1) * step;
+
+		return new APLValue(this.shape.slice(1), this.scalars.slice(start, start + step));
+	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(

@@ -1,5 +1,40 @@
 // tom-weatherhead/thaw-grammar/src/languages/apl/apl-grammar.ts
 
+// Operators that have been implemented:
+
+// Plus
+// Minus
+// Multiply
+// Divide (truncating integer division)
+// Restruct
+
+// Operators TODO:
+
+// Equals
+// LessThan
+// GreaterThan
+// Print
+// Max
+// Or
+// And
+// PlusSlash
+// MinusSlash
+// MultiplySlash
+// DivideSlash
+// MaxSlash
+// OrSlash
+// AndSlash
+// Compress
+// Shape
+// Ravel
+// Cat
+// Indx
+// Trans
+// SquareBrackets
+// Apostrophe
+// Assign
+// DoubleSubscripting
+
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
@@ -71,7 +106,7 @@ export class APLGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalSquareBrackets);
 		this.terminals.push(GrammarSymbol.terminalApostrophe);
 		this.terminals.push(GrammarSymbol.terminalAssign);
-		// this.terminals.push(GrammarSymbol.terminalDoubleSubscripting);
+		this.terminals.push(GrammarSymbol.terminalDoubleSubscripting);
 		// this.terminals.push(GrammarSymbol.terminalFloatLiteral);
 		// this.terminals.push(GrammarSymbol.terminalRandom);
 		// this.terminals.push(GrammarSymbol.terminalPow);
@@ -554,10 +589,7 @@ export class APLGrammar extends GrammarBase {
 	}
 
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
-		// const tokenValueAsString: string = token.tokenValue as string;
-
 		if (token.tokenType === LexicalState.tokenIdent) {
-			// switch (tokenValueAsString) {
 			switch (token.tokenValue as string) {
 				case 'max':
 					return GrammarSymbol.terminalMax;
@@ -617,31 +649,6 @@ export class APLGrammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			// case GrammarSymbol.terminalNumberPred:
-			// case GrammarSymbol.terminalSymbolPred:
-			// case GrammarSymbol.terminalStringPred:
-			// case GrammarSymbol.terminalObjectPred:
-			// case GrammarSymbol.terminalToString:
-			// case GrammarSymbol.terminalStringToSymbol:
-			// case GrammarSymbol.terminalAtan2:
-			// case GrammarSymbol.terminalFloor:
-			// case GrammarSymbol.terminalThrow:
-			// case GrammarSymbol.terminalStringLessThan:
-			// case GrammarSymbol.terminalStrlen:
-			// case GrammarSymbol.terminalSubstr:
-			// case GrammarSymbol.terminalTypename:
-			// case GrammarSymbol.terminalHash:
-			// case GrammarSymbol.terminalReferenceEquals:
-			// case GrammarSymbol.terminalStrcat:
-			// case GrammarSymbol.terminalNewArray:
-			// case GrammarSymbol.terminalArrayLength:
-			// case GrammarSymbol.terminalArrayGet:
-			// case GrammarSymbol.terminalArraySet:
-			// case GrammarSymbol.terminalArrayPred:
-			// case GrammarSymbol.terminalCharPred:
-			// case GrammarSymbol.terminalStringIndex:
-
-			// APL:
 			case GrammarSymbol.terminalMax:
 			case GrammarSymbol.terminalOr:
 			case GrammarSymbol.terminalAnd:
@@ -681,16 +688,7 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.push(new SmalltalkString(value, token.line, token.column));
 			// 	break;
 
-			// case GrammarSymbol.terminalLeftBracket:
-			// case GrammarSymbol.terminalRightBracket:
 			case GrammarSymbol.terminalApostrophe:
-				// case GrammarSymbol.terminalBegin:
-				// case GrammarSymbol.terminalCond:
-				// case GrammarSymbol.terminalDefine:
-				// case GrammarSymbol.terminalIf:
-				// case GrammarSymbol.terminalSet:
-				// case GrammarSymbol.terminalWhile:
-				// case GrammarSymbol.terminalEOF:
 				// For these terminals, push nothing onto the semantic stack.
 				break;
 

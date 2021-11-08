@@ -94,8 +94,9 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 				} */
 					return 'The second argument is a scalar';
 				} else if (
-					(evaluatedArguments[0].getShape() as APLValue).scalars[0] !==
-					(evaluatedArguments[1].getShape() as APLValue).scalars[0]
+					// evaluatedArguments[0].getShape().scalars[0] !==
+					// evaluatedArguments[1].getShape().scalars[0]
+					evaluatedArguments[0].shape[0] !== evaluatedArguments[1].shape[0]
 				) {
 					return 'The length of the first argument is not equal to the number of slices in the second argument';
 				}
@@ -191,7 +192,8 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 				return (x, y) => (x == y ? 1 : 0);
 			case '<':
 				return (x, y) => (x < y ? 1 : 0);
-			//case '>': return (x, y) => x > y ? 1 : 0;
+			case '>':
+				return (x, y) => (x > y ? 1 : 0);
 			// case 'pow': return (x, y) => (int)Math.Pow(x, y);
 			default:
 				throw new Error(`getDyadicIntIntOperator() : Unknown operator '${operatorName}'.`);
@@ -230,23 +232,27 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	// 	}
 	// }
 
-	// private getDyadicOperatorNameFromReductionName(reductionName: string): string {
-	// 	switch (reductionName) {
-	// 		case '+/':
-	// 		case '-/':
-	// 		case '*/':
-	// 		case '//':
-	// 		case 'max/':
-	// 		case 'or/':
-	// 		case 'and/':
-	// 			return reductionName.substring(0, reductionName.length - 1);
-	//
-	// 		default:
-	// 			throw new Error(
-	// 				`getDyadicOperatorNameFromReductionName() : Unknown reduction operator '${reductionName}'.`
-	// 			);
-	// 	}
-	// }
+	private getDyadicOperatorNameFromReductionName(reductionName: string): string {
+		if (['+/', '-/', '*/', '//', 'max/', 'or/', 'and/'].indexOf(reductionName) >= 0) {
+			return reductionName.substring(0, reductionName.length - 1);
+		}
+
+		// switch (reductionName) {
+		// 	case '+/':
+		// 	case '-/':
+		// 	case '*/':
+		// 	case '//':
+		// 	case 'max/':
+		// 	case 'or/':
+		// 	case 'and/':
+		// 		return reductionName.substring(0, reductionName.length - 1);
+		//
+		// 	default:
+		throw new Error(
+			`getDyadicOperatorNameFromReductionName() : Unknown reduction operator '${reductionName}'.`
+		);
+		// }
+	}
 
 	private evaluateDyadicExpressionHelper(
 		arg1: IAPLValue,
@@ -422,68 +428,75 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		return this.evaluateDyadicExpressionHelper(arg1, arg2, op);
 	}
 
-	// private void EvaluateReductionExpressionHelper2<T>(APLValue<T> arg, Func<T, T, T> operatorLambda, List<T> newScalars)
-	// {
-	// 	var shapeVector = arg.GetShape().Scalars;
-	//
-	// 	if (shapeVector.Count == 1)
-	// 	{
-	// 		var vector = arg.Scalars;
-	// 		var result = vector[vector.Count - 1];
-	//
-	// 		for (var i = vector.Count - 2; i >= 0; --i)
-	// 		{
-	// 			result = operatorLambda(vector[i], result);
-	// 		}
-	//
-	// 		newScalars.Add(result);
-	// 	}
-	// 	else
-	// 	{
-	//
-	// 		for (var i = 1; i <= shapeVector[0]; ++i)
-	// 		{
-	// 			EvaluateReductionExpressionHelper2<T>(arg.CreateSlice(i), operatorLambda, newScalars);
-	// 		}
-	// 	}
-	// }
+	private evaluateReductionExpressionHelper2(
+		arg: IAPLValue,
+		operatorLambda: (x: number, y: number) => number,
+		newScalars: number[]
+	): void {
+		const shapeVector = arg.shape;
 
-	// private APLValue<T> EvaluateReductionExpressionHelper<T>(APLValue<T> arg, Func<T, T, T> operatorLambda)
-	// {
-	//
-	// 	if (arg.IsScalar)
-	// 	{
-	// 		return arg;
-	// 	}
-	//
-	// 	var newScalars = new List<T>();
-	//
-	// 	EvaluateReductionExpressionHelper2<T>(arg, operatorLambda, newScalars);
-	//
-	// 	return new APLValue<T>(arg.GetShape().Scalars.Take(arg.NumberOfDimensions - 1).ToList(), newScalars);
-	// }
+		if (shapeVector.length === 1) {
+			const vector = arg.scalars;
+			let result = vector[vector.length - 1];
 
-	// private IAPLValue EvaluateReductionExpression(IAPLValue arg, string operatorName)
-	// {
-	// 	var dyadicOperatorName = GetDyadicOperatorNameFromReductionName(operatorName);
-	// 	IAPLValue result;
-	//
-	// 	if (arg is APLValue<int>)
-	// 	{
-	// 		result = EvaluateReductionExpressionHelper((APLValue<int>)arg, GetDyadicIntIntOperator(dyadicOperatorName));
-	// 	}
-	// 	else
-	// 	{
-	// 		result = EvaluateReductionExpressionHelper((APLValue<double>)arg, GetDyadicDoubleDoubleOperator(dyadicOperatorName));
-	// 	}
-	//
-	// 	if (!(result is APLValue<int>) && DyadicOperatorMustReturnInt(dyadicOperatorName))
-	// 	{
-	// 		result = result.ConvertToIntEquivalent();
-	// 	}
-	//
-	// 	return result;
-	// }
+			for (let i = vector.length - 2; i >= 0; --i) {
+				result = operatorLambda(vector[i], result);
+			}
+
+			newScalars.push(result);
+		} else {
+			for (let i = 1; i <= shapeVector[0]; ++i) {
+				this.evaluateReductionExpressionHelper2(
+					arg.createSlice(i),
+					operatorLambda,
+					newScalars
+				);
+			}
+		}
+	}
+
+	private evaluateReductionExpressionHelper(
+		arg: IAPLValue,
+		operatorLambda: (x: number, y: number) => number
+	): IAPLValue {
+		if (arg.isScalar) {
+			return arg;
+		}
+
+		const newScalars: number[] = [];
+
+		this.evaluateReductionExpressionHelper2(arg, operatorLambda, newScalars);
+
+		return new APLValue(arg.shape.slice(0, arg.numberOfDimensions - 1), newScalars);
+	}
+
+	private evaluateReductionExpression(arg: IAPLValue, operatorName: string): IAPLValue {
+		const dyadicOperatorName = this.getDyadicOperatorNameFromReductionName(operatorName);
+		// IAPLValue result;
+		// let result: IAPLValue;
+
+		// if (arg is APLValue<int>)
+		// {
+		// 	result = EvaluateReductionExpressionHelper((APLValue<int>)arg, GetDyadicIntIntOperator(dyadicOperatorName));
+		// }
+		// else
+		// {
+		// 	result = EvaluateReductionExpressionHelper((APLValue<double>)arg, GetDyadicDoubleDoubleOperator(dyadicOperatorName));
+		// }
+
+		/* const result = */
+		return this.evaluateReductionExpressionHelper(
+			arg,
+			this.getDyadicIntIntOperator(dyadicOperatorName)
+		);
+
+		// if (!(result is APLValue<int>) && DyadicOperatorMustReturnInt(dyadicOperatorName))
+		// {
+		// 	result = result.ConvertToIntEquivalent();
+		// }
+
+		// return result;
+	}
 
 	// private IAPLValue EvaluateCompressHelper<T2>(APLValue<int> vector1, APLValue<T2> arg2)
 	// {
@@ -800,7 +813,7 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			case 'and':
 			case '=': // Note: E.g. (= '(2 3 5 7) '(2 3 5 7)) yields '(1 1 1 1), not 1
 			case '<':
-			//case '>':
+			case '>':
 			case 'pow':
 				return this.evaluateDyadicExpression(evaluatedArguments, this.operatorName.value);
 
@@ -810,16 +823,19 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			// case 'cos':
 			// case 'tan':
 			// 	return EvaluateExpLnEtcExpression(evaluatedArguments[0], OperatorName.Value);
-			//
-			// case '+/':
-			// case '-/':
-			// case '*/':
-			// case '//':
-			// case 'max/':
-			// case 'or/':
-			// case 'and/':
-			// 	return EvaluateReductionExpression(evaluatedArguments[0], OperatorName.Value);
-			//
+
+			case '+/':
+			case '-/':
+			case '*/':
+			case '//':
+			case 'max/':
+			case 'or/':
+			case 'and/':
+				return this.evaluateReductionExpression(
+					evaluatedArguments[0],
+					this.operatorName.value
+				);
+
 			// case 'compress':
 			// 	return EvaluateCompress(evaluatedArguments[0], evaluatedArguments[1]);
 

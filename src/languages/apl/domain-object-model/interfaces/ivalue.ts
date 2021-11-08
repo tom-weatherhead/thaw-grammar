@@ -21,9 +21,10 @@ export interface IAPLValue extends IEqualityComparable, IExpression<IAPLValue>, 
 	valueIfScalar: number | undefined;
 
 	areShapesEqual(otherValue: IAPLValue): boolean;
+	convertToIntegerEquivalent(): IAPLValue; // APLValue<int>;
+	createSlice(n: number): IAPLValue;
 	getFirstScalar(): number;
 	getShape(): IAPLValue; // APLValue<int>;
-	convertToIntegerEquivalent(): IAPLValue; // APLValue<int>;
 	toScalarIfPossible(): IAPLValue;
 	toVector(): IAPLValue;
 }

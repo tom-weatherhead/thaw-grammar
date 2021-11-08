@@ -140,6 +140,41 @@ test('APLGrammar addition test', () => {
 	expect(() => evalStringToString("(+ '(1 2 7) '(3 4))")).toThrow(Error);
 });
 
+test('APLGrammar subtraction test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(- 2 3)')).toBe('-1');
+});
+
+test('APLGrammar multiplication test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(* 2 3)')).toBe('6');
+});
+
+test('APLGrammar truncating integer division test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(/ 6 3)')).toBe('2');
+	expect(evalStringToString('(/ 7 3)')).toBe('2');
+	expect(evalStringToString('(/ 8 3)')).toBe('2');
+	expect(evalStringToString('(/ 9 3)')).toBe('3');
+});
+
+// test('APLGrammar  test', () => {
+// 	// Arrange
+// 	// Act
+// 	// Assert
+//
+// 	expect(evalStringToString('( 2 3)')).toBe('');
+// });
+
 test('APLGrammar restruct test', () => {
 	// Arrange
 	// Act
