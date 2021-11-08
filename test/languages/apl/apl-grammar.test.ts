@@ -199,3 +199,11 @@ test('APLGrammar define (user-defined functions) test', () => {
 	expect(actualResults[1]).toBe('3');
 	expect(actualResults[2]).toBe('0');
 });
+
+test('APLGrammar addition reduction test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(+/ \'(1 2 3 4))')).toBe('10');
+});
