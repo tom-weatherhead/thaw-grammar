@@ -206,4 +206,5 @@ test('APLGrammar addition reduction test', () => {
 	// Assert
 
 	expect(evalStringToString('(+/ \'(1 2 3 4))')).toBe('10');
+	expect(evalStringToString('(+/ (restruct \'(3 3) \'(1 2 3 4 5 6 7 8 9)))')).toBe('6 15 24');
 });
