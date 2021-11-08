@@ -338,3 +338,7 @@ export class APLValue implements IAPLValue {
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }
+
+export function createAPLNullValue(): IAPLValue {
+	return APLValue.createNull();
+}

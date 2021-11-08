@@ -6,7 +6,13 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 // import { createParser /*, SyntaxException */ } from 'thaw-parser';
 
-import { APLGlobalInfo, EnvironmentFrame, IAPLExpression, IAPLValue } from '../../..';
+import {
+	APLGlobalInfo,
+	createAPLNullValue,
+	EnvironmentFrame,
+	IAPLExpression,
+	IAPLValue
+} from '../../..';
 
 import {
 	// createFnParser,
@@ -108,6 +114,12 @@ test('APLGrammar null value test', () => {
 	// Act
 	// Assert
 	// expect(evalStringToString('()')).toBe('');
-	expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe('1 2\n3 4');
-	// expect(evalStringToValue("(restruct '() '())").isNull).toBe(true);
+
+	// expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe('1 2\n3 4');
+
+	expect(createAPLNullValue().isNull).toBe(true);
+
+	expect(evalStringToValue('7').isNull).toBe(false);
+	expect(evalStringToValue('\'(2 3 5 7)').isNull).toBe(false);
+	expect(evalStringToValue('(restruct \'(2 2) \'(1 2 3 4))').isNull).toBe(false);
 });
