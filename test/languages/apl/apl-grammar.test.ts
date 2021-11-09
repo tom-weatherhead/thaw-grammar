@@ -304,8 +304,9 @@ test('APLGrammar subtraction reduction test', () => {
 	// Act
 	// Assert
 
-	expect(evalStringToString("(-/ '(1 2 3 4))")).toBe('10');
-	expect(evalStringToString("(-/ (restruct '(3 3) '(1 2 3 4 5 6 7 8 9)))")).toBe('6 15 24');
+	// The reduction is performed from right to left; e.g. 1 - (2 - (3 - 4)).
+	expect(evalStringToString("(-/ '(1 2 3 4))")).toBe('-2');
+	expect(evalStringToString("(-/ (restruct '(3 3) '(1 2 3 4 5 6 7 8 9)))")).toBe('2 5 8');
 });
 
 test('APLGrammar multiplication reduction test', () => {
@@ -313,8 +314,8 @@ test('APLGrammar multiplication reduction test', () => {
 	// Act
 	// Assert
 
-	expect(evalStringToString("(*/ '(1 2 3 4))")).toBe('10');
-	expect(evalStringToString("(*/ (restruct '(3 3) '(1 2 3 4 5 6 7 8 9)))")).toBe('6 15 24');
+	expect(evalStringToString("(*/ '(1 2 3 4))")).toBe('24');
+	expect(evalStringToString("(*/ (restruct '(3 3) '(1 2 3 4 5 6 7 8 9)))")).toBe('6 120 504');
 });
 
 test('APLGrammar division reduction test', () => {
