@@ -7,6 +7,7 @@ import { IExpression } from '../../../../common/domain-object-model/iexpression'
 export interface IAPLValue extends IEqualityComparable, IExpression<IAPLValue>, IStringifiable {
 	readonly scalars: number[];
 	readonly shape: number[];
+	readonly steps: number[];
 
 	isNull: boolean;
 	isScalar: boolean;

@@ -40,6 +40,8 @@ import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
 import { Name } from 'thaw-interpreter-core';
 
+import { BeginUsage } from '../../common/domain-object-model/begin-usage';
+
 // import { EnvironmentFrame } from '../../common/domain-object-model/environment-frame';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
@@ -48,9 +50,15 @@ import { FunctionDefinition } from '../../common/domain-object-model/function-de
 
 import { IExpression } from '../../common/domain-object-model/iexpression';
 
+import { IfUsage } from '../../common/domain-object-model/if-usage';
+
+import { SetUsage } from '../../common/domain-object-model/set-usage';
+
 import { Variable } from '../../common/domain-object-model/variable';
 
 import { VariableList } from '../../common/domain-object-model/variable-list';
+
+import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
 import { IAPLValue } from './domain-object-model/interfaces/ivalue';
 
@@ -373,6 +381,10 @@ export class APLGrammar extends GrammarBase {
 			GrammarSymbol.terminalSquareBrackets
 		]);
 
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [
+			GrammarSymbol.terminalDoubleSubscripting
+		]);
+
 		// An empty vector is an int vector.
 
 		this.addProduction(GrammarSymbol.nonterminalVectorConst, [
@@ -431,6 +443,7 @@ export class APLGrammar extends GrammarBase {
 		let functionName: Name;
 		let expression: IExpression<IAPLValue>;
 		let expression2: IExpression<IAPLValue>;
+		let expression3: IExpression<IAPLValue>;
 		let expressionList: ExpressionList<IAPLValue>;
 		let intList: number[];
 		let intScalar: IAPLValue;
@@ -505,33 +518,32 @@ export class APLGrammar extends GrammarBase {
 				semanticStack.push(new VectorAssignmentUsage(variable, expression, expression2));
 				break;
 
-			// From C#:
+			case '#set':
+				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				variable = semanticStack.pop() as Variable<IAPLValue>;
+				semanticStack.push(new SetUsage<IAPLValue>(variable, expression));
+				break;
 
-			// case '#if':
-			// 	var expression3 = (IExpression<IAPLValue>)semanticStack.Pop();
-			//
-			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	semanticStack.Push(new APLIfUsage(expression, expression2, expression3));
-			// 	break;
-			//
-			// case '#while':
-			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	semanticStack.Push(new APLWhileUsage(expression, expression2));
-			// 	break;
-			//
-			// case '#set':
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
-			// 	semanticStack.Push(new SetUsage<IAPLValue>(variable, expression));
-			// 	break;
-			//
-			// case '#begin':
-			// 	expressionList = (ExpressionList<IAPLValue>)semanticStack.Pop();
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	semanticStack.Push(new BeginUsage<IAPLValue>(expression, expressionList));
-			// 	break;
+			case '#if':
+				expression3 = semanticStack.pop() as IExpression<IAPLValue>;
+				expression2 = semanticStack.pop() as IExpression<IAPLValue>;
+				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				semanticStack.push(new IfUsage<IAPLValue>(expression, expression2, expression3));
+				break;
+
+			case '#while':
+				expression2 = semanticStack.pop() as IExpression<IAPLValue>;
+				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				semanticStack.push(new WhileUsage<IAPLValue>(expression, expression2));
+				break;
+
+			case '#begin':
+				expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
+				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				semanticStack.push(new BeginUsage<IAPLValue>(expression, expressionList));
+				break;
+
+			// From C#:
 
 			// case '#makeFloatVector':
 			// 	floatList = (List<double>)semanticStack.Pop();
@@ -680,7 +692,6 @@ export class APLGrammar extends GrammarBase {
 			case GrammarSymbol.terminalIndx:
 			case GrammarSymbol.terminalTrans:
 			case GrammarSymbol.terminalSquareBrackets:
-			case GrammarSymbol.terminalAssign:
 			case GrammarSymbol.terminalDoubleSubscripting:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
@@ -702,6 +713,7 @@ export class APLGrammar extends GrammarBase {
 			// 	break;
 
 			case GrammarSymbol.terminalApostrophe:
+			case GrammarSymbol.terminalAssign:
 				// For these terminals, push nothing onto the semantic stack.
 				break;
 

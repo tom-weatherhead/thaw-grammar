@@ -13,19 +13,11 @@ import { IAPLValue } from './interfaces/ivalue';
 import { APLValue } from './data-types/value';
 
 export class VectorAssignmentUsage implements IExpression<IAPLValue> {
-	// public readonly Variable<IAPLValue> VariableName;
-	// public readonly IExpression<IAPLValue> IndicesExpression;
-	// public readonly IExpression<IAPLValue> ValuesExpression;
-
 	constructor(
 		public readonly variableName: Variable<IAPLValue>,
 		public readonly indicesExpression: IExpression<IAPLValue>,
 		public readonly valuesExpression: IExpression<IAPLValue>
-	) {
-		// VariableName = variableName;
-		// IndicesExpression = indicesExpression;
-		// ValuesExpression = valuesExpression;
-	}
+	) {}
 
 	public toString(): string {
 		// return string.Format("(:= {0} {1} {2})", VariableName, IndicesExpression, ValuesExpression);

@@ -22,14 +22,14 @@ import {
 
 // Define values for unit testing here.
 
-const testvector1 = '\'(1 1 2 3)';
-const testvector2 = '\'(5 8 13 21)';
-const logicalvector3 = '\'(1 0 1)';
-const logicalvector4 = '\'(0 1 1 0)';
+const testvector1 = "'(1 1 2 3)";
+const testvector2 = "'(5 8 13 21)";
+const logicalvector3 = "'(1 0 1)";
+const logicalvector4 = "'(0 1 1 0)";
 // Evaluate("(set floatvector5 '(1.0 1.25 1.5 1.75))");
 // Evaluate("(set floatvector6 '(2.0 3.5 5.0 7.5))");
 // Evaluate("(set testmatrix1 (restruct '(3 4) '(1 2 3 4 5 6 7 8 9 10 11 12)))");
-const testmatrix2 = '(restruct \'(3 4) \'(2 3 5 7 11 13 17 19 23 29 31 37))'
+const testmatrix2 = "(restruct '(3 4) '(2 3 5 7 11 13 17 19 23 29 31 37))";
 // Evaluate("(set logicalmatrix3 (restruct '(3 4) '(1 1 1 1 0 0 0 0 1 1 1 1)))");
 // Evaluate("(set logicalmatrix4 (restruct '(3 4) '(0 1 0 1 0 1 0 1 0 1 0 1)))");
 
@@ -70,6 +70,10 @@ function evalStringsToValue(strs: string[]): IAPLValue {
 	}
 
 	return values[0];
+}
+
+function evalStringsToString(strs: string[]): string {
+	return evalStringsToValue(strs).toString();
 }
 
 function evalStringToValue(str: string): IAPLValue {
@@ -221,6 +225,70 @@ test('APLGrammar restruct test', () => {
 
 	expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe('1 2\n3 4');
 	expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe(['1 2', '3 4'].join('\n'));
+
+	// TODO:
+
+	// 	Assert.AreEqual("5", Evaluate("(restruct '() testvector2)"));
+	// 	Assert.AreEqual("5 8 13", Evaluate("(restruct 3 testvector2)"));
+	// 	Assert.AreEqual("5 8 13", Evaluate("(restruct '(3) testvector2)"));
+	// 	Assert.AreEqual("5 8\r\n13 21", Evaluate("(restruct '(2 2) testvector2)"));
+	//
+	// 	// A three-dimensional matrix:
+	// 	Assert.AreEqual(@"Slice (0) :
+	// 1 2 3 4
+	// 5 6 7 8
+	// 9 10 11 12
+	//
+	// Slice (1) :
+	// 13 14 15 16
+	// 17 18 19 20
+	// 21 22 23 24", Evaluate("(restruct '(2 3 4) (indx 24))"));
+	//
+	// 	// A four-dimensional matrix:
+	// 	Assert.AreEqual(@"Slice (0, 0) :
+	// 1 2 3 4
+	// 5 6 7 8
+	// 9 10 11 12
+	//
+	// Slice (0, 1) :
+	// 13 14 15 16
+	// 17 18 19 20
+	// 21 22 23 24
+	//
+	// Slice (1, 0) :
+	// 25 26 27 28
+	// 29 30 31 32
+	// 33 34 35 36
+	//
+	// Slice (1, 1) :
+	// 37 38 39 40
+	// 41 42 43 44
+	// 45 46 47 48", Evaluate("(restruct '(2 2 3 4) (indx 48))"));
+	//
+	// 	// Another four-dimensional matrix:
+	// 	Assert.AreEqual(@"Slice (0, 0) :
+	// 1 2 3 4
+	// 5 6 7 8
+	//
+	// Slice (0, 1) :
+	// 9 10 11 12
+	// 13 14 15 16
+	//
+	// Slice (0, 2) :
+	// 17 18 19 20
+	// 21 22 23 24
+	//
+	// Slice (1, 0) :
+	// 25 26 27 28
+	// 29 30 31 32
+	//
+	// Slice (1, 1) :
+	// 33 34 35 36
+	// 37 38 39 40
+	//
+	// Slice (1, 2) :
+	// 41 42 43 44
+	// 45 46 47 48", Evaluate("(restruct '(2 3 2 4) (indx 48))"));
 });
 
 test('APLGrammar shape test', () => {
@@ -255,11 +323,37 @@ test('APLGrammar indx test', () => {
 });
 
 test('APLGrammar trans test', () => {
+	// Matrix transposition
 	// Arrange
 	// Act
 	// Assert
 
-	expect(evalStringToString("(trans (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+	// expect(evalStringToString("(trans (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+
+	// 	// A scalar (no-op):
+	// 	Assert.AreEqual("7", Evaluate("(trans 7)"));
+	expect(evalStringToString('(trans 7)')).toBe('7');
+
+	// 	// A vector (no-op):
+	// 	Assert.AreEqual("2 3 5 7", Evaluate("(trans '(2 3 5 7))"));
+	//
+	// 	// A two-dimensional matrix:
+	// 	Assert.AreEqual("2 11 23\r\n3 13 29\r\n5 17 31\r\n7 19 37", Evaluate("(trans testmatrix2)"));
+	//
+	// 	// A three-dimensional matrix:
+	// 	var m3string = Evaluate("(set m3 (restruct '(2 3 4) (indx 24)))");
+	//
+	// 	Assert.AreNotEqual(m3string, Evaluate("(set m3a (trans m3))"));
+	// 	Assert.AreNotEqual(m3string, Evaluate("(set m3b (trans m3a))"));
+	// 	Assert.AreEqual(m3string, Evaluate("(trans m3b)"));
+	//
+	// 	// A four-dimensional matrix:
+	// 	var m4string = Evaluate("(set m4 (restruct '(2 3 5 7) (indx 210)))");
+	//
+	// 	Assert.AreNotEqual(m4string, Evaluate("(set m4a (trans m4))"));
+	// 	Assert.AreNotEqual(m4string, Evaluate("(set m4b (trans m4a))"));
+	// 	Assert.AreNotEqual(m4string, Evaluate("(set m4c (trans m4b))"));
+	// 	Assert.AreEqual(m4string, Evaluate("(trans m4c)"));
 });
 
 test('APLGrammar compress test', () => {
@@ -270,7 +364,9 @@ test('APLGrammar compress test', () => {
 	expect(evalStringToString(`(compress '(0 0 0 0) ${testvector2})`)).toBe('');
 	expect(evalStringToString(`(compress ${logicalvector4} ${testvector2})`)).toBe('8 13');
 	expect(evalStringToString(`(compress '(0 0 0) ${testmatrix2})`)).toBe('');
-	expect(evalStringToString(`(compress ${logicalvector3} ${testmatrix2})`)).toBe('2 3 5 7\n23 29 31 37');
+	expect(evalStringToString(`(compress ${logicalvector3} ${testmatrix2})`)).toBe(
+		'2 3 5 7\n23 29 31 37'
+	);
 });
 
 test('APLGrammar cat test', () => {
@@ -278,10 +374,6 @@ test('APLGrammar cat test', () => {
 	// Act
 	// Assert
 
-	// Assert.AreEqual("7 13", Evaluate("(cat 7 13)"));
-	// Assert.AreEqual("1 1 2 3 5 8 13 21", Evaluate("(cat testvector1 testvector2)"));
-
-	// expect(evalStringToString("(cat (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
 	expect(evalStringToString('(cat 7 13)')).toBe('7 13');
 	expect(evalStringToString(`(cat ${testvector1} ${testvector2})`)).toBe('1 1 2 3 5 8 13 21');
 });
@@ -291,42 +383,50 @@ test('APLGrammar [] (subscripting) test', () => {
 	// Act
 	// Assert
 
-	expect(evalStringToString("([] (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+	// Assert.AreEqual("13", Evaluate("([] testvector2 3)"));
+	expect(evalStringToString(`([] ${testvector2} 3)`)).toBe('13');
+	// Assert.AreEqual("8 5 21", Evaluate("([] testvector2 '(2 1 4))"));
+	expect(evalStringToString(`([] ${testvector2} '(2 1 4))`)).toBe('8 5 21');
+	// Assert.AreEqual("11 13 17 19", Evaluate("([] testmatrix2 2)"));
+	expect(evalStringToString(`([] ${testmatrix2} 2)`)).toBe('11 13 17 19');
+	// Assert.AreEqual("23 29 31 37\r\n2 3 5 7\r\n2 3 5 7", Evaluate("([] testmatrix2 '(3 1 1))"));
+	expect(evalStringToString(`([] ${testmatrix2} '(3 1 1))`)).toBe(
+		'23 29 31 37\n2 3 5 7\n2 3 5 7'
+	);
 });
-
-// [Test]
-// public void DoubleSubscriptingTest()  // See exercise 13 on page 90
-// {
-// 	Assert.AreEqual("7 9\r\n17 19", Evaluate("([;] (restruct '(5 5) (indx 25)) '(2 4) '(2 4))"));
-// 	Assert.AreEqual("1 4 5\r\n6 9 10", Evaluate("([;] (restruct '(4 5) (indx 20)) '(1 2) '(1 4 5))"));
-// }
 
 test('APLGrammar [;] (double subscripting) test', () => {
 	// Arrange
 	// Act
 	// Assert
 
-	expect(evalStringToString("([;] (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
-});
+	// 	Assert.AreEqual("7 9\r\n17 19", Evaluate("([;] (restruct '(5 5) (indx 25)) '(2 4) '(2 4))"));
+	expect(evalStringToString("([;] (restruct '(5 5) (indx 25)) '(2 4) '(2 4))")).toBe(
+		'7 9\n17 19'
+	);
 
-// [Test]
-// public void VectorAssignmentTest()  // See exercise 12 on page 90
-// {
-// 	Evaluate("(set vector1 '(10 20 30 40 50))");
-// 	Evaluate("(:= vector1 4 13)");
-// 	Assert.AreEqual("10 20 30 13 50", Evaluate("vector1"));
-//
-// 	Evaluate("(set vector2 '(10 20 30 40 50))");
-// 	Evaluate("(:= vector2 '(3 5 1) '(7 9 11))");
-// 	Assert.AreEqual("11 20 7 40 9", Evaluate("vector2"));
-// }
+	// 	Assert.AreEqual("1 4 5\r\n6 9 10", Evaluate("([;] (restruct '(4 5) (indx 20)) '(1 2) '(1 4 5))"));
+	expect(evalStringToString("([;]  (restruct '(4 5) (indx 20)) '(1 2) '(1 4 5))")).toBe(
+		'1 4 5\n6 9 10'
+	);
+});
 
 test('APLGrammar := (vector assignment) test', () => {
 	// Arrange
 	// Act
 	// Assert
 
-	expect(evalStringToString("(:= (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+	expect(
+		evalStringsToString(["(set vector1 '(10 20 30 40 50))", '(:= vector1 4 13)', 'vector1'])
+	).toBe('10 20 30 13 50');
+
+	expect(
+		evalStringsToString([
+			"(set vector2 '(10 20 30 40 50))",
+			"(:= vector2 '(3 5 1) '(7 9 11))",
+			'vector2'
+		])
+	).toBe('11 20 7 40 9');
 });
 
 test('APLGrammar addition reduction test', () => {

@@ -644,143 +644,145 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 
 	// private void EvaluateTransHelper2<T>(int dimNum, List<int> shape, List<int> steps, int offset, List<T> oldScalars, List<T> newScalars)
 	// {
-	//
-	// 	if (dimNum >= shape.Count)
-	// 	{
-	// 		newScalars.Add(oldScalars[offset]);
-	// 	}
-	// 	else
-	// 	{
-	// 		var length = shape[dimNum];
-	// 		var step = steps[dimNum];
-	//
-	// 		for (var i = 0; i < length; ++i)
-	// 		{
-	// 			EvaluateTransHelper2<T>(dimNum + 1, shape, steps, offset, oldScalars, newScalars);
-	// 			offset += step;
-	// 		}
-	// 	}
-	// }
+	private evaluateTransHelper2(
+		dimNum: number,
+		shape: number[],
+		steps: number[],
+		offset: number,
+		oldScalars: number[],
+		newScalars: number[]
+	): void {
+		if (dimNum >= shape.length) {
+			newScalars.push(oldScalars[offset]);
+		} else {
+			const length = shape[dimNum];
+			const step = steps[dimNum];
 
-	// 	private IAPLValue EvaluateTransHelper<T>(APLValue<T> arg)
-	// 	{
-	// #if DEAD_CODE
-	// 		if (arg.NumberOfDimensions != 2) // TODO: Consider supporting more than 2 dimensions in the future, perhaps using CreateSlice().
-	// 		{
-	// 			return arg;
-	// 		}
-	//
-	// 		var numRows = arg.Shape[0];
-	// 		var numColumns = arg.Shape[1];
-	// 		var newScalars = new List<T>();
-	//
-	// 		for (var col = 0; col < numColumns; ++col)
-	// 		{
-	//
-	// 			for (var row = 0; row < numRows; ++row)
-	// 			{
-	// 				newScalars.Add(arg.Scalars[row * numColumns + col]);
-	// 			}
-	// 		}
-	//
-	// 		return new APLValue<T>(new List<int>() { numColumns, numRows }, newScalars);
-	// #else
-	// 		// 2014/01/20
-	//
-	// 		if (arg.NumberOfDimensions < 2)
-	// 		{
-	// 			return arg;
-	// 		}
-	//
-	// 		// Rotate the Shape and Steps vectors.
-	// 		var modifiedShape = new List<int>(arg.Shape);
-	// 		var modifiedSteps = new List<int>(arg.Steps);
-	// 		var lastShape = modifiedShape[modifiedShape.Count - 1];
-	// 		var lastStep = modifiedSteps[modifiedSteps.Count - 1];
-	// 		var newScalars = new List<T>();
-	//
-	// 		modifiedShape.RemoveAt(modifiedShape.Count - 1);
-	// 		modifiedSteps.RemoveAt(modifiedSteps.Count - 1);
-	// 		modifiedShape.Insert(0, lastShape);
-	// 		modifiedSteps.Insert(0, lastStep);
-	//
-	// 		EvaluateTransHelper2<T>(0, modifiedShape, modifiedSteps, 0, arg.Scalars, newScalars);
-	//
-	// 		return new APLValue<T>(modifiedShape, newScalars);
-	// #endif
-	// 	}
+			for (let i = 0; i < length; ++i) {
+				this.evaluateTransHelper2(dimNum + 1, shape, steps, offset, oldScalars, newScalars);
+				offset += step;
+			}
+		}
+	}
 
-	// private IAPLValue EvaluateTrans(IAPLValue arg)
-	// {
-	//
-	// 	if (arg is APLValue<int>)
-	// 	{
-	// 		return EvaluateTransHelper((APLValue<int>)arg);
-	// 	}
-	// 	else
-	// 	{
-	// 		return EvaluateTransHelper((APLValue<double>)arg);
-	// 	}
-	// }
+	private evaluateTransHelper(arg: IAPLValue): IAPLValue {
+		// #if DEAD_CODE
+		// if (arg.NumberOfDimensions != 2) // TODO: Consider supporting more than 2 dimensions in the future, perhaps using CreateSlice().
+		// {
+		// 	return arg;
+		// }
+		//
+		// var numRows = arg.Shape[0];
+		// var numColumns = arg.Shape[1];
+		// var newScalars = new List<T>();
+		//
+		// for (var col = 0; col < numColumns; ++col)
+		// {
+		//
+		// 	for (var row = 0; row < numRows; ++row)
+		// 	{
+		// 		newScalars.Add(arg.Scalars[row * numColumns + col]);
+		// 	}
+		// }
+		//
+		// return new APLValue<T>(new List<int>() { numColumns, numRows }, newScalars);
+		// #else
 
-	// private IAPLValue EvaluateSubscriptingHelper<T1>(APLValue<T1> arg1, APLValue<int> arg2)
-	// {
-	// 	var vector2 = (APLValue<int>)arg2;
-	//
-	// 	if (arg2.IsIntScalar)
-	// 	{
-	// 		vector2 = arg2.ToVector();
-	// 	}
-	//
-	// 	var arg1AsValue = (APLValue<T1>)arg1;
-	// 	var newScalars = new List<T1>();
-	//
-	// 	foreach (var n2 in vector2.Scalars)
-	// 	{
-	// 		newScalars.AddRange(arg1AsValue.CreateSlice(n2).Scalars);
-	// 	}
-	//
-	// 	var newShape = new List<int>(arg1AsValue.GetShape().Scalars);
-	//
-	// 	newShape[0] = vector2.Scalars.Count;
-	//
-	// 	return new APLValue<T1>(newShape, newScalars);
-	// }
+		// 2014/01/20
 
-	// private IAPLValue EvaluateSubscripting(IAPLValue arg1, IAPLValue arg2)
-	// {
-	// 	var arg2AsIntType = arg2 as APLValue<int>;
-	//
-	// 	if (arg2AsIntType == null)
-	// 	{
-	// 		throw new Exception("EvaluateSubscripting() : arg2's element type is not int.");
-	// 	}
-	//
-	// 	if (arg1 is APLValue<int>)
-	// 	{
-	// 		return EvaluateSubscriptingHelper((APLValue<int>)arg1, arg2AsIntType);
-	// 	}
-	// 	else
-	// 	{
-	// 		return EvaluateSubscriptingHelper((APLValue<double>)arg1, arg2AsIntType);
-	// 	}
-	// }
+		if (arg.numberOfDimensions < 2) {
+			return arg;
+		}
 
-	// private IAPLValue EvaluateDoubleSubscripting(IAPLValue A, IAPLValue B, IAPLValue C)
-	// {
-	// 	// See Table 3.3 on page 86: ([;] A B C) = (trans ([] (trans ([] A B)) C))
-	//
-	// 	if (!A.IsMatrix)
-	// 	{
-	// 		throw new Exception("[;] : A is not a matrix");
-	// 	}
-	//
-	// 	var matrix1 = EvaluateSubscripting(A, B);
-	// 	var matrix2 = EvaluateTrans(matrix1);
-	// 	var matrix3 = EvaluateSubscripting(matrix2, C);
-	//
-	// 	return EvaluateTrans(matrix3);
-	// }
+		// Rotate the Shape and Steps vectors.
+		const modifiedShape = arg.shape.slice(0);
+		const modifiedSteps = arg.steps.slice(0);
+		const lastShape = modifiedShape.pop(); // [modifiedShape.Count - 1];
+		const lastStep = modifiedSteps.pop(); // [modifiedSteps.Count - 1];
+		const newScalars: number[] = [];
+
+		if (typeof lastShape === 'undefined' || typeof lastStep === 'undefined') {
+			throw new Error('evaluateTransHelper() : Shape or steps is empty.');
+		}
+
+		// modifiedShape.RemoveAt(modifiedShape.Count - 1);
+		// modifiedSteps.RemoveAt(modifiedSteps.Count - 1);
+		modifiedShape.unshift(lastShape);
+		modifiedSteps.unshift(lastStep);
+
+		this.evaluateTransHelper2(0, modifiedShape, modifiedSteps, 0, arg.scalars, newScalars);
+
+		return new APLValue(modifiedShape, newScalars);
+		// #endif
+	}
+
+	private evaluateTrans(arg: IAPLValue): IAPLValue {
+		// if (arg is APLValue<int>)
+		// {
+		// 	return EvaluateTransHelper((APLValue<int>)arg);
+		// }
+		// else
+		// {
+		// 	return EvaluateTransHelper((APLValue<double>)arg);
+		// }
+
+		return this.evaluateTransHelper(arg);
+	}
+
+	private evaluateSubscriptingHelper(arg1: IAPLValue, arg2: IAPLValue): IAPLValue {
+		let vector2 = arg2;
+
+		if (arg2.isIntegerScalar) {
+			vector2 = arg2.toVector();
+		}
+
+		const arg1AsValue = arg1;
+		let newScalars: number[] = [];
+
+		for (const n2 of vector2.scalars) {
+			newScalars = newScalars.concat(arg1AsValue.createSlice(n2).scalars);
+		}
+
+		const newShape = arg1AsValue.getShape().scalars.slice(0); // Clone the array
+
+		newShape[0] = vector2.scalars.length;
+
+		return new APLValue(newShape, newScalars);
+	}
+
+	private evaluateSubscripting(arg1: IAPLValue, arg2: IAPLValue): IAPLValue {
+		// var arg2AsIntType = arg2 as APLValue<int>;
+		//
+		// if (arg2AsIntType == null)
+		// {
+		// 	throw new Exception("EvaluateSubscripting() : arg2's element type is not int.");
+		// }
+		//
+		// if (arg1 is APLValue<int>)
+		// {
+		// 	return EvaluateSubscriptingHelper((APLValue<int>)arg1, arg2AsIntType);
+		// }
+		// else
+		// {
+		// 	return EvaluateSubscriptingHelper((APLValue<double>)arg1, arg2AsIntType);
+		// }
+
+		return this.evaluateSubscriptingHelper(arg1, arg2);
+	}
+
+	private evaluateDoubleSubscripting(a: IAPLValue, b: IAPLValue, c: IAPLValue): IAPLValue {
+		// See Table 3.3 on page 86: ([;] A B C) = (trans ([] (trans ([] A B)) C))
+
+		if (!a.isMatrix) {
+			throw new Error('[;] : a is not a matrix');
+		}
+
+		const matrix1 = this.evaluateSubscripting(a, b);
+		const matrix2 = this.evaluateTrans(matrix1);
+		const matrix3 = this.evaluateSubscripting(matrix2, c);
+
+		return this.evaluateTrans(matrix3);
+	}
 
 	// private APLValue<int> EvaluateRandom(APLValue<int> n, APLValue<int> limit)
 	// {
@@ -853,15 +855,19 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			case 'indx':
 				return this.evaluateIndx(evaluatedArguments[0]);
 
-			// case 'trans':
-			// 	return this.evaluateTrans(evaluatedArguments[0]);
-			//
-			// case '[]':
-			// 	return this.evaluateSubscripting(evaluatedArguments[0], evaluatedArguments[1]);
-			//
-			// case '[;]':
-			// 	return this.evaluateDoubleSubscripting(evaluatedArguments[0], evaluatedArguments[1], evaluatedArguments[2]);
-			//
+			case 'trans':
+				return this.evaluateTrans(evaluatedArguments[0]);
+
+			case '[]':
+				return this.evaluateSubscripting(evaluatedArguments[0], evaluatedArguments[1]);
+
+			case '[;]':
+				return this.evaluateDoubleSubscripting(
+					evaluatedArguments[0],
+					evaluatedArguments[1],
+					evaluatedArguments[2]
+				);
+
 			// case 'random':
 			// 	return this.evaluateRandom((APLValue<int>)evaluatedArguments[0], (APLValue<int>)evaluatedArguments[1]);
 
