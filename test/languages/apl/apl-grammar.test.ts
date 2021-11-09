@@ -20,6 +20,23 @@ import {
 	createInfrastructure
 } from '../../create-infrastructure';
 
+// Define values for unit testing here.
+
+// Evaluate("(set testvector1 '(1 1 2 3))");
+// Evaluate("(set testvector2 '(5 8 13 21))");
+const testvector2 = '\'(5 8 13 21)';
+// Evaluate("(set logicalvector3 '(1 0 1))");
+const logicalvector3 = '\'(1 0 1)';
+// Evaluate("(set logicalvector4 '(0 1 1 0))");
+const logicalvector4 = '\'(0 1 1 0)';
+// Evaluate("(set floatvector5 '(1.0 1.25 1.5 1.75))");
+// Evaluate("(set floatvector6 '(2.0 3.5 5.0 7.5))");
+// Evaluate("(set testmatrix1 (restruct '(3 4) '(1 2 3 4 5 6 7 8 9 10 11 12)))");
+// Evaluate("(set testmatrix2 (restruct '(3 4) '(2 3 5 7 11 13 17 19 23 29 31 37)))");
+const testmatrix2 = '(restruct \'(3 4) \'(2 3 5 7 11 13 17 19 23 29 31 37))'
+// Evaluate("(set logicalmatrix3 (restruct '(3 4) '(1 1 1 1 0 0 0 0 1 1 1 1)))");
+// Evaluate("(set logicalmatrix4 (restruct '(3 4) '(0 1 0 1 0 1 0 1 0 1 0 1)))");
+
 const ls = LanguageSelector.APL;
 
 function createFnEval(): (str: string) => IAPLValue {
@@ -254,7 +271,16 @@ test('APLGrammar compress test', () => {
 	// Act
 	// Assert
 
-	expect(evalStringToString("(compress (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+	// Assert.AreEqual("", Evaluate("(compress '(0 0 0 0) testvector2)"));
+	// Assert.AreEqual("8 13", Evaluate("(compress logicalvector4 testvector2)"));
+	// Assert.AreEqual("", Evaluate("(compress '(0 0 0) testmatrix2)"));
+	// Assert.AreEqual("2 3 5 7\r\n23 29 31 37", Evaluate("(compress logicalvector3 testmatrix2)"));
+
+	// expect(evalStringToString("(compress (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+	expect(evalStringToString(`(compress '(0 0 0 0) ${testvector2})`)).toBe('');
+	expect(evalStringToString(`(compress ${logicalvector4} ${testvector2})`)).toBe('8 13');
+	expect(evalStringToString(`(compress '(0 0 0) ${testmatrix2})`)).toBe('');
+	expect(evalStringToString(`(compress ${logicalvector3} ${testmatrix2})`)).toBe('2 3 5 7\n23 29 31 37');
 });
 
 test('APLGrammar cat test', () => {

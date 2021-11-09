@@ -501,32 +501,27 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		// return result;
 	}
 
-	// private IAPLValue EvaluateCompressHelper<T2>(APLValue<int> vector1, APLValue<T2> arg2)
-	// {
-	//
-	// 	if (!vector1.Scalars.All(int1 => int1 == 0 || int1 == 1))
-	// 	{
-	// 		throw new Exception(string.Format("EvaluateCompress() : The vector {0} is not a logical vector.", vector1));
-	// 	}
-	//
-	// 	var numSlices = 0;
-	// 	var newScalars = new List<T2>();
-	//
-	// 	for (int i = 0; i < vector1.Scalars.Count; ++i)
-	// 	{
-	//
-	// 		if (vector1.Scalars[i] != 0)
-	// 		{
-	// 			newScalars.AddRange(arg2.CreateSlice(i + 1).Scalars);
-	// 			++numSlices;
-	// 		}
-	// 	}
-	//
-	// 	var newShape = new List<int>(arg2.GetShape().Scalars);
-	//
-	// 	newShape[0] = numSlices;
-	// 	return new APLValue<T2>(newShape, newScalars);
-	// }
+	private evaluateCompressHelper(vector1: IAPLValue, arg2: IAPLValue): IAPLValue {
+		if (!vector1.scalars.every((int1) => int1 === 0 || int1 === 1)) {
+			throw new Error(`evaluateCompress() : The vector ${vector1} is not a logical vector.`);
+		}
+
+		let numSlices = 0;
+		let newScalars: number[] = [];
+
+		for (let i = 0; i < vector1.scalars.length; ++i) {
+			if (vector1.scalars[i] !== 0) {
+				newScalars = newScalars.concat(arg2.createSlice(i + 1).scalars);
+				++numSlices;
+			}
+		}
+
+		const newShape = arg2.getShape().scalars.slice(0);
+
+		newShape[0] = numSlices;
+
+		return new APLValue(newShape, newScalars);
+	}
 
 	// private IAPLValue EvaluateCompress(IAPLValue arg1, IAPLValue arg2)
 	// {
@@ -546,6 +541,9 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	// 		return EvaluateCompressHelper(vector1, (APLValue<double>)arg2);
 	// 	}
 	// }
+	private evaluateCompress(vector1: IAPLValue, arg2: IAPLValue): IAPLValue {
+		return this.evaluateCompressHelper(vector1, arg2);
+	}
 
 	private evaluateRavelHelper(arg: IAPLValue): IAPLValue {
 		return arg.toVector();
@@ -600,33 +598,32 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		return this.evaluateRestructHelper(arg1, arg2);
 	}
 
-	// private APLValue<T> EvaluateCatHelper<T>(APLValue<T> arg1, APLValue<T> arg2)
-	// {
-	// 	var arg1Ravel = EvaluateRavelHelper(arg1);
-	// 	var arg2Ravel = EvaluateRavelHelper(arg2);
-	// 	var newScalars = new List<T>(arg1Ravel.Scalars);
-	//
-	// 	newScalars.AddRange(arg2Ravel.Scalars);
-	//
-	// 	return APLValue<T>.CreateVector(newScalars);
-	// }
+	private evaluateCatHelper(arg1: IAPLValue, arg2: IAPLValue): IAPLValue {
+		// var arg1Ravel = EvaluateRavelHelper(arg1);
+		// var arg2Ravel = EvaluateRavelHelper(arg2);
+		// var newScalars = new List<T>(arg1Ravel.Scalars);
+		//
+		// newScalars.AddRange(arg2Ravel.Scalars);
 
-	// private IAPLValue EvaluateCat(IAPLValue arg1, IAPLValue arg2)
-	// {
-	//
-	// 	if (arg1 is APLValue<int> && arg2 is APLValue<int>)
-	// 	{
-	// 		return EvaluateCatHelper((APLValue<int>)arg1, (APLValue<int>)arg2);
-	// 	}
-	// 	else if (arg1 is APLValue<double> && arg2 is APLValue<double>)
-	// 	{
-	// 		return EvaluateCatHelper((APLValue<double>)arg1, (APLValue<double>)arg2);
-	// 	}
-	// 	else
-	// 	{
-	// 		throw new Exception("EvaluateCat() : arg1 and arg2 have different element types (int vs. double).");
-	// 	}
-	// }
+		return APLValue.createVector1(arg1.scalars.concat(arg2.scalars));
+	}
+
+	private evaluateCat(arg1: IAPLValue, arg2: IAPLValue): IAPLValue {
+		// if (arg1 is APLValue<int> && arg2 is APLValue<int>)
+		// {
+		// 	return EvaluateCatHelper((APLValue<int>)arg1, (APLValue<int>)arg2);
+		// }
+		// else if (arg1 is APLValue<double> && arg2 is APLValue<double>)
+		// {
+		// 	return EvaluateCatHelper((APLValue<double>)arg1, (APLValue<double>)arg2);
+		// }
+		// else
+		// {
+		// 	throw new Exception("EvaluateCat() : arg1 and arg2 have different element types (int vs. double).");
+		// }
+
+		return this.evaluateCatHelper(arg1, arg2);
+	}
 
 	private evaluateIndxHelper(arg: IAPLValue): IAPLValue {
 		return APLValue.createVector1(generateFirstNNaturalNumbers(arg.getFirstScalar()));
@@ -838,8 +835,8 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 					this.operatorName.value
 				);
 
-			// case 'compress':
-			// 	return EvaluateCompress(evaluatedArguments[0], evaluatedArguments[1]);
+			case 'compress':
+				return this.evaluateCompress(evaluatedArguments[0], evaluatedArguments[1]);
 
 			case 'shape':
 				return evaluatedArguments[0].getShape();
@@ -850,8 +847,8 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			case 'restruct':
 				return this.evaluateRestruct(evaluatedArguments[0], evaluatedArguments[1]);
 
-			// case 'cat':
-			// 	return this.evaluateCat(evaluatedArguments[0], evaluatedArguments[1]);
+			case 'cat':
+				return this.evaluateCat(evaluatedArguments[0], evaluatedArguments[1]);
 
 			case 'indx':
 				return this.evaluateIndx(evaluatedArguments[0]);
