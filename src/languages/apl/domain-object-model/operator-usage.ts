@@ -237,21 +237,9 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			return reductionName.substring(0, reductionName.length - 1);
 		}
 
-		// switch (reductionName) {
-		// 	case '+/':
-		// 	case '-/':
-		// 	case '*/':
-		// 	case '//':
-		// 	case 'max/':
-		// 	case 'or/':
-		// 	case 'and/':
-		// 		return reductionName.substring(0, reductionName.length - 1);
-		//
-		// 	default:
 		throw new Error(
 			`getDyadicOperatorNameFromReductionName() : Unknown reduction operator '${reductionName}'.`
 		);
-		// }
 	}
 
 	private evaluateDyadicExpressionHelper(
@@ -436,14 +424,27 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		const shapeVector = arg.shape;
 
 		if (shapeVector.length === 1) {
-			const vector = arg.scalars;
-			let result = vector[vector.length - 1];
+			// const vector = arg.scalars;
+			// let result = vector[vector.length - 1];
+			//
+			// for (let i = vector.length - 2; i >= 0; --i) {
+			// 	result = operatorLambda(vector[i], result);
+			// }
+			//
+			// newScalars.push(result);
 
-			for (let i = vector.length - 2; i >= 0; --i) {
-				result = operatorLambda(vector[i], result);
+			const scalarsClone = arg.scalars.slice(0);
+			const lastScalar = scalarsClone.pop();
+
+			if (typeof lastScalar === 'undefined') {
+				throw new Error(
+					'evaluateReductionExpressionHelper2() : Called .pop() on an empty array.'
+				);
 			}
 
-			newScalars.push(result);
+			newScalars.push(
+				scalarsClone.reduceRight((x: number, y: number) => operatorLambda(y, x), lastScalar)
+			);
 		} else {
 			for (let i = 1; i <= shapeVector[0]; ++i) {
 				this.evaluateReductionExpressionHelper2(

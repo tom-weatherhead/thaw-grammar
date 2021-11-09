@@ -326,7 +326,9 @@ test('APLGrammar division reduction test', () => {
 	// The reduction is performed from right to left; e.g. 4 / (4 / (4 / 2)).
 	expect(evalStringToString("(// '(5040 7))")).toBe('720');
 	expect(evalStringToString("(// '(4 4 4 4 4 4 4 2))")).toBe('2');
-	expect(evalStringToString("(// (restruct '(3 3) '(24 12 3 120 30 6 144 48 12)))")).toBe('6 24 36');
+	expect(evalStringToString("(// (restruct '(3 3) '(24 12 3 120 30 6 144 48 12)))")).toBe(
+		'6 24 36'
+	);
 });
 
 test('APLGrammar max reduction test', () => {
