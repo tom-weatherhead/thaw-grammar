@@ -9,16 +9,10 @@ import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 export class APLWhileUsage implements IExpression<IAPLValue> {
-	// public readonly IExpression<IAPLValue> Condition;
-	// public readonly IExpression<IAPLValue> Body;
-
 	constructor(
 		public readonly condition: IExpression<IAPLValue>,
 		public readonly body: IExpression<IAPLValue>
-	) {
-		// Condition = condition;
-		// Body = body;
-	}
+	) {}
 
 	public toString(): string {
 		return `(while ${this.condition} ${this.body})`;

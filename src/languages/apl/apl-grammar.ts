@@ -48,9 +48,7 @@ import { ExpressionList } from '../../common/domain-object-model/expression-list
 
 import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
 
-import { IExpression } from '../../common/domain-object-model/iexpression';
-
-import { IfUsage } from '../../common/domain-object-model/if-usage';
+// import { IExpression } from '../../common/domain-object-model/iexpression';
 
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 
@@ -58,15 +56,19 @@ import { Variable } from '../../common/domain-object-model/variable';
 
 import { VariableList } from '../../common/domain-object-model/variable-list';
 
-import { WhileUsage } from '../../common/domain-object-model/while-usage';
-
-import { IAPLValue } from './domain-object-model/interfaces/ivalue';
+import { IAPLExpression, IAPLValue } from './domain-object-model/interfaces/ivalue';
 
 import { APLValue } from './domain-object-model/data-types/value';
+
+import { APLIfUsage } from './domain-object-model/if-usage';
+
+import { APLCondUsage } from './domain-object-model/cond-usage';
 
 import { APLOperatorUsage } from './domain-object-model/operator-usage';
 
 import { VectorAssignmentUsage } from './domain-object-model/vector-assignment-usage';
+
+import { APLWhileUsage } from './domain-object-model/while-usage';
 
 export class APLGrammar extends GrammarBase {
 	// The APL grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -91,7 +93,7 @@ export class APLGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalPrint);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		// this.terminals.push(GrammarSymbol.terminalCond);
+		this.terminals.push(GrammarSymbol.terminalCond);
 		// this.terminals.push(GrammarSymbol.terminalLet);
 		// this.terminals.push(GrammarSymbol.terminalLetStar);
 
@@ -117,13 +119,13 @@ export class APLGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalAssign);
 		this.terminals.push(GrammarSymbol.terminalDoubleSubscripting);
 		// this.terminals.push(GrammarSymbol.terminalFloatLiteral);
-		// this.terminals.push(GrammarSymbol.terminalRandom);
-		// this.terminals.push(GrammarSymbol.terminalPow);
-		// this.terminals.push(GrammarSymbol.terminalExp);
-		// this.terminals.push(GrammarSymbol.terminalLn);
-		// this.terminals.push(GrammarSymbol.terminalSin);
-		// this.terminals.push(GrammarSymbol.terminalCos);
-		// this.terminals.push(GrammarSymbol.terminalTan);
+		this.terminals.push(GrammarSymbol.terminalRandom);
+		this.terminals.push(GrammarSymbol.terminalPow);
+		this.terminals.push(GrammarSymbol.terminalExp);
+		this.terminals.push(GrammarSymbol.terminalLn);
+		this.terminals.push(GrammarSymbol.terminalSin);
+		this.terminals.push(GrammarSymbol.terminalCos);
+		this.terminals.push(GrammarSymbol.terminalTan);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
@@ -142,7 +144,7 @@ export class APLGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
 		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
 		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
 		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
 
@@ -306,20 +308,29 @@ export class APLGrammar extends GrammarBase {
 
 		// cond
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
-		//     GrammarSymbol.terminalCond,
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_Expression,
-		//     Symbol.N_Expression,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_ExprPairList, "#condUsage" }, 31));
-		// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() {
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_Expression,
-		//     Symbol.N_Expression,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_ExprPairList, "#exprPairList" }, 32));
-		// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() { Symbol.Lambda, "#emptyExprPairList" }, 33));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalCond,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExprPairList,
+			'#condUsage'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalExprPairList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExprPairList,
+			'#exprPairList'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalExprPairList, [
+			GrammarSymbol.Lambda,
+			'#emptyExprPairList'
+		]);
 
 		// let and let*
 
@@ -328,7 +339,7 @@ export class APLGrammar extends GrammarBase {
 		//     GrammarSymbol.terminalLeftBracket,
 		//     Symbol.N_VarExprList,
 		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_Expression, "#letUsage" }, 34));
+		//     Symbol.N_Expression, '#letUsage' }, 34));
 		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLet }, 35));
 		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLetStar }, 36));
 		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() {
@@ -336,8 +347,8 @@ export class APLGrammar extends GrammarBase {
 		//     Symbol.N_Variable,
 		//     Symbol.N_Expression,
 		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_VarExprList, "#varExprList" }, 37));
-		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, "#emptyVarExprList" }, 38));
+		//     Symbol.N_VarExprList, '#varExprList' }, 37));
+		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, '#emptyVarExprList' }, 38));
 
 		// APL Productions
 
@@ -385,6 +396,15 @@ export class APLGrammar extends GrammarBase {
 			GrammarSymbol.terminalDoubleSubscripting
 		]);
 
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalRandom]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPow]);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalExp]);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLn]);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalSin]);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCos]);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalTan]);
+
 		// An empty vector is an int vector.
 
 		this.addProduction(GrammarSymbol.nonterminalVectorConst, [
@@ -395,7 +415,7 @@ export class APLGrammar extends GrammarBase {
 			'#makeIntVector'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_VectorConst, new List<object>() { Symbol.T_Apostrophe, Symbol.T_LeftBracket, Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, Symbol.T_RightBracket, "#makeFloatVector" }, 59));
+		// Productions.Add(new Production(Symbol.N_VectorConst, new List<object>() { Symbol.T_Apostrophe, Symbol.T_LeftBracket, Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, Symbol.T_RightBracket, '#makeFloatVector' }, 59));
 
 		this.addProduction(GrammarSymbol.nonterminalIntegerLiteralList, [
 			GrammarSymbol.terminalIntegerLiteral,
@@ -408,11 +428,10 @@ export class APLGrammar extends GrammarBase {
 			'#emptyIntList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, "#floatList" }, 62));
+		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, '#floatList' }, 62));
 
-		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.Lambda, "#emptyFloatList" }, 63));
+		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.Lambda, '#emptyFloatList' }, 63));
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Assign, Symbol.N_Variable, Symbol.N_Expression, Symbol.N_Expression, "#vecassign" }, 64));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.terminalAssign,
 			GrammarSymbol.nonterminalVariable,
@@ -421,17 +440,7 @@ export class APLGrammar extends GrammarBase {
 			'#vecassign'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_DoubleSubscripting }, 65));
-
 		// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.T_FloatLiteral }, 66));
-
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Random }, 67));
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Pow }, 68));
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Exp }, 69));
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Ln }, 70));
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Sin }, 71));
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cos }, 72));
-		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Tan }, 73));
 	}
 
 	public get languageName(): string {
@@ -441,16 +450,17 @@ export class APLGrammar extends GrammarBase {
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;
 		let functionName: Name;
-		let expression: IExpression<IAPLValue>;
-		let expression2: IExpression<IAPLValue>;
-		let expression3: IExpression<IAPLValue>;
+		let expression: IAPLExpression;
+		let expression2: IAPLExpression;
+		let expression3: IAPLExpression;
 		let expressionList: ExpressionList<IAPLValue>;
+		let exprPairList: [IAPLExpression, IAPLExpression][];
 		let intList: number[];
 		let intScalar: IAPLValue;
 		let variable: Variable<IAPLValue>;
 		let variableList: VariableList<IAPLValue>;
 		let argumentList: VariableList<IAPLValue>;
-		let body: IExpression<IAPLValue>;
+		let body: IAPLExpression;
 
 		switch (action) {
 			case '#operatorUsage':
@@ -461,7 +471,7 @@ export class APLGrammar extends GrammarBase {
 
 			case '#expressionList':
 				expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
-				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				expression = semanticStack.pop() as IAPLExpression;
 				expressionList.value.unshift(expression);
 				semanticStack.push(expressionList);
 				break;
@@ -487,7 +497,7 @@ export class APLGrammar extends GrammarBase {
 				break;
 
 			case '#functionDefinition':
-				body = semanticStack.pop() as IExpression<IAPLValue>;
+				body = semanticStack.pop() as IAPLExpression;
 				argumentList = semanticStack.pop() as VariableList<IAPLValue>;
 				functionName = semanticStack.pop() as Name;
 				semanticStack.push(
@@ -512,34 +522,34 @@ export class APLGrammar extends GrammarBase {
 				break;
 
 			case '#vecassign':
-				expression2 = semanticStack.pop() as IExpression<IAPLValue>;
-				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				expression2 = semanticStack.pop() as IAPLExpression;
+				expression = semanticStack.pop() as IAPLExpression;
 				variable = semanticStack.pop() as Variable<IAPLValue>;
 				semanticStack.push(new VectorAssignmentUsage(variable, expression, expression2));
 				break;
 
 			case '#set':
-				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				expression = semanticStack.pop() as IAPLExpression;
 				variable = semanticStack.pop() as Variable<IAPLValue>;
 				semanticStack.push(new SetUsage<IAPLValue>(variable, expression));
 				break;
 
 			case '#if':
-				expression3 = semanticStack.pop() as IExpression<IAPLValue>;
-				expression2 = semanticStack.pop() as IExpression<IAPLValue>;
-				expression = semanticStack.pop() as IExpression<IAPLValue>;
-				semanticStack.push(new IfUsage<IAPLValue>(expression, expression2, expression3));
+				expression3 = semanticStack.pop() as IAPLExpression;
+				expression2 = semanticStack.pop() as IAPLExpression;
+				expression = semanticStack.pop() as IAPLExpression;
+				semanticStack.push(new APLIfUsage(expression, expression2, expression3));
 				break;
 
 			case '#while':
-				expression2 = semanticStack.pop() as IExpression<IAPLValue>;
-				expression = semanticStack.pop() as IExpression<IAPLValue>;
-				semanticStack.push(new WhileUsage<IAPLValue>(expression, expression2));
+				expression2 = semanticStack.pop() as IAPLExpression;
+				expression = semanticStack.pop() as IAPLExpression;
+				semanticStack.push(new APLWhileUsage(expression, expression2));
 				break;
 
 			case '#begin':
 				expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
-				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				expression = semanticStack.pop() as IAPLExpression;
 				semanticStack.push(new BeginUsage<IAPLValue>(expression, expressionList));
 				break;
 
@@ -563,29 +573,29 @@ export class APLGrammar extends GrammarBase {
 			// 	semanticStack.Push(new List<double>());
 			// 	break;
 
-			// case '#condUsage':
-			// 	exprPairList = (List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
-			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	exprPairList.Insert(0, new KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>(expression, expression2));
-			// 	semanticStack.Push(new APLCondUsage(exprPairList));
-			// 	break;
-			//
-			// case '#exprPairList':
-			// 	exprPairList = (List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
-			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	exprPairList.Insert(0, new KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>(expression, expression2));
-			// 	semanticStack.Push(exprPairList);
-			// 	break;
-			//
-			// case '#emptyExprPairList':
-			// 	semanticStack.Push(new List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>());
-			// 	break;
-			//
+			case '#condUsage':
+				exprPairList = semanticStack.pop() as [IAPLExpression, IAPLExpression][];
+				expression2 = semanticStack.pop() as IAPLExpression;
+				expression = semanticStack.pop() as IAPLExpression;
+				exprPairList.unshift([expression, expression2]);
+				semanticStack.push(new APLCondUsage(exprPairList));
+				break;
+
+			case '#exprPairList':
+				exprPairList = semanticStack.pop() as [IAPLExpression, IAPLExpression][];
+				expression2 = semanticStack.pop() as IAPLExpression;
+				expression = semanticStack.pop() as IAPLExpression;
+				exprPairList.unshift([expression, expression2]);
+				semanticStack.push(exprPairList);
+				break;
+
+			case '#emptyExprPairList':
+				semanticStack.push([] as [IAPLExpression, IAPLExpression][]);
+				break;
+
 			// case '#letUsage':
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
+			// 	expression = (IAPLExpression)semanticStack.Pop();
+			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>)semanticStack.Pop();
 			//
 			// 	var letName = (Name)semanticStack.Pop();
 			//
@@ -593,15 +603,15 @@ export class APLGrammar extends GrammarBase {
 			// 	break;
 			//
 			// case '#varExprList':
-			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
+			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>)semanticStack.Pop();
+			// 	expression = (IAPLExpression)semanticStack.Pop();
 			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
-			// 	varExprList.Insert(0, new KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>(variable, expression));
+			// 	varExprList.Insert(0, new KeyValuePair<Variable<IAPLValue>, IAPLExpression>(variable, expression));
 			// 	semanticStack.Push(varExprList);
 			// 	break;
 			//
 			// case '#emptyVarExprList':
-			// 	semanticStack.Push(new List<KeyValuePair<Variable<IAPLValue>, IExpression<IAPLValue>>>());
+			// 	semanticStack.Push(new List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>());
 			// 	break;
 
 			default:
@@ -693,6 +703,14 @@ export class APLGrammar extends GrammarBase {
 			case GrammarSymbol.terminalTrans:
 			case GrammarSymbol.terminalSquareBrackets:
 			case GrammarSymbol.terminalDoubleSubscripting:
+				// Handled by base class:
+				// case GrammarSymbol.terminalRandom:
+				// case GrammarSymbol.terminalPow:
+				// case GrammarSymbol.terminalExp:
+				// case GrammarSymbol.terminalLn:
+				// case GrammarSymbol.terminalSin:
+				// case GrammarSymbol.terminalCos:
+				// case GrammarSymbol.terminalTan:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
 				// Or: semanticStack.push(new Name(`${value}`, token.line, token.column));

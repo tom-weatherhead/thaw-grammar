@@ -9,19 +9,11 @@ import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 export class APLIfUsage implements IExpression<IAPLValue> {
-	// public readonly IExpression<IAPLValue> Condition;
-	// public readonly IExpression<IAPLValue> IfBody;
-	// public readonly IExpression<IAPLValue> ElseBody;
-
 	constructor(
 		public readonly condition: IExpression<IAPLValue>,
 		public readonly ifBody: IExpression<IAPLValue>,
 		public readonly elseBody: IExpression<IAPLValue>
-	) {
-		// Condition = condition;
-		// IfBody = ifBody;
-		// ElseBody = elseBody;
-	}
+	) {}
 
 	public toString(): string {
 		return `(if ${this.condition} ${this.ifBody} ${this.elseBody})`;

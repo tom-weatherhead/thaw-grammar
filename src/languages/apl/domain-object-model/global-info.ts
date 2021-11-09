@@ -2,13 +2,7 @@
 
 import { ArgumentException } from 'thaw-interpreter-core';
 
-// import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-
-// import { IExpression } from '../../../common/domain-object-model/iexpression';
-
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
-
-// import { Variable } from '../../../common/domain-object-model/variable';
 
 import { IAPLValue } from './interfaces/ivalue';
 

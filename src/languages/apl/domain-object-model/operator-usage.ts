@@ -2,19 +2,15 @@
 
 import { generateFirstNNaturalNumbers } from 'thaw-common-utilities.ts';
 
-import { /* ArgumentException, */ Name } from 'thaw-interpreter-core';
+import { Name } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 
-// import { IExpression } from '../../../common/domain-object-model/iexpression';
-
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';
-
-// import { Variable } from '../../../common/domain-object-model/variable';
 
 import { IAPLValue } from './interfaces/ivalue';
 
@@ -83,23 +79,15 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 				break;
 
 			case 'compress':
-				/* if (evaluatedArguments[0].IsNull)
-				{
+				if (evaluatedArguments[0].isNull) {
 					return 'The first argument is null';
-				}
-				else */ if (!evaluatedArguments[0].isVector) {
+				} else if (!evaluatedArguments[0].isVector) {
 					return 'The first argument is not a vector';
-				} else if (evaluatedArguments[1].isScalar) {
-					/* else if (evaluatedArguments[1].IsNull)
-				{
+				} else if (evaluatedArguments[1].isNull) {
 					return 'The second argument is null';
-				} */
+				} else if (evaluatedArguments[1].isScalar) {
 					return 'The second argument is a scalar';
-				} else if (
-					// evaluatedArguments[0].getShape().scalars[0] !==
-					// evaluatedArguments[1].getShape().scalars[0]
-					evaluatedArguments[0].shape[0] !== evaluatedArguments[1].shape[0]
-				) {
+				} else if (evaluatedArguments[0].shape[0] !== evaluatedArguments[1].shape[0]) {
 					return 'The length of the first argument is not equal to the number of slices in the second argument';
 				}
 
@@ -221,17 +209,7 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	// }
 
 	// private dyadicOperatorMustReturnInt(operatorName: string): boolean {
-	// 	switch (operatorName) {
-	// 		case 'or':
-	// 		case 'and':
-	// 		case '=':
-	// 		case '<':
-	// 			//case '>':
-	// 			return true;
-	//
-	// 		default:
-	// 			return false;
-	// 	}
+	// 	return ['=', '<', '>', 'or', 'and'].indexOf(operatorName) >= 0;
 	// }
 
 	private getDyadicOperatorNameFromReductionName(reductionName: string): string {
@@ -300,15 +278,8 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 				operatorLambda(n1, arg2.scalars[i])
 			);
 
-			// for (let i = 0; i < arg1AsValue.scalars.length; ++i) {
-			// 	newScalars.push(operatorLambda(arg1AsValue.scalars[i], arg2AsValue.scalars[i]));
-			// }
-
-			// return new APLValue(arg1AsValue.getShape().scalars, newScalars);
-
 			return new APLValue(arg1.shape, newScalars);
 		} else {
-			// throw new Error('evaluateDyadicExpressionHelper() : Fscked.');
 			throw new Error(
 				'Cannot perform a dyadic operation; neither value is a scalar, and the shapes are unequal.'
 			);
@@ -411,8 +382,6 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		const arg1 = evaluatedArguments[0];
 		const arg2 = evaluatedArguments[1];
 
-		// if (!arg1.isIntegerScalar) ...
-
 		const op = this.getDyadicIntIntOperator(operatorName);
 
 		return this.evaluateDyadicExpressionHelper(arg1, arg2, op);
@@ -426,15 +395,6 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		const shapeVector = arg.shape;
 
 		if (shapeVector.length === 1) {
-			// const vector = arg.scalars;
-			// let result = vector[vector.length - 1];
-			//
-			// for (let i = vector.length - 2; i >= 0; --i) {
-			// 	result = operatorLambda(vector[i], result);
-			// }
-			//
-			// newScalars.push(result);
-
 			const scalarsClone = arg.scalars.slice(0);
 			const lastScalar = scalarsClone.pop();
 
@@ -599,12 +559,6 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	}
 
 	private evaluateCatHelper(arg1: IAPLValue, arg2: IAPLValue): IAPLValue {
-		// var arg1Ravel = EvaluateRavelHelper(arg1);
-		// var arg2Ravel = EvaluateRavelHelper(arg2);
-		// var newScalars = new List<T>(arg1Ravel.Scalars);
-		//
-		// newScalars.AddRange(arg2Ravel.Scalars);
-
 		return APLValue.createVector1(arg1.scalars.concat(arg2.scalars));
 	}
 
@@ -666,28 +620,6 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	}
 
 	private evaluateTransHelper(arg: IAPLValue): IAPLValue {
-		// #if DEAD_CODE
-		// if (arg.NumberOfDimensions != 2) // TODO: Consider supporting more than 2 dimensions in the future, perhaps using CreateSlice().
-		// {
-		// 	return arg;
-		// }
-		//
-		// var numRows = arg.Shape[0];
-		// var numColumns = arg.Shape[1];
-		// var newScalars = new List<T>();
-		//
-		// for (var col = 0; col < numColumns; ++col)
-		// {
-		//
-		// 	for (var row = 0; row < numRows; ++row)
-		// 	{
-		// 		newScalars.Add(arg.Scalars[row * numColumns + col]);
-		// 	}
-		// }
-		//
-		// return new APLValue<T>(new List<int>() { numColumns, numRows }, newScalars);
-		// #else
-
 		// 2014/01/20
 
 		if (arg.numberOfDimensions < 2) {
@@ -697,23 +629,20 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		// Rotate the Shape and Steps vectors.
 		const modifiedShape = arg.shape.slice(0);
 		const modifiedSteps = arg.steps.slice(0);
-		const lastShape = modifiedShape.pop(); // [modifiedShape.Count - 1];
-		const lastStep = modifiedSteps.pop(); // [modifiedSteps.Count - 1];
+		const lastShape = modifiedShape.pop();
+		const lastStep = modifiedSteps.pop();
 		const newScalars: number[] = [];
 
 		if (typeof lastShape === 'undefined' || typeof lastStep === 'undefined') {
 			throw new Error('evaluateTransHelper() : Shape or steps is empty.');
 		}
 
-		// modifiedShape.RemoveAt(modifiedShape.Count - 1);
-		// modifiedSteps.RemoveAt(modifiedSteps.Count - 1);
 		modifiedShape.unshift(lastShape);
 		modifiedSteps.unshift(lastStep);
 
 		this.evaluateTransHelper2(0, modifiedShape, modifiedSteps, 0, arg.scalars, newScalars);
 
 		return new APLValue(modifiedShape, newScalars);
-		// #endif
 	}
 
 	private evaluateTrans(arg: IAPLValue): IAPLValue {
@@ -784,20 +713,18 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		return this.evaluateTrans(matrix3);
 	}
 
-	// private APLValue<int> EvaluateRandom(APLValue<int> n, APLValue<int> limit)
-	// {
-	// 	var intList = new List<int>();
-	// 	var r = new Random();
-	// 	var nValue = n.GetFirstScalar();
-	// 	var limitValue = limit.GetFirstScalar();
-	//
-	// 	for (int i = 0; i < nValue; ++i)
-	// 	{
-	// 		intList.Add(r.Next(limitValue));
-	// 	}
-	//
-	// 	return APLValue<int>.CreateVector(intList);
-	// }
+	private evaluateRandom(n: IAPLValue, limit: IAPLValue): IAPLValue {
+		const intList: number[] = [];
+		// var r = new Random();
+		const nValue = n.getFirstScalar();
+		const limitValue = limit.getFirstScalar();
+
+		for (let i = 0; i < nValue; ++i) {
+			intList.push(Math.floor(limitValue * Math.random()));
+		}
+
+		return APLValue.createVector1(intList);
+	}
 
 	protected override evaluateAux(
 		evaluatedArguments: IAPLValue[],
@@ -868,8 +795,8 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 					evaluatedArguments[2]
 				);
 
-			// case 'random':
-			// 	return this.evaluateRandom((APLValue<int>)evaluatedArguments[0], (APLValue<int>)evaluatedArguments[1]);
+			case 'random':
+				return this.evaluateRandom(evaluatedArguments[0], evaluatedArguments[1]);
 
 			default:
 				return super.evaluateAux(evaluatedArguments, localEnvironment, globalInfo);

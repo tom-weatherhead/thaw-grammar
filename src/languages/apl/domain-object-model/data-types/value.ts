@@ -1,6 +1,6 @@
 // thaw-grammar/src/languages/apl/domain-object-model/data-types/value.ts
 
-// import { product } from 'thaw-common-utilities.ts';
+import { product } from 'thaw-common-utilities.ts';
 
 import { EnvironmentFrame } from '../../../../common/domain-object-model/environment-frame';
 
@@ -8,7 +8,6 @@ import { IGlobalInfo } from '../../../../common/domain-object-model/iglobal-info
 
 import { IAPLValue } from '../interfaces/ivalue';
 
-// export class APLValue<T> implements IAPLValue, IExpression<IAPLValue> {
 export class APLValue implements IAPLValue {
 	public static createNull(): IAPLValue {
 		return new APLValue([], []);
@@ -40,14 +39,12 @@ export class APLValue implements IAPLValue {
 			);
 		}
 
-		// Shape.AddRange(srcShape);
-
-		this.numberOfContainedScalars = 1;
-
-		for (const s of this.shape) {
-			this.numberOfContainedScalars *= s;
-		}
-		// this.numberOfContainedScalars = product(...this.shape);
+		// this.numberOfContainedScalars = 1;
+		//
+		// for (const s of this.shape) {
+		// 	this.numberOfContainedScalars *= s;
+		// }
+		this.numberOfContainedScalars = product(...this.shape);
 
 		if (this.shape.length > 0) {
 			this.steps.push(1);
