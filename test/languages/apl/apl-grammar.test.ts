@@ -167,13 +167,39 @@ test('APLGrammar truncating integer division test', () => {
 	expect(evalStringToString('(/ 9 3)')).toBe('3');
 });
 
-// test('APLGrammar  test', () => {
-// 	// Arrange
-// 	// Act
-// 	// Assert
-//
-// 	expect(evalStringToString('( 2 3)')).toBe('');
-// });
+// case 'max':
+// case 'or':
+// case 'and':
+
+test('APLGrammar max test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(max 2 3)')).toBe('3');
+});
+
+test('APLGrammar or test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(or 0 0)')).toBe('0');
+	expect(evalStringToString('(or 0 1)')).toBe('1');
+	expect(evalStringToString('(or 1 0)')).toBe('1');
+	expect(evalStringToString('(or 1 1)')).toBe('1');
+});
+
+test('APLGrammar and test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString('(and 0 0)')).toBe('0');
+	expect(evalStringToString('(and 0 1)')).toBe('0');
+	expect(evalStringToString('(and 1 0)')).toBe('0');
+	expect(evalStringToString('(and 1 1)')).toBe('1');
+});
 
 test('APLGrammar restruct test', () => {
 	// Arrange
@@ -200,6 +226,54 @@ test('APLGrammar ravel test', () => {
 	expect(evalStringToString("(ravel (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
 });
 
+test('APLGrammar indx test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(indx (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+});
+
+test('APLGrammar trans test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(trans (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+});
+
+test('APLGrammar compress test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(compress (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+});
+
+test('APLGrammar cat test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(cat (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+});
+
+test('APLGrammar [] test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("([] (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+});
+
+test('APLGrammar [;] test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("([;] (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+});
+
 test('APLGrammar define (user-defined functions) test', () => {
 	// Arrange
 	// Act
@@ -223,4 +297,58 @@ test('APLGrammar addition reduction test', () => {
 
 	expect(evalStringToString("(+/ '(1 2 3 4))")).toBe('10');
 	expect(evalStringToString("(+/ (restruct '(3 3) '(1 2 3 4 5 6 7 8 9)))")).toBe('6 15 24');
+});
+
+test('APLGrammar subtraction reduction test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(-/ '(1 2 3 4))")).toBe('10');
+	expect(evalStringToString("(-/ (restruct '(3 3) '(1 2 3 4 5 6 7 8 9)))")).toBe('6 15 24');
+});
+
+test('APLGrammar multiplication reduction test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(*/ '(1 2 3 4))")).toBe('10');
+	expect(evalStringToString("(*/ (restruct '(3 3) '(1 2 3 4 5 6 7 8 9)))")).toBe('6 15 24');
+});
+
+test('APLGrammar division reduction test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	// The reduction is performed from right to left; e.g. 4 / (4 / (4 / 2)).
+	expect(evalStringToString("(// '(5040 7))")).toBe('720');
+	expect(evalStringToString("(// '(4 4 4 4 4 4 4 2))")).toBe('2');
+	expect(evalStringToString("(// (restruct '(3 3) '(24 12 3 120 30 6 144 48 12)))")).toBe('6 24 36');
+});
+
+test('APLGrammar max reduction test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(max/ '(1 2 3 4))")).toBe('4');
+	expect(evalStringToString("(max/ (restruct '(3 3) '(1 2 3 6 5 4 7 9 8)))")).toBe('3 6 9');
+});
+
+test('APLGrammar and reduction test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(and/ (restruct '(4 2) '(0 0 0 1 1 0 1 1)))")).toBe('0 0 0 1');
+});
+
+test('APLGrammar or reduction test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(or/ (restruct '(4 2) '(0 0 0 1 1 0 1 1)))")).toBe('0 1 1 1');
 });
