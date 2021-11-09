@@ -184,6 +184,22 @@ test('APLGrammar restruct test', () => {
 	expect(evalStringToString("(restruct '(2 2) '(1 2 3 4))")).toBe(['1 2', '3 4'].join('\n'));
 });
 
+test('APLGrammar shape test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(shape (restruct '(2 2) '(1 2 3 4)))")).toBe('2 2');
+});
+
+test('APLGrammar ravel test', () => {
+	// Arrange
+	// Act
+	// Assert
+
+	expect(evalStringToString("(ravel (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+});
+
 test('APLGrammar define (user-defined functions) test', () => {
 	// Arrange
 	// Act
@@ -205,6 +221,6 @@ test('APLGrammar addition reduction test', () => {
 	// Act
 	// Assert
 
-	expect(evalStringToString('(+/ \'(1 2 3 4))')).toBe('10');
-	expect(evalStringToString('(+/ (restruct \'(3 3) \'(1 2 3 4 5 6 7 8 9)))')).toBe('6 15 24');
+	expect(evalStringToString("(+/ '(1 2 3 4))")).toBe('10');
+	expect(evalStringToString("(+/ (restruct '(3 3) '(1 2 3 4 5 6 7 8 9)))")).toBe('6 15 24');
 });

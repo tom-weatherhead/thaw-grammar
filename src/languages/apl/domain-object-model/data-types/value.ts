@@ -308,7 +308,8 @@ export class APLValue implements IAPLValue {
 
 	public toVector(): IAPLValue {
 		// I.e. ravel
-		return APLValue.createVector2(this.numberOfContainedScalars, this.scalars);
+		// return APLValue.createVector2(this.numberOfContainedScalars, this.scalars);
+		return APLValue.createVector1(this.scalars);
 	}
 
 	public createSlice(n: number): IAPLValue {

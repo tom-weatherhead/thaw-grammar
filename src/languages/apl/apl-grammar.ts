@@ -6,6 +6,7 @@
 // Minus
 // Multiply
 // Divide (truncating integer division)
+// PlusSlash
 // Restruct
 
 // Operators TODO:
@@ -17,7 +18,6 @@
 // Max
 // Or
 // And
-// PlusSlash
 // MinusSlash
 // MultiplySlash
 // DivideSlash
