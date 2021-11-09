@@ -1,5 +1,7 @@
 // thaw-grammar/src/languages/apl/domain-object-model/operator-usage.ts
 
+import { generateFirstNNaturalNumbers } from 'thaw-common-utilities.ts';
+
 import { /* ArgumentException, */ Name } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
@@ -185,11 +187,11 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			case 'max':
 				return (x, y) => Math.max(x, y);
 			case 'or':
-				return (x, y) => (x != 0 || y != 0 ? 1 : 0);
+				return (x, y) => (x !== 0 || y !== 0 ? 1 : 0);
 			case 'and':
-				return (x, y) => (x != 0 && y != 0 ? 1 : 0);
+				return (x, y) => (x !== 0 && y !== 0 ? 1 : 0);
 			case '=':
-				return (x, y) => (x == y ? 1 : 0);
+				return (x, y) => (x === y ? 1 : 0);
 			case '<':
 				return (x, y) => (x < y ? 1 : 0);
 			case '>':
@@ -626,23 +628,22 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 	// 	}
 	// }
 
-	// private IAPLValue EvaluateIndxHelper(APLValue<int> arg)
-	// {
-	// 	return APLValue<int>.CreateVector(1.To(arg.GetFirstScalar()));
-	// }
+	private evaluateIndxHelper(arg: IAPLValue): IAPLValue {
+		return APLValue.createVector1(generateFirstNNaturalNumbers(arg.getFirstScalar()));
+	}
 
-	// private IAPLValue EvaluateIndx(IAPLValue arg)
-	// {
-	//
-	// 	if (arg is APLValue<int>)
-	// 	{
-	// 		return EvaluateIndxHelper((APLValue<int>)arg);
-	// 	}
-	// 	else
-	// 	{
-	// 		throw new Exception("EvaluateIndx() : arg's element type is not int.");
-	// 	}
-	// }
+	private evaluateIndx(arg: IAPLValue): IAPLValue {
+		// if (arg is APLValue<int>)
+		// {
+		// 	return EvaluateIndxHelper((APLValue<int>)arg);
+		// }
+		// else
+		// {
+		// 	throw new Exception("EvaluateIndx() : arg's element type is not int.");
+		// }
+
+		return this.evaluateIndxHelper(arg);
+	}
 
 	// private void EvaluateTransHelper2<T>(int dimNum, List<int> shape, List<int> steps, int offset, List<T> oldScalars, List<T> newScalars)
 	// {
@@ -823,7 +824,7 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 			// case 'sin':
 			// case 'cos':
 			// case 'tan':
-			// 	return EvaluateExpLnEtcExpression(evaluatedArguments[0], OperatorName.Value);
+			// 	return this.evaluateExpLnEtcExpression(evaluatedArguments[0], this.operatorName.value);
 
 			case '+/':
 			case '-/':
@@ -850,22 +851,22 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 				return this.evaluateRestruct(evaluatedArguments[0], evaluatedArguments[1]);
 
 			// case 'cat':
-			// 	return EvaluateCat(evaluatedArguments[0], evaluatedArguments[1]);
-			//
-			// case 'indx':
-			// 	return EvaluateIndx(evaluatedArguments[0]);
-			//
+			// 	return this.evaluateCat(evaluatedArguments[0], evaluatedArguments[1]);
+
+			case 'indx':
+				return this.evaluateIndx(evaluatedArguments[0]);
+
 			// case 'trans':
-			// 	return EvaluateTrans(evaluatedArguments[0]);
+			// 	return this.evaluateTrans(evaluatedArguments[0]);
 			//
 			// case '[]':
-			// 	return EvaluateSubscripting(evaluatedArguments[0], evaluatedArguments[1]);
+			// 	return this.evaluateSubscripting(evaluatedArguments[0], evaluatedArguments[1]);
 			//
 			// case '[;]':
-			// 	return EvaluateDoubleSubscripting(evaluatedArguments[0], evaluatedArguments[1], evaluatedArguments[2]);
+			// 	return this.evaluateDoubleSubscripting(evaluatedArguments[0], evaluatedArguments[1], evaluatedArguments[2]);
 			//
 			// case 'random':
-			// 	return EvaluateRandom((APLValue<int>)evaluatedArguments[0], (APLValue<int>)evaluatedArguments[1]);
+			// 	return this.evaluateRandom((APLValue<int>)evaluatedArguments[0], (APLValue<int>)evaluatedArguments[1]);
 
 			default:
 				return super.evaluateAux(evaluatedArguments, localEnvironment, globalInfo);

@@ -64,26 +64,44 @@ export class APLValue implements IAPLValue {
 		}
 
 		if (typeof srcList !== 'undefined') {
-			if (srcList.length === 0 && this.shape.length === 0) {
+			if (srcList.length === 0) {
+				// if (this.shape.length > 0) {
+				// 	throw new Error(
+				// 		'APLValue constructor: srcList is defined but empty, and shape.length > 0.'
+				// 	);
+				// }
+
 				// We are constructing a Null value.
 				this.numberOfContainedScalars = 0;
-			} else {
-				if (this.numberOfContainedScalars === 0) {
-					throw new Error('APLValue constructor: numberOfContainedScalars === 0');
+			}
+
+			// if (this.numberOfContainedScalars === 0) {
+			// 	throw new Error('APLValue constructor: numberOfContainedScalars === 0');
+			// }
+
+			if (this.numberOfContainedScalars === 0 /* && this.shape.length > 0 */) {
+				// throw new Error(
+				// 	'APLValue constructor: numberOfContainedScalars === 0 but shape.length > 0'
+				// );
+
+				// At least one of the shape elements must be zero. So empty the array.
+
+				while (this.shape.length > 0) {
+					this.shape.pop();
 				}
+			}
 
-				if (srcList.length == 0) {
-					throw new Error('APLValue constructor: srcList is empty');
-				}
+			// if (srcList.length == 0) {
+			// 	throw new Error('APLValue constructor: srcList is empty');
+			// }
 
-				let srcIndex = 0;
+			let srcIndex = 0;
 
-				while (this.scalars.length < this.numberOfContainedScalars) {
-					this.scalars.push(srcList[srcIndex]);
+			while (this.scalars.length < this.numberOfContainedScalars) {
+				this.scalars.push(srcList[srcIndex]);
 
-					if (++srcIndex >= srcList.length) {
-						srcIndex = 0;
-					}
+				if (++srcIndex >= srcList.length) {
+					srcIndex = 0;
 				}
 			}
 		}
@@ -188,8 +206,18 @@ export class APLValue implements IAPLValue {
 	): string {
 		const dimNum = offsetVector.length;
 
+		if (dimNum < 0 || dimNum > this.numberOfDimensions) {
+			throw new Error('APLValue.toStringHelper() : dimNum out of bounds.');
+		}
+
 		switch (this.numberOfDimensions - dimNum) {
 			case 0:
+				if (offset < 0 || offset >= this.scalars.length) {
+					throw new Error(
+						'APLValue.toStringHelper() : Scalar array index (offset) out of bounds.'
+					);
+				}
+
 				sb = sb + this.valueToString(this.scalars[offset]);
 				break;
 
@@ -253,6 +281,10 @@ export class APLValue implements IAPLValue {
 	}
 
 	public /* override */ toString(): string {
+		if (this.isNull) {
+			return '';
+		}
+
 		// var sb = new StringBuilder();
 		//
 		// ToStringHelper(sb, new List<int>(), 0, true);

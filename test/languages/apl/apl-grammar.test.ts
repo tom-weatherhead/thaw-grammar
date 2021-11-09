@@ -231,7 +231,14 @@ test('APLGrammar indx test', () => {
 	// Act
 	// Assert
 
-	expect(evalStringToString("(indx (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
+	expect(evalStringToString('(indx 0)')).toBe('');
+	expect(evalStringToString('(indx 7)')).toBe('1 2 3 4 5 6 7');
+	expect(evalStringToString("(indx '(6 12 18))")).toBe('1 2 3 4 5 6');
+	expect(evalStringToString("(indx (restruct '(2 2) '(5 7 2 3)))")).toBe('1 2 3 4 5');
+
+	// Assert.Throws<Exception>(() => Evaluate("(indx 7.5)"));
+	// Assert.Throws<Exception>(() => Evaluate("(indx '(6.25 12.5 18.75))"));
+	// Assert.Throws<Exception>(() => Evaluate("(indx (restruct '(2 2) '(5.0 7.0 2.0 3.0)))"));
 });
 
 test('APLGrammar trans test', () => {
@@ -258,7 +265,7 @@ test('APLGrammar cat test', () => {
 	expect(evalStringToString("(cat (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
 });
 
-test('APLGrammar [] test', () => {
+test('APLGrammar [] (subscripting) test', () => {
 	// Arrange
 	// Act
 	// Assert
@@ -266,7 +273,14 @@ test('APLGrammar [] test', () => {
 	expect(evalStringToString("([] (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
 });
 
-test('APLGrammar [;] test', () => {
+// [Test]
+// public void DoubleSubscriptingTest()  // See exercise 13 on page 90
+// {
+// 	Assert.AreEqual("7 9\r\n17 19", Evaluate("([;] (restruct '(5 5) (indx 25)) '(2 4) '(2 4))"));
+// 	Assert.AreEqual("1 4 5\r\n6 9 10", Evaluate("([;] (restruct '(4 5) (indx 20)) '(1 2) '(1 4 5))"));
+// }
+
+test('APLGrammar [;] (double subscripting) test', () => {
 	// Arrange
 	// Act
 	// Assert
@@ -274,20 +288,24 @@ test('APLGrammar [;] test', () => {
 	expect(evalStringToString("([;] (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
 });
 
-test('APLGrammar define (user-defined functions) test', () => {
+// [Test]
+// public void VectorAssignmentTest()  // See exercise 12 on page 90
+// {
+// 	Evaluate("(set vector1 '(10 20 30 40 50))");
+// 	Evaluate("(:= vector1 4 13)");
+// 	Assert.AreEqual("10 20 30 13 50", Evaluate("vector1"));
+//
+// 	Evaluate("(set vector2 '(10 20 30 40 50))");
+// 	Evaluate("(:= vector2 '(3 5 1) '(7 9 11))");
+// 	Assert.AreEqual("11 20 7 40 9", Evaluate("vector2"));
+// }
+
+test('APLGrammar := (vector assignment) test', () => {
 	// Arrange
 	// Act
-
-	const actualResults = evalStringsToStrings(
-		['(define neg (v) (- 0 v))', '(neg 7)', '(neg -3)', '(neg 0)'],
-		3
-	);
-
 	// Assert
-	expect(actualResults.length).toBe(3);
-	expect(actualResults[0]).toBe('-7');
-	expect(actualResults[1]).toBe('3');
-	expect(actualResults[2]).toBe('0');
+
+	expect(evalStringToString("(:= (restruct '(2 2) '(1 2 3 4)))")).toBe('1 2 3 4');
 });
 
 test('APLGrammar addition reduction test', () => {
@@ -354,4 +372,20 @@ test('APLGrammar or reduction test', () => {
 	// Assert
 
 	expect(evalStringToString("(or/ (restruct '(4 2) '(0 0 0 1 1 0 1 1)))")).toBe('0 1 1 1');
+});
+
+test('APLGrammar define (user-defined functions) test', () => {
+	// Arrange
+	// Act
+
+	const actualResults = evalStringsToStrings(
+		['(define neg (v) (- 0 v))', '(neg 7)', '(neg -3)', '(neg 0)'],
+		3
+	);
+
+	// Assert
+	expect(actualResults.length).toBe(3);
+	expect(actualResults[0]).toBe('-7');
+	expect(actualResults[1]).toBe('3');
+	expect(actualResults[2]).toBe('0');
 });

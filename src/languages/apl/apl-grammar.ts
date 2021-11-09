@@ -6,8 +6,20 @@
 // Minus
 // Multiply
 // Divide (truncating integer division)
+// Max
+// Or
+// And
 // PlusSlash
+// MinusSlash
+// MultiplySlash
+// DivideSlash
+// MaxSlash
+// OrSlash
+// AndSlash
+// Shape
+// Ravel
 // Restruct
+// Indx
 
 // Operators TODO:
 
@@ -15,23 +27,10 @@
 // LessThan
 // GreaterThan
 // Print
-// Max
-// Or
-// And
-// MinusSlash
-// MultiplySlash
-// DivideSlash
-// MaxSlash
-// OrSlash
-// AndSlash
 // Compress
-// Shape
-// Ravel
 // Cat
-// Indx
 // Trans
-// SquareBrackets
-// Apostrophe
+// SquareBrackets (subscripting)
 // Assign
 // DoubleSubscripting
 
@@ -58,6 +57,8 @@ import { IAPLValue } from './domain-object-model/interfaces/ivalue';
 import { APLValue } from './domain-object-model/data-types/value';
 
 import { APLOperatorUsage } from './domain-object-model/operator-usage';
+
+import { VectorAssignmentUsage } from './domain-object-model/vector-assignment-usage';
 
 export class APLGrammar extends GrammarBase {
 	// The APL grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -396,8 +397,17 @@ export class APLGrammar extends GrammarBase {
 		]);
 
 		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.T_FloatLiteral, Symbol.N_FloatLiteralList, "#floatList" }, 62));
+
 		// Productions.Add(new Production(Symbol.N_FloatLiteralList, new List<object>() { Symbol.Lambda, "#emptyFloatList" }, 63));
+
 		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Assign, Symbol.N_Variable, Symbol.N_Expression, Symbol.N_Expression, "#vecassign" }, 64));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalAssign,
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			'#vecassign'
+		]);
 
 		// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_DoubleSubscripting }, 65));
 
@@ -420,6 +430,7 @@ export class APLGrammar extends GrammarBase {
 		let name: Name;
 		let functionName: Name;
 		let expression: IExpression<IAPLValue>;
+		let expression2: IExpression<IAPLValue>;
 		let expressionList: ExpressionList<IAPLValue>;
 		let intList: number[];
 		let intScalar: IAPLValue;
@@ -487,6 +498,13 @@ export class APLGrammar extends GrammarBase {
 				semanticStack.push(new VariableList<IAPLValue>());
 				break;
 
+			case '#vecassign':
+				expression2 = semanticStack.pop() as IExpression<IAPLValue>;
+				expression = semanticStack.pop() as IExpression<IAPLValue>;
+				variable = semanticStack.pop() as Variable<IAPLValue>;
+				semanticStack.push(new VectorAssignmentUsage(variable, expression, expression2));
+				break;
+
 			// From C#:
 
 			// case '#if':
@@ -532,14 +550,7 @@ export class APLGrammar extends GrammarBase {
 			// case '#emptyFloatList':
 			// 	semanticStack.Push(new List<double>());
 			// 	break;
-			//
-			// case '#vecassign':
-			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	expression = (IExpression<IAPLValue>)semanticStack.Pop();
-			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
-			// 	semanticStack.Push(new VectorAssignmentUsage(variable, expression, expression2));
-			// 	break;
-			//
+
 			// case '#condUsage':
 			// 	exprPairList = (List<KeyValuePair<IExpression<IAPLValue>, IExpression<IAPLValue>>>)semanticStack.Pop();
 			// 	expression2 = (IExpression<IAPLValue>)semanticStack.Pop();
@@ -589,7 +600,9 @@ export class APLGrammar extends GrammarBase {
 	}
 
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
-		if (token.tokenType === LexicalState.tokenIdent) {
+		if (token.tokenType === LexicalState.tokenAssign) {
+			return GrammarSymbol.terminalAssign;
+		} else if (token.tokenType === LexicalState.tokenIdent) {
 			switch (token.tokenValue as string) {
 				case 'max':
 					return GrammarSymbol.terminalMax;
@@ -629,8 +642,8 @@ export class APLGrammar extends GrammarBase {
 					return GrammarSymbol.terminalSquareBrackets;
 				case "'":
 					return GrammarSymbol.terminalApostrophe;
-				case ':=':
-					return GrammarSymbol.terminalAssign;
+				// case ':=':
+				// 	return GrammarSymbol.terminalAssign;
 				case '[;]':
 					return GrammarSymbol.terminalDoubleSubscripting;
 				default:
