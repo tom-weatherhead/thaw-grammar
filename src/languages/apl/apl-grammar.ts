@@ -94,8 +94,8 @@ export class APLGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
 		this.terminals.push(GrammarSymbol.terminalCond);
-		// this.terminals.push(GrammarSymbol.terminalLet);
-		// this.terminals.push(GrammarSymbol.terminalLetStar);
+		this.terminals.push(GrammarSymbol.terminalLet);
+		this.terminals.push(GrammarSymbol.terminalLetStar);
 
 		this.terminals.push(GrammarSymbol.terminalMax);
 		this.terminals.push(GrammarSymbol.terminalOr);
@@ -145,8 +145,8 @@ export class APLGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
 		this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalVectorConst);
 		this.nonTerminals.push(GrammarSymbol.nonterminalIntegerLiteralList);
