@@ -29,7 +29,7 @@ export class CLUBeginUsage implements ICLUExpression {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		let result = this.firstExpression.evaluate(localEnvironment, cluster, globalInfo);

@@ -25,7 +25,7 @@ export class CLULetUsage implements ICLUExpression {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		const newEnvFrame = new CLUEnvironmentFrame(localEnvironment);

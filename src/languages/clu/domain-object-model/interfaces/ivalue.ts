@@ -39,12 +39,13 @@ export interface ICLUGlobalInfo {
 	valueIsInteger(value: ICLUValue): boolean;
 	valueAsInteger(value: ICLUValue): number;
 	integerAsValue(value: number): ICLUValue;
+	evaluate(expr: ICLUExpression): ICLUValue;
 }
 
 export interface ICLUExpression {
 	evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue;
 }

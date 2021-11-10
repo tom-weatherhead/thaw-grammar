@@ -18,7 +18,7 @@ export abstract class CLUFunctionDefinitionBase implements ICLUExpression, ICLUF
 
 	public abstract evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue;
 }

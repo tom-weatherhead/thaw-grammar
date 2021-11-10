@@ -44,7 +44,8 @@ export { SchemeGlobalInfo } from './languages/scheme/domain-object-model/scheme-
 export { SASLGlobalInfo } from './languages/sasl/domain-object-model/global-info';
 
 // CLU (Kamin 6/8)
-// export { CLUGlobalInfo } from './languages/clu/domain-object-model/global-info';
+export { ICLUExpression, ICLUValue } from './languages/clu/domain-object-model/interfaces/ivalue';
+export { CLUGlobalInfo } from './languages/clu/domain-object-model/global-info';
 
 // Smalltalk (Kamin 7/8)
 export * from './languages/smalltalk/domain-object-model/interfaces/iexpression';

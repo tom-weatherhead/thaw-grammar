@@ -44,7 +44,7 @@ export class CLUVariable implements ICLUVariable {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		return localEnvironment.lookup(this);

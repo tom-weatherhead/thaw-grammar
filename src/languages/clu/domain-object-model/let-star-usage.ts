@@ -25,7 +25,7 @@ export class CLULetStarUsage implements ICLUExpression {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		// #if DEAD_CODE

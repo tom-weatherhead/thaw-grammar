@@ -48,10 +48,10 @@ export class CLUNormalFunctionDefinition extends CLUFunctionDefinitionBase {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
-		globalInfo.functionDefinitions[this.functionName] = this;
+		globalInfo.functionDefinitions.set(this.functionName, this);
 
 		return globalInfo.trueValue;
 	}

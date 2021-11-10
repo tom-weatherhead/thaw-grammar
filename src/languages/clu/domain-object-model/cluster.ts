@@ -57,7 +57,7 @@ export class Cluster implements ICLUExpression {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		globalInfo.clusterDict.set(this.clusterName, this);

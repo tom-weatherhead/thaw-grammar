@@ -41,7 +41,7 @@ export class CLUSettorDefinition extends CLUFunctionDefinitionBase {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		localEnvironment.add(this.associatedVariable, this.setValue);

@@ -3,7 +3,7 @@
 import { ArgumentException } from 'thaw-interpreter-core';
 
 import {
-	ICLUEnvironmentFrame,
+	// ICLUEnvironmentFrame,
 	ICLUExpression,
 	ICLUGlobalInfo,
 	ICluster,
@@ -99,5 +99,9 @@ export class CLUGlobalInfo implements /* IGlobalInfoOps */ ICLUGlobalInfo {
 
 	public setDebug(debug: boolean): boolean {
 		return false;
+	}
+
+	public evaluate(expr: ICLUExpression): ICLUValue {
+		return expr.evaluate(this.globalEnvironment, undefined, this);
 	}
 }

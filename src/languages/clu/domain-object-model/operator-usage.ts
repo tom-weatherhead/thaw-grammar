@@ -228,20 +228,20 @@ export class CLUOperatorUsage implements ICLUExpression {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		const originalCluster = cluster;
 		let funDef: CLUFunctionDefinitionBase | undefined;
 
 		if (this.clusterName !== '') {
-			if (!globalInfo.clusterDict.has(this.clusterName)) {
+			cluster = globalInfo.clusterDict.get(this.clusterName);
+
+			if (typeof cluster === 'undefined') {
 				throw new Error(
 					`CLUOperatorUsage.evaluate() : Unknown cluster '${this.clusterName}'.`
 				);
 			}
-
-			cluster = globalInfo.clusterDict[this.clusterName];
 
 			if (!cluster.exportedDict.has(this.functionName)) {
 				//throw new Exception(string.Format("CLUOperatorUsage.Evaluate() : Cluster '{0}' does not contain an exported function named '{1}'.", ClusterName, FunctionName));
@@ -249,9 +249,9 @@ export class CLUOperatorUsage implements ICLUExpression {
 			}
 
 			funDef = cluster.exportedDict[this.functionName];
-		} else if (cluster == null) {
+		} else if (typeof cluster === 'undefined') {
 			if (builtInOperatorNames.indexOf(this.functionName) >= 0) {
-				funDef = null;
+				funDef = undefined;
 			} else {
 				if (!globalInfo.functionDefinitions.has(this.functionName)) {
 					throw new Error(
@@ -266,10 +266,10 @@ export class CLUOperatorUsage implements ICLUExpression {
 		} else if (cluster.nonExportedDict.has(this.functionName)) {
 			funDef = cluster.nonExportedDict[this.functionName];
 		} else {
-			cluster = null;
+			cluster = undefined;
 
 			if (builtInOperatorNames.indexOf(this.functionName) >= 0) {
-				funDef = null;
+				funDef = undefined;
 			} else {
 				if (!globalInfo.functionDefinitions.has(this.functionName)) {
 					throw new Error(

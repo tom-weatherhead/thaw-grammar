@@ -17,7 +17,7 @@ export class CLUCondUsage implements ICLUExpression {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		//var falseValue = globalInfo.FalseValue;
