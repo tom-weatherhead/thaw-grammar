@@ -1,6 +1,39 @@
 // clu/domain-object-model/operator-usage.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import { ArgumentException } from 'thaw-interpreter-core';
+
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUFunctionName,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue,
+	ICLUVariable
+} from './interfaces/ivalue';
+
+import { isCLUPrimitiveValue } from './data-types/primitive-value';
+
+import { CLUUserValue, isCLUUserValue } from './data-types/user-value';
+
+import { isCLUConstructorDefinition } from './constructor-definition';
+
+import { CLUEnvironmentFrame } from './environment-frame';
+
+import { CLUFunctionDefinitionBase } from './function-definition-base';
+
+import {
+	CLUNormalFunctionDefinition,
+	isCLUNormalFunctionDefinition
+} from './normal-function-definition';
+
+import { isOnePartFunctionName } from './one-part-function-name';
+
+import { isCLUSelectorDefinition } from './selector-definition';
+
+import { isCLUSettorDefinition } from './settor-definition';
+
+import { isTwoPartFunctionName } from './two-part-function-name';
 
 export class FunctionNotExportedException extends Error {
 	constructor(clusterName: string, functionName: string) {
@@ -8,32 +41,44 @@ export class FunctionNotExportedException extends Error {
 	}
 }
 
+const builtInOperatorNames = ['+', '-', '*', '/', '=', '<', '>', 'print'];
+
+const twoArgumentIntegerOperators = new Map<string, (x: number, y: number) => number>();
+const twoArgumentIntegerPredicates = new Map<string, (x: number, y: number) => boolean>();
+
+twoArgumentIntegerOperators.set('+', (x: number, y: number) => x + y);
+twoArgumentIntegerOperators.set('-', (x: number, y: number) => x - y);
+twoArgumentIntegerOperators.set('*', (x: number, y: number) => x * y);
+twoArgumentIntegerOperators.set('/', (x: number, y: number) => Math.floor(x / y));
+
+twoArgumentIntegerPredicates.set('=', (x: number, y: number) => x === y);
+twoArgumentIntegerPredicates.set('<', (x: number, y: number) => x < y);
+twoArgumentIntegerPredicates.set('>', (x: number, y: number) => x > y);
+
 export class CLUOperatorUsage implements ICLUExpression {
-	public readonly List<ICLUExpression> ExpressionList;
-	private readonly string ClusterName;
-	private readonly string FunctionName;
-	private readonly HashSet<string> BuiltInOperatorNames;
+	// public readonly expressionList: ICLUExpression[];
+	private readonly clusterName: string;
+	private readonly functionName: string;
+	// private readonly builtInOperatorNames: string[];
 
-	public CLUOperatorUsage(ICLUFunctionName operatorName, List<ICLUExpression> expressionList)
-	{
-		ExpressionList = expressionList;
+	constructor(operatorName: ICLUFunctionName, public readonly expressionList: ICLUExpression[]) {
+		// ExpressionList = expressionList;
 
-		if (operatorName is TwoPartFunctionName)
-		{
-			var o = (TwoPartFunctionName)operatorName;
+		if (isTwoPartFunctionName(operatorName)) {
+			// var o = (TwoPartFunctionName)operatorName;
 
-			ClusterName = o.ClusterPart;
-			FunctionName = o.FunctionPart;
-		}
-		else
-		{
-			var o = (OnePartFunctionName)operatorName;
+			this.clusterName = operatorName.clusterPart;
+			this.functionName = operatorName.functionPart;
+		} else if (isOnePartFunctionName(operatorName)) {
+			// var o = (OnePartFunctionName)operatorName;
 
-			ClusterName = string.Empty;
-			FunctionName = o.FunctionPart;
+			this.clusterName = '';
+			this.functionName = operatorName.functionPart;
+		} else {
+			throw new Error('CLUOperatorUsage constructor');
 		}
 
-		BuiltInOperatorNames = new HashSet<string>() { "+", "-", "*", "/", "=", "<", /* ">", */ "print" };
+		// BuiltInOperatorNames = new HashSet<string>() { "+", "-", "*", "/", "=", "<", /* ">", */ "print" };
 	}
 
 	/*
@@ -43,140 +88,129 @@ export class CLUOperatorUsage implements ICLUExpression {
 	}
 	 */
 
-	protected bool TryGetExpectedNumArgs(CLUFunctionDefinitionBase funDef, Cluster cluster, CLUGlobalInfo globalInfo, out int result)
-	{
+	protected tryGetExpectedNumArgs(
+		funDef: CLUFunctionDefinitionBase | undefined,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): number | undefined {
+		if (typeof funDef === 'undefined') {
+			switch (this.functionName) {
+				case 'print':
+					return 1;
 
-		if (funDef == null)
-		{
-
-			switch (FunctionName)
-			{
-				case "print":
-					result = 1;
-					return true;
-
-				case "+":
-				case "-":
-				case "*":
-				case "/":
-				case "=":
-				case "<":
-				//case ">":
-					result = 2;
-					return true;
+				case '+':
+				case '-':
+				case '*':
+				case '/':
+				case '=':
+				case '<':
+				case '>':
+					return 2;
 
 				default:
-					throw new Exception(string.Format("TryGetExpectedNumArgs() : Unknown built-in operator '{0}'.", FunctionName));
+					throw new Error(
+						`TryGetExpectedNumArgs() : Unknown built-in operator '${this.functionName}'.`
+					);
 			}
 		}
 
-		if (funDef is CLUNormalFunctionDefinition)
-		{
-			var normalFunDef = (CLUNormalFunctionDefinition)funDef;
+		if (isCLUNormalFunctionDefinition(funDef)) {
+			// var normalFunDef = (CLUNormalFunctionDefinition)funDef;
 
-			result = normalFunDef.ArgList.Count;
-			return true;
-		}
-		else if (funDef is CLUConstructorDefinition)
-		{
-			result = cluster.ClRep.Count;
-			return true;
-		}
-		else if (funDef is CLUSelectorDefinition)
-		{
-			result = 1;
-			return true;
-		}
-		else if (funDef is CLUSettorDefinition)
-		{
-			result = 2;
-			return true;
-		}
-		else
-		{
-			throw new Exception(string.Format("TryGetExpectedNumArgs() : Unknown operator type '{0}'.", funDef.GetType().FullName));
+			return funDef.argList.length;
+		} else if (isCLUConstructorDefinition(funDef)) {
+			return cluster.clRep.length;
+		} else if (isCLUSelectorDefinition(funDef)) {
+			return 1;
+		} else if (isCLUSettorDefinition(funDef)) {
+			return 2;
+		} else {
+			throw new Error('TryGetExpectedNumArgs() : Unknown operator type.');
 		}
 	}
 
-	protected void CheckArgTypes(CLUFunctionDefinitionBase funDef, Cluster cluster, List<ICLUValue> evaluatedArguments)
-	{
+	protected checkArgTypes(
+		funDef: CLUFunctionDefinitionBase,
+		cluster: ICluster,
+		evaluatedArguments: ICLUValue[]
+	): void {
+		if (typeof funDef !== 'undefined') {
+			let associatedVariable: ICLUVariable | undefined;
 
-		if (funDef != null)
-		{
-			CLUVariable associatedVariable = null;
+			if (isCLUSelectorDefinition(funDef)) {
+				// var selector = (CLUSelectorDefinition)funDef;
 
-			if (funDef is CLUSelectorDefinition)
-			{
-				var selector = (CLUSelectorDefinition)funDef;
+				associatedVariable = funDef.associatedVariable;
+			} else if (isCLUSettorDefinition(funDef)) {
+				// var settor = (CLUSettorDefinition)funDef;
 
-				associatedVariable = selector.AssociatedVariable;
-			}
-			else if (funDef is CLUSettorDefinition)
-			{
-				var settor = (CLUSettorDefinition)funDef;
-
-				associatedVariable = settor.AssociatedVariable;
+				associatedVariable = funDef.associatedVariable;
 			}
 
-			if (associatedVariable != null)
-			{
-				var userValue = evaluatedArguments[0] as CLUUserValue;
+			if (typeof associatedVariable !== 'undefined') {
+				const userValue = evaluatedArguments[0]; // as ICLUUserValue;
 
-				if (userValue == null)
-				{
-					throw new Exception("Selector/settor arg type check: First arg is not a CLUUserValue.");
-				}
-				else if (!userValue.Value.Dict.ContainsKey(associatedVariable))
-				{
-					throw new Exception(string.Format("Selector/settor arg type check: First arg does not contain the member var {0}.", associatedVariable));
+				if (!isCLUUserValue(userValue)) {
+					throw new Error(
+						'Selector/settor arg type check: First arg is not a CLUUserValue.'
+					);
+				} else if (!userValue.value.has(associatedVariable)) {
+					throw new Error(
+						`Selector/settor arg type check: First arg does not contain the member var ${associatedVariable}.`
+					);
 				}
 			}
 
 			return;
 		}
 
-		if (IntegerOperatorKeeper.TwoArgumentOperators.ContainsKey(FunctionName) ||
-			IntegerOperatorKeeper.TwoArgumentPredicates.ContainsKey(FunctionName))
-		{
-
-			if (!(evaluatedArguments[0] is CLUPrimitiveValue))
-			{
-				throw new ArgumentException(string.Format("Operator {0} : First argument is not a number.", FunctionName));
-			}
-
-			if (!(evaluatedArguments[1] is CLUPrimitiveValue))
-			{
-				throw new ArgumentException(string.Format("Operator {0} : Second argument is not a number.", FunctionName));
-			}
-		}
+		// if (IntegerOperatorKeeper.TwoArgumentOperators.ContainsKey(this.functionName) ||
+		// 	IntegerOperatorKeeper.TwoArgumentPredicates.ContainsKey(this.functionName)) {
+		//
+		// 	if (!isCLUPrimitiveValue(evaluatedArguments[0])) {
+		// 		throw new ArgumentException(`Operator ${this.functionName} : First argument is not a number.`, 'evaluatedArguments[0]');
+		// 	}
+		//
+		// 	if (!isCLUPrimitiveValue(evaluatedArguments[1])) {
+		// 		throw new ArgumentException(`Operator ${this.functionName} : Second argument is not a number.`, 'evaluatedArguments[1]');
+		// 	}
+		// }
 	}
 
-	protected ICLUValue EvaluateNormal(CLUNormalFunctionDefinition funDef, List<ICLUValue> evaluatedArguments, Cluster cluster, CLUGlobalInfo globalInfo)
-	{
-		int firstArgAsInt = (evaluatedArguments.Count > 0 && globalInfo.ValueIsInteger(evaluatedArguments[0]))
-			? globalInfo.ValueAsInteger(evaluatedArguments[0]) : 0;
-		int secondArgAsInt = (evaluatedArguments.Count > 1 && globalInfo.ValueIsInteger(evaluatedArguments[1]))
-			? globalInfo.ValueAsInteger(evaluatedArguments[1]) : 0;
+	protected evaluateNormal(
+		funDef: CLUNormalFunctionDefinition,
+		evaluatedArguments: ICLUValue[],
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
+		const firstArgAsInt =
+			evaluatedArguments.length > 0 && globalInfo.valueIsInteger(evaluatedArguments[0])
+				? globalInfo.valueAsInteger(evaluatedArguments[0])
+				: 0;
+		const secondArgAsInt =
+			evaluatedArguments.length > 1 && globalInfo.valueIsInteger(evaluatedArguments[1])
+				? globalInfo.valueAsInteger(evaluatedArguments[1])
+				: 0;
 
-		if (cluster == null)
-		{
+		if (typeof cluster === 'undefined') {
+			const operator = twoArgumentIntegerOperators.get(this.functionName);
+			const predicate = twoArgumentIntegerPredicates.get(this.functionName);
 
-			if (IntegerOperatorKeeper.TwoArgumentOperators.ContainsKey(FunctionName))
-			{
-				return globalInfo.IntegerAsValue(IntegerOperatorKeeper.TwoArgumentOperators[FunctionName](firstArgAsInt, secondArgAsInt));
+			if (typeof operator !== 'undefined') {
+				return globalInfo.integerAsValue(operator(firstArgAsInt, secondArgAsInt));
+			} else if (typeof predicate !== 'undefined') {
+				return predicate(firstArgAsInt, secondArgAsInt)
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 			}
-			else if (IntegerOperatorKeeper.TwoArgumentPredicates.ContainsKey(FunctionName))
-			{
-				return IntegerOperatorKeeper.TwoArgumentPredicates[FunctionName](firstArgAsInt, secondArgAsInt) ? globalInfo.TrueValue : globalInfo.FalseValue;
-			}
 
-			switch (FunctionName)
-			{
-				case "=":
-					return evaluatedArguments[0].Equals(evaluatedArguments[1]) ? globalInfo.TrueValue : globalInfo.FalseValue;
+			switch (this.functionName) {
+				// case "=":
+				// 	return evaluatedArguments[0].equals(evaluatedArguments[1]) ? globalInfo.trueValue : globalInfo.falseValue;
 
-				case "print":
-					Console.WriteLine(evaluatedArguments[0]);
+				case 'print':
+					console.log(evaluatedArguments[0]);
+
 					return evaluatedArguments[0];
 
 				default:
@@ -185,129 +219,111 @@ export class CLUOperatorUsage implements ICLUExpression {
 		}
 
 		// Evaluate a user-defined function.
-		var newEnvironment = new CLUEnvironmentFrame(globalInfo.GlobalEnvironment);
+		const newEnvironment = new CLUEnvironmentFrame(globalInfo.globalEnvironment);
 
-		newEnvironment.Compose(funDef.ArgList, evaluatedArguments);
-		return funDef.Body.Evaluate(newEnvironment, cluster, globalInfo);
+		newEnvironment.compose(funDef.argList, evaluatedArguments);
+
+		return funDef.body.evaluate(newEnvironment, cluster, globalInfo);
 	}
 
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
-		Cluster originalCluster = cluster;
-		CLUFunctionDefinitionBase funDef = null;
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
+		const originalCluster = cluster;
+		let funDef: CLUFunctionDefinitionBase | undefined;
 
-		if (!string.IsNullOrEmpty(ClusterName))
-		{
-
-			if (!globalInfo.ClusterDict.ContainsKey(ClusterName))
-			{
-				throw new Exception(string.Format("CLUOperatorUsage.Evaluate() : Unknown cluster '{0}'.", ClusterName));
+		if (this.clusterName !== '') {
+			if (!globalInfo.clusterDict.has(this.clusterName)) {
+				throw new Error(
+					`CLUOperatorUsage.evaluate() : Unknown cluster '${this.clusterName}'.`
+				);
 			}
 
-			cluster = globalInfo.ClusterDict[ClusterName];
+			cluster = globalInfo.clusterDict[this.clusterName];
 
-			if (!cluster.ExportedDict.ContainsKey(FunctionName))
-			{
+			if (!cluster.exportedDict.has(this.functionName)) {
 				//throw new Exception(string.Format("CLUOperatorUsage.Evaluate() : Cluster '{0}' does not contain an exported function named '{1}'.", ClusterName, FunctionName));
-				throw new FunctionNotExportedException(ClusterName, FunctionName);
+				throw new FunctionNotExportedException(this.clusterName, this.functionName);
 			}
 
-			funDef = cluster.ExportedDict[FunctionName];
-		}
-		else if (cluster == null)
-		{
-
-			if (BuiltInOperatorNames.Contains(FunctionName))
-			{
+			funDef = cluster.exportedDict[this.functionName];
+		} else if (cluster == null) {
+			if (builtInOperatorNames.indexOf(this.functionName) >= 0) {
 				funDef = null;
-			}
-			else
-			{
-
-				if (!globalInfo.FunctionDefinitions.ContainsKey(FunctionName))
-				{
-					throw new Exception(string.Format("CLUOperatorUsage.Evaluate() : Unknown global function '{0}'.", FunctionName));
+			} else {
+				if (!globalInfo.functionDefinitions.has(this.functionName)) {
+					throw new Error(
+						`CLUOperatorUsage.evaluate() : Unknown global function '${this.functionName}'.`
+					);
 				}
 
-				funDef = globalInfo.FunctionDefinitions[FunctionName];
+				funDef = globalInfo.functionDefinitions[this.functionName];
 			}
-		}
-		else if (cluster.ExportedDict.ContainsKey(FunctionName))
-		{
-			funDef = cluster.ExportedDict[FunctionName];
-		}
-		else if (cluster.NonExportedDict.ContainsKey(FunctionName))
-		{
-			funDef = cluster.NonExportedDict[FunctionName];
-		}
-		else
-		{
+		} else if (cluster.exportedDict.has(this.functionName)) {
+			funDef = cluster.exportedDict[this.functionName];
+		} else if (cluster.nonExportedDict.has(this.functionName)) {
+			funDef = cluster.nonExportedDict[this.functionName];
+		} else {
 			cluster = null;
 
-			if (BuiltInOperatorNames.Contains(FunctionName))
-			{
+			if (builtInOperatorNames.indexOf(this.functionName) >= 0) {
 				funDef = null;
-			}
-			else
-			{
-
-				if (!globalInfo.FunctionDefinitions.ContainsKey(FunctionName))
-				{
-					throw new Exception(string.Format("CLUOperatorUsage.Evaluate() : Unknown global function '{0}'.", FunctionName));
+			} else {
+				if (!globalInfo.functionDefinitions.has(this.functionName)) {
+					throw new Error(
+						`CLUOperatorUsage.evaluate() : Unknown global function '${this.functionName}'.`
+					);
 				}
 
-				funDef = globalInfo.FunctionDefinitions[FunctionName];
+				funDef = globalInfo.functionDefinitions[this.functionName];
 			}
 		}
 
 		// At this point, funDef == null means that it's a built-in operator.
 
-		var actualNumArgs = ExpressionList.Count;
-		int expectedNumArgs;
+		const actualNumArgs = this.expressionList.length;
+		const expectedNumArgs = this.tryGetExpectedNumArgs(funDef, cluster, globalInfo);
 
-		if (!TryGetExpectedNumArgs(funDef, cluster, globalInfo, out expectedNumArgs))
-		{
-			throw new Exception(string.Format("CLUOperatorUsage : Unknown operator name '{0}'.", FunctionName));
-		}
-		else if (actualNumArgs != expectedNumArgs)
-		{
-			throw new Exception(string.Format("CLUOperatorUsage : Expected {0} arguments for operator '{1}', instead of the actual {2} arguments.",
-				expectedNumArgs, FunctionName, actualNumArgs));
+		if (typeof expectedNumArgs === 'undefined') {
+			throw new Error(
+				`CLUOperatorUsage.evaluate() : Unknown operator name '${this.functionName}'.`
+			);
+		} else if (actualNumArgs != expectedNumArgs) {
+			throw new Error(
+				`CLUOperatorUsage : Expected ${expectedNumArgs} arguments for operator '${this.functionName}', instead of the actual ${actualNumArgs} arguments.`
+			);
 		}
 
 		// originalCluster
 		//List<ICLUValue> evaluatedArguments = ExpressionList.Select(expr => expr.Evaluate(localEnvironment, cluster, globalInfo)).ToList();
-		List<ICLUValue> evaluatedArguments = ExpressionList.Select(expr => expr.Evaluate(localEnvironment, originalCluster, globalInfo)).ToList();
 
-		CheckArgTypes(funDef, cluster, evaluatedArguments);
+		const evaluatedArguments = this.expressionList.map((expr) =>
+			expr.evaluate(localEnvironment, originalCluster, globalInfo)
+		);
 
-		if (funDef == null || funDef is CLUNormalFunctionDefinition)
-		{
-			return EvaluateNormal((CLUNormalFunctionDefinition)funDef, evaluatedArguments, cluster, globalInfo);
-		}
-		else if (funDef is CLUConstructorDefinition)
-		{
-			var newEnvironment = new CLUEnvironmentFrame(globalInfo.GlobalEnvironment);
+		this.checkArgTypes(funDef, cluster, evaluatedArguments);
 
-			newEnvironment.Compose(cluster.ClRep, evaluatedArguments);
+		if (/* funDef == null || */ isCLUNormalFunctionDefinition(funDef)) {
+			return this.evaluateNormal(funDef, evaluatedArguments, cluster, globalInfo);
+		} else if (isCLUConstructorDefinition(funDef)) {
+			const newEnvironment = new CLUEnvironmentFrame(globalInfo.globalEnvironment);
+
+			newEnvironment.compose(cluster.clRep, evaluatedArguments);
 			return new CLUUserValue(cluster, newEnvironment);
-		}
-		else if (funDef is CLUSelectorDefinition)
-		{
-			var instance = (CLUUserValue)evaluatedArguments[0];
+		} else if (isCLUSelectorDefinition(funDef) && isCLUUserValue(evaluatedArguments[0])) {
+			const instance = evaluatedArguments[0];
 
-			return funDef.Evaluate(instance.Value, cluster, globalInfo);
-		}
-		else if (funDef is CLUSettorDefinition)
-		{
-			var settor = (CLUSettorDefinition)funDef;
-			var instance = (CLUUserValue)evaluatedArguments[0];
+			return funDef.evaluate(instance.value, cluster, globalInfo);
+		} else if (isCLUSettorDefinition(funDef) && isCLUUserValue(evaluatedArguments[0])) {
+			const settor = funDef;
+			const instance = evaluatedArguments[0];
 
-			settor.SetValue = evaluatedArguments[1];
-			return funDef.Evaluate(instance.Value, cluster, globalInfo);
-		}
-		else
-		{
-			throw new Exception("CLUOperatorUsage : Failed to evaluate; unrecognized type of funDef.");
+			settor.setValue = evaluatedArguments[1];
+			return funDef.evaluate(instance.value, cluster, globalInfo);
+		} else {
+			throw new Error('CLUOperatorUsage : Failed to evaluate; unrecognized type of funDef.');
 		}
 	}
 }

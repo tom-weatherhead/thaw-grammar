@@ -2,7 +2,20 @@
 
 import { ICLUEnvironmentFrame, ICLUGlobalInfo, ICluster, ICLUValue } from '../interfaces/ivalue';
 
+const typenameCLUUserValue = 'CLUUserValue';
+
+export function isCLUUserValue(obj: unknown): obj is CLUUserValue {
+	const v = obj as CLUUserValue;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameCLUUserValue
+	);
+}
+
 export class CLUUserValue implements ICLUValue {
+	public readonly typename: string = typenameCLUUserValue;
 	// public readonly owner: ICluster;
 	// public readonly value: ICLUEnvironmentFrame;
 
@@ -20,7 +33,11 @@ export class CLUUserValue implements ICLUValue {
 		return '<CLUUserValue>';
 	}
 
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
 		return this;
 	}
 }

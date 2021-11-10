@@ -1,16 +1,42 @@
 // clu/domain-object-model/normal-function-definition.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue,
+	ICLUVariable
+} from './interfaces/ivalue';
+
+import { CLUFunctionDefinitionBase } from './function-definition-base';
+
+const typenameCLUNormalFunctionDefinition = 'CLUNormalFunctionDefinition';
+
+export function isCLUNormalFunctionDefinition(obj: unknown): obj is CLUNormalFunctionDefinition {
+	const v = obj as CLUNormalFunctionDefinition;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameCLUNormalFunctionDefinition
+	);
+}
 
 export class CLUNormalFunctionDefinition extends CLUFunctionDefinitionBase {
-	public readonly List<CLUVariable> ArgList;
-	public readonly ICLUExpression Body;
+	public readonly typename: string = typenameCLUNormalFunctionDefinition;
+	// public readonly List<CLUVariable> ArgList;
+	// public readonly ICLUExpression Body;
 
-	constructor(string functionName, List<CLUVariable> argList, ICLUExpression body) {
+	constructor(
+		functionName: string,
+		public readonly argList: ICLUVariable[],
+		public readonly body: ICLUExpression
+	) {
 		super(functionName);
 
-		ArgList = argList;
-		Body = body;
+		// ArgList = argList;
+		// Body = body;
 	}
 
 	/*
@@ -20,8 +46,13 @@ export class CLUNormalFunctionDefinition extends CLUFunctionDefinitionBase {
 	}
 	 */
 
-	 public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
-		globalInfo.FunctionDefinitions[FunctionName] = this;
-		return globalInfo.TrueValue;
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
+		globalInfo.functionDefinitions[this.functionName] = this;
+
+		return globalInfo.trueValue;
 	}
 }

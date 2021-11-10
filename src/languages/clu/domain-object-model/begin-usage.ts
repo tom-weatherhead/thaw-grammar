@@ -1,12 +1,21 @@
 // clu/domain-object-model/begin-usage.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue
+} from './interfaces/ivalue';
 
 export class CLUBeginUsage implements ICLUExpression {
 	// public readonly ICLUExpression FirstExpression;
 	// public readonly List<ICLUExpression> ExpressionList;
 
-	constructor(public readonly firstExpression: ICLUExpression, public readonly expressionList: ICLUExpression[]) {
+	constructor(
+		public readonly firstExpression: ICLUExpression,
+		public readonly expressionList: ICLUExpression[]
+	) {
 		// FirstExpression = firstExpression;
 		// ExpressionList = expressionList;
 	}
@@ -18,7 +27,11 @@ export class CLUBeginUsage implements ICLUExpression {
 	}
 	 */
 
-	 public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
 		let result = this.firstExpression.evaluate(localEnvironment, cluster, globalInfo);
 
 		for (const expression of this.expressionList) {

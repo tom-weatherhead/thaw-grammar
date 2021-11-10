@@ -1,12 +1,17 @@
 // clu/domain-object-model/variable.ts
 
-import { ICLUEnvironmentFrame, ICLUGlobalInfo, ICluster, ICLUValue, ICLUVariable } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue,
+	ICLUVariable
+} from './interfaces/ivalue';
 
 export class CLUVariable implements ICLUVariable {
 	// public readonly string Name;
 
 	constructor(public readonly name: string) {
-
 		if (!name) {
 			// throw new ArgumentNullException("name", "A CLUVariable cannot have a null or empty name");
 			throw new Error('A CLUVariable cannot have a falsy name.');
@@ -37,7 +42,11 @@ export class CLUVariable implements ICLUVariable {
 	// 	return Name.GetHashCode();
 	// }
 
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
 		return localEnvironment.lookup(this);
 	}
 }

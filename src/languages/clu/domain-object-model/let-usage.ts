@@ -1,25 +1,39 @@
 // clu/domain-object-model/let-usage.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue,
+	ICLUVariable
+} from './interfaces/ivalue';
+
+import { CLUEnvironmentFrame } from './environment-frame';
 
 export class CLULetUsage implements ICLUExpression {
-	public readonly List<KeyValuePair<CLUVariable, ICLUExpression>> Bindings;
-	public readonly ICLUExpression Expression;
+	// public readonly List<KeyValuePair<CLUVariable, ICLUExpression>> Bindings;
+	// public readonly ICLUExpression Expression;
 
-	public CLULetUsage(List<KeyValuePair<CLUVariable, ICLUExpression>> bindings, ICLUExpression expression)
-	{
-		Bindings = bindings;
-		Expression = expression;
+	constructor(
+		public readonly bindings: [ICLUVariable, ICLUExpression][],
+		public readonly expression: ICLUExpression
+	) {
+		// Bindings = bindings;
+		// Expression = expression;
 	}
 
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
-		var newEnvFrame = new CLUEnvironmentFrame(localEnvironment);
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
+		const newEnvFrame = new CLUEnvironmentFrame(localEnvironment);
 
-		foreach (var binding in Bindings)
-		{
-			newEnvFrame.Add(binding.Key, binding.Value.Evaluate(localEnvironment, cluster, globalInfo));
+		for (const [key, value] of this.bindings) {
+			newEnvFrame.add(key, value.evaluate(localEnvironment, cluster, globalInfo));
 		}
 
-		return Expression.Evaluate(newEnvFrame, cluster, globalInfo);
+		return this.expression.evaluate(newEnvFrame, cluster, globalInfo);
 	}
 }

@@ -6,16 +6,33 @@ import { CLUUserValue } from './data-types/user-value';
 
 import { CLUFunctionDefinitionBase } from './function-definition-base';
 
+const typenameCLUConstructorDefinition = 'CLUConstructorDefinition';
+
+export function isCLUConstructorDefinition(obj: unknown): obj is CLUConstructorDefinition {
+	const v = obj as CLUConstructorDefinition;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameCLUConstructorDefinition
+	);
+}
+
 export class CLUConstructorDefinition extends CLUFunctionDefinitionBase {
+	public readonly typename: string = typenameCLUConstructorDefinition;
 	//public readonly string ClusterName;
 
-	constructor( /* string funcName, */ clusterName: string) {
+	constructor(/* string funcName, */ clusterName: string) {
 		super(clusterName);
 
 		//ClusterName = clusterName;
 	}
 
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
 		/*
 		// ClusterName is the name of the cluster of which newInstance is an instance.
 

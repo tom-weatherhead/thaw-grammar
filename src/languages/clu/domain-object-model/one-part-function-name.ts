@@ -1,41 +1,58 @@
 // one-part-function-name.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUFunctionName,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue
+} from './interfaces/ivalue';
 
-public class OnePartFunctionName : ICLUFunctionName
-{
-	public readonly string FunctionPart;
+const typenameOnePartFunctionName = 'OnePartFunctionName';
 
-	public OnePartFunctionName(string f)
-	{
-		FunctionPart = f;
+export function isOnePartFunctionName(obj: unknown): obj is OnePartFunctionName {
+	const v = obj as OnePartFunctionName;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameOnePartFunctionName
+	);
+}
+
+export class OnePartFunctionName implements ICLUFunctionName {
+	public typename: string = typenameOnePartFunctionName;
+	// public readonly string FunctionPart;
+
+	constructor(public readonly functionPart: string) {
+		// FunctionPart = f;
 	}
 
-	public override string ToString()
-	{
-		return FunctionPart;
+	public toString(): string {
+		return this.functionPart;
 	}
 
-	public override bool Equals(object obj)
-	{
-
-		if (object.ReferenceEquals(this, obj))
-		{
-			return true;
-		}
-
-		if (obj == null || !GetType().Equals(obj.GetType()))
-		{
-			return false;
-		}
-
-		var otherOnePartFunName = (OnePartFunctionName)obj;
-
-		return FunctionPart == otherOnePartFunName.FunctionPart;
-	}
-
-	public override int GetHashCode()
-	{
-		return FunctionPart.GetHashCode();
-	}
+	// public override bool Equals(object obj)
+	// {
+	//
+	// 	if (object.ReferenceEquals(this, obj))
+	// 	{
+	// 		return true;
+	// 	}
+	//
+	// 	if (obj == null || !GetType().Equals(obj.GetType()))
+	// 	{
+	// 		return false;
+	// 	}
+	//
+	// 	var otherOnePartFunName = (OnePartFunctionName)obj;
+	//
+	// 	return FunctionPart == otherOnePartFunName.FunctionPart;
+	// }
+	//
+	// public override int GetHashCode()
+	// {
+	// 	return FunctionPart.GetHashCode();
+	// }
 }

@@ -1,69 +1,91 @@
 // clu/domain-object-model/cluster.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue,
+	ICLUVariable
+} from './interfaces/ivalue';
+
+import { CLUConstructorDefinition } from './constructor-definition';
+
+import { CLUFunctionDefinitionBase } from './function-definition-base';
+
+import { CLUSelectorDefinition } from './selector-definition';
+
+import { CLUSettorDefinition } from './settor-definition';
 
 export class Cluster implements ICLUExpression {
-	public readonly string ClusterName;
-	public readonly HashSet<string> ExportSet;
-	public readonly List<CLUVariable> ClRep;
-	private List<CLUFunctionDefinitionBase> FunDefList;
-	public readonly Dictionary<string, CLUFunctionDefinitionBase> ExportedDict = new Dictionary<string, CLUFunctionDefinitionBase>();
-	public readonly Dictionary<string, CLUFunctionDefinitionBase> NonExportedDict = new Dictionary<string, CLUFunctionDefinitionBase>();
+	// public readonly clusterName: string;
+	// public readonly exportSet: string[]; // HashSet<string>;
+	// public readonly clRep: ICLUVariable[];
+	// private funDefList: CLUFunctionDefinitionBase[];
+	public readonly exportedDict = new Map<string, CLUFunctionDefinitionBase>();
+	public readonly nonExportedDict = new Map<string, CLUFunctionDefinitionBase>();
 
-	constructor(string name, HashSet<string> exportSet, List<CLUVariable> clRep, List<CLUFunctionDefinitionBase> funDefList)
-	{
-		ClusterName = name;
-		ExportSet = exportSet;
-		ClRep = clRep;
-		FunDefList = funDefList;
+	constructor(
+		public readonly clusterName: string,
+		public readonly exportSet: string[],
+		public readonly clRep: ICLUVariable[],
+		private funDefList: CLUFunctionDefinitionBase[]
+	) {
+		// ClusterName = name;
+		// ExportSet = exportSet;
+		// ClRep = clRep;
+		// FunDefList = funDefList;
 	}
 
-	public override bool Equals(object obj)
-	{
+	// public override bool Equals(object obj)
+	// {
+	//
+	// 	if (object.ReferenceEquals(this, obj))
+	// 	{
+	// 		return true;
+	// 	}
+	//
+	// 	var otherCluster = obj as Cluster;
+	//
+	// 	return otherCluster != null && ClusterName == otherCluster.ClusterName;
+	// }
+	//
+	// public override int GetHashCode()
+	// {
+	// 	return ClusterName.GetHashCode();
+	// }
 
-		if (object.ReferenceEquals(this, obj))
-		{
-			return true;
-		}
-
-		var otherCluster = obj as Cluster;
-
-		return otherCluster != null && ClusterName == otherCluster.ClusterName;
-	}
-
-	public override int GetHashCode()
-	{
-		return ClusterName.GetHashCode();
-	}
-
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
-		globalInfo.ClusterDict[ClusterName] = this;
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
+		globalInfo.clusterDict.set(this.clusterName, this);
 
 		// Make the constructor:
-		NonExportedDict[ClusterName] = new CLUConstructorDefinition(ClusterName);
+		this.nonExportedDict[this.clusterName] = new CLUConstructorDefinition(this.clusterName);
 
 		// Make the selectors and settors:
 
-		foreach (var memberVariable in ClRep)
-		{
-			NonExportedDict[memberVariable.Name] = new CLUSelectorDefinition(memberVariable.Name, memberVariable);
-			NonExportedDict["set-" + memberVariable.Name] =
-				new CLUSettorDefinition("set-" + memberVariable.Name, memberVariable);
+		for (const memberVariable of this.clRep) {
+			this.nonExportedDict[memberVariable.name] = new CLUSelectorDefinition(
+				memberVariable.name,
+				memberVariable
+			);
+			this.nonExportedDict['set-' + memberVariable.name] = new CLUSettorDefinition(
+				'set-' + memberVariable.name,
+				memberVariable
+			);
 		}
 
-		foreach (var funDef in FunDefList)
-		{
-
-			if (ExportSet.Contains(funDef.FunctionName))
-			{
-				ExportedDict[funDef.FunctionName] = funDef;
-			}
-			else
-			{
-				NonExportedDict[funDef.FunctionName] = funDef;
+		for (const funDef of this.funDefList) {
+			if (this.exportSet.indexOf(funDef.functionName) >= 0) {
+				this.exportedDict[funDef.functionName] = funDef;
+			} else {
+				this.nonExportedDict[funDef.functionName] = funDef;
 			}
 		}
 
-		return globalInfo.TrueValue;
+		return globalInfo.trueValue;
 	}
 }

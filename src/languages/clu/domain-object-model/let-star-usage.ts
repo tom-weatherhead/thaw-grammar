@@ -1,6 +1,13 @@
 // clu/domain-object-model/let-star-usage.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue, ICLUVariable } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue,
+	ICLUVariable
+} from './interfaces/ivalue';
 
 import { CLUEnvironmentFrame } from './environment-frame';
 
@@ -8,13 +15,19 @@ export class CLULetStarUsage implements ICLUExpression {
 	// public readonly List<KeyValuePair<CLUVariable, ICLUExpression>> Bindings;
 	// public readonly ICLUExpression Expression;
 
-	constructor(public readonly bindings: [ICLUVariable, ICLUExpression][], public readonly expression: ICLUExpression)
-	{
+	constructor(
+		public readonly bindings: [ICLUVariable, ICLUExpression][],
+		public readonly expression: ICLUExpression
+	) {
 		// Bindings = bindings;
 		// Expression = expression;
 	}
 
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
 		// #if DEAD_CODE
 		// var newEnvFrame = new CLUEnvironmentFrame(localEnvironment);
 		//
@@ -30,9 +43,9 @@ export class CLULetStarUsage implements ICLUExpression {
 		let lastEnv = localEnvironment;
 
 		for (const [key, value] of this.bindings) {
-			var newEnvFrame = new CLUEnvironmentFrame(lastEnv);
+			const newEnvFrame = new CLUEnvironmentFrame(lastEnv);
 
-			newEnvFrame.add(key, value.Evaluate(lastEnv, cluster, globalInfo));
+			newEnvFrame.add(key, value.evaluate(lastEnv, cluster, globalInfo));
 			lastEnv = newEnvFrame;
 		}
 

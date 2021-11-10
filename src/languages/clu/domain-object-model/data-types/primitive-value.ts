@@ -2,7 +2,20 @@
 
 import { ICLUEnvironmentFrame, ICLUGlobalInfo, ICluster, ICLUValue } from '../interfaces/ivalue';
 
+const typenameCLUPrimitiveValue = 'CLUPrimitiveValue';
+
+export function isCLUPrimitiveValue(obj: unknown): obj is CLUPrimitiveValue {
+	const v = obj as CLUPrimitiveValue;
+
+	return (
+		typeof v !== 'undefined' &&
+		typeof v.typename !== 'undefined' &&
+		v.typename === typenameCLUPrimitiveValue
+	);
+}
+
 export class CLUPrimitiveValue implements ICLUValue {
+	public readonly typename: string = typenameCLUPrimitiveValue;
 	// public readonly int Value;
 
 	constructor(public readonly value: number) {
@@ -31,7 +44,11 @@ export class CLUPrimitiveValue implements ICLUValue {
 	// 	return Value.GetHashCode();
 	// }
 
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
 		return this;
 	}
 }

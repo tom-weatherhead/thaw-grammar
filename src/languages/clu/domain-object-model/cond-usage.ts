@@ -1,29 +1,34 @@
 // clu/domain-object-model/cond-usage.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue
+} from './interfaces/ivalue';
 
 export class CLUCondUsage implements ICLUExpression {
-	public readonly List<KeyValuePair<ICLUExpression, ICLUExpression>> ExprPairList;
+	// public readonly List<KeyValuePair<ICLUExpression, ICLUExpression>> ExprPairList;
 
-	public CLUCondUsage(List<KeyValuePair<ICLUExpression, ICLUExpression>> exprPairList)
-	{
-		ExprPairList = exprPairList;
+	constructor(public readonly exprPairList: [ICLUExpression, ICLUExpression][]) {
+		// ExprPairList = exprPairList;
 	}
 
-	public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
 		//var falseValue = globalInfo.FalseValue;
 
-		foreach (var exprPair in ExprPairList)
-		{
-
+		for (const [key, value] of this.exprPairList) {
 			//if (!exprPair.Key.Evaluate(localEnvironment, cluster, globalInfo).Equals(falseValue))
-			if (!globalInfo.ValueIsFalse(exprPair.Key.Evaluate(localEnvironment, cluster, globalInfo)))
-			{
-				return exprPair.Value.Evaluate(localEnvironment, cluster, globalInfo);
+			if (!globalInfo.valueIsFalse(key.evaluate(localEnvironment, cluster, globalInfo))) {
+				return value.evaluate(localEnvironment, cluster, globalInfo);
 			}
 		}
 
-		//return falseValue;
-		return globalInfo.FalseValue;
+		return globalInfo.falseValue;
 	}
 }

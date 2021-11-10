@@ -1,6 +1,12 @@
 // clu/domain-object-model/while-usage.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue
+} from './interfaces/ivalue';
 
 export class CLUWhileUsage implements ICLUExpression {
 	// public readonly ICLUExpression Condition;
@@ -18,7 +24,11 @@ export class CLUWhileUsage implements ICLUExpression {
 	}
 	 */
 
-	 public evaluate(localEnvironment: ICLUEnvironmentFrame, cluster: ICluster, globalInfo: ICLUGlobalInfo): ICLUValue {
+	public evaluate(
+		localEnvironment: ICLUEnvironmentFrame,
+		cluster: ICluster,
+		globalInfo: ICLUGlobalInfo
+	): ICLUValue {
 		// #if DEAD_CODE
 		// ICLUValue conditionValue;
 		// //ICLUValue falseValue = globalInfo.FalseValue;
@@ -39,7 +49,9 @@ export class CLUWhileUsage implements ICLUExpression {
 		// return conditionValue;
 		// #else
 
-		while (!globalInfo.valueIsFalse(this.condition.evaluate(localEnvironment, cluster, globalInfo))) {
+		while (
+			!globalInfo.valueIsFalse(this.condition.evaluate(localEnvironment, cluster, globalInfo))
+		) {
 			this.body.evaluate(localEnvironment, cluster, globalInfo);
 		}
 

@@ -1,5 +1,9 @@
 // tom-weatherhead/thaw-grammar/src/main.ts
 
+// Much of the code in this library was based on or inspired by the book
+// 'Programming Languages: An Interpreter-Based Approach', by Samuel N. Kamin, 1990,
+// Addison Wesley, ISBN 0-201-06824-9.
+
 // Exceptions
 export { KeyNotFoundException } from './common/exceptions/key-not-found-exception';
 // export { NotImplementedException } from './common/exceptions/not-implemented-exception';

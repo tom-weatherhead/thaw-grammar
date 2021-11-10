@@ -6,7 +6,7 @@ export class CLUEnvironmentFrame {
 	public readonly dict = new Map<string, ICLUValue>();
 	// public readonly CLUEnvironmentFrame Next;
 
-	constructor(public readonly next: ICLUEnvironmentFrame | undefined) {
+	constructor(public readonly next?: ICLUEnvironmentFrame) {
 		// Next = next;
 	}
 
@@ -14,6 +14,10 @@ export class CLUEnvironmentFrame {
 	// {
 	// 	return string.Format("({0})", string.Join("; ", Dict.Keys.Select(key => string.Format("{0} = {1}", key, Dict[key]))));
 	// }
+
+	public has(key: ICLUVariable): boolean {
+		return this.dict.has(key.name) || (typeof this.next !== 'undefined' && this.next.has(key));
+	}
 
 	public lookup(key: ICLUVariable): ICLUValue {
 		const value = this.dict.get(key.name);
@@ -33,17 +37,18 @@ export class CLUEnvironmentFrame {
 
 		// throw new KeyNotFoundException(string.Format("CLUEnvironmentFrame.Lookup() : No value found for variable '{0}'.", key.name));
 
-		throw new Error(`CLUEnvironmentFrame.Lookup() : No value found for variable '${key.name}'.`);
+		throw new Error(
+			`CLUEnvironmentFrame.Lookup() : No value found for variable '${key.name}'.`
+		);
 	}
 
-	public add(key: ICLUVariable,  value: ICLUValue):  void {
+	public add(key: ICLUVariable, value: ICLUValue): void {
 		this.dict.set(key.name, value);
 	}
 
-	public addBubbleDown(key: ICLUVariable,  value: ICLUValue): void {
-
+	public addBubbleDown(key: ICLUVariable, value: ICLUValue): void {
 		if (!this.dict.has(key.name) && typeof this.next !== 'undefined') {
-			this.next.addBubbleDown(key, value);     // Bubble down towards the global environment.
+			this.next.addBubbleDown(key, value); // Bubble down towards the global environment.
 		} else {
 			// Bug fix: Before 2013/12/05, the "else" above was absent, and the code below was executed unconditionally.
 
@@ -57,10 +62,11 @@ export class CLUEnvironmentFrame {
 	}
 
 	public compose(keys: ICLUVariable[], values: ICLUValue[]): void {
-
 		if (keys.length !== values.length) {
 			// throw new ArgumentException("CLUEnvironmentFrame.Compose() : The keys list and the values list have different lengths.");
-			throw new Error('CLUEnvironmentFrame.Compose() : The keys list and the values list have different lengths.');
+			throw new Error(
+				'CLUEnvironmentFrame.Compose() : The keys list and the values list have different lengths.'
+			);
 		}
 
 		for (let i = 0; i < keys.length; ++i) {

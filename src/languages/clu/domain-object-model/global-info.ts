@@ -1,101 +1,103 @@
 // clu/domain-object-model/global-info.ts
 
-import { ICLUEnvironmentFrame, ICLUExpression, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import { ArgumentException } from 'thaw-interpreter-core';
+
+import {
+	ICLUEnvironmentFrame,
+	ICLUExpression,
+	ICLUGlobalInfo,
+	ICluster,
+	ICLUValue
+} from './interfaces/ivalue';
+
+import { CLUEnvironmentFrame } from './environment-frame';
+
+import { CLUNormalFunctionDefinition } from './normal-function-definition';
+
+import { CLUPrimitiveValue, isCLUPrimitiveValue } from './data-types/primitive-value';
 
 export class CLUGlobalInfo implements /* IGlobalInfoOps */ ICLUGlobalInfo {
-	private readonly ITokenizer Tokenizer;
-	private readonly IParser Parser;
-	private readonly ICLUValue FalseVal = new CLUPrimitiveValue(0);
-	private readonly ICLUValue TrueVal = new CLUPrimitiveValue(1);
-	public readonly CLUEnvironmentFrame GlobalEnvironment = new CLUEnvironmentFrame(null);
-	public readonly Dictionary<string, CLUNormalFunctionDefinition> FunctionDefinitions = new Dictionary<string, CLUNormalFunctionDefinition>();
-	public readonly Dictionary<string, Cluster> ClusterDict = new Dictionary<string, Cluster>();
+	// private readonly ITokenizer Tokenizer;
+	// private readonly IParser Parser;
+	private readonly falseVal = new CLUPrimitiveValue(0);
+	private readonly trueVal = new CLUPrimitiveValue(1);
+	public readonly globalEnvironment = new CLUEnvironmentFrame();
+	public readonly functionDefinitions = new Map<string, CLUNormalFunctionDefinition>();
+	public readonly clusterDict = new Map<string, ICluster>();
 
-	constructor(ITokenizer t, IParser p) {
-		Tokenizer = t;
-		Parser = p;
+	constructor(/* ITokenizer t, IParser p */) {
+		// Tokenizer = t;
+		// Parser = p;
 	}
 
-	public void Clear()
-	{
-		GlobalEnvironment.Dict.Clear();
-		FunctionDefinitions.Clear();
-		ClusterDict.Clear();
+	// public void Clear()
+	// {
+	// 	GlobalEnvironment.Dict.Clear();
+	// 	FunctionDefinitions.Clear();
+	// 	ClusterDict.Clear();
+	// }
+
+	// public string LoadPreset(string presetName)
+	// {
+	// 	throw new Exception(string.Format("LoadPreset() : Unknown preset name '{0}'.", presetName));
+	// }
+
+	// private void Evaluate(string input)
+	// {
+	// 	var expr = Parser.Parse(Tokenizer.Tokenize(input)) as ICLUExpression;
+	//
+	// 	if (expr == null)
+	// 	{
+	// 		throw new Exception(string.Format("CLUGlobalInfo.Evaluate() : Parse failed; input is: {0}", input));
+	// 	}
+	//
+	// 	expr.Evaluate(GlobalEnvironment, null, this);
+	// }
+
+	// public void LoadPresets()
+	// {
+	// 	Evaluate("(define > (x y) (< y x))");
+	// }
+
+	public get falseValue(): ICLUValue {
+		return this.falseVal;
 	}
 
-	public string LoadPreset(string presetName)
-	{
-		throw new Exception(string.Format("LoadPreset() : Unknown preset name '{0}'.", presetName));
+	public get trueValue(): ICLUValue {
+		return this.trueVal;
 	}
 
-	private void Evaluate(string input)
-	{
-		var expr = Parser.Parse(Tokenizer.Tokenize(input)) as ICLUExpression;
+	public valueIsFalse(value: ICLUValue): boolean {
+		// return value.equals(this.falseValue);
 
-		if (expr == null)
-		{
-			throw new Exception(string.Format("CLUGlobalInfo.Evaluate() : Parse failed; input is: {0}", input));
+		return isCLUPrimitiveValue(value) && value.value === 0;
+	}
+
+	public valueIsInteger(value: ICLUValue): boolean {
+		return isCLUPrimitiveValue(value);
+	}
+
+	public valueAsInteger(value: ICLUValue): number {
+		if (!isCLUPrimitiveValue(value)) {
+			throw new ArgumentException('ValueAsInteger() : value is not an integer', 'value');
 		}
 
-		expr.Evaluate(GlobalEnvironment, null, this);
+		// var prim = (CLUPrimitiveValue)value;
+
+		// return prim.Value;
+
+		return value.value;
 	}
 
-	public void LoadPresets()
-	{
-		Evaluate("(define > (x y) (< y x))");
-	}
-
-	public ICLUValue FalseValue
-	{
-		get
-		{
-			return FalseVal;
-		}
-	}
-
-	public ICLUValue TrueValue
-	{
-		get
-		{
-			return TrueVal;
-		}
-	}
-
-	public bool ValueIsFalse(ICLUValue value)
-	{
-		return value.Equals(FalseValue);
-	}
-
-	public bool ValueIsInteger(ICLUValue value)
-	{
-		return value is CLUPrimitiveValue;
-	}
-
-	public int ValueAsInteger(ICLUValue value)
-	{
-
-		if (!ValueIsInteger(value))
-		{
-			throw new ArgumentException("ValueAsInteger() : value is not an integer");
-		}
-
-		var prim = (CLUPrimitiveValue)value;
-
-		return prim.Value;
-	}
-
-	public ICLUValue IntegerAsValue(int value)
-	{
+	public integerAsValue(value: number): ICLUValue {
 		return new CLUPrimitiveValue(value);
 	}
 
-	public bool SetScoping(bool dynamicScoping)
-	{
+	public setScoping(dynamicScoping: boolean): boolean {
 		return false;
 	}
 
-	public bool SetDebug(bool debug)
-	{
+	public setDebug(debug: boolean): boolean {
 		return false;
 	}
 }
