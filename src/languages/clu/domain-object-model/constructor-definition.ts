@@ -31,8 +31,13 @@ export class CLUConstructorDefinition extends CLUFunctionDefinitionBase {
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
 		cluster: ICluster | undefined,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
+		if (typeof cluster === 'undefined') {
+			throw new Error('CLUConstructorDefinition.evaluate() : cluster is undefined');
+		}
+
 		/*
 		// ClusterName is the name of the cluster of which newInstance is an instance.
 

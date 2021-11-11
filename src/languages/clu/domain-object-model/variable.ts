@@ -44,7 +44,9 @@ export class CLUVariable implements ICLUVariable {
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		cluster: ICluster | undefined,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		return localEnvironment.lookup(this);

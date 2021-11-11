@@ -45,8 +45,11 @@ export class CLUPrimitiveValue implements ICLUValue {
 	// }
 
 	public evaluate(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		localEnvironment: ICLUEnvironmentFrame,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		cluster: ICluster | undefined,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		return this;

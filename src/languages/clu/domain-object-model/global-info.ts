@@ -93,13 +93,13 @@ export class CLUGlobalInfo implements /* IGlobalInfoOps */ ICLUGlobalInfo {
 		return new CLUPrimitiveValue(value);
 	}
 
-	public setScoping(dynamicScoping: boolean): boolean {
-		return false;
-	}
-
-	public setDebug(debug: boolean): boolean {
-		return false;
-	}
+	// public setScoping(dynamicScoping: boolean): boolean {
+	// 	return false;
+	// }
+	//
+	// public setDebug(debug: boolean): boolean {
+	// 	return false;
+	// }
 
 	public evaluate(expr: ICLUExpression): ICLUValue {
 		return expr.evaluate(this.globalEnvironment, undefined, this);

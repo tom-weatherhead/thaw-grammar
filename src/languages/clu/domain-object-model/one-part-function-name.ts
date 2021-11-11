@@ -1,12 +1,12 @@
 // one-part-function-name.ts
 
 import {
-	ICLUEnvironmentFrame,
-	ICLUExpression,
-	ICLUFunctionName,
-	ICLUGlobalInfo,
-	ICluster,
-	ICLUValue
+	// ICLUEnvironmentFrame,
+	// ICLUExpression,
+	ICLUFunctionName // ,
+	// ICLUGlobalInfo,
+	// ICluster,
+	// ICLUValue
 } from './interfaces/ivalue';
 
 const typenameOnePartFunctionName = 'OnePartFunctionName';

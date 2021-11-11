@@ -1,6 +1,6 @@
 // clu/domain-object-model/operator-usage.ts
 
-import { ArgumentException } from 'thaw-interpreter-core';
+// import { ArgumentException } from 'thaw-interpreter-core';
 
 import {
 	ICLUEnvironmentFrame,
@@ -12,7 +12,7 @@ import {
 	ICLUVariable
 } from './interfaces/ivalue';
 
-import { isCLUPrimitiveValue } from './data-types/primitive-value';
+// import { isCLUPrimitiveValue } from './data-types/primitive-value';
 
 import { CLUUserValue, isCLUUserValue } from './data-types/user-value';
 
@@ -90,7 +90,8 @@ export class CLUOperatorUsage implements ICLUExpression {
 
 	protected tryGetExpectedNumArgs(
 		funDef: CLUFunctionDefinitionBase | undefined,
-		cluster: ICluster,
+		cluster: ICluster | undefined,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: ICLUGlobalInfo
 	): number | undefined {
 		if (typeof funDef === 'undefined') {
@@ -119,19 +120,23 @@ export class CLUOperatorUsage implements ICLUExpression {
 
 			return funDef.argList.length;
 		} else if (isCLUConstructorDefinition(funDef)) {
+			if (typeof cluster === 'undefined') {
+				throw new Error('tryGetExpectedNumArgs() : cluster is undefined');
+			}
+
 			return cluster.clRep.length;
 		} else if (isCLUSelectorDefinition(funDef)) {
 			return 1;
 		} else if (isCLUSettorDefinition(funDef)) {
 			return 2;
 		} else {
-			throw new Error('TryGetExpectedNumArgs() : Unknown operator type.');
+			throw new Error('tryGetExpectedNumArgs() : Unknown operator type.');
 		}
 	}
 
 	protected checkArgTypes(
-		funDef: CLUFunctionDefinitionBase,
-		cluster: ICluster,
+		funDef: CLUFunctionDefinitionBase | undefined,
+		cluster: ICluster | undefined,
 		evaluatedArguments: ICLUValue[]
 	): void {
 		if (typeof funDef !== 'undefined') {
@@ -178,9 +183,9 @@ export class CLUOperatorUsage implements ICLUExpression {
 	}
 
 	protected evaluateNormal(
-		funDef: CLUNormalFunctionDefinition,
+		funDef: CLUNormalFunctionDefinition | undefined,
 		evaluatedArguments: ICLUValue[],
-		cluster: ICluster,
+		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
 		const firstArgAsInt =
@@ -218,6 +223,10 @@ export class CLUOperatorUsage implements ICLUExpression {
 			}
 		}
 
+		if (typeof funDef === 'undefined') {
+			throw new Error('evaluateNormal() : funDef is undefined');
+		}
+
 		// Evaluate a user-defined function.
 		const newEnvironment = new CLUEnvironmentFrame(globalInfo.globalEnvironment);
 
@@ -243,28 +252,28 @@ export class CLUOperatorUsage implements ICLUExpression {
 				);
 			}
 
-			if (!cluster.exportedDict.has(this.functionName)) {
+			funDef = cluster.exportedDict.get(this.functionName);
+
+			if (typeof funDef === 'undefined') {
 				//throw new Exception(string.Format("CLUOperatorUsage.Evaluate() : Cluster '{0}' does not contain an exported function named '{1}'.", ClusterName, FunctionName));
 				throw new FunctionNotExportedException(this.clusterName, this.functionName);
 			}
-
-			funDef = cluster.exportedDict[this.functionName];
 		} else if (typeof cluster === 'undefined') {
 			if (builtInOperatorNames.indexOf(this.functionName) >= 0) {
 				funDef = undefined;
 			} else {
-				if (!globalInfo.functionDefinitions.has(this.functionName)) {
+				funDef = globalInfo.functionDefinitions.get(this.functionName);
+
+				if (typeof funDef === 'undefined') {
 					throw new Error(
 						`CLUOperatorUsage.evaluate() : Unknown global function '${this.functionName}'.`
 					);
 				}
-
-				funDef = globalInfo.functionDefinitions[this.functionName];
 			}
 		} else if (cluster.exportedDict.has(this.functionName)) {
-			funDef = cluster.exportedDict[this.functionName];
+			funDef = cluster.exportedDict.get(this.functionName);
 		} else if (cluster.nonExportedDict.has(this.functionName)) {
-			funDef = cluster.nonExportedDict[this.functionName];
+			funDef = cluster.nonExportedDict.get(this.functionName);
 		} else {
 			cluster = undefined;
 
@@ -277,7 +286,7 @@ export class CLUOperatorUsage implements ICLUExpression {
 					);
 				}
 
-				funDef = globalInfo.functionDefinitions[this.functionName];
+				funDef = globalInfo.functionDefinitions.get(this.functionName);
 			}
 		}
 
@@ -305,9 +314,13 @@ export class CLUOperatorUsage implements ICLUExpression {
 
 		this.checkArgTypes(funDef, cluster, evaluatedArguments);
 
-		if (/* funDef == null || */ isCLUNormalFunctionDefinition(funDef)) {
+		if (typeof funDef === 'undefined' || isCLUNormalFunctionDefinition(funDef)) {
 			return this.evaluateNormal(funDef, evaluatedArguments, cluster, globalInfo);
 		} else if (isCLUConstructorDefinition(funDef)) {
+			if (typeof cluster === 'undefined') {
+				throw new Error('CLUOperatorUsage.evaluate() : cluster is undefined');
+			}
+
 			const newEnvironment = new CLUEnvironmentFrame(globalInfo.globalEnvironment);
 
 			newEnvironment.compose(cluster.clRep, evaluatedArguments);
