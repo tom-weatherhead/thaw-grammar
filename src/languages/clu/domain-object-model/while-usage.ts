@@ -9,13 +9,7 @@ import {
 } from './interfaces/ivalue';
 
 export class CLUWhileUsage implements ICLUExpression {
-	// public readonly ICLUExpression Condition;
-	// public readonly ICLUExpression Body;
-
-	constructor(public readonly condition: ICLUExpression, public readonly body: ICLUExpression) {
-		// Condition = condition;
-		// Body = body;
-	}
+	constructor(public readonly condition: ICLUExpression, public readonly body: ICLUExpression) {}
 
 	/*
 	public override string ToString()
@@ -29,26 +23,6 @@ export class CLUWhileUsage implements ICLUExpression {
 		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
-		// #if DEAD_CODE
-		// ICLUValue conditionValue;
-		// //ICLUValue falseValue = globalInfo.FalseValue;
-		//
-		// for (; ; )
-		// {
-		// 	conditionValue = Condition.Evaluate(localEnvironment, cluster, globalInfo);
-		//
-		// 	//if (conditionValue.Equals(falseValue))
-		// 	if (globalInfo.ValueIsFalse(conditionValue))
-		// 	{
-		// 		break;
-		// 	}
-		//
-		// 	Body.Evaluate(localEnvironment, cluster, globalInfo);
-		// }
-		//
-		// return conditionValue;
-		// #else
-
 		while (
 			!globalInfo.valueIsFalse(this.condition.evaluate(localEnvironment, cluster, globalInfo))
 		) {
@@ -56,6 +30,5 @@ export class CLUWhileUsage implements ICLUExpression {
 		}
 
 		return globalInfo.falseValue;
-		// #endif
 	}
 }

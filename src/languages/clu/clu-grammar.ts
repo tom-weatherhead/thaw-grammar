@@ -609,66 +609,53 @@ export class CluGrammar extends GrammarBase {
 		// const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
-			case LexicalState.tokenEOF:
-				return GrammarSymbol.terminalEOF;
-			case LexicalState.tokenLeftBracket:
-				return GrammarSymbol.terminalLeftBracket;
-			case LexicalState.tokenRightBracket:
-				return GrammarSymbol.terminalRightBracket;
-			case LexicalState.tokenIntLit:
-				return GrammarSymbol.terminalIntegerLiteral;
-			case LexicalState.tokenPlus:
-				return GrammarSymbol.terminalPlus;
-			case LexicalState.tokenMinus:
-				return GrammarSymbol.terminalMinus;
-			case LexicalState.tokenMult:
-				return GrammarSymbol.terminalMultiply;
-			case LexicalState.tokenDiv:
-				return GrammarSymbol.terminalDivide;
-			case LexicalState.tokenEqual:
-				return GrammarSymbol.terminalEquals;
-			case LexicalState.tokenLess:
-				return GrammarSymbol.terminalLessThan;
-			case LexicalState.tokenGreater:
-				return GrammarSymbol.terminalGreaterThan;
-			// case LexicalState.tokenOctothorpe:
-			// 	return GrammarSymbol.terminalOctothorpe;
+			// case LexicalState.tokenEOF:
+			// 	return GrammarSymbol.terminalEOF;
+			// case LexicalState.tokenLeftBracket:
+			// 	return GrammarSymbol.terminalLeftBracket;
+			// case LexicalState.tokenRightBracket:
+			// 	return GrammarSymbol.terminalRightBracket;
+			// case LexicalState.tokenIntLit:
+			// 	return GrammarSymbol.terminalIntegerLiteral;
+			// case LexicalState.tokenPlus:
+			// 	return GrammarSymbol.terminalPlus;
+			// case LexicalState.tokenMinus:
+			// 	return GrammarSymbol.terminalMinus;
+			// case LexicalState.tokenMult:
+			// 	return GrammarSymbol.terminalMultiply;
+			// case LexicalState.tokenDiv:
+			// 	return GrammarSymbol.terminalDivide;
+			// case LexicalState.tokenEqual:
+			// 	return GrammarSymbol.terminalEquals;
+			// case LexicalState.tokenLess:
+			// 	return GrammarSymbol.terminalLessThan;
+			// case LexicalState.tokenGreater:
+			// 	return GrammarSymbol.terminalGreaterThan;
 			case LexicalState.tokenDollar:
 				return GrammarSymbol.terminalDollar;
 			case LexicalState.tokenGreaterEqual:
 				return GrammarSymbol.terminalID;
 			case LexicalState.tokenIdent:
 				switch (token.tokenValue as string) {
-					case 'define':
-						return GrammarSymbol.terminalDefine;
-					case 'if':
-						return GrammarSymbol.terminalIf;
-					case 'while':
-						return GrammarSymbol.terminalWhile;
-					case 'set':
-						return GrammarSymbol.terminalSet;
-					case 'begin':
-						return GrammarSymbol.terminalBegin;
-					case 'print':
-						return GrammarSymbol.terminalPrint;
-					// case '+':
-					// 	return GrammarSymbol.terminalPlus;
-					// case '-':
-					// 	return GrammarSymbol.terminalMinus;
-					// case '*':
-					// 	return GrammarSymbol.terminalMultiply;
-					// case '/':
-					// 	return GrammarSymbol.terminalDivide;
-					// case '=':
-					// 	return GrammarSymbol.terminalEquals;
-					// case '<':
-					// 	return GrammarSymbol.terminalLessThan;
-					case 'cond':
-						return GrammarSymbol.terminalCond;
-					case 'let':
-						return GrammarSymbol.terminalLet;
-					case 'let*':
-						return GrammarSymbol.terminalLetStar;
+					// case 'define':
+					// 	return GrammarSymbol.terminalDefine;
+					// case 'if':
+					// 	return GrammarSymbol.terminalIf;
+					// case 'while':
+					// 	return GrammarSymbol.terminalWhile;
+					// case 'set':
+					// 	return GrammarSymbol.terminalSet;
+					// case 'begin':
+					// 	return GrammarSymbol.terminalBegin;
+					// case 'print':
+					// 	return GrammarSymbol.terminalPrint;
+					// case 'cond':
+					// 	return GrammarSymbol.terminalCond;
+					// case 'let':
+					// 	return GrammarSymbol.terminalLet;
+					// case 'let*':
+					// 	return GrammarSymbol.terminalLetStar;
+
 					// CLU-specific:
 					case 'cluster':
 						return GrammarSymbol.terminalCluster;
@@ -677,36 +664,17 @@ export class CluGrammar extends GrammarBase {
 					case 'rep':
 						return GrammarSymbol.terminalRep;
 					default:
-						// return GrammarSymbol.terminalID;
 						break;
 				}
 
 				break;
 
 			default:
-				// throw new GrammarException(
-				// 	`CLUGrammar.tokenToSymbol() : No grammar symbol matches token ${
-				// 		token.tokenType
-				// 	} ${LexicalState[token.tokenType]} (value '${token.tokenValue}')`,
-				// 	token.line,
-				// 	token.column
-				// );
 				break;
 		}
 
 		return super.tokenToSymbol(token);
 	}
-
-	/* eslint-disable @typescript-eslint/no-unused-vars */
-	// public override pushTokenOntoSemanticStack(
-	// 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	// 	semanticStack: SemanticStackType,
-	// 	tokenAsSymbol: number,
-	// 	token: IToken
-	// ): void {
-	// 	throw new Error('CLUGrammar.pushTokenOntoSemanticStack() : Not yet implemented.');
-	// }
-	/* eslint-enable @typescript-eslint/no-unused-vars */
 
 	public override pushTokenOntoSemanticStack(
 		semanticStack: SemanticStackType,
@@ -716,37 +684,11 @@ export class CluGrammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case GrammarSymbol.terminalMax:
-				// case GrammarSymbol.terminalOr:
-				// case GrammarSymbol.terminalAnd:
-				// case GrammarSymbol.terminalPlusSlash:
-				// case GrammarSymbol.terminalMinusSlash:
-				// case GrammarSymbol.terminalMultiplySlash:
-				// case GrammarSymbol.terminalDivideSlash:
-				// case GrammarSymbol.terminalMaxSlash:
-				// case GrammarSymbol.terminalOrSlash:
-				// case GrammarSymbol.terminalAndSlash:
-				// case GrammarSymbol.terminalCompress:
-				// case GrammarSymbol.terminalShape:
-				// case GrammarSymbol.terminalRavel:
-				// case GrammarSymbol.terminalRestruct:
-				// case GrammarSymbol.terminalCat:
-				// case GrammarSymbol.terminalIndx:
-				// case GrammarSymbol.terminalTrans:
-				// case GrammarSymbol.terminalSquareBrackets:
-				// case GrammarSymbol.terminalDoubleSubscripting:
-				// Handled by base class:
-				// case GrammarSymbol.terminalRandom:
-				// case GrammarSymbol.terminalPow:
-				// case GrammarSymbol.terminalExp:
-				// case GrammarSymbol.terminalLn:
-				// case GrammarSymbol.terminalSin:
-				// case GrammarSymbol.terminalCos:
-				// case GrammarSymbol.terminalTan:
-				semanticStack.push(new Name(value as string, token.line, token.column));
-				// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
-				// Or: semanticStack.push(new Name(`${value}`, token.line, token.column));
-				break;
+			// case GrammarSymbol.terminalMax:
+			// 	semanticStack.push(new Name(value as string, token.line, token.column));
+			// 	// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
+			// 	// Or: semanticStack.push(new Name(`${value}`, token.line, token.column));
+			// 	break;
 
 			case GrammarSymbol.terminalIntegerLiteral:
 				semanticStack.push(

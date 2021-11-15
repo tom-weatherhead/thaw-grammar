@@ -10,16 +10,10 @@ import {
 } from './interfaces/ivalue';
 
 export class CLUSetUsage implements ICLUExpression {
-	// public readonly CLUVariable VariableName;
-	// public readonly ICLUExpression Expression;
-
 	constructor(
 		public readonly variableName: ICLUVariable,
 		public readonly expression: ICLUExpression
-	) {
-		// VariableName = variableName;
-		// Expression = expression;
-	}
+	) {}
 
 	/*
 	public override string ToString()

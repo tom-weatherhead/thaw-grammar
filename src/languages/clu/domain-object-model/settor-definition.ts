@@ -2,7 +2,6 @@
 
 import {
 	ICLUEnvironmentFrame,
-	// ICLUExpression,
 	ICLUGlobalInfo,
 	ICluster,
 	ICLUValue,
@@ -25,18 +24,10 @@ export function isCLUSettorDefinition(obj: unknown): obj is CLUSettorDefinition 
 
 export class CLUSettorDefinition extends CLUFunctionDefinitionBase {
 	public readonly typename: string = typenameCLUSettorDefinition;
-	//public readonly string SelName;
-	// public readonly CLUVariable AssociatedVariable;
 	public setValue: ICLUValue | undefined; // This must be set before Evaluate() is called.
 
-	constructor(
-		funcName: string,
-		/* string selName, */ public readonly associatedVariable: ICLUVariable
-	) {
+	constructor(funcName: string, public readonly associatedVariable: ICLUVariable) {
 		super(funcName);
-
-		//SelName = selName;
-		// AssociatedVariable = associatedVariable;
 	}
 
 	public evaluate(

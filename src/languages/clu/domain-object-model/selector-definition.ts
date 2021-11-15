@@ -24,12 +24,9 @@ export function isCLUSelectorDefinition(obj: unknown): obj is CLUSelectorDefinit
 
 export class CLUSelectorDefinition extends CLUFunctionDefinitionBase {
 	public readonly typename: string = typenameCLUSelectorDefinition;
-	// public readonly CLUVariable AssociatedVariable;
 
 	constructor(funcName: string, public readonly associatedVariable: ICLUVariable) {
 		super(funcName);
-
-		// AssociatedVariable = associatedVariable;
 	}
 
 	public evaluate(
