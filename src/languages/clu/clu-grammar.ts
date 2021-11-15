@@ -8,7 +8,7 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
+import { ArgumentException, GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
 import {
 	ICLUExpression,
@@ -26,6 +26,10 @@ import { CLUCondUsage } from './domain-object-model/cond-usage';
 import { CLUBeginUsage } from './domain-object-model/begin-usage';
 
 import { CLUIfUsage } from './domain-object-model/if-usage';
+
+import { CLULetUsage } from './domain-object-model/let-usage';
+
+import { CLULetStarUsage } from './domain-object-model/let-star-usage';
 
 import { CLUNormalFunctionDefinition } from './domain-object-model/normal-function-definition';
 
@@ -294,15 +298,41 @@ export class CluGrammar extends GrammarBase {
 		//     Symbol.N_VarExprList,
 		//     GrammarSymbol.terminalRightBracket,
 		//     Symbol.N_Expression, "#letUsage" }, 34));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.nonterminalLetKeyword,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVarExprList,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExpression,
+			'#letUsage'
+		]);
+
 		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLet }, 35));
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLet]);
+
 		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLetStar }, 36));
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLetStar]);
+
 		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() {
 		//     GrammarSymbol.terminalLeftBracket,
 		//     Symbol.N_Variable,
 		//     Symbol.N_Expression,
 		//     GrammarSymbol.terminalRightBracket,
 		//     Symbol.N_VarExprList, "#varExprList" }, 37));
+		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalVarExprList,
+			'#varExprList'
+		]);
+
 		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, "#emptyVarExprList" }, 38));
+		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
+			GrammarSymbol.Lambda,
+			'#emptyVarExprList'
+		]);
 
 		// CLU Productions
 
@@ -421,6 +451,7 @@ export class CluGrammar extends GrammarBase {
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;
 		let functionName: Name;
+		let letName: Name;
 		let clusterName: Name;
 		let expression: ICLUExpression;
 		let expression2: ICLUExpression;
@@ -433,7 +464,7 @@ export class CluGrammar extends GrammarBase {
 		let funDef: ICLUFunctionDefinition;
 		let funDefList: ICLUFunctionDefinition[];
 		let exportSet: string[];
-		// let varExprList: [ICLUVariable, ICLUExpression][];
+		let varExprList: [ICLUVariable, ICLUExpression][];
 		let exprPairList: [ICLUExpression, ICLUExpression][];
 
 		switch (action) {
@@ -576,26 +607,24 @@ export class CluGrammar extends GrammarBase {
 				semanticStack.push([] as [ICLUExpression, ICLUExpression][]);
 				break;
 
-			// case "#letUsage":
-			// 	expression = (ICLUExpression)semanticStack.Pop();
-			// 	varExprList = (List<KeyValuePair<CLUVariable, ICLUExpression>>)semanticStack.Pop();
-			//
-			// 	var letName = (Name)semanticStack.Pop();
-			//
-			// 	semanticStack.Push(CreateLetUsage(letName.Value, varExprList, expression));
-			// 	break;
-			//
-			// case "#varExprList":
-			// 	varExprList = (List<KeyValuePair<CLUVariable, ICLUExpression>>)semanticStack.Pop();
-			// 	expression = (ICLUExpression)semanticStack.Pop();
-			// 	variable = (CLUVariable)semanticStack.Pop();
-			// 	varExprList.Insert(0, new KeyValuePair<CLUVariable, ICLUExpression>(variable, expression));
-			// 	semanticStack.Push(varExprList);
-			// 	break;
-			//
-			// case "#emptyVarExprList":
-			// 	semanticStack.Push(new List<KeyValuePair<CLUVariable, ICLUExpression>>());
-			// 	break;
+			case '#letUsage':
+				expression = semanticStack.pop() as ICLUExpression;
+				varExprList = semanticStack.pop() as [ICLUVariable, ICLUExpression][];
+				letName = semanticStack.pop() as Name;
+				semanticStack.push(this.createLetUsage(letName, varExprList, expression));
+				break;
+
+			case '#varExprList':
+				varExprList = semanticStack.pop() as [ICLUVariable, ICLUExpression][];
+				expression = semanticStack.pop() as ICLUExpression;
+				variable = semanticStack.pop() as ICLUVariable;
+				varExprList.unshift([variable, expression]);
+				semanticStack.push(varExprList);
+				break;
+
+			case '#emptyVarExprList':
+				semanticStack.push([] as [ICLUVariable, ICLUExpression][]);
+				break;
 
 			default:
 				throw new GrammarException(`APL: Unrecognized semantic action: ${action}`);
@@ -667,6 +696,28 @@ export class CluGrammar extends GrammarBase {
 
 			default:
 				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
+		}
+	}
+
+	protected createLetUsage(
+		letName: Name,
+		varExprList: [ICLUVariable, ICLUExpression][],
+		expression: ICLUExpression
+	): ICLUExpression {
+		switch (letName.value) {
+			case 'let':
+				return new CLULetUsage(varExprList, expression);
+
+			case 'let*':
+				return new CLULetStarUsage(varExprList, expression);
+
+			default:
+				throw new ArgumentException(
+					`CLUGrammar.createLetUsage() : Unknown 'let' keyword '${letName.value}.`,
+					'letName',
+					letName.line,
+					letName.column
+				);
 		}
 	}
 }

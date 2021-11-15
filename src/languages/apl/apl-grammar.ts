@@ -739,4 +739,26 @@ export class APLGrammar extends GrammarBase {
 				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
 		}
 	}
+
+	// protected createLetUsage(
+	// 	letName: Name,
+	// 	varExprList: [Variable<IAPLValue>, IAPLExpression][],
+	// 	expression: IAPLExpression
+	// ): IAPLExpression {
+	// 	switch (letName.value) {
+	// 		case 'let':
+	// 			return new LetUsage<IAPLValue>(varExprList, expression);
+	//
+	// 		case 'let*':
+	// 			return new LetStarUsage<IAPLValue>(varExprList, expression);
+	//
+	// 		default:
+	// 			throw new ArgumentException(
+	// 				`APLGrammar.createLetUsage() : Unknown 'let' keyword '${letName.value}.`,
+	// 				'letName',
+	// 				letName.line,
+	// 				letName.column
+	// 			);
+	// 	}
+	// }
 }
