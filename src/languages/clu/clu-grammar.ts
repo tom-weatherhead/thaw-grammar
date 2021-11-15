@@ -3,7 +3,6 @@
 import {
 	GrammarSymbol,
 	IToken,
-	// LanguageSelector,
 	LexicalState,
 	ParserSelector,
 	SemanticStackType
@@ -11,12 +10,11 @@ import {
 
 import { GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
-// import { ExpressionList } from '../../common/domain-object-model/expression-list';
-
 import {
 	ICLUExpression,
 	ICLUFunctionDefinition,
-	/* ICLUValue, */ ICLUVariable
+	// ICLUValue,
+	ICLUVariable
 } from './domain-object-model/interfaces/ivalue';
 
 import { CLUPrimitiveValue } from './domain-object-model/data-types/primitive-value';
@@ -445,15 +443,6 @@ export class CluGrammar extends GrammarBase {
 
 				break;
 
-			// case '#operatorUsage':
-			// 	// TODO: Handle TwoPartFunctionName as well as OnePartFunctionName
-			// 	expressionList = semanticStack.pop() as ICLUExpression[];
-			// 	name = semanticStack.pop() as Name;
-			// 	semanticStack.push(
-			// 		new CLUOperatorUsage(new OnePartFunctionName(name.value), expressionList)
-			// 	);
-			// 	break;
-
 			case '#expressionList':
 				expressionList = semanticStack.pop() as ICLUExpression[];
 				expression = semanticStack.pop() as ICLUExpression;
@@ -464,8 +453,6 @@ export class CluGrammar extends GrammarBase {
 			case '#emptyExpressionList':
 				semanticStack.push([] as ICLUExpression[]);
 				break;
-
-			// ****
 
 			case '#makeTwoPartName':
 				functionName = semanticStack.pop() as Name;
@@ -606,56 +593,13 @@ export class CluGrammar extends GrammarBase {
 	}
 
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
-		// const tokenValueAsString: string = token.tokenValue as string;
-
 		switch (token.tokenType) {
-			// case LexicalState.tokenEOF:
-			// 	return GrammarSymbol.terminalEOF;
-			// case LexicalState.tokenLeftBracket:
-			// 	return GrammarSymbol.terminalLeftBracket;
-			// case LexicalState.tokenRightBracket:
-			// 	return GrammarSymbol.terminalRightBracket;
-			// case LexicalState.tokenIntLit:
-			// 	return GrammarSymbol.terminalIntegerLiteral;
-			// case LexicalState.tokenPlus:
-			// 	return GrammarSymbol.terminalPlus;
-			// case LexicalState.tokenMinus:
-			// 	return GrammarSymbol.terminalMinus;
-			// case LexicalState.tokenMult:
-			// 	return GrammarSymbol.terminalMultiply;
-			// case LexicalState.tokenDiv:
-			// 	return GrammarSymbol.terminalDivide;
-			// case LexicalState.tokenEqual:
-			// 	return GrammarSymbol.terminalEquals;
-			// case LexicalState.tokenLess:
-			// 	return GrammarSymbol.terminalLessThan;
-			// case LexicalState.tokenGreater:
-			// 	return GrammarSymbol.terminalGreaterThan;
 			case LexicalState.tokenDollar:
 				return GrammarSymbol.terminalDollar;
 			case LexicalState.tokenGreaterEqual:
 				return GrammarSymbol.terminalID;
 			case LexicalState.tokenIdent:
 				switch (token.tokenValue as string) {
-					// case 'define':
-					// 	return GrammarSymbol.terminalDefine;
-					// case 'if':
-					// 	return GrammarSymbol.terminalIf;
-					// case 'while':
-					// 	return GrammarSymbol.terminalWhile;
-					// case 'set':
-					// 	return GrammarSymbol.terminalSet;
-					// case 'begin':
-					// 	return GrammarSymbol.terminalBegin;
-					// case 'print':
-					// 	return GrammarSymbol.terminalPrint;
-					// case 'cond':
-					// 	return GrammarSymbol.terminalCond;
-					// case 'let':
-					// 	return GrammarSymbol.terminalLet;
-					// case 'let*':
-					// 	return GrammarSymbol.terminalLetStar;
-
 					// CLU-specific:
 					case 'cluster':
 						return GrammarSymbol.terminalCluster;
