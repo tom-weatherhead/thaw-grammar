@@ -21,6 +21,8 @@ import { CLUPrimitiveValue } from './domain-object-model/data-types/primitive-va
 
 import { Cluster } from './domain-object-model/cluster';
 
+import { CLUCondUsage } from './domain-object-model/cond-usage';
+
 import { CLUBeginUsage } from './domain-object-model/begin-usage';
 
 import { CLUIfUsage } from './domain-object-model/if-usage';
@@ -65,9 +67,9 @@ export class CluGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalPrint);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		// this.terminals.push(GrammarSymbol.terminalCond);
-		// this.terminals.push(GrammarSymbol.terminalLet);
-		// this.terminals.push(GrammarSymbol.terminalLetStar);
+		this.terminals.push(GrammarSymbol.terminalCond);
+		this.terminals.push(GrammarSymbol.terminalLet);
+		this.terminals.push(GrammarSymbol.terminalLetStar);
 
 		this.terminals.push(GrammarSymbol.terminalCluster);
 		this.terminals.push(GrammarSymbol.terminalRep);
@@ -91,12 +93,11 @@ export class CluGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
 		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
+		this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalClusterDef);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalCluster);
 		this.nonTerminals.push(GrammarSymbol.nonterminalRep);
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunDefList);
 		this.nonTerminals.push(GrammarSymbol.nonterminalOnePartName);
@@ -261,20 +262,29 @@ export class CluGrammar extends GrammarBase {
 
 		// cond
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
-		//     GrammarSymbol.terminalCond,
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_Expression,
-		//     Symbol.N_Expression,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_ExprPairList, "#condUsage" }, 31));
-		// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() {
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_Expression,
-		//     Symbol.N_Expression,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_ExprPairList, "#exprPairList" }, 32));
-		// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() { Symbol.Lambda, "#emptyExprPairList" }, 33));
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.terminalCond,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExprPairList,
+			'#condUsage'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalExprPairList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExprPairList,
+			'#exprPairList'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalExprPairList, [
+			GrammarSymbol.Lambda,
+			'#emptyExprPairList'
+		]);
 
 		// let and let*
 
@@ -424,7 +434,7 @@ export class CluGrammar extends GrammarBase {
 		let funDefList: ICLUFunctionDefinition[];
 		let exportSet: string[];
 		// let varExprList: [ICLUVariable, ICLUExpression][];
-		// let exprPairList: [ICLUExpression, ICLUExpression][];
+		let exprPairList: [ICLUExpression, ICLUExpression][];
 
 		switch (action) {
 			case '#operatorUsage':
@@ -546,26 +556,26 @@ export class CluGrammar extends GrammarBase {
 				semanticStack.push(new CLUBeginUsage(expression, expressionList));
 				break;
 
-			// case "#condUsage":
-			// 	exprPairList = (List<KeyValuePair<ICLUExpression, ICLUExpression>>)semanticStack.Pop();
-			// 	expression2 = (ICLUExpression)semanticStack.Pop();
-			// 	expression = (ICLUExpression)semanticStack.Pop();
-			// 	exprPairList.Insert(0, new KeyValuePair<ICLUExpression, ICLUExpression>(expression, expression2));
-			// 	semanticStack.Push(new CLUCondUsage(exprPairList));
-			// 	break;
-			//
-			// case "#exprPairList":
-			// 	exprPairList = (List<KeyValuePair<ICLUExpression, ICLUExpression>>)semanticStack.Pop();
-			// 	expression2 = (ICLUExpression)semanticStack.Pop();
-			// 	expression = (ICLUExpression)semanticStack.Pop();
-			// 	exprPairList.Insert(0, new KeyValuePair<ICLUExpression, ICLUExpression>(expression, expression2));
-			// 	semanticStack.Push(exprPairList);
-			// 	break;
-			//
-			// case "#emptyExprPairList":
-			// 	semanticStack.Push(new List<KeyValuePair<ICLUExpression, ICLUExpression>>());
-			// 	break;
-			//
+			case '#condUsage':
+				exprPairList = semanticStack.pop() as [ICLUExpression, ICLUExpression][];
+				expression2 = semanticStack.pop() as ICLUExpression;
+				expression = semanticStack.pop() as ICLUExpression;
+				exprPairList.unshift([expression, expression2]);
+				semanticStack.push(new CLUCondUsage(exprPairList));
+				break;
+
+			case '#exprPairList':
+				exprPairList = semanticStack.pop() as [ICLUExpression, ICLUExpression][];
+				expression2 = semanticStack.pop() as ICLUExpression;
+				expression = semanticStack.pop() as ICLUExpression;
+				exprPairList.unshift([expression, expression2]);
+				semanticStack.push(exprPairList);
+				break;
+
+			case '#emptyExprPairList':
+				semanticStack.push([] as [ICLUExpression, ICLUExpression][]);
+				break;
+
 			// case "#letUsage":
 			// 	expression = (ICLUExpression)semanticStack.Pop();
 			// 	varExprList = (List<KeyValuePair<CLUVariable, ICLUExpression>>)semanticStack.Pop();
