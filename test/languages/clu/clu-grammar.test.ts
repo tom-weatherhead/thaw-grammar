@@ -5,12 +5,63 @@
 import { LanguageSelector } from 'thaw-interpreter-types';
 
 // import { createParser /*, SyntaxException */ } from 'thaw-parser';
-//
-// import { createGrammar } from '../../..';
 
 import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
+import { CLUEnvironmentFrame, CLUGlobalInfo, ICLUExpression, ICLUValue } from '../../..';
+
 const ls = LanguageSelector.CLU;
+
+function createFnEval(): (str: string) => ICLUValue {
+	const { tokenizer, parser } = createInfrastructure(ls);
+	const localEnvironment = new CLUEnvironmentFrame();
+	const globalInfo = new CLUGlobalInfo();
+
+	// globalInfo.loadPresets(tokenizer, parser);
+
+	// return (str: string) =>
+	// 	globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as IAPLExpression);
+
+	return (str: string) => {
+		const expr = parser.parse(tokenizer.tokenize(str)) as ICLUExpression;
+
+		// The 'undefined' is the cluster.
+
+		return expr.evaluate(localEnvironment, undefined, globalInfo);
+	};
+}
+
+function evalStringsToValues(strs: string[], n = 1): ICLUValue[] {
+	const f = createFnEval();
+
+	return strs.map(f).slice(-n);
+}
+
+function evalStringsToStrings(strs: string[], n = 1): string[] {
+	return evalStringsToValues(strs, n).map((value) => value.toString());
+}
+
+// function evalStringsToValue(strs: string[]): ICLUValue {
+// 	const values = evalStringsToValues(strs, 1);
+//
+// 	if (values.length < 1) {
+// 		throw new Error('evalToValue() : values.length is zero.');
+// 	}
+//
+// 	return values[0];
+// }
+
+// function evalStringsToString(strs: string[]): string {
+// 	return evalStringsToValue(strs).toString();
+// }
+
+// function evalStringToValue(str: string): ICLUValue {
+// 	return evalStringsToValue([str]);
+// }
+
+// function evalStringToString(str: string): string {
+// 	return evalStringToValue(str).toString();
+// }
 
 test('CLUGrammar instance creation test', () => {
 	// Arrange
@@ -72,57 +123,72 @@ test('CLUGrammar recognize test', () => {
 // 	return EvaluateToICLUValue(input).ToString();
 // }
 
-// [Test]
-// public void PointTest()
-// {
-// 	const string pointCluster = @"
-// ; From Kamin, page 211 (not page 214)
-// ;
-// (cluster Point
-// (export new abscissa ordinate reflect rotate compare quadrant)
-// (rep x-coord y-coord)
-// (define new (x y) (Point x y))
-// (define abscissa (p) (x-coord p))
-// (define ordinate (p) (y-coord p))
-// (define reflect (p)
-// (begin
-// 	(set-x-coord p (- 0 (x-coord p)))
-// 	(set-y-coord p (- 0 (y-coord p)))))
-// (define rotate (p)
-// (begin
-// 	(set temp (x-coord p))
-// 	(set-x-coord p (y-coord p))
-// 	(set-y-coord p (- 0 temp))))
-// (define compare (p1 p2) (< (sqrdist p1) (sqrdist p2)))
-// (define quadrant (p)
-// (if (>= (x-coord p) 0)
-// 	(if (>= (y-coord p) 0) 1 2)
-// 	(if (< (y-coord p) 0) 3 4)))
-// ; sqrdist is not exported
-// (define sqrdist (p) (+ (sqr (x-coord p)) (sqr (y-coord p))))
-// )";
-//
-// 	Assert.AreEqual("1", Evaluate("(define not (x) (if x 0 1))"));
-// 	Assert.AreEqual("1", Evaluate("(define >= (x y) (not (< x y)))"));
-// 	Assert.AreEqual("1", Evaluate("(define sqr (x) (* x x))"));
-// 	Assert.AreEqual("1", Evaluate("(define abs (x) (if (< x 0) (- 0 x) x))"));
-// 	Assert.AreEqual("1", Evaluate(pointCluster));
-// 	Evaluate("(set p1 (Point$new 3 4))");
-// 	Assert.AreEqual("3\r\n4", Evaluate("p1"));
-// 	Evaluate("(Point$rotate p1)");
-// 	Assert.AreEqual("4", Evaluate("(Point$abscissa p1)"));
-// 	Assert.AreEqual("-3", Evaluate("(Point$ordinate p1)"));
-// 	Evaluate("(Point$reflect p1)");
-// 	Assert.AreEqual("-4", Evaluate("(Point$abscissa p1)"));
-// 	Assert.AreEqual("3", Evaluate("(Point$ordinate p1)"));
-// 	Evaluate("(set p2 (Point$new 1 5))");
-// 	Assert.AreEqual("1", Evaluate("(Point$compare p1 p2)"));
-// 	Assert.AreEqual("1", Evaluate(@"(define enclosed-area (p1 p2) (abs (*
-// 		(- (Point$abscissa p1) (Point$abscissa p2))
-// 		(- (Point$ordinate p1) (Point$ordinate p2)))))"));
-// 	Assert.AreEqual("10", Evaluate("(enclosed-area p1 p2)"));
-// }
-//
+test('CLUGrammar point test', () => {
+	const pointCluster = [
+		// '; From Kamin, page 211 (not page 214)',
+		// ';',
+		'(cluster Point',
+		'(export new abscissa ordinate reflect rotate compare quadrant)',
+		'(rep x-coord y-coord)',
+		'(define new (x y) (Point x y))',
+		'(define abscissa (p) (x-coord p))',
+		'(define ordinate (p) (y-coord p))',
+		'(define reflect (p)',
+		'(begin',
+		'	(set-x-coord p (- 0 (x-coord p)))',
+		'	(set-y-coord p (- 0 (y-coord p)))))',
+		'(define rotate (p)',
+		'(begin',
+		'	(set temp (x-coord p))',
+		'	(set-x-coord p (y-coord p))',
+		'	(set-y-coord p (- 0 temp))))',
+		'(define compare (p1 p2) (< (sqrdist p1) (sqrdist p2)))',
+		'(define quadrant (p)',
+		'(if (>= (x-coord p) 0)',
+		'	(if (>= (y-coord p) 0) 1 2)',
+		'	(if (< (y-coord p) 0) 3 4)))',
+		// '; sqrdist is not exported',
+		'(define sqrdist (p) (+ (sqr (x-coord p)) (sqr (y-coord p))))',
+		')'
+	].join(' ');
+
+	const actualResults = evalStringsToStrings(
+		[
+			'(define not (x) (if x 0 1))',
+			'(define >= (x y) (not (< x y)))',
+			'(define sqr (x) (* x x))',
+			'(define abs (x) (if (< x 0) (- 0 x) x))',
+			pointCluster,
+			'(set p1 (Point$new 3 4))',
+			'p1'
+		],
+		1
+	);
+
+	expect(actualResults.length).toBe(1);
+	expect(actualResults[0]).toBe('x-coord = 3; y-coord = 4');
+
+	// Assert.AreEqual("1", Evaluate("(define not (x) (if x 0 1))"));
+	// Assert.AreEqual("1", Evaluate("(define >= (x y) (not (< x y)))"));
+	// Assert.AreEqual("1", Evaluate("(define sqr (x) (* x x))"));
+	// Assert.AreEqual("1", Evaluate("(define abs (x) (if (< x 0) (- 0 x) x))"));
+	// Assert.AreEqual("1", Evaluate(pointCluster));
+	// Evaluate("(set p1 (Point$new 3 4))");
+	// Assert.AreEqual("3\r\n4", Evaluate("p1"));
+	// Evaluate("(Point$rotate p1)");
+	// Assert.AreEqual("4", Evaluate("(Point$abscissa p1)"));
+	// Assert.AreEqual("-3", Evaluate("(Point$ordinate p1)"));
+	// Evaluate("(Point$reflect p1)");
+	// Assert.AreEqual("-4", Evaluate("(Point$abscissa p1)"));
+	// Assert.AreEqual("3", Evaluate("(Point$ordinate p1)"));
+	// Evaluate("(set p2 (Point$new 1 5))");
+	// Assert.AreEqual("1", Evaluate("(Point$compare p1 p2)"));
+	// Assert.AreEqual("1", Evaluate(@"(define enclosed-area (p1 p2) (abs (*
+	// 	(- (Point$abscissa p1) (Point$abscissa p2))
+	// 	(- (Point$ordinate p1) (Point$ordinate p2)))))"));
+	// Assert.AreEqual("10", Evaluate("(enclosed-area p1 p2)"));
+});
+
 // [Test]
 // public void ListTest()
 // {

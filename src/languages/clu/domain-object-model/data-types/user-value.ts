@@ -16,13 +16,8 @@ export function isCLUUserValue(obj: unknown): obj is CLUUserValue {
 
 export class CLUUserValue implements ICLUValue {
 	public readonly typename: string = typenameCLUUserValue;
-	// public readonly owner: ICluster;
-	// public readonly value: ICLUEnvironmentFrame;
 
-	constructor(public readonly owner: ICluster, public readonly value: ICLUEnvironmentFrame) {
-		// Owner = owner;
-		// Value = environmentFrame;
-	}
+	constructor(public readonly owner: ICluster, public readonly value: ICLUEnvironmentFrame) {}
 
 	public toString(): string {
 		// TODO: Output the values of the cluster instance variables, in the order in which they are declared in the cluster.
@@ -30,7 +25,9 @@ export class CLUUserValue implements ICLUValue {
 
 		// return string.Join("\r\n", Owner.ClRep.Select(v => Value.Lookup(v)));
 
-		return '<CLUUserValue>';
+		return this.owner.clRep.map((v) => `${v} = ${this.value.lookup(v)}`).join('; ');
+
+		// return '<CLUUserValue>';
 	}
 
 	public evaluate(

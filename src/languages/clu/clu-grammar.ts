@@ -635,6 +635,8 @@ export class CluGrammar extends GrammarBase {
 			// 	return GrammarSymbol.terminalOctothorpe;
 			case LexicalState.tokenDollar:
 				return GrammarSymbol.terminalDollar;
+			case LexicalState.tokenGreaterEqual:
+				return GrammarSymbol.terminalID;
 			case LexicalState.tokenIdent:
 				switch (token.tokenValue as string) {
 					case 'define':
@@ -760,10 +762,12 @@ export class CluGrammar extends GrammarBase {
 			// 	semanticStack.push(new SmalltalkString(value, token.line, token.column));
 			// 	break;
 
-			// case GrammarSymbol.terminalApostrophe:
-			// case GrammarSymbol.terminalAssign:
-			// 	// For these terminals, push nothing onto the semantic stack.
-			// 	break;
+			case GrammarSymbol.terminalCluster:
+			case GrammarSymbol.terminalDollar:
+			case GrammarSymbol.terminalExport:
+			case GrammarSymbol.terminalRep:
+				// For these terminals, push nothing onto the semantic stack.
+				break;
 
 			default:
 				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);

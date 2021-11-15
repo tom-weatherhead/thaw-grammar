@@ -18,10 +18,6 @@ import { CLUSelectorDefinition } from './selector-definition';
 import { CLUSettorDefinition } from './settor-definition';
 
 export class Cluster implements ICLUExpression {
-	// public readonly clusterName: string;
-	// public readonly exportSet: string[]; // HashSet<string>;
-	// public readonly clRep: ICLUVariable[];
-	// private funDefList: CLUFunctionDefinitionBase[];
 	public readonly exportedDict = new Map<string, CLUFunctionDefinitionBase>();
 	public readonly nonExportedDict = new Map<string, CLUFunctionDefinitionBase>();
 
@@ -30,12 +26,7 @@ export class Cluster implements ICLUExpression {
 		public readonly exportSet: string[],
 		public readonly clRep: ICLUVariable[],
 		private funDefList: CLUFunctionDefinitionBase[]
-	) {
-		// ClusterName = name;
-		// ExportSet = exportSet;
-		// ClRep = clRep;
-		// FunDefList = funDefList;
-	}
+	) {}
 
 	// public override bool Equals(object obj)
 	// {
