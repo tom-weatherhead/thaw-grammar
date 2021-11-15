@@ -194,49 +194,57 @@ test('CLUGrammar point test', () => {
 	expect(actualResults[7]).toBe('3');
 	expect(actualResults[9]).toBe('1');
 	expect(actualResults[11]).toBe('10');
-
-	// Evaluate("(set p2 (Point$new 1 5))");
-	// Assert.AreEqual("1", Evaluate("(Point$compare p1 p2)"));
-	// Assert.AreEqual("1", Evaluate(@"(define enclosed-area (p1 p2) (abs (*
-	// 	(- (Point$abscissa p1) (Point$abscissa p2))
-	// 	(- (Point$ordinate p1) (Point$ordinate p2)))))"));
-	// Assert.AreEqual("10", Evaluate("(enclosed-area p1 p2)"));
 });
 
-// [Test]
-// public void ListTest()
-// {
-// 	const string listCluster = @"
-// ; From Kamin, pages 216-217
-// ;
-// (cluster List
-// (export nil null? cons car cdr rplaca rplacd)
-// (rep type a d)
-// (define nil() (List 0 0 0))
-// (define null? (l) (= (type l) 0))
-// (define cons (item l) (List 1 item l))
-// (define car (l) (a l)) ; apply selector a to l
-// (define cdr (l) (d l)) ; apply selector d to l
-// (define rplaca (l a) (set-a l a))
-// (define rplacd (l d) (set-d l d))
-// )";
-// 	Assert.AreEqual("1", Evaluate("(define +1 (n) (+ n 1))"));
-// 	Assert.AreEqual("1", Evaluate(listCluster));
-// 	Evaluate("(set x (List$cons 1 (List$cons 2 (List$nil))))");
-// 	Evaluate("(set y x)");
-// 	Assert.AreEqual("1", Evaluate("(List$car x)"));
-// 	Assert.AreEqual("1", Evaluate("(List$car y)"));
-// 	Assert.AreEqual("2", Evaluate("(List$car (List$cdr x))"));
-// 	Evaluate("(List$rplaca y 3)");
-// 	Assert.AreEqual("3", Evaluate("(List$car x)"));
-// 	Assert.AreEqual("3", Evaluate("(List$car y)"));
-// 	Assert.AreEqual("1", Evaluate("(define length (l) (if (List$null? l) 0 (+1 (length (List$cdr l)))))"));
-// 	Assert.AreEqual("2", Evaluate("(length x)"));
-//
-// 	Assert.Throws<FunctionNotExportedException>(() => Evaluate("(List$type x)"));
-// 	Assert.Throws<FunctionNotExportedException>(() => Evaluate("(List$set-type x 0)"));
-// }
-//
+test('CLUGrammar point test', () => {
+	const listCluster = [
+		// '; From Kamin, pages 216-217',
+		// ';',
+		'(cluster List',
+		'(export nil null? cons car cdr rplaca rplacd)',
+		'(rep type a d)',
+		'(define nil() (List 0 0 0))',
+		'(define null? (l) (= (type l) 0))',
+		'(define cons (item l) (List 1 item l))',
+		'(define car (l) (a l))', // ; apply selector a to l',
+		'(define cdr (l) (d l))', // ; apply selector d to l',
+		'(define rplaca (l a) (set-a l a))',
+		'(define rplacd (l d) (set-d l d))',
+		')'
+	].join(' ');
+
+	const actualResults = evalStringsToStrings(
+		[
+			'(define +1 (n) (+ n 1))',
+			listCluster,
+			'(set x (List$cons 1 (List$cons 2 (List$nil))))',
+			'(set y x)',
+			'(List$car x)',
+			'(List$car y)',
+			'(List$car (List$cdr x))',
+			'(List$rplaca y 3)',
+			'(List$car x)',
+			'(List$car y)',
+			'(define length (l) (if (List$null? l) 0 (+1 (length (List$cdr l)))))',
+			'(length x)'
+		],
+		8
+	);
+
+	expect(actualResults.length).toBe(8);
+
+	expect(actualResults[0]).toBe('1');
+	expect(actualResults[1]).toBe('1');
+	expect(actualResults[2]).toBe('2');
+	expect(actualResults[4]).toBe('3');
+	expect(actualResults[5]).toBe('3');
+	expect(actualResults[6]).toBe('1');
+	expect(actualResults[7]).toBe('2');
+
+	// Assert.Throws<FunctionNotExportedException>(() => Evaluate("(List$type x)"));
+	// Assert.Throws<FunctionNotExportedException>(() => Evaluate("(List$set-type x 0)"));
+});
+
 // [Test]
 // public void CondTest()
 // {
