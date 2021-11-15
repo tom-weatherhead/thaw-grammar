@@ -23,11 +23,17 @@ import { CLUPrimitiveValue } from './domain-object-model/data-types/primitive-va
 
 import { Cluster } from './domain-object-model/cluster';
 
+import { CLUBeginUsage } from './domain-object-model/begin-usage';
+
+import { CLUIfUsage } from './domain-object-model/if-usage';
+
 import { CLUNormalFunctionDefinition } from './domain-object-model/normal-function-definition';
 
 import { CLUOperatorUsage } from './domain-object-model/operator-usage';
 
 import { OnePartFunctionName } from './domain-object-model/one-part-function-name';
+
+import { CLUSetUsage } from './domain-object-model/set-usage';
 
 import {
 	isTwoPartFunctionName,
@@ -35,6 +41,8 @@ import {
 } from './domain-object-model/two-part-function-name';
 
 import { CLUVariable } from './domain-object-model/variable';
+
+import { CLUWhileUsage } from './domain-object-model/while-usage';
 
 export class CluGrammar extends GrammarBase {
 	// The CLU grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -290,20 +298,10 @@ export class CluGrammar extends GrammarBase {
 
 		// CLU Productions
 
-		// Productions.Add(new Production(Symbol.N_Input, new List<object>() { Symbol.N_ClusterDef }, 39));
 		this.addProduction(GrammarSymbol.nonterminalBracketedInput, [
 			GrammarSymbol.nonterminalClusterDef
 		]);
 
-		// Productions.Add(new Production(Symbol.N_ClusterDef, new List<object>() {
-		// 	Symbol.T_LeftBracket,
-		// 	Symbol.T_Cluster,
-		// 	Symbol.T_ID, // This T_ID is really a Symbol.N_Cluster
-		// 	Symbol.N_ExportList,
-		// 	Symbol.N_Rep,
-		// 	Symbol.N_FunDef,
-		// 	Symbol.N_FunDefList,
-		// 	Symbol.T_RightBracket, "#clusterDefinition" }, 40));
 		this.addProduction(GrammarSymbol.nonterminalClusterDef, [
 			GrammarSymbol.terminalCluster,
 			GrammarSymbol.terminalID,
@@ -316,12 +314,6 @@ export class CluGrammar extends GrammarBase {
 			'#clusterDefinition'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_Rep, new List<object>() {
-		// 	Symbol.T_LeftBracket,
-		// 	Symbol.T_Rep,
-		// 	Symbol.N_Variable,
-		// 	Symbol.N_VariableList,
-		// 	Symbol.T_RightBracket, "#variableList" }, 41));
 		this.addProduction(GrammarSymbol.nonterminalRep, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.terminalRep,
@@ -331,7 +323,6 @@ export class CluGrammar extends GrammarBase {
 			'#variableList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_FunDefList, new List<object>() { Symbol.N_FunDef, Symbol.N_FunDefList, "#funDefList" }, 42));
 		this.addProduction(GrammarSymbol.nonterminalFunDefList, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalFunDef,
@@ -340,7 +331,6 @@ export class CluGrammar extends GrammarBase {
 			'#funDefList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_FunDefList, new List<object>() { Symbol.Lambda, "#emptyFunDefList" }, 43));
 		this.addProduction(GrammarSymbol.nonterminalFunDefList, [
 			GrammarSymbol.Lambda,
 			'#emptyFunDefList'
@@ -391,12 +381,6 @@ export class CluGrammar extends GrammarBase {
 		// // SLR(1): There was a reduce-reduce conflict between N_OnePartName -> T_ID and N_Cluster -> T_ID.
 		// //Productions.Add(new Production(Symbol.N_Cluster, new List<object>() { Symbol.T_ID }, 48));
 
-		// Productions.Add(new Production(Symbol.N_ExportList, new List<object>() {
-		// 	Symbol.T_LeftBracket,
-		// 	Symbol.T_Export,
-		// 	Symbol.N_OnePartName,
-		// 	Symbol.N_OnePartNameList,
-		// 	Symbol.T_RightBracket, "#exportList" }, 49));
 		this.addProduction(GrammarSymbol.nonterminalExportList, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.terminalExport,
@@ -406,14 +390,12 @@ export class CluGrammar extends GrammarBase {
 			'#exportList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_OnePartNameList, new List<object>() { Symbol.N_OnePartName, Symbol.N_OnePartNameList, "#exportList" }, 50));
 		this.addProduction(GrammarSymbol.nonterminalOnePartNameList, [
 			GrammarSymbol.nonterminalOnePartName,
 			GrammarSymbol.nonterminalOnePartNameList,
 			'#exportList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_OnePartNameList, new List<object>() { Symbol.Lambda, "#emptyExportList" }, 51));
 		this.addProduction(GrammarSymbol.nonterminalOnePartNameList, [
 			GrammarSymbol.Lambda,
 			'#emptyExportList'
@@ -433,8 +415,8 @@ export class CluGrammar extends GrammarBase {
 		let functionName: Name;
 		let clusterName: Name;
 		let expression: ICLUExpression;
-		// let expression2: ICLUExpression;
-		// let expression3: ICLUExpression;
+		let expression2: ICLUExpression;
+		let expression3: ICLUExpression;
 		let expressionList: ICLUExpression[];
 		let variable: ICLUVariable;
 		let variableList: ICLUVariable[];
@@ -552,6 +534,31 @@ export class CluGrammar extends GrammarBase {
 				semanticStack.push(new Cluster(name.value, exportSet, variableList, funDefList));
 				break;
 
+			case '#if':
+				expression3 = semanticStack.pop() as ICLUExpression;
+				expression2 = semanticStack.pop() as ICLUExpression;
+				expression = semanticStack.pop() as ICLUExpression;
+				semanticStack.push(new CLUIfUsage(expression, expression2, expression3));
+				break;
+
+			case '#while':
+				expression2 = semanticStack.pop() as ICLUExpression;
+				expression = semanticStack.pop() as ICLUExpression;
+				semanticStack.push(new CLUWhileUsage(expression, expression2));
+				break;
+
+			case '#set':
+				expression = semanticStack.pop() as ICLUExpression;
+				variable = semanticStack.pop() as ICLUVariable;
+				semanticStack.push(new CLUSetUsage(variable, expression));
+				break;
+
+			case '#begin':
+				expressionList = semanticStack.pop() as ICLUExpression[];
+				expression = semanticStack.pop() as ICLUExpression;
+				semanticStack.push(new CLUBeginUsage(expression, expressionList));
+				break;
+
 			// case "#condUsage":
 			// 	exprPairList = (List<KeyValuePair<ICLUExpression, ICLUExpression>>)semanticStack.Pop();
 			// 	expression2 = (ICLUExpression)semanticStack.Pop();
@@ -591,32 +598,6 @@ export class CluGrammar extends GrammarBase {
 			//
 			// case "#emptyVarExprList":
 			// 	semanticStack.Push(new List<KeyValuePair<CLUVariable, ICLUExpression>>());
-			// 	break;
-			//
-			// case "#if":
-			// 	var expression3 = (ICLUExpression)semanticStack.Pop();
-			//
-			// 	expression2 = (ICLUExpression)semanticStack.Pop();
-			// 	expression = (ICLUExpression)semanticStack.Pop();
-			// 	semanticStack.Push(new CLUIfUsage(expression, expression2, expression3));
-			// 	break;
-			//
-			// case "#while":
-			// 	expression2 = (ICLUExpression)semanticStack.Pop();
-			// 	expression = (ICLUExpression)semanticStack.Pop();
-			// 	semanticStack.Push(new CLUWhileUsage(expression, expression2));
-			// 	break;
-			//
-			// case "#set":
-			// 	expression = (ICLUExpression)semanticStack.Pop();
-			// 	variable = (CLUVariable)semanticStack.Pop();
-			// 	semanticStack.Push(new CLUSetUsage(variable, expression));
-			// 	break;
-			//
-			// case "#begin":
-			// 	expressionList = (List<ICLUExpression>)semanticStack.Pop();
-			// 	expression = (ICLUExpression)semanticStack.Pop();
-			// 	semanticStack.Push(new CLUBeginUsage(expression, expressionList));
 			// 	break;
 
 			default:
