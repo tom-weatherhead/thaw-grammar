@@ -36,7 +36,7 @@
 
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
-import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
+import { ArgumentException, GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
 import { Name } from 'thaw-interpreter-core';
 
@@ -49,6 +49,10 @@ import { ExpressionList } from '../../common/domain-object-model/expression-list
 import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
 
 // import { IExpression } from '../../common/domain-object-model/iexpression';
+
+import { LetUsage } from '../../common/domain-object-model/let-usage';
+
+import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
 
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 
@@ -450,6 +454,7 @@ export class APLGrammar extends GrammarBase {
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		let name: Name;
 		let functionName: Name;
+		let letName: Name;
 		let expression: IAPLExpression;
 		let expression2: IAPLExpression;
 		let expression3: IAPLExpression;
@@ -461,6 +466,7 @@ export class APLGrammar extends GrammarBase {
 		let variableList: VariableList<IAPLValue>;
 		let argumentList: VariableList<IAPLValue>;
 		let body: IAPLExpression;
+		let varExprList: [Variable<IAPLValue>, IAPLExpression][];
 
 		switch (action) {
 			case '#operatorUsage':
@@ -593,30 +599,26 @@ export class APLGrammar extends GrammarBase {
 				semanticStack.push([] as [IAPLExpression, IAPLExpression][]);
 				break;
 
-			// case '#letUsage':
-			// 	expression = (IAPLExpression)semanticStack.Pop();
-			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>)semanticStack.Pop();
-			//
-			// 	var letName = (Name)semanticStack.Pop();
-			//
-			// 	semanticStack.Push(CreateLetUsage(letName.Value, varExprList, expression));
-			// 	break;
-			//
-			// case '#varExprList':
-			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>)semanticStack.Pop();
-			// 	expression = (IAPLExpression)semanticStack.Pop();
-			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
-			// 	varExprList.Insert(0, new KeyValuePair<Variable<IAPLValue>, IAPLExpression>(variable, expression));
-			// 	semanticStack.Push(varExprList);
-			// 	break;
-			//
-			// case '#emptyVarExprList':
-			// 	semanticStack.Push(new List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>());
-			// 	break;
+			case '#letUsage':
+				expression = semanticStack.pop() as IAPLExpression;
+				varExprList = semanticStack.pop() as [Variable<IAPLValue>, IAPLExpression][];
+				letName = semanticStack.pop() as Name;
+				semanticStack.push(this.createLetUsage(letName, varExprList, expression));
+				break;
+
+			case '#varExprList':
+				varExprList = semanticStack.pop() as [Variable<IAPLValue>, IAPLExpression][];
+				expression = semanticStack.pop() as IAPLExpression;
+				variable = semanticStack.pop() as Variable<IAPLValue>;
+				varExprList.unshift([variable, expression]);
+				semanticStack.push(varExprList);
+				break;
+
+			case '#emptyVarExprList':
+				semanticStack.push([] as [Variable<IAPLValue>, IAPLExpression][]);
+				break;
 
 			default:
-				// base.ExecuteSemanticAction(semanticStack, action);
-				// break;
 				throw new GrammarException(`APL: Unrecognized semantic action: ${action}`);
 		}
 	}
@@ -740,25 +742,25 @@ export class APLGrammar extends GrammarBase {
 		}
 	}
 
-	// protected createLetUsage(
-	// 	letName: Name,
-	// 	varExprList: [Variable<IAPLValue>, IAPLExpression][],
-	// 	expression: IAPLExpression
-	// ): IAPLExpression {
-	// 	switch (letName.value) {
-	// 		case 'let':
-	// 			return new LetUsage<IAPLValue>(varExprList, expression);
-	//
-	// 		case 'let*':
-	// 			return new LetStarUsage<IAPLValue>(varExprList, expression);
-	//
-	// 		default:
-	// 			throw new ArgumentException(
-	// 				`APLGrammar.createLetUsage() : Unknown 'let' keyword '${letName.value}.`,
-	// 				'letName',
-	// 				letName.line,
-	// 				letName.column
-	// 			);
-	// 	}
-	// }
+	protected createLetUsage(
+		letName: Name,
+		varExprList: [Variable<IAPLValue>, IAPLExpression][],
+		expression: IAPLExpression
+	): IAPLExpression {
+		switch (letName.value) {
+			case 'let':
+				return new LetUsage<IAPLValue>(varExprList, expression);
+
+			case 'let*':
+				return new LetStarUsage<IAPLValue>(varExprList, expression);
+
+			default:
+				throw new ArgumentException(
+					`APLGrammar.createLetUsage() : Unknown 'let' keyword '${letName.value}.`,
+					'letName',
+					letName.line,
+					letName.column
+				);
+		}
+	}
 }
