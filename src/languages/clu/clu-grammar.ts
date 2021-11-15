@@ -13,13 +13,28 @@ import { GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
 // import { ExpressionList } from '../../common/domain-object-model/expression-list';
 
-import { ICLUExpression /*, ICLUValue */ } from './domain-object-model/interfaces/ivalue';
+import {
+	ICLUExpression,
+	ICLUFunctionDefinition,
+	/* ICLUValue, */ ICLUVariable
+} from './domain-object-model/interfaces/ivalue';
 
 import { CLUPrimitiveValue } from './domain-object-model/data-types/primitive-value';
+
+import { Cluster } from './domain-object-model/cluster';
+
+import { CLUNormalFunctionDefinition } from './domain-object-model/normal-function-definition';
 
 import { CLUOperatorUsage } from './domain-object-model/operator-usage';
 
 import { OnePartFunctionName } from './domain-object-model/one-part-function-name';
+
+import {
+	isTwoPartFunctionName,
+	TwoPartFunctionName
+} from './domain-object-model/two-part-function-name';
+
+import { CLUVariable } from './domain-object-model/variable';
 
 export class CluGrammar extends GrammarBase {
 	// The CLU grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -413,33 +428,49 @@ export class CluGrammar extends GrammarBase {
 		return ParserSelector.SLR1;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
-		// throw new Error('CLUGrammar.executeSemanticAction() : Not yet implemented.');
-
 		let name: Name;
-		// let functionName: Name;
+		let functionName: Name;
+		let clusterName: Name;
 		let expression: ICLUExpression;
-		// let expression2: IAPLExpression;
-		// let expression3: IAPLExpression;
+		// let expression2: ICLUExpression;
+		// let expression3: ICLUExpression;
 		let expressionList: ICLUExpression[];
-		// let exprPairList: [IAPLExpression, IAPLExpression][];
-		// let intList: number[];
-		// let intScalar: IAPLValue;
-		// let variable: Variable<IAPLValue>;
-		// let variableList: VariableList<IAPLValue>;
-		// let argumentList: VariableList<IAPLValue>;
-		// let body: IAPLExpression;
+		let variable: ICLUVariable;
+		let variableList: ICLUVariable[];
+		let argumentList: ICLUVariable[];
+		let body: ICLUExpression;
+		let funDef: ICLUFunctionDefinition;
+		let funDefList: ICLUFunctionDefinition[];
+		let exportSet: string[];
+		// let varExprList: [ICLUVariable, ICLUExpression][];
+		// let exprPairList: [ICLUExpression, ICLUExpression][];
 
 		switch (action) {
 			case '#operatorUsage':
-				// TODO: Handle TwoPartFunctionName as well as OnePartFunctionName
 				expressionList = semanticStack.pop() as ICLUExpression[];
-				name = semanticStack.pop() as Name;
-				semanticStack.push(
-					new CLUOperatorUsage(new OnePartFunctionName(name.value), expressionList)
-				);
+
+				const operatorNameAsObject: Name | TwoPartFunctionName = semanticStack.pop(); // TODO: This may be a one-part name or a two-part name.
+
+				if (isTwoPartFunctionName(operatorNameAsObject)) {
+					semanticStack.push(new CLUOperatorUsage(operatorNameAsObject, expressionList));
+				} else {
+					name = operatorNameAsObject as Name;
+					semanticStack.push(
+						new CLUOperatorUsage(new OnePartFunctionName(name.value), expressionList)
+					);
+				}
+
 				break;
+
+			// case '#operatorUsage':
+			// 	// TODO: Handle TwoPartFunctionName as well as OnePartFunctionName
+			// 	expressionList = semanticStack.pop() as ICLUExpression[];
+			// 	name = semanticStack.pop() as Name;
+			// 	semanticStack.push(
+			// 		new CLUOperatorUsage(new OnePartFunctionName(name.value), expressionList)
+			// 	);
+			// 	break;
 
 			case '#expressionList':
 				expressionList = semanticStack.pop() as ICLUExpression[];
@@ -452,149 +483,149 @@ export class CluGrammar extends GrammarBase {
 				semanticStack.push([] as ICLUExpression[]);
 				break;
 
-			// case '#makeIntVector':
-			// 	intList = semanticStack.pop() as number[];
-			// 	semanticStack.push(APLValue.createVector1(intList));
-			// 	break;
-			//
-			// case '#intList':
-			// 	intList = semanticStack.pop() as number[];
-			// 	intScalar = semanticStack.pop() as IAPLValue;
-			// 	intList.unshift(intScalar.getFirstScalar());
-			// 	semanticStack.push(intList);
-			// 	break;
-			//
-			// case '#emptyIntList':
-			// 	semanticStack.push([] as number[]);
-			// 	break;
-			//
-			// case '#functionDefinition':
-			// 	body = semanticStack.pop() as IAPLExpression;
-			// 	argumentList = semanticStack.pop() as VariableList<IAPLValue>;
-			// 	functionName = semanticStack.pop() as Name;
-			// 	semanticStack.push(
-			// 		new FunctionDefinition<IAPLValue>(functionName, argumentList, body)
-			// 	);
-			// 	break;
-			//
-			// case '#variable':
-			// 	name = semanticStack.pop() as Name;
-			// 	semanticStack.push(new Variable<IAPLValue>(name.value, name.line, name.column));
-			// 	break;
-			//
-			// case '#variableList':
-			// 	variableList = semanticStack.pop() as VariableList<IAPLValue>;
-			// 	variable = semanticStack.pop() as Variable<IAPLValue>;
-			// 	variableList.value.unshift(variable);
-			// 	semanticStack.push(variableList);
-			// 	break;
-			//
-			// case '#emptyVariableList':
-			// 	semanticStack.push(new VariableList<IAPLValue>());
-			// 	break;
-			//
-			// case '#vecassign':
-			// 	expression2 = semanticStack.pop() as IAPLExpression;
-			// 	expression = semanticStack.pop() as IAPLExpression;
-			// 	variable = semanticStack.pop() as Variable<IAPLValue>;
-			// 	semanticStack.push(new VectorAssignmentUsage(variable, expression, expression2));
-			// 	break;
-			//
-			// case '#set':
-			// 	expression = semanticStack.pop() as IAPLExpression;
-			// 	variable = semanticStack.pop() as Variable<IAPLValue>;
-			// 	semanticStack.push(new SetUsage<IAPLValue>(variable, expression));
-			// 	break;
-			//
-			// case '#if':
-			// 	expression3 = semanticStack.pop() as IAPLExpression;
-			// 	expression2 = semanticStack.pop() as IAPLExpression;
-			// 	expression = semanticStack.pop() as IAPLExpression;
-			// 	semanticStack.push(new APLIfUsage(expression, expression2, expression3));
-			// 	break;
-			//
-			// case '#while':
-			// 	expression2 = semanticStack.pop() as IAPLExpression;
-			// 	expression = semanticStack.pop() as IAPLExpression;
-			// 	semanticStack.push(new APLWhileUsage(expression, expression2));
-			// 	break;
-			//
-			// case '#begin':
-			// 	expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
-			// 	expression = semanticStack.pop() as IAPLExpression;
-			// 	semanticStack.push(new BeginUsage<IAPLValue>(expression, expressionList));
-			// 	break;
+			// ****
 
-			// From C#:
+			case '#makeTwoPartName':
+				functionName = semanticStack.pop() as Name;
+				clusterName = semanticStack.pop() as Name;
+				semanticStack.push(new TwoPartFunctionName(clusterName.value, functionName.value));
+				break;
 
-			// case '#makeFloatVector':
-			// 	floatList = (List<double>)semanticStack.Pop();
-			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
-			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
-			// 	semanticStack.Push(APLValue<double>.CreateVector(floatList));
-			// 	break;
-			//
-			// case '#floatList':
-			// 	floatList = (List<double>)semanticStack.Pop();
-			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
-			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
-			// 	semanticStack.Push(floatList);
-			// 	break;
-			//
-			// case '#emptyFloatList':
-			// 	semanticStack.Push(new List<double>());
-			// 	break;
+			case '#variable':
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new CLUVariable(name.value));
+				break;
 
-			// case '#condUsage':
-			// 	exprPairList = semanticStack.pop() as [IAPLExpression, IAPLExpression][];
-			// 	expression2 = semanticStack.pop() as IAPLExpression;
-			// 	expression = semanticStack.pop() as IAPLExpression;
-			// 	exprPairList.unshift([expression, expression2]);
-			// 	semanticStack.push(new APLCondUsage(exprPairList));
-			// 	break;
-			//
-			// case '#exprPairList':
-			// 	exprPairList = semanticStack.pop() as [IAPLExpression, IAPLExpression][];
-			// 	expression2 = semanticStack.pop() as IAPLExpression;
-			// 	expression = semanticStack.pop() as IAPLExpression;
-			// 	exprPairList.unshift([expression, expression2]);
-			// 	semanticStack.push(exprPairList);
-			// 	break;
-			//
-			// case '#emptyExprPairList':
-			// 	semanticStack.push([] as [IAPLExpression, IAPLExpression][]);
-			// 	break;
+			case '#variableList':
+				variableList = semanticStack.pop() as ICLUVariable[];
+				variable = semanticStack.pop() as ICLUVariable;
+				variableList.unshift(variable);
+				semanticStack.push(variableList);
+				break;
 
-			// case '#letUsage':
-			// 	expression = (IAPLExpression)semanticStack.Pop();
-			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>)semanticStack.Pop();
+			case '#emptyVariableList':
+				semanticStack.push([] as ICLUVariable[]);
+				break;
+
+			case '#functionDefinition':
+				body = semanticStack.pop() as ICLUExpression;
+				argumentList = semanticStack.pop() as ICLUVariable[];
+				functionName = semanticStack.pop() as Name;
+				semanticStack.push(
+					new CLUNormalFunctionDefinition(functionName.value, argumentList, body)
+				);
+				break;
+
+			case '#funDefList':
+				funDefList = semanticStack.pop() as ICLUFunctionDefinition[];
+				funDef = semanticStack.pop() as ICLUFunctionDefinition;
+				funDefList.unshift(funDef);
+				semanticStack.push(funDefList);
+				break;
+
+			case '#emptyFunDefList':
+				semanticStack.push([] as ICLUFunctionDefinition[]);
+				break;
+
+			case '#exportList':
+				exportSet = semanticStack.pop() as string[];
+				name = semanticStack.pop() as Name;
+
+				if (exportSet.indexOf(name.value) < 0) {
+					exportSet.push(name.value);
+				}
+
+				semanticStack.push(exportSet);
+				break;
+
+			case '#emptyExportList':
+				semanticStack.push([] as string[]);
+				break;
+
+			case '#clusterDefinition':
+				funDefList = semanticStack.pop() as ICLUFunctionDefinition[];
+				funDef = semanticStack.pop() as ICLUFunctionDefinition;
+				funDefList.unshift(funDef);
+				variableList = semanticStack.pop() as ICLUVariable[];
+				exportSet = semanticStack.pop() as string[];
+				name = semanticStack.pop() as Name;
+				semanticStack.push(new Cluster(name.value, exportSet, variableList, funDefList));
+				break;
+
+			// case "#condUsage":
+			// 	exprPairList = (List<KeyValuePair<ICLUExpression, ICLUExpression>>)semanticStack.Pop();
+			// 	expression2 = (ICLUExpression)semanticStack.Pop();
+			// 	expression = (ICLUExpression)semanticStack.Pop();
+			// 	exprPairList.Insert(0, new KeyValuePair<ICLUExpression, ICLUExpression>(expression, expression2));
+			// 	semanticStack.Push(new CLUCondUsage(exprPairList));
+			// 	break;
+			//
+			// case "#exprPairList":
+			// 	exprPairList = (List<KeyValuePair<ICLUExpression, ICLUExpression>>)semanticStack.Pop();
+			// 	expression2 = (ICLUExpression)semanticStack.Pop();
+			// 	expression = (ICLUExpression)semanticStack.Pop();
+			// 	exprPairList.Insert(0, new KeyValuePair<ICLUExpression, ICLUExpression>(expression, expression2));
+			// 	semanticStack.Push(exprPairList);
+			// 	break;
+			//
+			// case "#emptyExprPairList":
+			// 	semanticStack.Push(new List<KeyValuePair<ICLUExpression, ICLUExpression>>());
+			// 	break;
+			//
+			// case "#letUsage":
+			// 	expression = (ICLUExpression)semanticStack.Pop();
+			// 	varExprList = (List<KeyValuePair<CLUVariable, ICLUExpression>>)semanticStack.Pop();
 			//
 			// 	var letName = (Name)semanticStack.Pop();
 			//
 			// 	semanticStack.Push(CreateLetUsage(letName.Value, varExprList, expression));
 			// 	break;
 			//
-			// case '#varExprList':
-			// 	varExprList = (List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>)semanticStack.Pop();
-			// 	expression = (IAPLExpression)semanticStack.Pop();
-			// 	variable = (Variable<IAPLValue>)semanticStack.Pop();
-			// 	varExprList.Insert(0, new KeyValuePair<Variable<IAPLValue>, IAPLExpression>(variable, expression));
+			// case "#varExprList":
+			// 	varExprList = (List<KeyValuePair<CLUVariable, ICLUExpression>>)semanticStack.Pop();
+			// 	expression = (ICLUExpression)semanticStack.Pop();
+			// 	variable = (CLUVariable)semanticStack.Pop();
+			// 	varExprList.Insert(0, new KeyValuePair<CLUVariable, ICLUExpression>(variable, expression));
 			// 	semanticStack.Push(varExprList);
 			// 	break;
 			//
-			// case '#emptyVarExprList':
-			// 	semanticStack.Push(new List<KeyValuePair<Variable<IAPLValue>, IAPLExpression>>());
+			// case "#emptyVarExprList":
+			// 	semanticStack.Push(new List<KeyValuePair<CLUVariable, ICLUExpression>>());
+			// 	break;
+			//
+			// case "#if":
+			// 	var expression3 = (ICLUExpression)semanticStack.Pop();
+			//
+			// 	expression2 = (ICLUExpression)semanticStack.Pop();
+			// 	expression = (ICLUExpression)semanticStack.Pop();
+			// 	semanticStack.Push(new CLUIfUsage(expression, expression2, expression3));
+			// 	break;
+			//
+			// case "#while":
+			// 	expression2 = (ICLUExpression)semanticStack.Pop();
+			// 	expression = (ICLUExpression)semanticStack.Pop();
+			// 	semanticStack.Push(new CLUWhileUsage(expression, expression2));
+			// 	break;
+			//
+			// case "#set":
+			// 	expression = (ICLUExpression)semanticStack.Pop();
+			// 	variable = (CLUVariable)semanticStack.Pop();
+			// 	semanticStack.Push(new CLUSetUsage(variable, expression));
+			// 	break;
+			//
+			// case "#begin":
+			// 	expressionList = (List<ICLUExpression>)semanticStack.Pop();
+			// 	expression = (ICLUExpression)semanticStack.Pop();
+			// 	semanticStack.Push(new CLUBeginUsage(expression, expressionList));
 			// 	break;
 
 			default:
-				// base.ExecuteSemanticAction(semanticStack, action);
-				// break;
 				throw new GrammarException(`APL: Unrecognized semantic action: ${action}`);
 		}
 	}
 
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
-		const tokenValueAsString: string = token.tokenValue as string;
+		// const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
@@ -624,7 +655,7 @@ export class CluGrammar extends GrammarBase {
 			case LexicalState.tokenDollar:
 				return GrammarSymbol.terminalDollar;
 			case LexicalState.tokenIdent:
-				switch (tokenValueAsString) {
+				switch (token.tokenValue as string) {
 					case 'define':
 						return GrammarSymbol.terminalDefine;
 					case 'if':
@@ -663,18 +694,24 @@ export class CluGrammar extends GrammarBase {
 					case 'rep':
 						return GrammarSymbol.terminalRep;
 					default:
-						return GrammarSymbol.terminalID;
+						// return GrammarSymbol.terminalID;
+						break;
 				}
 
+				break;
+
 			default:
-				throw new GrammarException(
-					`CLUGrammar.tokenToSymbol() : No grammar symbol matches token ${
-						token.tokenType
-					} ${LexicalState[token.tokenType]} (value '${token.tokenValue}')`,
-					token.line,
-					token.column
-				);
+				// throw new GrammarException(
+				// 	`CLUGrammar.tokenToSymbol() : No grammar symbol matches token ${
+				// 		token.tokenType
+				// 	} ${LexicalState[token.tokenType]} (value '${token.tokenValue}')`,
+				// 	token.line,
+				// 	token.column
+				// );
+				break;
 		}
+
+		return super.tokenToSymbol(token);
 	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */

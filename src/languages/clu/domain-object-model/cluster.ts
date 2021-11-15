@@ -63,26 +63,26 @@ export class Cluster implements ICLUExpression {
 		globalInfo.clusterDict.set(this.clusterName, this);
 
 		// Make the constructor:
-		this.nonExportedDict[this.clusterName] = new CLUConstructorDefinition(this.clusterName);
+		this.nonExportedDict.set(this.clusterName, new CLUConstructorDefinition(this.clusterName));
 
 		// Make the selectors and settors:
 
 		for (const memberVariable of this.clRep) {
-			this.nonExportedDict[memberVariable.name] = new CLUSelectorDefinition(
+			this.nonExportedDict.set(
 				memberVariable.name,
-				memberVariable
+				new CLUSelectorDefinition(memberVariable.name, memberVariable)
 			);
-			this.nonExportedDict['set-' + memberVariable.name] = new CLUSettorDefinition(
+			this.nonExportedDict.set(
 				'set-' + memberVariable.name,
-				memberVariable
+				new CLUSettorDefinition('set-' + memberVariable.name, memberVariable)
 			);
 		}
 
 		for (const funDef of this.funDefList) {
 			if (this.exportSet.indexOf(funDef.functionName) >= 0) {
-				this.exportedDict[funDef.functionName] = funDef;
+				this.exportedDict.set(funDef.functionName, funDef);
 			} else {
-				this.nonExportedDict[funDef.functionName] = funDef;
+				this.nonExportedDict.set(funDef.functionName, funDef);
 			}
 		}
 
