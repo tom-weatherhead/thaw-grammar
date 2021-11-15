@@ -160,21 +160,22 @@ test('CLUGrammar point test', () => {
 			'(define abs (x) (if (< x 0) (- 0 x) x))',
 			pointCluster,
 			'(set p1 (Point$new 3 4))',
-			'p1'
+			'p1',
+			'(set p2 (Point$new 3 4))',
+			'(Point$rotate p2)',
+			'p2',
+			'(Point$abscissa p2)',
+			'(Point$ordinate p2)'
 		],
-		1
+		6
 	);
 
-	expect(actualResults.length).toBe(1);
+	expect(actualResults.length).toBe(6);
 	expect(actualResults[0]).toBe('x-coord = 3; y-coord = 4');
+	expect(actualResults[3]).toBe('x-coord = 4; y-coord = -3');
+	expect(actualResults[4]).toBe('4');
+	expect(actualResults[5]).toBe('-3');
 
-	// Assert.AreEqual("1", Evaluate("(define not (x) (if x 0 1))"));
-	// Assert.AreEqual("1", Evaluate("(define >= (x y) (not (< x y)))"));
-	// Assert.AreEqual("1", Evaluate("(define sqr (x) (* x x))"));
-	// Assert.AreEqual("1", Evaluate("(define abs (x) (if (< x 0) (- 0 x) x))"));
-	// Assert.AreEqual("1", Evaluate(pointCluster));
-	// Evaluate("(set p1 (Point$new 3 4))");
-	// Assert.AreEqual("3\r\n4", Evaluate("p1"));
 	// Evaluate("(Point$rotate p1)");
 	// Assert.AreEqual("4", Evaluate("(Point$abscissa p1)"));
 	// Assert.AreEqual("-3", Evaluate("(Point$ordinate p1)"));
