@@ -31,14 +31,18 @@ function createFnEval(): (str: string) => ICLUValue {
 	};
 }
 
-function evalStringsToValues(strs: string[], n = 1): ICLUValue[] {
-	const f = createFnEval();
-
-	return strs.map(f).slice(-n);
-}
+// function evalStringsToValues(strs: string[], n = 1): ICLUValue[] {
+// 	const f = createFnEval();
+//
+// 	return strs.map(f).slice(-n);
+// }
 
 function evalStringsToStrings(strs: string[], n = 1): string[] {
-	return evalStringsToValues(strs, n).map((value) => value.toString());
+	// return evalStringsToValues(strs, n).map((value) => value.toString());
+
+	const f = createFnEval();
+
+	return strs.map(str => f(str).toString()).slice(-n);
 }
 
 // function evalStringsToValue(strs: string[]): ICLUValue {
@@ -160,28 +164,37 @@ test('CLUGrammar point test', () => {
 			'(define abs (x) (if (< x 0) (- 0 x) x))',
 			pointCluster,
 			'(set p1 (Point$new 3 4))',
-			'p1',
-			'(set p2 (Point$new 3 4))',
-			'(Point$rotate p2)',
-			'p2',
-			'(Point$abscissa p2)',
-			'(Point$ordinate p2)'
+			'p1',							// -> x-coord = 3; y-coord = 4
+			'(Point$rotate p1)',
+			'p1',							// -> x-coord = 4; y-coord = -3
+			'(Point$abscissa p1)',			// -> 4
+			'(Point$ordinate p1)',			// -> -3
+			'(Point$reflect p1)',
+			'(Point$abscissa p1)',			// -> -4
+			'(Point$ordinate p1)',			// -> 3
+			'(set p2 (Point$new 1 5))',
+			'(Point$compare p1 p2)',		// -> 1
+			[
+				'(define enclosed-area (p1 p2) (abs (*',
+				'(- (Point$abscissa p1) (Point$abscissa p2))',
+				'(- (Point$ordinate p1) (Point$ordinate p2)))))',
+			].join(' '),
+			'(enclosed-area p1 p2)'			// -> 10
 		],
-		6
+		12
 	);
 
-	expect(actualResults.length).toBe(6);
-	expect(actualResults[0]).toBe('x-coord = 3; y-coord = 4');
-	expect(actualResults[3]).toBe('x-coord = 4; y-coord = -3');
-	expect(actualResults[4]).toBe('4');
-	expect(actualResults[5]).toBe('-3');
+	expect(actualResults.length).toBe(12);
 
-	// Evaluate("(Point$rotate p1)");
-	// Assert.AreEqual("4", Evaluate("(Point$abscissa p1)"));
-	// Assert.AreEqual("-3", Evaluate("(Point$ordinate p1)"));
-	// Evaluate("(Point$reflect p1)");
-	// Assert.AreEqual("-4", Evaluate("(Point$abscissa p1)"));
-	// Assert.AreEqual("3", Evaluate("(Point$ordinate p1)"));
+	expect(actualResults[0]).toBe('x-coord = 3; y-coord = 4');
+	expect(actualResults[2]).toBe('x-coord = 4; y-coord = -3');
+	expect(actualResults[3]).toBe('4');
+	expect(actualResults[4]).toBe('-3');
+	expect(actualResults[6]).toBe('-4');
+	expect(actualResults[7]).toBe('3');
+	expect(actualResults[9]).toBe('1');
+	expect(actualResults[11]).toBe('10');
+
 	// Evaluate("(set p2 (Point$new 1 5))");
 	// Assert.AreEqual("1", Evaluate("(Point$compare p1 p2)"));
 	// Assert.AreEqual("1", Evaluate(@"(define enclosed-area (p1 p2) (abs (*
