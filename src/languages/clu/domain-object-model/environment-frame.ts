@@ -4,11 +4,8 @@ import { ICLUEnvironmentFrame, ICLUValue, ICLUVariable } from './interfaces/ival
 
 export class CLUEnvironmentFrame {
 	public readonly dict = new Map<string, ICLUValue>();
-	// public readonly CLUEnvironmentFrame Next;
 
-	constructor(public readonly next?: ICLUEnvironmentFrame) {
-		// Next = next;
-	}
+	constructor(public readonly next?: ICLUEnvironmentFrame) {}
 
 	// public override string ToString()
 	// {
@@ -23,11 +20,6 @@ export class CLUEnvironmentFrame {
 		const value = this.dict.get(key.name);
 
 		if (typeof value !== 'undefined') {
-			// #if DEAD_CODE
-			// Console.WriteLine("Lookup: The value of {0} in {1} environment frame is {2}",
-			// 	key, (Next != null) ? "a local" : "the global", Dict[key]);
-			// #endif
-
 			return value;
 		}
 

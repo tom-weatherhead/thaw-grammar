@@ -25,8 +25,6 @@ export function isCLUNormalFunctionDefinition(obj: unknown): obj is CLUNormalFun
 
 export class CLUNormalFunctionDefinition extends CLUFunctionDefinitionBase {
 	public readonly typename: string = typenameCLUNormalFunctionDefinition;
-	// public readonly List<CLUVariable> ArgList;
-	// public readonly ICLUExpression Body;
 
 	constructor(
 		functionName: string,
@@ -34,9 +32,6 @@ export class CLUNormalFunctionDefinition extends CLUFunctionDefinitionBase {
 		public readonly body: ICLUExpression
 	) {
 		super(functionName);
-
-		// ArgList = argList;
-		// Body = body;
 	}
 
 	/*

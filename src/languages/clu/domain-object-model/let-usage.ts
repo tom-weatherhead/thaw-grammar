@@ -12,16 +12,10 @@ import {
 import { CLUEnvironmentFrame } from './environment-frame';
 
 export class CLULetUsage implements ICLUExpression {
-	// public readonly List<KeyValuePair<CLUVariable, ICLUExpression>> Bindings;
-	// public readonly ICLUExpression Expression;
-
 	constructor(
 		public readonly bindings: [ICLUVariable, ICLUExpression][],
 		public readonly expression: ICLUExpression
-	) {
-		// Bindings = bindings;
-		// Expression = expression;
-	}
+	) {}
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,

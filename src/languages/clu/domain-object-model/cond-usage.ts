@@ -9,21 +9,14 @@ import {
 } from './interfaces/ivalue';
 
 export class CLUCondUsage implements ICLUExpression {
-	// public readonly List<KeyValuePair<ICLUExpression, ICLUExpression>> ExprPairList;
-
-	constructor(public readonly exprPairList: [ICLUExpression, ICLUExpression][]) {
-		// ExprPairList = exprPairList;
-	}
+	constructor(public readonly exprPairList: [ICLUExpression, ICLUExpression][]) {}
 
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
 		cluster: ICluster | undefined,
 		globalInfo: ICLUGlobalInfo
 	): ICLUValue {
-		//var falseValue = globalInfo.FalseValue;
-
 		for (const [key, value] of this.exprPairList) {
-			//if (!exprPair.Key.Evaluate(localEnvironment, cluster, globalInfo).Equals(falseValue))
 			if (!globalInfo.valueIsFalse(key.evaluate(localEnvironment, cluster, globalInfo))) {
 				return value.evaluate(localEnvironment, cluster, globalInfo);
 			}

@@ -28,24 +28,6 @@ export class Cluster implements ICLUExpression {
 		private funDefList: CLUFunctionDefinitionBase[]
 	) {}
 
-	// public override bool Equals(object obj)
-	// {
-	//
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-	//
-	// 	var otherCluster = obj as Cluster;
-	//
-	// 	return otherCluster != null && ClusterName == otherCluster.ClusterName;
-	// }
-	//
-	// public override int GetHashCode()
-	// {
-	// 	return ClusterName.GetHashCode();
-	// }
-
 	public evaluate(
 		localEnvironment: ICLUEnvironmentFrame,
 		cluster: ICluster | undefined,

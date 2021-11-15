@@ -20,14 +20,17 @@ export class CLUUserValue implements ICLUValue {
 	constructor(public readonly owner: ICluster, public readonly value: ICLUEnvironmentFrame) {}
 
 	public toString(): string {
-		// TODO: Output the values of the cluster instance variables, in the order in which they are declared in the cluster.
-		//return "CLUUserValue: " + Value.ToString();
-
-		// return string.Join("\r\n", Owner.ClRep.Select(v => Value.Lookup(v)));
+		// Output the values of the cluster instance variables, in the order in which they are declared in the cluster.
 
 		return this.owner.clRep.map((v) => `${v} = ${this.value.lookup(v)}`).join('; ');
+	}
 
-		// return '<CLUUserValue>';
+	public equals(other: unknown): boolean {
+		return (
+			isCLUUserValue(other) &&
+			other.owner.clusterName === this.owner.clusterName &&
+			other.toString() === this.toString()
+		);
 	}
 
 	public evaluate(

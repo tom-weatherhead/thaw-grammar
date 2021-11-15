@@ -9,16 +9,10 @@ import {
 } from './interfaces/ivalue';
 
 export class CLUBeginUsage implements ICLUExpression {
-	// public readonly ICLUExpression FirstExpression;
-	// public readonly List<ICLUExpression> ExpressionList;
-
 	constructor(
 		public readonly firstExpression: ICLUExpression,
 		public readonly expressionList: ICLUExpression[]
-	) {
-		// FirstExpression = firstExpression;
-		// ExpressionList = expressionList;
-	}
+	) {}
 
 	/*
 	public override string ToString()

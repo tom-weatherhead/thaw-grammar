@@ -16,33 +16,16 @@ export function isCLUPrimitiveValue(obj: unknown): obj is CLUPrimitiveValue {
 
 export class CLUPrimitiveValue implements ICLUValue {
 	public readonly typename: string = typenameCLUPrimitiveValue;
-	// public readonly int Value;
 
-	constructor(public readonly value: number) {
-		// Value = value;
-	}
+	constructor(public readonly value: number) {}
 
 	public toString(): string {
 		return this.value.toString();
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	//
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-	//
-	// 	var otherPrim = obj as CLUPrimitiveValue;
-	//
-	// 	return otherPrim != null && Value == otherPrim.Value;
-	// }
-	//
-	// public override int GetHashCode()
-	// {
-	// 	return Value.GetHashCode();
-	// }
+	public equals(other: unknown): boolean {
+		return isCLUPrimitiveValue(other) && other.value === this.value;
+	}
 
 	public evaluate(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -263,7 +263,7 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 				arg2.scalars.map((n2: number) => operatorLambda(fs1, n2))
 			);
 
-			console.log(`evaluateDyadicExpressionHelper: result is ${result}.`);
+			// console.log(`evaluateDyadicExpressionHelper: result is ${result}.`);
 
 			return result;
 		} else if (arg2AsValue.isScalar) {

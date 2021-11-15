@@ -42,7 +42,7 @@ function evalStringsToStrings(strs: string[], n = 1): string[] {
 
 	const f = createFnEval();
 
-	return strs.map(str => f(str).toString()).slice(-n);
+	return strs.map((str) => f(str).toString()).slice(-n);
 }
 
 // function evalStringsToValue(strs: string[]): ICLUValue {
@@ -164,22 +164,22 @@ test('CLUGrammar point test', () => {
 			'(define abs (x) (if (< x 0) (- 0 x) x))',
 			pointCluster,
 			'(set p1 (Point$new 3 4))',
-			'p1',							// -> x-coord = 3; y-coord = 4
+			'p1', // -> x-coord = 3; y-coord = 4
 			'(Point$rotate p1)',
-			'p1',							// -> x-coord = 4; y-coord = -3
-			'(Point$abscissa p1)',			// -> 4
-			'(Point$ordinate p1)',			// -> -3
+			'p1', // -> x-coord = 4; y-coord = -3
+			'(Point$abscissa p1)', // -> 4
+			'(Point$ordinate p1)', // -> -3
 			'(Point$reflect p1)',
-			'(Point$abscissa p1)',			// -> -4
-			'(Point$ordinate p1)',			// -> 3
+			'(Point$abscissa p1)', // -> -4
+			'(Point$ordinate p1)', // -> 3
 			'(set p2 (Point$new 1 5))',
-			'(Point$compare p1 p2)',		// -> 1
+			'(Point$compare p1 p2)', // -> 1
 			[
 				'(define enclosed-area (p1 p2) (abs (*',
 				'(- (Point$abscissa p1) (Point$abscissa p2))',
-				'(- (Point$ordinate p1) (Point$ordinate p2)))))',
+				'(- (Point$ordinate p1) (Point$ordinate p2)))))'
 			].join(' '),
-			'(enclosed-area p1 p2)'			// -> 10
+			'(enclosed-area p1 p2)' // -> 10
 		],
 		12
 	);

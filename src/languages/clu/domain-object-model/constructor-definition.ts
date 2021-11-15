@@ -20,12 +20,9 @@ export function isCLUConstructorDefinition(obj: unknown): obj is CLUConstructorD
 
 export class CLUConstructorDefinition extends CLUFunctionDefinitionBase {
 	public readonly typename: string = typenameCLUConstructorDefinition;
-	//public readonly string ClusterName;
 
 	constructor(/* string funcName, */ clusterName: string) {
 		super(clusterName);
-
-		//ClusterName = clusterName;
 	}
 
 	public evaluate(

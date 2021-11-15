@@ -10,11 +10,7 @@ import {
 } from './interfaces/ivalue';
 
 export abstract class CLUFunctionDefinitionBase implements ICLUExpression, ICLUFunctionDefinition {
-	// public readonly string FunctionName;
-
-	protected constructor(public readonly functionName: string) {
-		// FunctionName = funcName;
-	}
+	protected constructor(public readonly functionName: string) {}
 
 	public abstract evaluate(
 		localEnvironment: ICLUEnvironmentFrame,

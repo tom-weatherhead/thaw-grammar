@@ -56,29 +56,19 @@ twoArgumentIntegerPredicates.set('<', (x: number, y: number) => x < y);
 twoArgumentIntegerPredicates.set('>', (x: number, y: number) => x > y);
 
 export class CLUOperatorUsage implements ICLUExpression {
-	// public readonly expressionList: ICLUExpression[];
 	private readonly clusterName: string;
 	private readonly functionName: string;
-	// private readonly builtInOperatorNames: string[];
 
 	constructor(operatorName: ICLUFunctionName, public readonly expressionList: ICLUExpression[]) {
-		// ExpressionList = expressionList;
-
 		if (isTwoPartFunctionName(operatorName)) {
-			// var o = (TwoPartFunctionName)operatorName;
-
 			this.clusterName = operatorName.clusterPart;
 			this.functionName = operatorName.functionPart;
 		} else if (isOnePartFunctionName(operatorName)) {
-			// var o = (OnePartFunctionName)operatorName;
-
 			this.clusterName = '';
 			this.functionName = operatorName.functionPart;
 		} else {
 			throw new Error('CLUOperatorUsage constructor');
 		}
-
-		// BuiltInOperatorNames = new HashSet<string>() { "+", "-", "*", "/", "=", "<", /* ">", */ "print" };
 	}
 
 	/*
@@ -116,8 +106,6 @@ export class CLUOperatorUsage implements ICLUExpression {
 		}
 
 		if (isCLUNormalFunctionDefinition(funDef)) {
-			// var normalFunDef = (CLUNormalFunctionDefinition)funDef;
-
 			return funDef.argList.length;
 		} else if (isCLUConstructorDefinition(funDef)) {
 			if (typeof cluster === 'undefined') {
@@ -143,12 +131,8 @@ export class CLUOperatorUsage implements ICLUExpression {
 			let associatedVariable: ICLUVariable | undefined;
 
 			if (isCLUSelectorDefinition(funDef)) {
-				// var selector = (CLUSelectorDefinition)funDef;
-
 				associatedVariable = funDef.associatedVariable;
 			} else if (isCLUSettorDefinition(funDef)) {
-				// var settor = (CLUSettorDefinition)funDef;
-
 				associatedVariable = funDef.associatedVariable;
 			}
 
@@ -210,8 +194,10 @@ export class CLUOperatorUsage implements ICLUExpression {
 			}
 
 			switch (this.functionName) {
-				// case "=":
-				// 	return evaluatedArguments[0].equals(evaluatedArguments[1]) ? globalInfo.trueValue : globalInfo.falseValue;
+				case '=':
+					return evaluatedArguments[0].equals(evaluatedArguments[1])
+						? globalInfo.trueValue
+						: globalInfo.falseValue;
 
 				case 'print':
 					console.log(evaluatedArguments[0]);
@@ -305,9 +291,7 @@ export class CLUOperatorUsage implements ICLUExpression {
 			);
 		}
 
-		// originalCluster
-		//List<ICLUValue> evaluatedArguments = ExpressionList.Select(expr => expr.Evaluate(localEnvironment, cluster, globalInfo)).ToList();
-
+		// Evaluate using originalCluster, not cluster:
 		const evaluatedArguments = this.expressionList.map((expr) =>
 			expr.evaluate(localEnvironment, originalCluster, globalInfo)
 		);

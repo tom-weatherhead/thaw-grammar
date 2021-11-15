@@ -23,36 +23,10 @@ export function isOnePartFunctionName(obj: unknown): obj is OnePartFunctionName 
 
 export class OnePartFunctionName implements ICLUFunctionName {
 	public typename: string = typenameOnePartFunctionName;
-	// public readonly string FunctionPart;
 
-	constructor(public readonly functionPart: string) {
-		// FunctionPart = f;
-	}
+	constructor(public readonly functionPart: string) {}
 
 	public toString(): string {
 		return this.functionPart;
 	}
-
-	// public override bool Equals(object obj)
-	// {
-	//
-	// 	if (object.ReferenceEquals(this, obj))
-	// 	{
-	// 		return true;
-	// 	}
-	//
-	// 	if (obj == null || !GetType().Equals(obj.GetType()))
-	// 	{
-	// 		return false;
-	// 	}
-	//
-	// 	var otherOnePartFunName = (OnePartFunctionName)obj;
-	//
-	// 	return FunctionPart == otherOnePartFunName.FunctionPart;
-	// }
-	//
-	// public override int GetHashCode()
-	// {
-	// 	return FunctionPart.GetHashCode();
-	// }
 }
