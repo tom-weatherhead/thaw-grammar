@@ -55,9 +55,9 @@ function evalStringsToValue(strs: string[]): ICLUValue {
 	return values[0];
 }
 
-// function evalStringsToString(strs: string[]): string {
-// 	return evalStringsToValue(strs).toString();
-// }
+function evalStringsToString(strs: string[]): string {
+	return evalStringsToValue(strs).toString();
+}
 
 function evalStringToValue(str: string): ICLUValue {
 	return evalStringsToValue([str]);
@@ -275,34 +275,40 @@ test('CLUGrammar let* test', () => {
 	expect(evalStringToString('(let* ((x (+ 2 3)) (y (* x x))) y)')).toBe('25');
 });
 
-// [Test]
-// public void AddBubbleDownTest() // 2013/12/04
-// {
-// 	// This tests a bug fix to CLUEnvironmentFrame<T>.AddBubbleDown(), where Add() used to be called unconditionally at the end of the function.
-// 	Evaluate("(define test2 () foo)");
-// 	Evaluate(@"
-// (define test1 () (begin
-// (set foo 7) ; The buggy code was adding this variable to both the global and local frames.
-// (set foo 13) ; The buggy code was modifying only the 'foo' in the local frame, since that's where AddBubbleDown() found 'foo' first.
-// (test2) ; This returns the value of the 'foo' in the global frame.
-// ))");
-//
-// 	Assert.AreEqual("13", Evaluate("(test1)"));
-// }
-//
-// [Test]
-// public void TwoLocalEnvironmentsTest() // 2013/12/05
-// {
-// 	Evaluate("(define test (x) (let ((y 13)) x))");
-//
-// 	Assert.AreEqual("7", Evaluate("(test 7)"));
-// }
-//
-// [Test]
-// public void TwoLocalEnvironmentsSetTest() // 2013/12/06
-// {
-// 	// To understand why this function contains two consecutive sets of the same variable, see the test AddBubbleDownTest().
-// 	Evaluate("(define test (x) (begin (let ((y 13)) (begin (set x 19) (set x 20))) x))");
-//
-// 	Assert.AreEqual("20", Evaluate("(test 7)"));
-// }
+test('CLUGrammar AddBubbleDown test', () => {
+	// 2013/12/04
+	// This tests a bug fix to CLUEnvironmentFrame<T>.AddBubbleDown(), where Add() used to be called unconditionally at the end of the function.
+
+	const actualResult = evalStringsToString([
+		'(define test2 () foo)',
+		[
+			'(define test1 () (begin',
+			'	(set foo 7)', // ; The buggy code was adding this variable to both the global and local frames.
+			'	(set foo 13)', // ; The buggy code was modifying only the 'foo' in the local frame, since that's where AddBubbleDown() found 'foo' first.
+			'	(test2)', // ; This returns the value of the 'foo' in the global frame.
+			'))'
+		].join(' '),
+		'(test1)'
+	]);
+
+	expect(actualResult).toBe('13');
+});
+
+test('CLUGrammar TwoLocalEnvironments test', () => {
+	// 2013/12/05
+	const actualResult = evalStringsToString(['(define test (x) (let ((y 13)) x))', '(test 7)']);
+
+	expect(actualResult).toBe('7');
+});
+
+test('CLUGrammar TwoLocalEnvironmentsSet test', () => {
+	// 2013/12/06
+	// To understand why this function contains two consecutive sets of the same variable, see the test AddBubbleDownTest().
+
+	const actualResult = evalStringsToString([
+		'(define test (x) (begin (let ((y 13)) (begin (set x 19) (set x 20))) x))',
+		'(test 7)'
+	]);
+
+	expect(actualResult).toBe('20');
+});
