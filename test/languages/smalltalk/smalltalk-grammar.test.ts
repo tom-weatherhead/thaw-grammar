@@ -47,6 +47,12 @@ function evalStringsToValue(strs: string[]): ISmalltalkValue {
 	return values[0];
 }
 
+function evalStringsToStrings(strs: string[], n = 1): string[] {
+	const f = createFnEval();
+
+	return strs.map((str) => f(str).toString()).slice(-n);
+}
+
 function evaluateStringToInteger(str: string): number | undefined {
 	return evalStringsToValue([str]).toInteger();
 }
@@ -443,23 +449,29 @@ test('SmalltalkGrammar class inheritance test', () => {
 	expect(actualResult).toBe('D');
 });
 
-// [Test]
-// public void SuperTest1()
-// {
-//     Evaluate(@"
-// (class C Object () ()
-// (define f () 7)
-// (define g () 13))");
-//     Evaluate(@"
-// (class D C () ()
-// (define f () (f super))
-// (define g () 101)
-// (define h () (g super)))");
-//     Evaluate("(set x (new D))");
-//     Assert.AreEqual("7", Evaluate("(f x)"));
-//     Assert.AreEqual("13", Evaluate("(h x)"));
-// }
-//
+test('SmalltalkGrammar super test 1', () => {
+	const actualResults = evalStringsToStrings(
+		[
+			['(class C Object () ()', '(define f () 7)', '(define g () 13))'].join(' '),
+			[
+				'(class D C () ()',
+				'(define f () (f super))',
+				'(define g () 101)',
+				'(define h () (g super)))'
+			].join(' '),
+			'(set x (new D))',
+			'(f x)',
+			'(h x)'
+		],
+		2
+	);
+
+	expect(actualResults.length).toBe(2);
+
+	expect(actualResults[0]).toBe('7');
+	expect(actualResults[1]).toBe('13');
+});
+
 // [Test]
 // public void SuperTest2()
 // {

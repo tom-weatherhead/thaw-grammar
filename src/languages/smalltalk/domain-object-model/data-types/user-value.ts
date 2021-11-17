@@ -33,7 +33,8 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 	}
 
 	public override toString(): string {
-		// Avoid looking up the value of "self", as that would cause an infinite loop.
+		// Avoid looking up the value of 'self', as that would cause an infinite loop.
+
 		// return string.Join("\r\n", Owner.ClRep.Where(v => !v.Equals(SmalltalkObjectClassKeeper.SelfVar)).Select(v => Value.Lookup(v)));
 
 		const variableNames = Array.from(this.value.dict.keys()).filter(
@@ -44,31 +45,12 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 
 		const values = variableNames.map((v) => `${v} = ${this.value.dict.get(v)}`);
 
-		// return `<SmalltalkUserValue of type ${this.getTypename()}>`;
-
 		return `${this.getTypename()}: ${values.join('; ')}`;
 	}
 
-	//     public override bool Equals(object obj)
-	//     {
-	// #if DEAD_CODE
-	//         if (object.ReferenceEquals(this, obj))
-	//         {
-	//             return true;
-	//         }
-	//
-	//         var otherUserValue = obj as SmalltalkUserValue;
-	//
-	//         return otherUserValue != null && Owner.Equals(otherUserValue.Owner) && Value.Equals(otherUserValue.Value);
-	// #else
-	//         // 2014/01/30: The book (at the top of page 278) recommends that this always return false.
-	//         return object.ReferenceEquals(this, obj);
-	// #endif
-	//     }
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public equals(other: unknown): boolean {
-		// return false; // 2021-11-04 : Temporary hack.
+		// 2021-11-16 : Is this next comment still valid? :
+		// 2014/01/30: The book (at the top of page 278) recommends that this always return false.
 
 		if (!isSmalltalkUserValue(other)) {
 			return false;
