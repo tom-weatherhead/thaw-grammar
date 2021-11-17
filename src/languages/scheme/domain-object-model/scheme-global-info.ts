@@ -1,8 +1,12 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/scheme-global-info.ts
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 import { ArgumentException } from 'thaw-interpreter-core';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
+
+import { IExpression } from '../../../common/domain-object-model/iexpression';
 
 import { FloatLiteral } from '../../lisp/domain-object-model/float-literal';
 import { IntegerLiteral } from '../../lisp/domain-object-model/integer-literal';
@@ -12,17 +16,282 @@ import { LISPSymbol } from '../../lisp/domain-object-model/lisp-symbol';
 import { NullSExpression } from '../../lisp/domain-object-model/null-sexpression';
 
 export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
+	private readonly tokenizer: ITokenizer | undefined;
+	private readonly parser: IParser | undefined;
 	private readonly trueValueForAccessor: ISExpression = new LISPSymbol('T'); // Symbols are immutable
 	private readonly falseValueForAccessor: ISExpression = new NullSExpression(); // This is immutable too
 	// private readonly Dictionary<Name, IMacroDefinition<ISExpression>> MacroDefs = new Dictionary<Name, IMacroDefinition<ISExpression>>();
 	// public static readonly Variable<ISExpression> varStackTrace = new Variable<ISExpression>("__STACK_TRACE__", 0, 0);
 
-	constructor() {
+	constructor(
+		options: {
+			parser?: IParser;
+			tokenizer?: ITokenizer;
+		} = {}
+	) {
 		super();
+
+		this.tokenizer = options.tokenizer;
+		this.parser = options.parser;
 	}
 
-	// public override string LoadPreset(string presetName) {
-	// }
+	public override loadPreset(presetName: string): string {
+		if (typeof this.tokenizer === 'undefined') {
+			throw new Error('SchemeGlobalInfo.loadPreset() : this.tokenizer is undefined.');
+		} else if (typeof this.parser === 'undefined') {
+			throw new Error('SchemeGlobalInfo.loadPreset() : this.parser is undefined.');
+		}
+
+		// globalInfo.LoadPreset("assoc");
+		// globalInfo.LoadPreset("select");
+		// globalInfo.LoadPreset("flatten");
+
+		switch (
+			presetName // presetName.ToLower()
+		) {
+			case 'assoc':
+				// Association list functions (adapted from page 32)
+				this.evaluate('(set caar (compose car car))');
+				this.evaluate('(set cadar (compose car cadr))');
+				this.evaluate(
+					[
+						'(set assoc (lambda (x alist)',
+						'(cond',
+						"((null? alist) '())",
+						'((= x (caar alist)) (cadar alist))',
+						"('T (assoc x (cdr alist)))",
+						')',
+						'))'
+					].join(' ')
+				);
+				this.evaluate(
+					[
+						'(set mkassoc (lambda (x y alist)',
+						'(cond',
+						'((null? alist) (list (list x y)))',
+						'((= x (caar alist)) (cons (list x y) (cdr alist)))',
+						"('T (cons (car alist) (mkassoc x y (cdr alist))))",
+						')',
+						'))'
+					].join(' ')
+				);
+				// Additional function
+				/*
+		                    this.evaluate(@"
+		(set assoc-contains-key (lambda (x alist)
+		    (if (null? alist) '()
+		        (if (= x (caar alist)) 'T
+		            (assoc-contains-key x (cdr alist))))))");
+		                     */
+				this.evaluate(
+					'(set assoc-contains-key (lambda (x alist) (find (compose car ((curry =) x)) alist)))'
+				);
+				// Adapted from page 55
+				this.evaluate(
+					[
+						'(set rplac-assoc (lambda (x y alist)',
+						'(cond',
+						"((null? alist) '())",
+						'((= x (caar alist)) (rplacd (car alist) (list y)))',
+						'((null? (cdr alist)) (rplacd alist (list (list x y))))',
+						"('T (rplac-assoc x y (cdr alist)))",
+						')',
+						'))'
+					].join(' ')
+				);
+				break;
+
+			case 'queue':
+				// Queue functions (adapted from page 37)
+				this.evaluate("(set empty-queue '())");
+				this.evaluate('(set front car)');
+				this.evaluate('(set rm-front cdr)');
+				//this.evaluate("(set enqueue (lambda (t q) (if (null? q) (list t) (cons (car q) (enqueue t (cdr q))))))"); // Version 1
+				this.evaluate('(set enqueue (lambda (t q) (append q (list t))))'); // Version 2; 2013/11/30
+				this.evaluate('(set empty? null?)');
+				break;
+
+			case 'compose': // From page 104
+				//this.evaluate("(set compose (lambda (f g) (lambda (x) (g (f x)))))");
+				break;
+
+			case 'set':
+				// Scheme set functions; from pages 104-105
+				this.evaluate("(set nullset '())");
+				this.evaluate('(set member? (lambda (x s) (find ((curry equal) x) s)))');
+				this.evaluate('(set addelt (lambda (x s) (if (member? x s) s (cons x s))))');
+				this.evaluate('(set union (lambda (s1 s2) ((combine id addelt s1) s2)))');
+				break;
+
+			case 'select':
+				this.evaluate(
+					[
+						'(set select (lambda (indices l)',
+						'(letrec ((select* (lambda (n indices l)',
+						'(cond',
+						"((or (null? indices) (null? l)) '())",
+						'((= n (car indices)) (cons (car l) (select* (+1 n) (cdr indices) (cdr l))))',
+						"('T (select* (+1 n) indices (cdr l)))))))",
+						'(select* 0 indices l))))'
+					].join(' ')
+				);
+				break;
+
+			case 'flatten':
+				this.evaluate(
+					[
+						'(set flatten (lambda (tree)',
+						"(if (null? tree) '()",
+						'(if (atom? tree) (list tree)',
+						'(append (flatten (car tree)) (flatten (cdr tree)))))))'
+					].join(' ')
+				);
+				break;
+
+			case 'sublist':
+				this.evaluate(
+					[
+						'(set sublist (lambda (l start len)',
+						'(cond',
+						"((or (<= len 0) (null? l)) '())",
+						'((> start 0) (sublist (cdr l) (- start 1) len))',
+						"('T (cons (car l) (sublist (cdr l) 0 (- len 1)))))))"
+					].join(' ')
+				);
+				this.evaluate(
+					[
+						'(set removesublist (lambda (l start len)',
+						'(cond',
+						'((or (<= len 0) (null? l)) l)',
+						'((> start 0) (cons (car l) (removesublist (cdr l) (- start 1) len)))',
+						"('T (removesublist (cdr l) 0 (- len 1))))))"
+					].join(' ')
+				);
+				break;
+
+			case 'substring':
+				this.loadPreset('sublist');
+				this.evaluate(
+					'(set substring (lambda (str start len) (listtostring (sublist (stringtolist str) start len))))'
+				);
+				this.evaluate(
+					'(set removesubstring (lambda (str start len) (listtostring (removesublist (stringtolist str) start len))))'
+				);
+				break;
+
+			case 'stack':
+				this.evaluate("(set empty-stack '())");
+				this.evaluate('(set push cons)');
+				this.evaluate('(set peek car)');
+				this.evaluate('(set pop cdr)');
+				this.evaluate('(set empty-stack? null?)');
+				break;
+
+			case 'filter':
+				this.evaluate(
+					[
+						'(set filter (lambda (pred l)', // ; Returns only the elements of l for which pred is true.
+						'(cond',
+						"((null? l) '())",
+						'((pred (car l)) (cons (car l) (filter pred (cdr l))))',
+						"('T (filter pred (cdr l)))",
+						')',
+						'))'
+					].join(' ')
+				);
+				this.evaluate(
+					[
+						'(set remove (lambda (x l)', // ; Returns a copy of l that has had all occurrences of x removed.
+						'(filter (compose ((curry =) x) not) l)',
+						'))'
+					].join(' ')
+				);
+				break;
+
+			case 'sort':
+				this.evaluate(
+					[
+						'(set insertion-sort (lambda (lessthan)',
+						'(letrec',
+						'(',
+						'(insert (lambda (x l)',
+						'(cond',
+						'((null? l) (list x))',
+						'((lessthan x (car l)) (cons x l))',
+						"('T (cons (car l) (insert x (cdr l))))",
+						')',
+						'))',
+						')',
+						"(combine id insert '())",
+						')',
+						'))'
+					].join(' ')
+				);
+				this.evaluate(
+					[
+						'(set quicksort (lambda (lessthan)',
+						'(letrec',
+						'(',
+						'(partition (lambda (pivot-element l lessthanlist notlessthanlist)',
+						'(cond',
+						'((null? l) (list lessthanlist notlessthanlist))',
+						'((lessthan (car l) pivot-element) (partition pivot-element (cdr l) (cons (car l) lessthanlist) notlessthanlist))',
+						"('T (partition pivot-element (cdr l) lessthanlist (cons (car l) notlessthanlist)))",
+						')',
+						'))',
+						'(qs (lambda (l)',
+						'(if (< (length l) 2) l',
+						"(let ((partitioned-lists (partition (car l) (cdr l) '() '())))",
+						'(append (qs (car partitioned-lists)) (cons (car l) (qs (cadr partitioned-lists))))',
+						')',
+						')',
+						'))',
+						')',
+						'qs',
+						')',
+						'))'
+					].join(' ')
+				);
+				this.evaluate(
+					[
+						'(set merge-sort (lambda (lessthan)',
+						'(letrec',
+						'(',
+						'(merge (lambda (l1 l2 reversed-result)',
+						'(cond',
+						'((null? l1) (append (reverse reversed-result) l2))',
+						'((null? l2) (append (reverse reversed-result) l1))',
+						'((lessthan (car l1) (car l2)) (merge (cdr l1) l2 (cons (car l1) reversed-result)))',
+						"('T (merge l1 (cdr l2) (cons (car l2) reversed-result)))",
+						')',
+						'))',
+						'(cut-list (lambda (l)',
+						'(let ((len (/ (length l) 2)))',
+						'(list (take len l) (skip len l))',
+						')',
+						'))',
+						'(ms (lambda (l)',
+						'(if (< (length l) 2) l',
+						'(let ((lists (cut-list l)))',
+						"(merge (ms (car lists)) (ms (cadr lists)) '())",
+						')',
+						')',
+						'))',
+						')',
+						'ms',
+						')',
+						'))'
+					].join(' ')
+				);
+
+				break;
+
+			default:
+				throw new Error(`loadPreset() : Unknown preset name '${presetName}'.`);
+		}
+
+		return `The preset '${presetName}' has been successfully loaded.`;
+	}
 
 	// public override void LoadPresets() {
 	// }
@@ -152,5 +421,18 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 		this.debug = debug;
 
 		return true;
+	}
+
+	public evaluate(str: string): ISExpression {
+		if (typeof this.tokenizer === 'undefined') {
+			throw new Error('SchemeGlobalInfo.evaluate() : this.tokenizer is undefined.');
+		} else if (typeof this.parser === 'undefined') {
+			throw new Error('SchemeGlobalInfo.evaluate() : this.parser is undefined.');
+		}
+
+		const parseResult = this.parser.parse(this.tokenizer.tokenize(str));
+		const expr = parseResult as IExpression<ISExpression>;
+
+		return expr.evaluate(this.globalEnvironment, this);
 	}
 }
