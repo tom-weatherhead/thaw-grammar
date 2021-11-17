@@ -14,11 +14,7 @@ import {
 	IAPLValue
 } from '../../..';
 
-import {
-	// createFnParser,
-	createFnRecognizer,
-	createInfrastructure
-} from '../../create-infrastructure';
+import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
 // Define values for unit testing here.
 
@@ -509,4 +505,34 @@ test('APLGrammar define (user-defined functions) test', () => {
 	expect(actualResults[0]).toBe('-7');
 	expect(actualResults[1]).toBe('3');
 	expect(actualResults[2]).toBe('0');
+});
+
+test('APLGrammar cond test', () => {
+	const actualResults = evalStringsToStrings(
+		[
+			'(define condtest (n) (cond ((= n 1) 101) ((= n 2) 102) ((= n 3) 103) (1 107)))',
+			'(condtest 0)',
+			'(condtest 1)',
+			'(condtest 2)',
+			'(condtest 3)',
+			'(condtest 4)'
+		],
+		5
+	);
+
+	expect(actualResults.length).toBe(5);
+
+	expect(actualResults[0]).toBe('107');
+	expect(actualResults[1]).toBe('101');
+	expect(actualResults[2]).toBe('102');
+	expect(actualResults[3]).toBe('103');
+	expect(actualResults[4]).toBe('107');
+});
+
+test('APLGrammar let test', () => {
+	expect(evalStringToString('(let ((n (+ 2 3))) n)')).toBe('5');
+});
+
+test('APLGrammar let* test', () => {
+	expect(evalStringToString('(let* ((x (+ 2 3)) (y (* x x))) y)')).toBe('25');
 });

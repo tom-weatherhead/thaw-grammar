@@ -31,11 +31,11 @@ function createFnEval(): (str: string) => ICLUValue {
 	};
 }
 
-// function evalStringsToValues(strs: string[], n = 1): ICLUValue[] {
-// 	const f = createFnEval();
-//
-// 	return strs.map(f).slice(-n);
-// }
+function evalStringsToValues(strs: string[], n = 1): ICLUValue[] {
+	const f = createFnEval();
+
+	return strs.map(f).slice(-n);
+}
 
 function evalStringsToStrings(strs: string[], n = 1): string[] {
 	// return evalStringsToValues(strs, n).map((value) => value.toString());
@@ -45,27 +45,27 @@ function evalStringsToStrings(strs: string[], n = 1): string[] {
 	return strs.map((str) => f(str).toString()).slice(-n);
 }
 
-// function evalStringsToValue(strs: string[]): ICLUValue {
-// 	const values = evalStringsToValues(strs, 1);
-//
-// 	if (values.length < 1) {
-// 		throw new Error('evalToValue() : values.length is zero.');
-// 	}
-//
-// 	return values[0];
-// }
+function evalStringsToValue(strs: string[]): ICLUValue {
+	const values = evalStringsToValues(strs, 1);
+
+	if (values.length < 1) {
+		throw new Error('evalToValue() : values.length is zero.');
+	}
+
+	return values[0];
+}
 
 // function evalStringsToString(strs: string[]): string {
 // 	return evalStringsToValue(strs).toString();
 // }
 
-// function evalStringToValue(str: string): ICLUValue {
-// 	return evalStringsToValue([str]);
-// }
+function evalStringToValue(str: string): ICLUValue {
+	return evalStringsToValue([str]);
+}
 
-// function evalStringToString(str: string): string {
-// 	return evalStringToValue(str).toString();
-// }
+function evalStringToString(str: string): string {
+	return evalStringToValue(str).toString();
+}
 
 test('CLUGrammar instance creation test', () => {
 	// Arrange
@@ -245,30 +245,36 @@ test('CLUGrammar point test', () => {
 	// Assert.Throws<FunctionNotExportedException>(() => Evaluate("(List$set-type x 0)"));
 });
 
-// [Test]
-// public void CondTest()
-// {
-// 	Evaluate("(define condtest (n) (cond ((= n 1) 101) ((= n 2) 102) ((= n 3) 103) (1 107)))");
-//
-// 	Assert.AreEqual("107", Evaluate("(condtest 0)"));
-// 	Assert.AreEqual("101", Evaluate("(condtest 1)"));
-// 	Assert.AreEqual("102", Evaluate("(condtest 2)"));
-// 	Assert.AreEqual("103", Evaluate("(condtest 3)"));
-// 	Assert.AreEqual("107", Evaluate("(condtest 4)"));
-// }
-//
-// [Test]
-// public void LetTest()
-// {
-// 	Assert.AreEqual("5", Evaluate("(let ((n (+ 2 3))) n)"));
-// }
-//
-// [Test]
-// public void LetStarTest()
-// {
-// 	Assert.AreEqual("25", Evaluate("(let* ((x (+ 2 3)) (y (* x x))) y)"));
-// }
-//
+test('CLUGrammar cond test', () => {
+	const actualResults = evalStringsToStrings(
+		[
+			'(define condtest (n) (cond ((= n 1) 101) ((= n 2) 102) ((= n 3) 103) (1 107)))',
+			'(condtest 0)',
+			'(condtest 1)',
+			'(condtest 2)',
+			'(condtest 3)',
+			'(condtest 4)'
+		],
+		5
+	);
+
+	expect(actualResults.length).toBe(5);
+
+	expect(actualResults[0]).toBe('107');
+	expect(actualResults[1]).toBe('101');
+	expect(actualResults[2]).toBe('102');
+	expect(actualResults[3]).toBe('103');
+	expect(actualResults[4]).toBe('107');
+});
+
+test('CLUGrammar let test', () => {
+	expect(evalStringToString('(let ((n (+ 2 3))) n)')).toBe('5');
+});
+
+test('CLUGrammar let* test', () => {
+	expect(evalStringToString('(let* ((x (+ 2 3)) (y (* x x))) y)')).toBe('25');
+});
+
 // [Test]
 // public void AddBubbleDownTest() // 2013/12/04
 // {

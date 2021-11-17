@@ -292,12 +292,6 @@ export class CluGrammar extends GrammarBase {
 
 		// let and let*
 
-		// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
-		//     Symbol.N_LetKeyword,
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_VarExprList,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_Expression, "#letUsage" }, 34));
 		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
 			GrammarSymbol.nonterminalLetKeyword,
 			GrammarSymbol.terminalLeftBracket,
@@ -307,18 +301,10 @@ export class CluGrammar extends GrammarBase {
 			'#letUsage'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLet }, 35));
 		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLet]);
 
-		// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { GrammarSymbol.terminalLetStar }, 36));
 		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLetStar]);
 
-		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() {
-		//     GrammarSymbol.terminalLeftBracket,
-		//     Symbol.N_Variable,
-		//     Symbol.N_Expression,
-		//     GrammarSymbol.terminalRightBracket,
-		//     Symbol.N_VarExprList, "#varExprList" }, 37));
 		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalVariable,
@@ -328,7 +314,6 @@ export class CluGrammar extends GrammarBase {
 			'#varExprList'
 		]);
 
-		// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, "#emptyVarExprList" }, 38));
 		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
 			GrammarSymbol.Lambda,
 			'#emptyVarExprList'
