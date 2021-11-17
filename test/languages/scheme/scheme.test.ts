@@ -44,11 +44,10 @@ test('LL(1) Scheme recognize test', () => {
 });
 
 function evaluateToISExpression(input: string): ISExpression {
-	// const ls = LanguageSelector.Scheme;
-	const globalInfo = new SchemeGlobalInfo();
 	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	const parser = createParser(ParserSelector.LL1, grammar);
+	const tokenizer = createTokenizer(grammar.defaultLexicalAnalyzer, ls);
+	const parser = createParser(grammar.defaultParser, grammar);
+	const globalInfo = new SchemeGlobalInfo({ tokenizer, parser });
 
 	const parseResult = parser.parse(tokenizer.tokenize(input));
 	const expr = parseResult as IExpression<ISExpression>;
@@ -1035,477 +1034,488 @@ test('LL(1) Scheme Streams test', () => {
 // d)
 // ))"));
 // }
-//
-// [Test]
-// public void APLEvalTest()
-// {
-//     globalInfo.LoadPreset("assoc");
-//     globalInfo.LoadPreset("select");
-//     globalInfo.LoadPreset("flatten");
-//     //globalInfo.LoadPreset("compose");
-//
-//     Evaluate("(set cddr (compose cdr cdr))");
-//     Evaluate("(set caddr (compose cdr cadr))");
-//     Evaluate("(set cadddr (compose cdr caddr))");
-//
-//     Evaluate(@"
-// (set get-type (lambda (x)
-// (cond
-// ((number? x) 'scalar)
-// ((null? x) 'vector)
-// ((number? (car x)) 'vector)
-// ('T 'matrix))))");
-//     Evaluate("(set s1 7)");
-//     Evaluate("(set v1 '(2 3 5 7))");
-//     Evaluate("(set m1 '((3 4) 1 2 3 4 5 6 7 8 9 10 11 12))");
-//
-//     Assert.AreEqual("scalar", Evaluate("(get-type s1)"));
-//     Assert.AreEqual("vector", Evaluate("(get-type '())"));
-//     Assert.AreEqual("vector", Evaluate("(get-type v1)"));
-//     Assert.AreEqual("matrix", Evaluate("(get-type m1)"));
-//
-//     Evaluate(@"
-// (set shape (lambda (x)
-// (let ((type (get-type x)))
-// (cond
-//     ((= type 'scalar) '())
-//     ((= type 'vector) (list (length x)))
-//     ('T (car x))))))");
-//
-//     Assert.AreEqual("()", Evaluate("(shape s1)"));
-//     Assert.AreEqual("(4)", Evaluate("(shape v1)"));
-//     Assert.AreEqual("(3 4)", Evaluate("(shape m1)"));
-//
-//     Evaluate(@"
-// (set to-vector (lambda (x)
-// (let ((type (get-type x)))
-// (cond
-//     ((= type 'scalar) (list x))
-//     ((= type 'vector) x)
-//     ('T (cdr x))))))");
-//
-//     Assert.AreEqual("(7)", Evaluate("(to-vector s1)"));
-//     Assert.AreEqual("(2 3 5 7)", Evaluate("(to-vector v1)"));
-//     Assert.AreEqual("(1 2 3 4 5 6 7 8 9 10 11 12)", Evaluate("(to-vector m1)"));
-//
-//     Evaluate(@"
-// (set get-first-scalar (lambda (x)
-// (let ((type (get-type x)))
-// (cond
-//     ((= type 'scalar) x)
-//     ((= type 'vector) (car x))
-//     ('T (cadr x))))))");
-//     Assert.AreEqual("7", Evaluate("(get-first-scalar 7)"));
-//     Assert.AreEqual("13", Evaluate("(get-first-scalar '(13 14 15))"));
-//     Assert.AreEqual("9", Evaluate("(get-first-scalar '((2 2) 9 3 5 7))"));
-//
-//     Evaluate("(set +/ (combine id + 0))");
-//     Evaluate("(set -/ (combine id - 0))");
-//     Evaluate("(set */ (combine id * 1))");
-//     Evaluate("(set // (combine id / 1))");
-//     Evaluate("(set to-scalar-if-possible (lambda (x) (if (= (*/ (shape x)) 1) (get-first-scalar x) x)))");
-//     Assert.AreEqual("13", Evaluate("(to-scalar-if-possible 13)"));
-//     Assert.AreEqual("7", Evaluate("(to-scalar-if-possible '(7))"));
-//     Assert.AreEqual("(8 9)", Evaluate("(to-scalar-if-possible '(8 9))"));
-//     Assert.AreEqual("20", Evaluate("(to-scalar-if-possible '((1 1) 20))"));
-//     Assert.AreEqual("((2 2) 1 0 0 1)", Evaluate("(to-scalar-if-possible '((2 2) 1 0 0 1))"));
-//
-//     Evaluate(@"
-// (set get-matrix-rows (lambda (m)
-// (letrec ((get-matrix-rows* (lambda (r c l)
-//     (if (= r 0) '()
-//         (cons (take c l) (get-matrix-rows* (- r 1) c (skip c l)))))))
-// (get-matrix-rows* (caar m) (cadar m) (cdr m)))))");
-//
-//     Assert.AreEqual("((1 2 3 4) (5 6 7 8) (9 10 11 12))", Evaluate("(get-matrix-rows m1)"));
-//
-//     Evaluate("(set max-of-pair (lambda (x y) (if (> x y) x y)))");
-//     Evaluate("(set max/ (lambda (l) ((combine id max-of-pair (car l)) (cdr l))))");
-//     Evaluate("(set apl-and (lambda (x y) (if (and (<> x 0) (<> y 0)) 1 0)))");
-//     Evaluate("(set apl-or (lambda (x y) (if (or (<> x 0) (<> y 0)) 1 0)))");
-//     Evaluate("(set and/ (combine id apl-and 1))");
-//     Evaluate("(set or/ (combine id apl-or 0))");
-//     Evaluate(@"
-// (set m-to-n (lambda (m n)
-// (if (> m n) '()
-// (cons m (m-to-n (+1 m) n)))))");
-//     Evaluate(@"
-// (set repeat (lambda (n l)
-// (letrec ((repeat* (lambda (n l l-original)
-//         (cond
-//             ((= n 0) '())
-//             ((null? l) (repeat* n l-original l-original))
-//             ('T (cons (car l) (repeat* (- n 1) (cdr l) l-original)))))))
-// (repeat* n l l))))");
-//     Evaluate(@"
-// (set restruct (lambda (desired-shape src-data)
-// (let* ((length-of-desired-shape (length desired-shape))
-//    (src-vector (to-vector src-data))
-//    (dst-vector (repeat (*/ desired-shape) src-vector)))
-// (cond
-//     ((= length-of-desired-shape 0) 'restruct-to-scalar-error)
-//     ((= length-of-desired-shape 1) dst-vector)
-//     ('T (cons desired-shape dst-vector))))))");
-//     Evaluate(@"
-// (set trans (lambda (matrix)
-// (letrec ((get-column (lambda (n l) (mapcar ((curry nth) n) l)))
-//      (get-data (lambda (n num-cols l)
-//         (if (< n num-cols)
-//             (append (get-column n l) (get-data (+1 n) num-cols l))
-//             '())))
-//      (new-shape (list (cadar matrix) (caar matrix))))
-// (cons new-shape (get-data 0 (cadar matrix) (get-matrix-rows matrix))))))");
-//     Evaluate(@"
-// (set [] (lambda (x y)
-// (let ((type-of-x (get-type x))
-//   (type-of-y (get-type y))
-//   (vector-y (to-vector y))
-//   (nth*-reversed-args (lambda (l n) (nth (- n 1) l))))
-// (cond
-//     ((= type-of-x 'scalar) '[]-x-scalar-error)
-//     ((= type-of-y 'matrix) '[]-x-matrix-error)
-//     ((= type-of-x 'vector) (mapcar ((curry nth*-reversed-args) x) vector-y))
-//     ('T (restruct
-//         (list (length vector-y) (cadar x))
-//         (flatten (mapcar ((curry nth*-reversed-args) (get-matrix-rows x)) vector-y))))))))");
-//     // Binary operators to implement:
-//     // - compress
-//     Evaluate(@"
-// (set compress (lambda (x y)
-// (letrec ((type-of-x (get-type x))
-//      (type-of-y (get-type y))
-//      (is-logical (lambda (v)
-//         (if (null? v) 'T
-//             (if (or (= (car v) 0) (= (car v) 1))
-//                 (is-logical (cdr v))
-//                 '()))))
-//      (compress* (lambda (logv l)
-//         (if (or (null? logv) (null? l)) '()
-//             (if (= (car logv) 0)
-//                 (compress* (cdr logv) (cdr l))
-//                 (cons (car l) (compress* (cdr logv) (cdr l))))))))
-// (cond
-//     ((<> type-of-x 'vector) 'compress-x-not-vector-error)
-//     ((not (is-logical x)) 'compress-vector-not-logical-error)
-//     ((= type-of-y 'scalar) 'compress-y-scalar-error)
-//     ((= type-of-y 'vector) (compress* x y))
-//     ('T (restruct
-//         (list (+/ x) (cadar y))
-//         (flatten (compress* x (get-matrix-rows y)))))))))");
-//     Evaluate(@"
-// (set apply-binary-op (lambda (f x y)
-// (letrec ((combine2 (lambda (f l1 l2)
-//         (if (or (null? l1) (null? l2)) '()
-//             (cons (f (car l1) (car l2)) (combine2 f (cdr l1) (cdr l2))))))
-//      (apply-scalar-scalar (lambda (f x y) (f x y)))
-//      (apply-scalar-vector (lambda (f x y) (mapcar (lambda (z) (f x z)) y)))
-//      (apply-scalar-matrix (lambda (f x y) (cons (car y) (mapcar (lambda (z) (f x z)) (cdr y)))))
-//      (apply-vector-scalar (lambda (f x y) (mapcar (lambda (z) (f z y)) x)))
-//      (apply-vector-vector (lambda (f x y)
-//         (if (= (length x) (length y))
-//             (combine2 f x y)
-//             'binary-op-vector-shape-mismatch)))
-//      (apply-matrix-scalar (lambda (f x y) (cons (car x) (mapcar (lambda (z) (f z y)) (cdr x)))))
-//      (apply-matrix-matrix (lambda (f x y)
-//         (if (equal (car x) (car y))
-//             (cons (car x) (combine2 f (cdr x) (cdr y)))
-//             'binary-op-matrix-shape-mismatch)))
-//      (apply-binary-op* (lambda (f x y)
-//         (begin
-//             (set x (to-scalar-if-possible x))
-//             (set y (to-scalar-if-possible y))
-//             (let ((type-of-x (get-type x))
-//                   (type-of-y (get-type y)))
-//                 (cond
-//                     ((= type-of-x 'scalar)
-//                         (cond
-//                             ((= type-of-y 'scalar) (apply-scalar-scalar f x y))
-//                             ((= type-of-y 'vector) (apply-scalar-vector f x y))
-//                             ('T (apply-scalar-matrix f x y))))
-//                     ((= type-of-x 'vector)
-//                         (cond
-//                             ((= type-of-y 'scalar) (apply-vector-scalar f x y))
-//                             ((= type-of-y 'vector) (apply-vector-vector f x y))
-//                             ('T 'binary-op-vector-matrix-error)))
-//                     ((= type-of-x 'matrix)
-//                         (cond
-//                             ((= type-of-y 'scalar) (apply-matrix-scalar f x y))
-//                             ((= type-of-y 'vector) 'binary-op-matrix-vector-error)
-//                             ('T (apply-matrix-matrix f x y)))))))))
-//      (apl< (lambda (x y) (if (< x y) 1 0)))
-//      (apl> (lambda (x y) (if (> x y) 1 0)))
-//      (apl= (lambda (x y) (if (= x y) 1 0))))
-// (cond
-//     ((= f '+) (apply-binary-op* + x y))
-//     ((= f '-) (apply-binary-op* - x y))
-//     ((= f '*) (apply-binary-op* * x y))
-//     ((= f '/) (apply-binary-op* / x y))
-//     ((= f '<) (apply-binary-op* apl< x y))
-//     ((= f '>) (apply-binary-op* apl> x y))
-//     ((= f '=) (apply-binary-op* apl= x y))
-//     ((= f 'max) (apply-binary-op* max-of-pair x y))
-//     ((= f 'and) (apply-binary-op* apl-and x y))
-//     ((= f 'or) (apply-binary-op* apl-or x y))
-//     ((= f 'restruct) (restruct x y))
-//     ((= f 'cat) (append (to-vector x) (to-vector y)))
-//     ((= f '[]) ([] x y))
-//     ((= f 'compress) (compress x y))
-//     ('T 'binary-op-error!)
-// ))))");
-//     Evaluate(@"
-// (set apply-unary-op (lambda (f x)
-// (let* ((type-of-x (get-type x))
-//    (apply-reduction-op (lambda (f x)
-//         (cond
-//             ((= type-of-x 'scalar) 'scalar-reduction-error)
-//             ((= type-of-x 'vector) (f x))
-//             ('T (mapcar f (get-matrix-rows x)))))))
-// (cond
-//     ((= f '+/) (apply-reduction-op +/ x))
-//     ((= f '-/) (apply-reduction-op -/ x))
-//     ((= f '*/) (apply-reduction-op */ x))
-//     ((= f '//) (apply-reduction-op // x))
-//     ((= f 'max/) (apply-reduction-op max/ x))
-//     ((= f 'and/) (apply-reduction-op and/ x))
-//     ((= f 'or/) (apply-reduction-op or/ x))
-//     ((= f 'shape) (shape x))
-//     ((= f 'indx) (m-to-n 1 x))
-//     ((= f 'ravel) (to-vector x))
-//     ((= f 'trans) (trans x))
-//     ('T 'unary-op-error!)
-//     ; ('T f)
-// ))))");
-//
-//     // begin
-//     Evaluate(@"
-// (set do-begin (lambda (expr-list rho fundefs)
-// (if (null? (cdr expr-list))
-// (eval (car expr-list) rho fundefs)
-// (begin
-//     (eval (car expr-list) rho fundefs)
-//     (do-begin (cdr expr-list) rho fundefs)))))");
-//
-//     Evaluate(@"
-// (set eval (lambda (expr rho fundefs)
-// (cond
-// ((number? expr) expr)
-// ((symbol? expr)
-//     (if (assoc-contains-key expr rho)
-//         (assoc expr rho)
-//         (assoc expr global-environment)))
-// ((= (car expr) 'quote) (cadr expr))
-// ((= (car expr) 'if)
-//     (if (= 0 (get-first-scalar (eval (cadr expr) rho fundefs)))
-//         (eval (cadddr expr) rho fundefs)
-//         (eval (caddr expr) rho fundefs)))
-// ((= (car expr) 'begin) (do-begin (cdr expr) rho fundefs)) ; Exercise 6a) on page 61
-// ((= (car expr) 'print) ; Exercise 6a) on page 61
-//     (print (eval (cadr expr) rho fundefs)))
-// ((= (car expr) 'set)
-//     (let ((evaluated-expression (eval (caddr expr) rho fundefs)))
-//         (if (assoc-contains-key (cadr expr) rho)
-//             (begin
-//                 (rplac-assoc (cadr expr) evaluated-expression rho)
-//                 evaluated-expression)
-//             (begin
-//                 (set global-environment (mkassoc (cadr expr) evaluated-expression global-environment))
-//                 evaluated-expression))))
-// ((userfun? (car expr) fundefs)
-//     (apply-userfun
-//         (assoc (car expr) fundefs)
-//         (evallist (cdr expr) rho fundefs)
-//         fundefs))
-// ((= (length expr) 2)
-//     (apply-unary-op (car expr) (eval (cadr expr) rho fundefs)))
-// ('T (apply-binary-op (car expr)
-//         (eval (cadr expr) rho fundefs)
-//         (eval (caddr expr) rho fundefs))))))");
-//     Evaluate("(set userfun? (lambda (f fundefs) (assoc-contains-key f fundefs)))");
-//     Evaluate(@"
-// (set apply-userfun (lambda (fundef args fundefs)
-// (eval (cadr fundef) ; body of function
-// (mkassoc* (car fundef) args '()) ; local env
-// fundefs)))");
-//     Evaluate(@"
-// (set evallist (lambda (el rho fundefs)
-// (if (null? el) '()
-// (cons (eval (car el) rho fundefs)
-//     (evallist (cdr el) rho fundefs)))))");
-//     Evaluate(@"
-// (set mkassoc* (lambda (keys values al)
-// (if (null? keys) al
-// (mkassoc* (cdr keys) (cdr values)
-//     (mkassoc (car keys) (car values) al)))))");
-//
-//     Evaluate(@"
-// (set r-e-p-loop (lambda (inputs)
-// (begin
-// (set global-environment '())
-// (r-e-p-loop* inputs '()))))");
-//     Evaluate(@"
-// (set r-e-p-loop* (lambda (inputs fundefs)
-// (cond
-// ((null? inputs) '()) ; session done
-// ((atom? (car inputs)) ; input is variable or number
-//     (process-expr (car inputs) (cdr inputs) fundefs))
-// ((= (caar inputs) 'define) ; input is function definition
-//     (process-def (car inputs) (cdr inputs) fundefs))
-// ('T (process-expr (car inputs) (cdr inputs) fundefs)))))");
-//     Evaluate(@"
-// (set process-def (lambda (e inputs fundefs)
-// (cons (cadr e) ; echo function name
-// (r-e-p-loop* inputs
-//     (mkassoc (cadr e) (cddr e) fundefs)))))");
-//     Evaluate(@"
-// (set process-expr (lambda (e inputs fundefs)
-// (cons (eval e '() fundefs) ; print value of expression
-// (r-e-p-loop* inputs fundefs))))");
-//
-//     // indx test
-//     Assert.AreEqual("((1 2 3 4 5 6 7 8))", Evaluate(@"
-// (r-e-p-loop '(
-// (indx 8)
-// ))"));
-//
-//     // max/ test
-//     /*
-//     Assert.AreEqual("(8 (10 9 12))", Evaluate(@"
-// (r-e-p-loop '(
-// (max/ (quote (2 4 6 8 1 3 5 7)))
-// (max/ (quote ((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))
-// ))"));
-//      */
-//     Assert.AreEqual("(8 (10 9 12))", Evaluate(@"
-// (r-e-p-loop (list
-// (list 'max/ (list 'quote '(2 4 6 8 1 3 5 7)))
-// (list 'max/ (list 'quote '((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))
-// ))"));
-//
-//     // restruct test
-//     /*
-//     Assert.AreEqual("((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))", Evaluate(@"
-// (r-e-p-loop '(
-// (restruct (quote (7)) (quote (8 9)))
-// (restruct (quote (4 4)) (quote (1 0 0 0 0)))
-// ))"));
-//      */
-//     Assert.AreEqual("((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))", Evaluate(@"
-// (r-e-p-loop (list
-// (list 'restruct (list 'quote '(7)) (list 'quote '(8 9)))
-// (list 'restruct (list 'quote '(4 4)) (list 'quote '(1 0 0 0 0)))
-// ))"));
-//
-//     // trans test
-//     /*
-//     Assert.AreEqual("(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))", Evaluate(@"
-// (select '(1) (r-e-p-loop '(
-// (set m1 (restruct (quote (3 4)) (indx 12)))
-// (trans m1)
-// )))"));
-//      */
-//     Assert.AreEqual("(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))", Evaluate(@"
-// (select '(1) (r-e-p-loop (list
-// (list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))
-// '(trans m1)
-// )))"));
-//
-//     // [] test
-//     /*
-//     Assert.AreEqual("((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))", Evaluate(@"
-// (select '(2 3 4 5) (r-e-p-loop '(
-// (set v1 (quote (8 6 7 5 3 0 9)))
-// (set m1 (restruct (quote (3 4)) (indx 12)))
-// ([] v1 4)
-// ([] v1 (quote (3 1 7 6)))
-// ([] m1 2)
-// ([] m1 (quote (3 1)))
-// )))"));
-//      */
-//     Assert.AreEqual("((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))", Evaluate(@"
-// (select '(2 3 4 5) (r-e-p-loop (list
-// (list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))
-// (list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))
-// '([] v1 4)
-// (list '[] 'v1 (list 'quote '(3 1 7 6)))
-// '([] m1 2)
-// (list '[] 'm1 (list 'quote '(3 1)))
-// )))"));
-//
-//     // compress test
-//     /*
-//     Assert.AreEqual("((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))", Evaluate(@"
-// (select '(2 3) (r-e-p-loop '(
-// (set v1 (quote (8 6 7 5 3 0 9)))
-// (set m1 (restruct (quote (4 4)) (indx 16)))
-// (compress (quote (1 0 1 1 0 1 0)) v1)
-// (compress (quote (0 1 0 1)) m1)
-// )))"));
-//      */
-//     Assert.AreEqual("((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))", Evaluate(@"
-// (select '(2 3) (r-e-p-loop (list
-// (list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))
-// (list 'set 'm1 (list 'restruct (list 'quote '(4 4)) '(indx 16)))
-// (list 'compress (list 'quote '(1 0 1 1 0 1 0)) 'v1)
-// (list 'compress (list 'quote '(0 1 0 1)) 'm1)
-// )))"));
-//
-//     // primes<= test (see pages 74-75)
-//     Assert.AreEqual("(((4 7) 0 1 1 1 1 1 1 0 0 2 2 2 2 2 0 1 0 3 3 3 3 0 0 1 0 4 4 4) (2 3 5 7))", Evaluate(@"
-// (select '(2 4) (r-e-p-loop '(
-// (define mod (m n) (- m (* n (/ m n))))
-// (define mod-outer-probe (v1 v2)
-// (mod (trans (restruct (cat (shape v2) (shape v1)) v1))
-//     (restruct (cat (shape v1) (shape v2)) v2)))
-// (mod-outer-probe (indx 4) (indx 7))
-// ; Perhaps we could implement 'let', and then use (let ((s (indx n))) ...)
-// (define primes<= (n) (compress (= 2 (+/ (= 0 (mod-outer-probe (set s (indx n)) s)))) s))
-// (primes<= 7)
-// )))"));
-//
-//     // +\ ("+-scan") test (see page 74).  This tests the "if" construct.
-//     /*
-//     Assert.AreEqual("(0)", Evaluate(@"
-// (select '(0) (r-e-p-loop '(
-// (= (shape (quote (1 3 5 7))) 0)
-// )))"));
-//      */
-//     Assert.AreEqual("(0)", Evaluate(@"
-// (select '(0) (r-e-p-loop (list
-// (list '= (list 'shape (list 'quote '(1 3 5 7))) 0)
-// )))"));
-//     /*
-//     Assert.AreEqual("(0)", Evaluate(@"
-// (select '(1) (r-e-p-loop '(
-// (define foo (v) (if (= (shape v) 0) 1 0))
-// (foo (quote (1 3 5 7)))
-// )))"));
-//      */
-//     Assert.AreEqual("(0)", Evaluate(@"
-// (select '(1) (r-e-p-loop (list
-// '(define foo (v) (if (= (shape v) 0) 1 0))
-// (list 'foo (list 'quote '(1 3 5 7)))
-// )))"));
-//
-//     /*
-//     Assert.AreEqual("((1 4 9 16))", Evaluate(@"
-// (select '(2) (r-e-p-loop '(
-// (define dropend (v) ([] v (indx (- (shape v) 1))))
-// (define +\ (v)
-// (if (= (shape v) 0) v
-//     (cat (+\ (dropend v)) (+/ v))))
-// (+\ (quote (1 3 5 7)))
-// )))"));
-//      */
-//     Assert.AreEqual("((1 4 9 16))", Evaluate(@"
-// (select '(2) (r-e-p-loop (list
-// '(define dropend (v) ([] v (indx (- (shape v) 1))))
-// '(define +\ (v)
-// (if (= (shape v) 0) v
-//     (cat (+\ (dropend v)) (+/ v))))
-// (list '+\ (list 'quote '(1 3 5 7)))
-// )))"));
-// }
-//
+
+test('Scheme APL-Evaluator test', () => {
+	// Arrange
+	const grammar = createGrammar(ls);
+	const tokenizer = createTokenizer(grammar.defaultLexicalAnalyzer, ls);
+	const parser = createParser(grammar.defaultParser, grammar);
+	const globalInfo = new SchemeGlobalInfo({ tokenizer, parser });
+
+	globalInfo.loadPresets();
+
+	globalInfo.loadPreset('assoc');
+	globalInfo.loadPreset('select');
+	globalInfo.loadPreset('flatten');
+	//globalInfo.loadPreset("compose");
+
+	globalInfo.evaluate('(set cddr (compose cdr cdr))');
+	globalInfo.evaluate('(set caddr (compose cdr cadr))');
+	globalInfo.evaluate('(set cadddr (compose cdr caddr))');
+
+	globalInfo.evaluate(
+		[
+			'(set get-type (lambda (x)',
+			'(cond',
+			"((number? x) 'scalar)",
+			"((null? x) 'vector)",
+			"((number? (car x)) 'vector)",
+			"('T 'matrix))))"
+		].join(' ')
+	);
+	globalInfo.evaluate('(set s1 7)');
+	globalInfo.evaluate("(set v1 '(2 3 5 7))");
+	globalInfo.evaluate("(set m1 '((3 4) 1 2 3 4 5 6 7 8 9 10 11 12))");
+
+	//     Assert.AreEqual("scalar", globalInfo.evaluate("(get-type s1)"));
+	expect(globalInfo.evaluateToString('(get-type s1)')).toBe('scalar');
+
+	//     Assert.AreEqual("vector", globalInfo.evaluate("(get-type '())"));
+	//     Assert.AreEqual("vector", globalInfo.evaluate("(get-type v1)"));
+	//     Assert.AreEqual("matrix", globalInfo.evaluate("(get-type m1)"));
+	//
+	//     globalInfo.evaluate(@"
+	// (set shape (lambda (x)
+	// (let ((type (get-type x)))
+	// (cond
+	//     ((= type 'scalar) '())
+	//     ((= type 'vector) (list (length x)))
+	//     ('T (car x))))))");
+	//
+	//     Assert.AreEqual("()", globalInfo.evaluate("(shape s1)"));
+	//     Assert.AreEqual("(4)", globalInfo.evaluate("(shape v1)"));
+	//     Assert.AreEqual("(3 4)", globalInfo.evaluate("(shape m1)"));
+	//
+	//     globalInfo.evaluate(@"
+	// (set to-vector (lambda (x)
+	// (let ((type (get-type x)))
+	// (cond
+	//     ((= type 'scalar) (list x))
+	//     ((= type 'vector) x)
+	//     ('T (cdr x))))))");
+	//
+	//     Assert.AreEqual("(7)", globalInfo.evaluate("(to-vector s1)"));
+	//     Assert.AreEqual("(2 3 5 7)", globalInfo.evaluate("(to-vector v1)"));
+	//     Assert.AreEqual("(1 2 3 4 5 6 7 8 9 10 11 12)", globalInfo.evaluate("(to-vector m1)"));
+	//
+	//     globalInfo.evaluate(@"
+	// (set get-first-scalar (lambda (x)
+	// (let ((type (get-type x)))
+	// (cond
+	//     ((= type 'scalar) x)
+	//     ((= type 'vector) (car x))
+	//     ('T (cadr x))))))");
+	//     Assert.AreEqual("7", globalInfo.evaluate("(get-first-scalar 7)"));
+	//     Assert.AreEqual("13", globalInfo.evaluate("(get-first-scalar '(13 14 15))"));
+	//     Assert.AreEqual("9", globalInfo.evaluate("(get-first-scalar '((2 2) 9 3 5 7))"));
+	//
+	//     globalInfo.evaluate("(set +/ (combine id + 0))");
+	//     globalInfo.evaluate("(set -/ (combine id - 0))");
+	//     globalInfo.evaluate("(set */ (combine id * 1))");
+	//     globalInfo.evaluate("(set // (combine id / 1))");
+	//     globalInfo.evaluate("(set to-scalar-if-possible (lambda (x) (if (= (*/ (shape x)) 1) (get-first-scalar x) x)))");
+	//     Assert.AreEqual("13", globalInfo.evaluate("(to-scalar-if-possible 13)"));
+	//     Assert.AreEqual("7", globalInfo.evaluate("(to-scalar-if-possible '(7))"));
+	//     Assert.AreEqual("(8 9)", globalInfo.evaluate("(to-scalar-if-possible '(8 9))"));
+	//     Assert.AreEqual("20", globalInfo.evaluate("(to-scalar-if-possible '((1 1) 20))"));
+	//     Assert.AreEqual("((2 2) 1 0 0 1)", globalInfo.evaluate("(to-scalar-if-possible '((2 2) 1 0 0 1))"));
+	//
+	//     globalInfo.evaluate(@"
+	// (set get-matrix-rows (lambda (m)
+	// (letrec ((get-matrix-rows* (lambda (r c l)
+	//     (if (= r 0) '()
+	//         (cons (take c l) (get-matrix-rows* (- r 1) c (skip c l)))))))
+	// (get-matrix-rows* (caar m) (cadar m) (cdr m)))))");
+	//
+	//     Assert.AreEqual("((1 2 3 4) (5 6 7 8) (9 10 11 12))", globalInfo.evaluate("(get-matrix-rows m1)"));
+	//
+	//     globalInfo.evaluate("(set max-of-pair (lambda (x y) (if (> x y) x y)))");
+	//     globalInfo.evaluate("(set max/ (lambda (l) ((combine id max-of-pair (car l)) (cdr l))))");
+	//     globalInfo.evaluate("(set apl-and (lambda (x y) (if (and (<> x 0) (<> y 0)) 1 0)))");
+	//     globalInfo.evaluate("(set apl-or (lambda (x y) (if (or (<> x 0) (<> y 0)) 1 0)))");
+	//     globalInfo.evaluate("(set and/ (combine id apl-and 1))");
+	//     globalInfo.evaluate("(set or/ (combine id apl-or 0))");
+	//     globalInfo.evaluate(@"
+	// (set m-to-n (lambda (m n)
+	// (if (> m n) '()
+	// (cons m (m-to-n (+1 m) n)))))");
+	//     globalInfo.evaluate(@"
+	// (set repeat (lambda (n l)
+	// (letrec ((repeat* (lambda (n l l-original)
+	//         (cond
+	//             ((= n 0) '())
+	//             ((null? l) (repeat* n l-original l-original))
+	//             ('T (cons (car l) (repeat* (- n 1) (cdr l) l-original)))))))
+	// (repeat* n l l))))");
+	//     globalInfo.evaluate(@"
+	// (set restruct (lambda (desired-shape src-data)
+	// (let* ((length-of-desired-shape (length desired-shape))
+	//    (src-vector (to-vector src-data))
+	//    (dst-vector (repeat (*/ desired-shape) src-vector)))
+	// (cond
+	//     ((= length-of-desired-shape 0) 'restruct-to-scalar-error)
+	//     ((= length-of-desired-shape 1) dst-vector)
+	//     ('T (cons desired-shape dst-vector))))))");
+	//     globalInfo.evaluate(@"
+	// (set trans (lambda (matrix)
+	// (letrec ((get-column (lambda (n l) (mapcar ((curry nth) n) l)))
+	//      (get-data (lambda (n num-cols l)
+	//         (if (< n num-cols)
+	//             (append (get-column n l) (get-data (+1 n) num-cols l))
+	//             '())))
+	//      (new-shape (list (cadar matrix) (caar matrix))))
+	// (cons new-shape (get-data 0 (cadar matrix) (get-matrix-rows matrix))))))");
+	//     globalInfo.evaluate(@"
+	// (set [] (lambda (x y)
+	// (let ((type-of-x (get-type x))
+	//   (type-of-y (get-type y))
+	//   (vector-y (to-vector y))
+	//   (nth*-reversed-args (lambda (l n) (nth (- n 1) l))))
+	// (cond
+	//     ((= type-of-x 'scalar) '[]-x-scalar-error)
+	//     ((= type-of-y 'matrix) '[]-x-matrix-error)
+	//     ((= type-of-x 'vector) (mapcar ((curry nth*-reversed-args) x) vector-y))
+	//     ('T (restruct
+	//         (list (length vector-y) (cadar x))
+	//         (flatten (mapcar ((curry nth*-reversed-args) (get-matrix-rows x)) vector-y))))))))");
+	//     // Binary operators to implement:
+	//     // - compress
+	//     globalInfo.evaluate(@"
+	// (set compress (lambda (x y)
+	// (letrec ((type-of-x (get-type x))
+	//      (type-of-y (get-type y))
+	//      (is-logical (lambda (v)
+	//         (if (null? v) 'T
+	//             (if (or (= (car v) 0) (= (car v) 1))
+	//                 (is-logical (cdr v))
+	//                 '()))))
+	//      (compress* (lambda (logv l)
+	//         (if (or (null? logv) (null? l)) '()
+	//             (if (= (car logv) 0)
+	//                 (compress* (cdr logv) (cdr l))
+	//                 (cons (car l) (compress* (cdr logv) (cdr l))))))))
+	// (cond
+	//     ((<> type-of-x 'vector) 'compress-x-not-vector-error)
+	//     ((not (is-logical x)) 'compress-vector-not-logical-error)
+	//     ((= type-of-y 'scalar) 'compress-y-scalar-error)
+	//     ((= type-of-y 'vector) (compress* x y))
+	//     ('T (restruct
+	//         (list (+/ x) (cadar y))
+	//         (flatten (compress* x (get-matrix-rows y)))))))))");
+	//     globalInfo.evaluate(@"
+	// (set apply-binary-op (lambda (f x y)
+	// (letrec ((combine2 (lambda (f l1 l2)
+	//         (if (or (null? l1) (null? l2)) '()
+	//             (cons (f (car l1) (car l2)) (combine2 f (cdr l1) (cdr l2))))))
+	//      (apply-scalar-scalar (lambda (f x y) (f x y)))
+	//      (apply-scalar-vector (lambda (f x y) (mapcar (lambda (z) (f x z)) y)))
+	//      (apply-scalar-matrix (lambda (f x y) (cons (car y) (mapcar (lambda (z) (f x z)) (cdr y)))))
+	//      (apply-vector-scalar (lambda (f x y) (mapcar (lambda (z) (f z y)) x)))
+	//      (apply-vector-vector (lambda (f x y)
+	//         (if (= (length x) (length y))
+	//             (combine2 f x y)
+	//             'binary-op-vector-shape-mismatch)))
+	//      (apply-matrix-scalar (lambda (f x y) (cons (car x) (mapcar (lambda (z) (f z y)) (cdr x)))))
+	//      (apply-matrix-matrix (lambda (f x y)
+	//         (if (equal (car x) (car y))
+	//             (cons (car x) (combine2 f (cdr x) (cdr y)))
+	//             'binary-op-matrix-shape-mismatch)))
+	//      (apply-binary-op* (lambda (f x y)
+	//         (begin
+	//             (set x (to-scalar-if-possible x))
+	//             (set y (to-scalar-if-possible y))
+	//             (let ((type-of-x (get-type x))
+	//                   (type-of-y (get-type y)))
+	//                 (cond
+	//                     ((= type-of-x 'scalar)
+	//                         (cond
+	//                             ((= type-of-y 'scalar) (apply-scalar-scalar f x y))
+	//                             ((= type-of-y 'vector) (apply-scalar-vector f x y))
+	//                             ('T (apply-scalar-matrix f x y))))
+	//                     ((= type-of-x 'vector)
+	//                         (cond
+	//                             ((= type-of-y 'scalar) (apply-vector-scalar f x y))
+	//                             ((= type-of-y 'vector) (apply-vector-vector f x y))
+	//                             ('T 'binary-op-vector-matrix-error)))
+	//                     ((= type-of-x 'matrix)
+	//                         (cond
+	//                             ((= type-of-y 'scalar) (apply-matrix-scalar f x y))
+	//                             ((= type-of-y 'vector) 'binary-op-matrix-vector-error)
+	//                             ('T (apply-matrix-matrix f x y)))))))))
+	//      (apl< (lambda (x y) (if (< x y) 1 0)))
+	//      (apl> (lambda (x y) (if (> x y) 1 0)))
+	//      (apl= (lambda (x y) (if (= x y) 1 0))))
+	// (cond
+	//     ((= f '+) (apply-binary-op* + x y))
+	//     ((= f '-) (apply-binary-op* - x y))
+	//     ((= f '*) (apply-binary-op* * x y))
+	//     ((= f '/) (apply-binary-op* / x y))
+	//     ((= f '<) (apply-binary-op* apl< x y))
+	//     ((= f '>) (apply-binary-op* apl> x y))
+	//     ((= f '=) (apply-binary-op* apl= x y))
+	//     ((= f 'max) (apply-binary-op* max-of-pair x y))
+	//     ((= f 'and) (apply-binary-op* apl-and x y))
+	//     ((= f 'or) (apply-binary-op* apl-or x y))
+	//     ((= f 'restruct) (restruct x y))
+	//     ((= f 'cat) (append (to-vector x) (to-vector y)))
+	//     ((= f '[]) ([] x y))
+	//     ((= f 'compress) (compress x y))
+	//     ('T 'binary-op-error!)
+	// ))))");
+	//     globalInfo.evaluate(@"
+	// (set apply-unary-op (lambda (f x)
+	// (let* ((type-of-x (get-type x))
+	//    (apply-reduction-op (lambda (f x)
+	//         (cond
+	//             ((= type-of-x 'scalar) 'scalar-reduction-error)
+	//             ((= type-of-x 'vector) (f x))
+	//             ('T (mapcar f (get-matrix-rows x)))))))
+	// (cond
+	//     ((= f '+/) (apply-reduction-op +/ x))
+	//     ((= f '-/) (apply-reduction-op -/ x))
+	//     ((= f '*/) (apply-reduction-op */ x))
+	//     ((= f '//) (apply-reduction-op // x))
+	//     ((= f 'max/) (apply-reduction-op max/ x))
+	//     ((= f 'and/) (apply-reduction-op and/ x))
+	//     ((= f 'or/) (apply-reduction-op or/ x))
+	//     ((= f 'shape) (shape x))
+	//     ((= f 'indx) (m-to-n 1 x))
+	//     ((= f 'ravel) (to-vector x))
+	//     ((= f 'trans) (trans x))
+	//     ('T 'unary-op-error!)
+	//     ; ('T f)
+	// ))))");
+	//
+	//     // begin
+	//     globalInfo.evaluate(@"
+	// (set do-begin (lambda (expr-list rho fundefs)
+	// (if (null? (cdr expr-list))
+	// (eval (car expr-list) rho fundefs)
+	// (begin
+	//     (eval (car expr-list) rho fundefs)
+	//     (do-begin (cdr expr-list) rho fundefs)))))");
+	//
+	//     globalInfo.evaluate(@"
+	// (set eval (lambda (expr rho fundefs)
+	// (cond
+	// ((number? expr) expr)
+	// ((symbol? expr)
+	//     (if (assoc-contains-key expr rho)
+	//         (assoc expr rho)
+	//         (assoc expr global-environment)))
+	// ((= (car expr) 'quote) (cadr expr))
+	// ((= (car expr) 'if)
+	//     (if (= 0 (get-first-scalar (eval (cadr expr) rho fundefs)))
+	//         (eval (cadddr expr) rho fundefs)
+	//         (eval (caddr expr) rho fundefs)))
+	// ((= (car expr) 'begin) (do-begin (cdr expr) rho fundefs)) ; Exercise 6a) on page 61
+	// ((= (car expr) 'print) ; Exercise 6a) on page 61
+	//     (print (eval (cadr expr) rho fundefs)))
+	// ((= (car expr) 'set)
+	//     (let ((evaluated-expression (eval (caddr expr) rho fundefs)))
+	//         (if (assoc-contains-key (cadr expr) rho)
+	//             (begin
+	//                 (rplac-assoc (cadr expr) evaluated-expression rho)
+	//                 evaluated-expression)
+	//             (begin
+	//                 (set global-environment (mkassoc (cadr expr) evaluated-expression global-environment))
+	//                 evaluated-expression))))
+	// ((userfun? (car expr) fundefs)
+	//     (apply-userfun
+	//         (assoc (car expr) fundefs)
+	//         (evallist (cdr expr) rho fundefs)
+	//         fundefs))
+	// ((= (length expr) 2)
+	//     (apply-unary-op (car expr) (eval (cadr expr) rho fundefs)))
+	// ('T (apply-binary-op (car expr)
+	//         (eval (cadr expr) rho fundefs)
+	//         (eval (caddr expr) rho fundefs))))))");
+	//     globalInfo.evaluate("(set userfun? (lambda (f fundefs) (assoc-contains-key f fundefs)))");
+	//     globalInfo.evaluate(@"
+	// (set apply-userfun (lambda (fundef args fundefs)
+	// (eval (cadr fundef) ; body of function
+	// (mkassoc* (car fundef) args '()) ; local env
+	// fundefs)))");
+	//     globalInfo.evaluate(@"
+	// (set evallist (lambda (el rho fundefs)
+	// (if (null? el) '()
+	// (cons (eval (car el) rho fundefs)
+	//     (evallist (cdr el) rho fundefs)))))");
+	//     globalInfo.evaluate(@"
+	// (set mkassoc* (lambda (keys values al)
+	// (if (null? keys) al
+	// (mkassoc* (cdr keys) (cdr values)
+	//     (mkassoc (car keys) (car values) al)))))");
+	//
+	//     globalInfo.evaluate(@"
+	// (set r-e-p-loop (lambda (inputs)
+	// (begin
+	// (set global-environment '())
+	// (r-e-p-loop* inputs '()))))");
+	//     globalInfo.evaluate(@"
+	// (set r-e-p-loop* (lambda (inputs fundefs)
+	// (cond
+	// ((null? inputs) '()) ; session done
+	// ((atom? (car inputs)) ; input is variable or number
+	//     (process-expr (car inputs) (cdr inputs) fundefs))
+	// ((= (caar inputs) 'define) ; input is function definition
+	//     (process-def (car inputs) (cdr inputs) fundefs))
+	// ('T (process-expr (car inputs) (cdr inputs) fundefs)))))");
+	//     globalInfo.evaluate(@"
+	// (set process-def (lambda (e inputs fundefs)
+	// (cons (cadr e) ; echo function name
+	// (r-e-p-loop* inputs
+	//     (mkassoc (cadr e) (cddr e) fundefs)))))");
+	//     globalInfo.evaluate(@"
+	// (set process-expr (lambda (e inputs fundefs)
+	// (cons (eval e '() fundefs) ; print value of expression
+	// (r-e-p-loop* inputs fundefs))))");
+	//
+	//     // indx test
+	//     Assert.AreEqual("((1 2 3 4 5 6 7 8))", globalInfo.evaluate(@"
+	// (r-e-p-loop '(
+	// (indx 8)
+	// ))"));
+	//
+	//     // max/ test
+	//     /*
+	//     Assert.AreEqual("(8 (10 9 12))", globalInfo.evaluate(@"
+	// (r-e-p-loop '(
+	// (max/ (quote (2 4 6 8 1 3 5 7)))
+	// (max/ (quote ((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))
+	// ))"));
+	//      */
+	//     Assert.AreEqual("(8 (10 9 12))", globalInfo.evaluate(@"
+	// (r-e-p-loop (list
+	// (list 'max/ (list 'quote '(2 4 6 8 1 3 5 7)))
+	// (list 'max/ (list 'quote '((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))
+	// ))"));
+	//
+	//     // restruct test
+	//     /*
+	//     Assert.AreEqual("((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))", globalInfo.evaluate(@"
+	// (r-e-p-loop '(
+	// (restruct (quote (7)) (quote (8 9)))
+	// (restruct (quote (4 4)) (quote (1 0 0 0 0)))
+	// ))"));
+	//      */
+	//     Assert.AreEqual("((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))", globalInfo.evaluate(@"
+	// (r-e-p-loop (list
+	// (list 'restruct (list 'quote '(7)) (list 'quote '(8 9)))
+	// (list 'restruct (list 'quote '(4 4)) (list 'quote '(1 0 0 0 0)))
+	// ))"));
+	//
+	//     // trans test
+	//     /*
+	//     Assert.AreEqual("(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))", globalInfo.evaluate(@"
+	// (select '(1) (r-e-p-loop '(
+	// (set m1 (restruct (quote (3 4)) (indx 12)))
+	// (trans m1)
+	// )))"));
+	//      */
+	//     Assert.AreEqual("(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))", globalInfo.evaluate(@"
+	// (select '(1) (r-e-p-loop (list
+	// (list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))
+	// '(trans m1)
+	// )))"));
+	//
+	//     // [] test
+	//     /*
+	//     Assert.AreEqual("((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))", globalInfo.evaluate(@"
+	// (select '(2 3 4 5) (r-e-p-loop '(
+	// (set v1 (quote (8 6 7 5 3 0 9)))
+	// (set m1 (restruct (quote (3 4)) (indx 12)))
+	// ([] v1 4)
+	// ([] v1 (quote (3 1 7 6)))
+	// ([] m1 2)
+	// ([] m1 (quote (3 1)))
+	// )))"));
+	//      */
+	//     Assert.AreEqual("((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))", globalInfo.evaluate(@"
+	// (select '(2 3 4 5) (r-e-p-loop (list
+	// (list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))
+	// (list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))
+	// '([] v1 4)
+	// (list '[] 'v1 (list 'quote '(3 1 7 6)))
+	// '([] m1 2)
+	// (list '[] 'm1 (list 'quote '(3 1)))
+	// )))"));
+	//
+	//     // compress test
+	//     /*
+	//     Assert.AreEqual("((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))", globalInfo.evaluate(@"
+	// (select '(2 3) (r-e-p-loop '(
+	// (set v1 (quote (8 6 7 5 3 0 9)))
+	// (set m1 (restruct (quote (4 4)) (indx 16)))
+	// (compress (quote (1 0 1 1 0 1 0)) v1)
+	// (compress (quote (0 1 0 1)) m1)
+	// )))"));
+	//      */
+	//     Assert.AreEqual("((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))", globalInfo.evaluate(@"
+	// (select '(2 3) (r-e-p-loop (list
+	// (list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))
+	// (list 'set 'm1 (list 'restruct (list 'quote '(4 4)) '(indx 16)))
+	// (list 'compress (list 'quote '(1 0 1 1 0 1 0)) 'v1)
+	// (list 'compress (list 'quote '(0 1 0 1)) 'm1)
+	// )))"));
+	//
+	//     // primes<= test (see pages 74-75)
+	//     Assert.AreEqual("(((4 7) 0 1 1 1 1 1 1 0 0 2 2 2 2 2 0 1 0 3 3 3 3 0 0 1 0 4 4 4) (2 3 5 7))", globalInfo.evaluate(@"
+	// (select '(2 4) (r-e-p-loop '(
+	// (define mod (m n) (- m (* n (/ m n))))
+	// (define mod-outer-probe (v1 v2)
+	// (mod (trans (restruct (cat (shape v2) (shape v1)) v1))
+	//     (restruct (cat (shape v1) (shape v2)) v2)))
+	// (mod-outer-probe (indx 4) (indx 7))
+	// ; Perhaps we could implement 'let', and then use (let ((s (indx n))) ...)
+	// (define primes<= (n) (compress (= 2 (+/ (= 0 (mod-outer-probe (set s (indx n)) s)))) s))
+	// (primes<= 7)
+	// )))"));
+	//
+	//     // +\ ("+-scan") test (see page 74).  This tests the "if" construct.
+	//     /*
+	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
+	// (select '(0) (r-e-p-loop '(
+	// (= (shape (quote (1 3 5 7))) 0)
+	// )))"));
+	//      */
+	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
+	// (select '(0) (r-e-p-loop (list
+	// (list '= (list 'shape (list 'quote '(1 3 5 7))) 0)
+	// )))"));
+	//     /*
+	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
+	// (select '(1) (r-e-p-loop '(
+	// (define foo (v) (if (= (shape v) 0) 1 0))
+	// (foo (quote (1 3 5 7)))
+	// )))"));
+	//      */
+	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
+	// (select '(1) (r-e-p-loop (list
+	// '(define foo (v) (if (= (shape v) 0) 1 0))
+	// (list 'foo (list 'quote '(1 3 5 7)))
+	// )))"));
+	//
+	//     /*
+	//     Assert.AreEqual("((1 4 9 16))", globalInfo.evaluate(@"
+	// (select '(2) (r-e-p-loop '(
+	// (define dropend (v) ([] v (indx (- (shape v) 1))))
+	// (define +\ (v)
+	// (if (= (shape v) 0) v
+	//     (cat (+\ (dropend v)) (+/ v))))
+	// (+\ (quote (1 3 5 7)))
+	// )))"));
+	//      */
+	//     Assert.AreEqual("((1 4 9 16))", globalInfo.evaluate(@"
+	// (select '(2) (r-e-p-loop (list
+	// '(define dropend (v) ([] v (indx (- (shape v) 1))))
+	// '(define +\ (v)
+	// (if (= (shape v) 0) v
+	//     (cat (+\ (dropend v)) (+/ v))))
+	// (list '+\ (list 'quote '(1 3 5 7)))
+	// )))"));
+});
+
 // [Test]
 // public void MacroApostrophesToQuoteKeywordsTest()
 // {

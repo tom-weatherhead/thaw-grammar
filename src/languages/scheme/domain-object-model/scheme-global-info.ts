@@ -35,6 +35,102 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 		this.parser = options.parser;
 	}
 
+	protected loadSASLSafePresets(): void {
+		// These presets do not use side effects: set, begin, while, etc.
+		// this.globalEnvironment.add(varStackTrace, new NullSExpression());
+		// this.globalEnvironment.add(new Variable<ISExpression>("e", 0, 0), new FloatLiteral(Math.E));
+		// this.globalEnvironment.add(new Variable<ISExpression>("pi", 0, 0), new FloatLiteral(Math.PI));
+
+		// Define commonly-used lambda expressions here.
+		// Of particular importance are combine, compose, and curry.
+
+		//Evaluate("(set combine (lambda (f sum zero) (lambda (l) (if (null? l) zero (sum (f (car l)) ((combine f sum zero) (cdr l)))))))"); // Version 1: see page 102
+		this.evaluate(
+			'(set combine (lambda (f sum zero) (letrec ((loop (lambda (l) (if (null? l) zero (sum (f (car l)) (loop (cdr l))))))) loop)))'
+		); // Version 2, using letrec: see page 126
+		this.evaluate('(set compose (lambda (f g) (lambda (x) (g (f x)))))');
+		this.evaluate('(set curry (lambda (f) (lambda (x) (lambda (y) (f x y)))))');
+
+		this.evaluate('(set compose2args (lambda (f g) (lambda (x y) (g (f x y)))))');
+		this.evaluate('(set reverse2args (lambda (f) (lambda (x y) (f y x))))');
+
+		// this.evaluate('(set > (reverse2args <))');
+		this.evaluate("(set not (lambda (x) (if x '() 'T)))");
+		this.evaluate('(set and (lambda (x y) (if x y x)))');
+		this.evaluate('(set or (lambda (x y) (if x x y)))');
+		this.evaluate('(set mod (lambda (m n) (- m (* n (/ m n)))))');
+		this.evaluate('(set gcd (lambda (m n) (if (= n 0) m (gcd n (mod m n)))))');
+		//this.evaluate("(set atom? (lambda (x) (or (null? x) (or (number? x) (or (symbol? x) (string? x))))))"); // What about primop? and closure? ?
+		this.evaluate('(set atom? (compose list? not))'); // Version 2
+		//this.evaluate("(set equal (lambda (l1 l2) (if (atom? l1) (= l1 l2) (if (atom? l2) '() (if (equal (car l1) (car l2)) (equal (cdr l1) (cdr l2)) '())))))"); // Version 1
+		this.evaluate(
+			[
+				'(set equal (lambda (l1 l2)',
+				'(cond',
+				'	((atom? l1) (= l1 l2))',
+				"	((atom? l2) '())",
+				'	((equal (car l1) (car l2)) (equal (cdr l1) (cdr l2)))',
+				"	('T '())",
+				')))'
+			].join(' ')
+		); // Version 2
+		//this.evaluate("(set >= (lambda (x y) (not (< x y))))");
+		this.evaluate('(set >= (compose2args < not))');
+		//this.evaluate("(set <= (lambda (x y) (not (> x y))))");
+		this.evaluate('(set <= (compose2args > not))');
+		//this.evaluate("(set <> (lambda (x y) (not (= x y))))");
+		this.evaluate('(set <> (compose2args = not))');
+		this.evaluate("(set any (lambda (l) (if (null? l) '() (if (car l) 'T (any (cdr l))))))");
+		this.evaluate(
+			"(set all (lambda (l) (if (null? l) 'T (if (not (car l)) '() (all (cdr l))))))"
+		);
+		//this.evaluate("(set mapcar (lambda (f l) (if (null? l) '() (cons (f (car l)) (mapcar f (cdr l))))))"); // Original definition.
+		this.evaluate('(set id (lambda (x) x))');
+		this.evaluate("(set mapc (lambda (f) (combine f cons '())))"); // Second definition.
+		this.evaluate('(set mapcar (lambda (f l) ((mapc f) l)))'); // Second definition.
+		//this.evaluate("(set mapc (curry mapcar))");  // Original definition.  From page 101.
+		this.evaluate("(set any2 (combine id or '()))");
+		this.evaluate("(set all2 (combine id and 'T))");
+		//this.evaluate("(set +1 (lambda (n) (+ n 1)))"); // Version 1
+		this.evaluate('(set +1 ((curry +) 1))'); // Version 2
+		//this.evaluate("(set append (lambda (l1 l2) (if (null? l1) l2 (cons (car l1) (append (cdr l1) l2)))))"); // Version 1
+		this.evaluate('(set append (lambda (l1 l2) ((combine id cons l2) l1)))'); // Version 2
+		this.evaluate(
+			"(set reverse (lambda (l) (letrec ((rev-aux (lambda (l1 l2) (if (null? l1) l2 (rev-aux (cdr l1) (cons (car l1) l2)))))) (rev-aux l '()))))"
+		);
+		this.evaluate(
+			'(set skip (lambda (n l) (if (or (null? l) (= n 0)) l (skip (- n 1) (cdr l)))))'
+		);
+		this.evaluate(
+			"(set take (lambda (n l) (if (or (null? l) (= n 0)) '() (cons (car l) (take (- n 1) (cdr l))))))"
+		);
+		this.evaluate('(set abs (lambda (n) (if (< n 0) (- 0 n) n)))');
+		//this.evaluate("(set cadr (lambda (l) (car (cdr l))))"); // Version 1
+		this.evaluate('(set cadr (compose cdr car))'); // Version 2
+		this.evaluate('(set length (lambda (l) (if (null? l) 0 (+1 (length (cdr l))))))'); // Adapted from page 29.
+		/*
+		this.evaluate(@"
+(set find (lambda (pred lis) ; From page 104
+(if (null? lis) '()
+	(if (pred (car lis)) 'T (find pred (cdr lis))))))"); // Version 1
+		 */
+		this.evaluate(
+			[
+				'(set find (lambda (pred lis)',
+				'(cond',
+				"	((null? lis) '())",
+				"	((pred (car lis)) 'T)",
+				"	('T (find pred (cdr lis)))",
+				')',
+				'))'
+			].join(' ')
+		); // Version 2
+		this.evaluate('(set nth (lambda (n l) (if (= n 0) (car l) (nth (- n 1) (cdr l)))))'); // Adapted from page 43.
+		/* TODO:
+		Evaluate("");
+		 */
+	}
+
 	public override loadPreset(presetName: string): string {
 		if (typeof this.tokenizer === 'undefined') {
 			throw new Error('SchemeGlobalInfo.loadPreset() : this.tokenizer is undefined.');
@@ -56,22 +152,22 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 				this.evaluate(
 					[
 						'(set assoc (lambda (x alist)',
-						'(cond',
-						"((null? alist) '())",
-						'((= x (caar alist)) (cadar alist))',
-						"('T (assoc x (cdr alist)))",
-						')',
+						'	(cond',
+						"		((null? alist) '())",
+						'		((= x (caar alist)) (cadar alist))',
+						"		('T (assoc x (cdr alist)))",
+						'	)',
 						'))'
 					].join(' ')
 				);
 				this.evaluate(
 					[
 						'(set mkassoc (lambda (x y alist)',
-						'(cond',
-						'((null? alist) (list (list x y)))',
-						'((= x (caar alist)) (cons (list x y) (cdr alist)))',
-						"('T (cons (car alist) (mkassoc x y (cdr alist))))",
-						')',
+						'	(cond',
+						'		((null? alist) (list (list x y)))',
+						'		((= x (caar alist)) (cons (list x y) (cdr alist)))',
+						"		('T (cons (car alist) (mkassoc x y (cdr alist))))",
+						'	)',
 						'))'
 					].join(' ')
 				);
@@ -293,8 +389,15 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 		return `The preset '${presetName}' has been successfully loaded.`;
 	}
 
-	// public override void LoadPresets() {
-	// }
+	public override loadPresets(): void {
+		// Define commonly-used lambda expressions here.
+		this.loadSASLSafePresets();
+
+		// And now we can load any SASL-unsafe, Scheme-only presets below.
+		/* TODO:
+		Evaluate("");
+		 */
+	}
 
 	public get falseValue(): ISExpression {
 		return this.falseValueForAccessor;
@@ -434,5 +537,9 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 		const expr = parseResult as IExpression<ISExpression>;
 
 		return expr.evaluate(this.globalEnvironment, this);
+	}
+
+	public evaluateToString(str: string): string {
+		return this.evaluate(str).toString();
 	}
 }

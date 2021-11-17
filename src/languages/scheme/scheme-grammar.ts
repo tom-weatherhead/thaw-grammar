@@ -160,8 +160,8 @@ export class SchemeGrammar extends GrammarBase {
 			this.terminals.push(GrammarSymbol.terminalWhile);
 			this.terminals.push(GrammarSymbol.terminalBegin);
 			this.terminals.push(GrammarSymbol.terminalPrint);
-			// this.terminals.push(GrammarSymbol.terminalRplaca);
-			// this.terminals.push(GrammarSymbol.terminalRplacd);
+			this.terminals.push(GrammarSymbol.terminalRplaca);
+			this.terminals.push(GrammarSymbol.terminalRplacd);
 			// this.terminals.push(GrammarSymbol.terminalDefineMacro);
 		}
 
@@ -966,8 +966,20 @@ export class SchemeGrammar extends GrammarBase {
 				)
 			);
 
-			// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalRplaca], 56));
-			// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalRplacd], 57));
+			this.productions.push(
+				createProduction(
+					GrammarSymbol.nonterminalValueOp,
+					[GrammarSymbol.terminalRplaca],
+					56
+				)
+			);
+			this.productions.push(
+				createProduction(
+					GrammarSymbol.nonterminalValueOp,
+					[GrammarSymbol.terminalRplacd],
+					57
+				)
+			);
 
 			// Old
 			// this.productions.push(createProduction(Symbol.nonterminalInput, [Symbol.nonterminalMacroDef], 58));
@@ -1244,6 +1256,10 @@ export class SchemeGrammar extends GrammarBase {
 				return GrammarSymbol.terminalLessThan;
 			case LexicalState.tokenGreater:
 				return GrammarSymbol.terminalGreaterThan;
+			case LexicalState.tokenLessEqual:
+				return GrammarSymbol.terminalID;
+			case LexicalState.tokenGreaterEqual:
+				return GrammarSymbol.terminalID;
 			case LexicalState.tokenApostrophe:
 				return GrammarSymbol.terminalApostrophe;
 			case LexicalState.tokenQuoteKeyword:
