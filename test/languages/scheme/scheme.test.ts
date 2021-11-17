@@ -1067,25 +1067,26 @@ test('Scheme APL-Evaluator test', () => {
 	globalInfo.evaluate("(set v1 '(2 3 5 7))");
 	globalInfo.evaluate("(set m1 '((3 4) 1 2 3 4 5 6 7 8 9 10 11 12))");
 
-	//     Assert.AreEqual("scalar", globalInfo.evaluate("(get-type s1)"));
 	expect(globalInfo.evaluateToString('(get-type s1)')).toBe('scalar');
+	expect(globalInfo.evaluateToString("(get-type '())")).toBe('vector');
+	expect(globalInfo.evaluateToString('(get-type v1)')).toBe('vector');
+	expect(globalInfo.evaluateToString('(get-type m1)')).toBe('matrix');
 
-	//     Assert.AreEqual("vector", globalInfo.evaluate("(get-type '())"));
-	//     Assert.AreEqual("vector", globalInfo.evaluate("(get-type v1)"));
-	//     Assert.AreEqual("matrix", globalInfo.evaluate("(get-type m1)"));
-	//
-	//     globalInfo.evaluate(@"
-	// (set shape (lambda (x)
-	// (let ((type (get-type x)))
-	// (cond
-	//     ((= type 'scalar) '())
-	//     ((= type 'vector) (list (length x)))
-	//     ('T (car x))))))");
-	//
-	//     Assert.AreEqual("()", globalInfo.evaluate("(shape s1)"));
-	//     Assert.AreEqual("(4)", globalInfo.evaluate("(shape v1)"));
-	//     Assert.AreEqual("(3 4)", globalInfo.evaluate("(shape m1)"));
-	//
+	globalInfo.evaluate(
+		[
+			'(set shape (lambda (x)',
+			'(let ((type (get-type x)))',
+			'(cond',
+			"    ((= type 'scalar) '())",
+			"    ((= type 'vector) (list (length x)))",
+			"    ('T (car x))))))"
+		].join(' ')
+	);
+
+	expect(globalInfo.evaluateToString('(shape s1)')).toBe('()');
+	expect(globalInfo.evaluateToString('(shape v1)')).toBe('(4)');
+	expect(globalInfo.evaluateToString('(shape m1)')).toBe('(3 4)');
+
 	//     globalInfo.evaluate(@"
 	// (set to-vector (lambda (x)
 	// (let ((type (get-type x)))
@@ -1093,11 +1094,11 @@ test('Scheme APL-Evaluator test', () => {
 	//     ((= type 'scalar) (list x))
 	//     ((= type 'vector) x)
 	//     ('T (cdr x))))))");
-	//
+
 	//     Assert.AreEqual("(7)", globalInfo.evaluate("(to-vector s1)"));
 	//     Assert.AreEqual("(2 3 5 7)", globalInfo.evaluate("(to-vector v1)"));
 	//     Assert.AreEqual("(1 2 3 4 5 6 7 8 9 10 11 12)", globalInfo.evaluate("(to-vector m1)"));
-	//
+
 	//     globalInfo.evaluate(@"
 	// (set get-first-scalar (lambda (x)
 	// (let ((type (get-type x)))
@@ -1105,14 +1106,15 @@ test('Scheme APL-Evaluator test', () => {
 	//     ((= type 'scalar) x)
 	//     ((= type 'vector) (car x))
 	//     ('T (cadr x))))))");
+
 	//     Assert.AreEqual("7", globalInfo.evaluate("(get-first-scalar 7)"));
 	//     Assert.AreEqual("13", globalInfo.evaluate("(get-first-scalar '(13 14 15))"));
 	//     Assert.AreEqual("9", globalInfo.evaluate("(get-first-scalar '((2 2) 9 3 5 7))"));
-	//
-	//     globalInfo.evaluate("(set +/ (combine id + 0))");
-	//     globalInfo.evaluate("(set -/ (combine id - 0))");
-	//     globalInfo.evaluate("(set */ (combine id * 1))");
-	//     globalInfo.evaluate("(set // (combine id / 1))");
+
+	globalInfo.evaluate('(set +/ (combine id + 0))');
+	globalInfo.evaluate('(set -/ (combine id - 0))');
+	globalInfo.evaluate('(set */ (combine id * 1))');
+	globalInfo.evaluate('(set // (combine id / 1))');
 	//     globalInfo.evaluate("(set to-scalar-if-possible (lambda (x) (if (= (*/ (shape x)) 1) (get-first-scalar x) x)))");
 	//     Assert.AreEqual("13", globalInfo.evaluate("(to-scalar-if-possible 13)"));
 	//     Assert.AreEqual("7", globalInfo.evaluate("(to-scalar-if-possible '(7))"));
