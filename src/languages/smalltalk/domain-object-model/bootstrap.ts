@@ -12,7 +12,7 @@ import { SmalltalkVariable } from './variable';
 
 export const objectClassName = 'Object';
 
-const selfVariableName = 'self';
+export const selfVariableName = 'self';
 const falseVariableName = 'false';
 const trueVariableName = 'true';
 

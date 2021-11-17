@@ -6,6 +6,8 @@ import {
 	ISmalltalkUserValue
 } from '../interfaces/iexpression';
 
+import { selfVariableName } from '../bootstrap';
+
 import { SmalltalkValueBase } from './base';
 
 const typenameSmalltalkUserValue = 'SmalltalkUserValue';
@@ -34,7 +36,17 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 		// Avoid looking up the value of "self", as that would cause an infinite loop.
 		// return string.Join("\r\n", Owner.ClRep.Where(v => !v.Equals(SmalltalkObjectClassKeeper.SelfVar)).Select(v => Value.Lookup(v)));
 
-		return `<SmalltalkUserValue of type ${this.getTypename()}>`;
+		const variableNames = Array.from(this.value.dict.keys()).filter(
+			(v) => v !== selfVariableName
+		);
+
+		variableNames.sort();
+
+		const values = variableNames.map((v) => `${v} = ${this.value.dict.get(v)}`);
+
+		// return `<SmalltalkUserValue of type ${this.getTypename()}>`;
+
+		return `${this.getTypename()}: ${values.join('; ')}`;
 	}
 
 	//     public override bool Equals(object obj)
@@ -56,7 +68,17 @@ export class SmalltalkUserValue extends SmalltalkValueBase implements ISmalltalk
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public equals(other: unknown): boolean {
-		return false; // 2021-11-04 : Temporary hack.
+		// return false; // 2021-11-04 : Temporary hack.
+
+		if (!isSmalltalkUserValue(other)) {
+			return false;
+		}
+
+		if (typeof this.owner === 'undefined' || typeof other.owner === 'undefined') {
+			throw new Error('SmalltalkUserValue.equals() : An owner is undefined.');
+		}
+
+		return this.toString() === other.toString();
 	}
 
 	public override getTypename(): string {

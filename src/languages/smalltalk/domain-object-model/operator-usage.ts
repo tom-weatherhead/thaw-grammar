@@ -35,47 +35,6 @@ import { SmalltalkEnvironmentFrame } from './environment-frame';
 import { isSmalltalkVariable } from './variable';
 
 // export class SmalltalkOperatorUsage implements ISmalltalkExpression {
-// 	public readonly operatorName: Name;
-// 	public readonly expressionList: ExpressionList<ISmalltalkValue>;
-// 	private readonly twoArgumentIntegerPredicates = new Map<
-// 		string,
-// 		(operand1: number, operand2: number) => boolean
-// 	>();
-// 	private readonly twoArgumentIntegerOperators = new Map<
-// 		string,
-// 		(operand1: number, operand2: number) => number
-// 	>();
-//
-// 	constructor(operatorName: Name, expressionList: ExpressionList<ISmalltalkValue>) {
-// 		this.operatorName = operatorName;
-// 		this.expressionList = expressionList;
-//
-// 		this.twoArgumentIntegerPredicates.set(
-// 			'<',
-// 			(operand1: number, operand2: number) => operand1 < operand2
-// 		);
-// 		this.twoArgumentIntegerPredicates.set(
-// 			'>',
-// 			(operand1: number, operand2: number) => operand1 > operand2
-// 		);
-//
-// 		this.twoArgumentIntegerOperators.set(
-// 			'+',
-// 			(operand1: number, operand2: number) => operand1 + operand2
-// 		);
-// 		this.twoArgumentIntegerOperators.set(
-// 			'-',
-// 			(operand1: number, operand2: number) => operand1 - operand2
-// 		);
-// 		this.twoArgumentIntegerOperators.set(
-// 			'*',
-// 			(operand1: number, operand2: number) => operand1 * operand2
-// 		);
-// 		this.twoArgumentIntegerOperators.set(
-// 			'/',
-// 			(operand1: number, operand2: number) => operand1 / operand2
-// 		);
-// 	}
 //
 // 	public toString(): string {
 // 		if (this.expressionList.value.length === 0) {
@@ -159,11 +118,6 @@ import { isSmalltalkVariable } from './variable';
 // 		}
 // 	}
 //
-// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// 	protected checkArgTypes(evaluatedArguments: ISmalltalkValue[]): string | null {
-// 		return null;
-// 	}
-//
 // 	// protected virtual bool TryInvokeMacro(
 // 	// 	List<IExpression<T>> unevaluatedArguments,
 // 	// 	EnvironmentFrame<T> localEnvironment,
@@ -172,11 +126,6 @@ import { isSmalltalkVariable } from './variable';
 // 	// {
 // 	// 	macroResult = default(T);
 // 	// 	return false;
-// 	// }
-//
-// 	// protected virtual void UpdateStackTrace(EnvironmentFrame<T> oldEnvFrame, EnvironmentFrame<T> newEnvFrame,
-// 	// 	int line, int column)
-// 	// {
 // 	// }
 //
 // 	protected evaluateAux(
@@ -418,7 +367,8 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				return new SmalltalkInteger(Math.floor(firstArgAsInt / secondArgAsInt));
 
 			case '=':
-				return firstArgAsInt === secondArgAsInt
+				// return firstArgAsInt === secondArgAsInt
+				return evaluatedArguments[0].equals(evaluatedArguments[1])
 					? globalInfo.trueValue
 					: globalInfo.falseValue;
 
