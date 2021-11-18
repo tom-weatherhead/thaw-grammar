@@ -2,7 +2,7 @@
 
 import { ArgumentException } from 'thaw-interpreter-core';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -37,9 +37,15 @@ export class IntegerLiteral implements IExpression<number> {
 	// }
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
+	// public evaluate(
+	// 	localEnvironment: EnvironmentFrame<number>,
+	// 	globalInfo: IGlobalInfo<number>
+	// ): number {
 	public evaluate(
-		localEnvironment: EnvironmentFrame<number>,
-		globalInfo: IGlobalInfo<number>
+		globalInfo: IGlobalInfo<number>,
+		localEnvironment?: IEnvironmentFrame<number>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
 	): number {
 		return this.value;
 	}

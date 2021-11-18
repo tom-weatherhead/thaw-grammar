@@ -1,24 +1,39 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/global-info-base.ts
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 import { ArgumentException } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame } from './environment-frame';
 import { FunctionDefinition } from './function-definition';
+import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 // import { IGlobalInfoOps } from './iglobal-info-ops';
 
 // export abstract class GlobalInfoBase<T> implements IGlobalInfo<T>, IGlobalInfoOps {
 export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
+	protected readonly tokenizer: ITokenizer | undefined;
+	protected readonly parser: IParser | undefined;
 	public readonly globalEnvironment = new EnvironmentFrame<T>();
 	public readonly functionDefinitions = new Map<string, FunctionDefinition<T>>();
 	public dynamicScoping: boolean;
 	public debug: boolean;
 	private printedText: string;
 
-	protected constructor() {
+	protected constructor(
+		options: {
+			parser?: IParser;
+			tokenizer?: ITokenizer;
+		} = {}
+	) {
+		this.tokenizer = options.tokenizer;
+		this.parser = options.parser;
+
 		this.dynamicScoping = false;
 		this.debug = false;
 		this.printedText = '';
+
+		this.loadPresets();
 	}
 
 	public initialize(): void {
@@ -90,5 +105,24 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 
 	public getPrintedText(): string {
 		return this.printedText;
+	}
+
+	public evaluate(str: string): T {
+		if (typeof this.tokenizer === 'undefined') {
+			throw new Error('GlobalInfoBase.evaluate() : this.tokenizer is undefined.');
+		} else if (typeof this.parser === 'undefined') {
+			throw new Error('GlobalInfoBase.evaluate() : this.parser is undefined.');
+		}
+
+		const parseResult = this.parser.parse(this.tokenizer.tokenize(str));
+		const expr = parseResult as IExpression<T>;
+
+		return expr.evaluate(this, this.globalEnvironment);
+	}
+
+	public evaluateToString(str: string): string {
+		// return this.evaluate(str).toString();
+
+		return `${this.evaluate(str)}`;
 	}
 }

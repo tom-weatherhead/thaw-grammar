@@ -1,15 +1,14 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/lambda-expression.ts
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
+
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { VariableList } from '../../../common/domain-object-model/variable-list';
 // import { ArgumentException } from '../../../common/exceptions/argument-exception';
 // import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
-// import { INumber } from './inumber';
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
-// import { SExpressionBase } from './sexpression-base';
 
 import { Closure } from './closure';
 
@@ -38,14 +37,26 @@ export class LambdaExpression implements IExpression<ISExpression> {
 		return `(lambda ${this.argList} ${this.body})`;
 	}
 
+	// public evaluate(
+	// 	localEnvironment: EnvironmentFrame<ISExpression>,
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	globalInfo: IGlobalInfo<ISExpression>
+	// ): ISExpression {
 	public evaluate(
-		localEnvironment: EnvironmentFrame<ISExpression>,
+		globalInfo: IGlobalInfo<ISExpression>,
+		localEnvironment?: IEnvironmentFrame<ISExpression>,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		globalInfo: IGlobalInfo<ISExpression>
+		options?: unknown
 	): ISExpression {
 		// console.log('Evaluating an instance of LambdaExpression...');
 
-		return new Closure(this.argList, this.body, localEnvironment, this.line, this.column);
+		return new Closure(
+			this.argList,
+			this.body,
+			ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment),
+			this.line,
+			this.column
+		);
 	}
 }
 

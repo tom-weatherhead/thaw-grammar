@@ -2,7 +2,7 @@
 
 import { Name } from 'thaw-interpreter-core';
 
-import { EnvironmentFrame } from './environment-frame';
+import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 import { VariableList } from './variable-list';
@@ -22,7 +22,14 @@ export class FunctionDefinition<T> implements IExpression<T> {
 		return `(define ${this.functionName} ${this.argList} ${this.body})`;
 	}
 
-	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	public evaluate(
+		globalInfo: IGlobalInfo<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		localEnvironment?: IEnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
+	): T {
 		globalInfo.functionDefinitions.set(this.functionName.value, this);
 
 		return globalInfo.trueValue;

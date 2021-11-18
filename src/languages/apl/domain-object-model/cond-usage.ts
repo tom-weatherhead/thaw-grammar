@@ -2,7 +2,7 @@
 
 import { IAPLValue } from './interfaces/ivalue';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 
@@ -15,13 +15,19 @@ export class APLCondUsage implements IExpression<IAPLValue> {
 		// ExprPairList = exprPairList;
 	}
 
+	// public evaluate(
+	// 	localEnvironment: EnvironmentFrame<IAPLValue>,
+	// 	globalInfo: IGlobalInfo<IAPLValue>
+	// ): IAPLValue {
 	public evaluate(
-		localEnvironment: EnvironmentFrame<IAPLValue>,
-		globalInfo: IGlobalInfo<IAPLValue>
+		globalInfo: IGlobalInfo<IAPLValue>,
+		localEnvironment?: IEnvironmentFrame<IAPLValue>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
 	): IAPLValue {
 		for (const [key, value] of this.exprPairList) {
-			if (!key.evaluate(localEnvironment, globalInfo).isFirstScalarEqualToZero) {
-				return value.evaluate(localEnvironment, globalInfo);
+			if (!key.evaluate(globalInfo, localEnvironment).isFirstScalarEqualToZero) {
+				return value.evaluate(globalInfo, localEnvironment);
 			}
 		}
 

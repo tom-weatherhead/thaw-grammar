@@ -1,5 +1,7 @@
 // global-info.ts
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 // import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 // import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 // import { IExpression } from '../../../common/domain-object-model/iexpression';
@@ -13,10 +15,14 @@ import { SchemeGlobalInfo } from '../../scheme/domain-object-model/scheme-global
 import { isThunk, Thunk } from './thunk';
 
 export class SASLGlobalInfo extends SchemeGlobalInfo {
-	// constructor(ITokenizer tokenizer, IParser parser)
-	//     : base(tokenizer, parser)
-	// {
-	// }
+	constructor(
+		options: {
+			parser?: IParser;
+			tokenizer?: ITokenizer;
+		} = {}
+	) {
+		super(options);
+	}
 
 	public dethunk(sexpr: ISExpression): ISExpression {
 		if (!isThunk(sexpr)) {

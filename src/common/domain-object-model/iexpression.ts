@@ -1,10 +1,20 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/iexpression.ts
 
-import { EnvironmentFrame } from './environment-frame';
+import { IStringifiable } from 'thaw-common-utilities.ts';
+
+import { IEnvironmentFrame } from './environment-frame';
 import { IGlobalInfo } from './iglobal-info';
 
-export interface IExpression<T> {
-	evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T;
+export interface IExpression<T> extends IStringifiable {
+	// evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T;
+
+	// By default, if localEnvironment is undefined, then use globalInfo.globalEnvironment
+	// options will be used by Clu and Smalltalk.
+	evaluate(
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
+		options?: unknown
+	): T;
 }
 
 // TODO 2021-11-09: Use IExpression<T, U>, where:

@@ -4,18 +4,29 @@ import { ArgumentException } from 'thaw-interpreter-core';
 
 import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
 
-import { Variable } from './variable';
+import { IVariable } from './variable';
 
-export class EnvironmentFrame<T> {
+export interface IEnvironmentFrame<T> {
+	readonly dict: Map<string, T>;
+	readonly next: IEnvironmentFrame<T> | undefined;
+
+	isDefined(key: IVariable<T>): boolean;
+	lookup(key: IVariable<T>): T;
+	add(key: IVariable<T>, value: T): void;
+	addBubbleDown(key: IVariable<T>, value: T): void;
+	compose(keys: IVariable<T>[], values: T[]): void;
+}
+
+export class EnvironmentFrame<T> implements IEnvironmentFrame<T> {
 	public readonly dict: Map<string, T>;
-	public readonly next: EnvironmentFrame<T> | undefined;
+	public readonly next: IEnvironmentFrame<T> | undefined;
 
-	constructor(next?: EnvironmentFrame<T>) {
+	constructor(next?: IEnvironmentFrame<T>) {
 		this.dict = new Map<string, T>();
 		this.next = next;
 	}
 
-	public isDefined(key: Variable<T>): boolean {
+	public isDefined(key: IVariable<T>): boolean {
 		// if (this.dictionaryContainsKey(key)) {
 		// 	return true;
 		// }
@@ -32,7 +43,7 @@ export class EnvironmentFrame<T> {
 		);
 	}
 
-	public lookup(key: Variable<T>): T {
+	public lookup(key: IVariable<T>): T {
 		// console.log(`EnvironmentFrame.lookup() : Looking up the value of ${key.name}...`);
 
 		if (this.dictionaryContainsKey(key)) {
@@ -64,11 +75,11 @@ export class EnvironmentFrame<T> {
 		);
 	}
 
-	public add(key: Variable<T>, value: T): void {
+	public add(key: IVariable<T>, value: T): void {
 		this.dict.set(key.name, value);
 	}
 
-	public addBubbleDown(key: Variable<T>, value: T): void {
+	public addBubbleDown(key: IVariable<T>, value: T): void {
 		// console.log(`EnvironmentFrame<T>.AddBubbleDown() : var is ${key.name}; value is ${value}`);
 
 		// if (value === undefined) {
@@ -85,7 +96,7 @@ export class EnvironmentFrame<T> {
 		}
 	}
 
-	public compose(keys: Variable<T>[], values: T[]): void {
+	public compose(keys: IVariable<T>[], values: T[]): void {
 		if (keys.length !== values.length) {
 			throw new ArgumentException(
 				'Environment.Compose() : The keys list and the values list have different lengths.',
@@ -98,7 +109,7 @@ export class EnvironmentFrame<T> {
 		}
 	}
 
-	private dictionaryContainsKey(key: Variable<T>): boolean {
+	private dictionaryContainsKey(key: IVariable<T>): boolean {
 		// return typeof this.dict.get(key.name) !== 'undefined';
 
 		return this.dict.has(key.name);

@@ -52,14 +52,14 @@ function evaluateToISExpression(input: string): ISExpression {
 	const parseResult = parser.parse(tokenizer.tokenize(input));
 	const expr = parseResult as IExpression<ISExpression>;
 
-	return expr.evaluate(globalInfo.globalEnvironment, globalInfo);
+	return expr.evaluate(globalInfo, globalInfo.globalEnvironment);
 }
 
 function schemeTest(data: Array<[input: string, expectedResult: string | string[]]>): void {
 	// Arrange
 	const { tokenizer, parser } = createInfrastructure(ls);
 
-	const schemeGlobalInfo = new SchemeGlobalInfo();
+	const schemeGlobalInfo = new SchemeGlobalInfo({ tokenizer, parser });
 	// Or: const schemeGlobalInfo = new SchemeGlobalInfo({ tokenizer, parser });
 
 	for (const [input, expectedResult] of data) {
@@ -67,7 +67,7 @@ function schemeTest(data: Array<[input: string, expectedResult: string | string[
 		const parseResult = parser.parse(tokenizer.tokenize(input));
 		const expr = parseResult as IExpression<ISExpression>;
 		const actualResult = expr
-			.evaluate(schemeGlobalInfo.globalEnvironment, schemeGlobalInfo)
+			.evaluate(schemeGlobalInfo, schemeGlobalInfo.globalEnvironment)
 			.toString();
 
 		// console.log(`input: ${input}\nactualResult:\n${actualResult}\n\n`);

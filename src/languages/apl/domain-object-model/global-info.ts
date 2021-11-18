@@ -1,5 +1,7 @@
 // thaw-grammar/src/languages/apl/domain-object-model/global-info.ts
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 import { ArgumentException } from 'thaw-interpreter-core';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
@@ -12,12 +14,13 @@ export class APLGlobalInfo extends GlobalInfoBase<IAPLValue> {
 	public readonly trueVal = APLValue.createScalar(1);
 	public readonly falseVal = APLValue.createScalar(0);
 
-	// constructor(ITokenizer tokenizer, IParser parser)
-	// 	: base(tokenizer, parser)
-	// {
-	// }
-	constructor() {
-		super();
+	constructor(
+		options: {
+			parser?: IParser;
+			tokenizer?: ITokenizer;
+		} = {}
+	) {
+		super(options);
 	}
 
 	// 	public override string LoadPreset(string presetName)
@@ -107,6 +110,10 @@ export class APLGlobalInfo extends GlobalInfoBase<IAPLValue> {
 
 	public override get trueValue(): IAPLValue {
 		return this.trueVal;
+	}
+
+	public override valueIsFalse(value: IAPLValue): boolean {
+		return value.isFirstScalarEqualToZero;
 	}
 
 	public override valueIsInteger(value: IAPLValue): boolean {

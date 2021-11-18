@@ -1,6 +1,8 @@
 // thaw-grammar/src/languages/apl/domain-object-model/vector-assignment-usage.ts
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
+
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 
@@ -71,13 +73,19 @@ export class VectorAssignmentUsage implements IExpression<IAPLValue> {
 		return APLValue.createVector1(newIntList);
 	}
 
+	// public evaluate(
+	// 	localEnvironment: EnvironmentFrame<IAPLValue>,
+	// 	globalInfo: IGlobalInfo<IAPLValue>
+	// ): IAPLValue {
 	public evaluate(
-		localEnvironment: EnvironmentFrame<IAPLValue>,
-		globalInfo: IGlobalInfo<IAPLValue>
+		globalInfo: IGlobalInfo<IAPLValue>,
+		localEnvironment?: IEnvironmentFrame<IAPLValue>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
 	): IAPLValue {
-		let vectorValue = this.variableName.evaluate(localEnvironment, globalInfo);
-		const indicesValue = this.indicesExpression.evaluate(localEnvironment, globalInfo);
-		const valuesValue = this.valuesExpression.evaluate(localEnvironment, globalInfo);
+		let vectorValue = this.variableName.evaluate(globalInfo, localEnvironment);
+		const indicesValue = this.indicesExpression.evaluate(globalInfo, localEnvironment);
+		const valuesValue = this.valuesExpression.evaluate(globalInfo, localEnvironment);
 
 		// if (vectorValue is APLValue<int>)
 		// {
@@ -94,7 +102,10 @@ export class VectorAssignmentUsage implements IExpression<IAPLValue> {
 		vectorValue = this.evaluateHelper(vectorValue, indicesValue, valuesValue);
 
 		// If the variable is not already defined in the local env, we may have to assign it to the global env (assuming that there are only two envs).
-		localEnvironment.addBubbleDown(this.variableName, vectorValue);
+		ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment).addBubbleDown(
+			this.variableName,
+			vectorValue
+		);
 
 		return vectorValue;
 	}

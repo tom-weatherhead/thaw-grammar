@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/begin-usage.ts
 
-import { EnvironmentFrame } from './environment-frame';
+import { IEnvironmentFrame } from './environment-frame';
 import { ExpressionList } from './expression-list';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
@@ -18,11 +18,20 @@ export class BeginUsage<T> implements IExpression<T> {
 		return `(begin ${this.firstExpression} ${this.expressionList})`;
 	}
 
-	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	public evaluate(
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
+	): T {
+		// const env = ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment);
+
 		return this.expressionList.value.reduce(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			(previousResult: T, expression: IExpression<T>) =>
-				expression.evaluate(localEnvironment, globalInfo), // Lint: Yes, previousResult is unused.
-			this.firstExpression.evaluate(localEnvironment, globalInfo)
+				expression.evaluate(globalInfo, localEnvironment),
+			this.firstExpression.evaluate(globalInfo, localEnvironment)
 		);
 	}
 }

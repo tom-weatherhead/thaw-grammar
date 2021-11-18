@@ -3,6 +3,8 @@
 import { EnvironmentFrame } from './environment-frame';
 import { FunctionDefinition } from './function-definition';
 
+// T is the language's value type.
+
 export interface IGlobalInfo<T> {
 	// **** Public instance fields ****
 	globalEnvironment: EnvironmentFrame<T>;

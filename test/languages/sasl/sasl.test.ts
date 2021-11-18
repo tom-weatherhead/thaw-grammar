@@ -50,17 +50,17 @@ test('LL(1) SASL recognize test', () => {
 function saslTest(data: Array<[input: string, expectedResult: string | string[]]>): void {
 	// Arrange
 	const ls = LanguageSelector.SASL;
-	const saslGlobalInfo = new SASLGlobalInfo();
 	const grammar = createGrammar(ls);
 	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
 	const parser = createParser(ParserSelector.LL1, grammar);
+	const saslGlobalInfo = new SASLGlobalInfo({ tokenizer, parser });
 
 	for (const [input, expectedResult] of data) {
 		// Act
 		const parseResult = parser.parse(tokenizer.tokenize(input));
 		const expr = parseResult as IExpression<ISExpression>;
 		const actualResult = expr
-			.evaluate(saslGlobalInfo.globalEnvironment, saslGlobalInfo)
+			.evaluate(saslGlobalInfo, saslGlobalInfo.globalEnvironment)
 			.toString();
 
 		// console.log(`input: ${input}\nactualResult:\n${actualResult}\n\n`);

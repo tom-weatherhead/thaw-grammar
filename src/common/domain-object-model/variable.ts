@@ -1,17 +1,33 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/variable.ts
 
+import { ifDefinedThenElse, IStringifiable } from 'thaw-common-utilities.ts';
+
 import { ArgumentException, EvaluationException } from 'thaw-interpreter-core';
 
 // import { ArgumentNullException } from '../exceptions/argument-null-exception';
-// import { EvaluationException } from '../exceptions/evaluation-exception';
 // import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
 
-import { EnvironmentFrame } from './environment-frame';
+import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
-export class Variable<T> implements IExpression<T> {
+const typenameVariableT = 'Variable<T>';
+
+export function isVariableT<T>(obj: unknown): obj is Variable<T> {
+	const otherVariable = obj as Variable<T>;
+
+	return typeof otherVariable !== 'undefined' && otherVariable.typename === typenameVariableT;
+}
+
+export interface IVariable<T> extends IExpression<T>, IStringifiable {
+	readonly name: string;
+	readonly line: number;
+	readonly column: number;
+}
+
+export class Variable<T> implements IVariable<T> {
 	// , IConvertibleToGraph
+	public readonly typename: string = typenameVariableT;
 	public readonly name: string;
 	public readonly line: number;
 	public readonly column: number;
@@ -37,12 +53,13 @@ export class Variable<T> implements IExpression<T> {
 	}
 
 	public evaluate(
-		localEnvironment: EnvironmentFrame<T>,
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		globalInfo: IGlobalInfo<T>
+		options?: unknown
 	): T {
 		try {
-			return localEnvironment.lookup(this);
+			return ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment).lookup(this);
 		} catch (KeyNotFoundException) {
 			throw new EvaluationException(
 				`Variable<T>.Evaluate() : No value found for variable ${this.name}`,

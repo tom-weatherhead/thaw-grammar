@@ -2,7 +2,7 @@
 
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
@@ -61,7 +61,7 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 
 	public call(
 		expressionList: ExpressionList<ISExpression>,
-		localEnvironment: EnvironmentFrame<ISExpression>,
+		localEnvironment: IEnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
 		if (
@@ -89,14 +89,14 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 		) {
 			const operatorUsage = new LISPOperatorUsage(this.name, expressionList);
 
-			return operatorUsage.evaluate(localEnvironment, globalInfo);
+			return operatorUsage.evaluate(globalInfo, localEnvironment);
 		}
 
 		// First, check the number of arguments. (TODO)
 		// Then check the argument types. (TODO)
 		// Then:
 		const evaluatedArguments = expressionList.value.map((expr: IExpression<ISExpression>) =>
-			expr.evaluate(localEnvironment, globalInfo)
+			expr.evaluate(globalInfo, localEnvironment)
 		);
 
 		switch (this.name.value) {
@@ -129,14 +129,15 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 		return this.name.value;
 	}
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public override evaluate(
-		/* eslint-disable @typescript-eslint/no-unused-vars */
-		localEnvironment: EnvironmentFrame<ISExpression>,
-		globalInfo: IGlobalInfo<ISExpression>
-		/* eslint-enable @typescript-eslint/no-unused-vars */
+		globalInfo: IGlobalInfo<ISExpression>,
+		localEnvironment?: IEnvironmentFrame<ISExpression>,
+		options?: unknown
 	): ISExpression {
 		return this;
 	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }
 
 // public class PrimOp : LISPOperatorUsage, ICallableSExpression // We cannot inherit from SExpressionBase here bacause we already inherit from LISPOperatorUsage.

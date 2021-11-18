@@ -2,13 +2,10 @@
 
 import { ArgumentException, EvaluationException, Name } from 'thaw-interpreter-core';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
-// import { FunctionDefinition } from './function-definition';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-// import { Name } from '../../../common/domain-object-model/name';
-// import { Variable } from './variable';
 
 export class OperatorUsage implements IExpression<number> {
 	public readonly operatorName: Name;
@@ -49,9 +46,15 @@ export class OperatorUsage implements IExpression<number> {
 
 	// This is virtual because Scheme.PrimOp overrides it.
 
+	// public evaluate(
+	// 	localEnvironment: EnvironmentFrame<number>,
+	// 	globalInfo: IGlobalInfo<number>
+	// ): number {
 	public evaluate(
-		localEnvironment: EnvironmentFrame<number>,
-		globalInfo: IGlobalInfo<number>
+		globalInfo: IGlobalInfo<number>,
+		localEnvironment?: IEnvironmentFrame<number>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
 	): number {
 		const actualNumArgs = this.expressionList.value.length;
 
@@ -64,7 +67,7 @@ export class OperatorUsage implements IExpression<number> {
 		}
 
 		const evaluatedArguments = this.expressionList.value.map((expr: IExpression<number>) =>
-			expr.evaluate(localEnvironment, globalInfo)
+			expr.evaluate(globalInfo, localEnvironment)
 		);
 
 		if (!globalInfo.valueIsInteger(evaluatedArguments[0])) {

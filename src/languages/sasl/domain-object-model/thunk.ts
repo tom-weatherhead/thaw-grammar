@@ -2,7 +2,7 @@
 
 // A thunk (or suspension).
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 // import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
@@ -34,7 +34,7 @@ export class Thunk extends SExpressionBase {
 
 	constructor(
 		public readonly body: IExpression<ISExpression>,
-		public /* readonly */ thunkEnvironment: EnvironmentFrame<ISExpression> // Not readonly, due to letrec.
+		public /* readonly */ thunkEnvironment: IEnvironmentFrame<ISExpression> // Not readonly, due to letrec.
 	) {
 		super();
 	}
@@ -92,7 +92,7 @@ export class Thunk extends SExpressionBase {
 		while (isThunk(sexpr)) {
 			const thunk = sexpr as Thunk;
 
-			sexpr = thunk.body.evaluate(this.thunkEnvironment, globalInfo);
+			sexpr = thunk.body.evaluate(globalInfo, this.thunkEnvironment);
 		}
 
 		this.dethunkedValue = sexpr;
@@ -100,9 +100,16 @@ export class Thunk extends SExpressionBase {
 		return sexpr;
 	}
 
+	// public override evaluate(
+	// 	localEnvironment: EnvironmentFrame<ISExpression>,
+	// 	globalInfo: IGlobalInfo<ISExpression>
+	// ): ISExpression {
 	public override evaluate(
-		localEnvironment: EnvironmentFrame<ISExpression>,
-		globalInfo: IGlobalInfo<ISExpression>
+		globalInfo: IGlobalInfo<ISExpression>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		localEnvironment?: IEnvironmentFrame<ISExpression>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
 	): ISExpression {
 		// const result = this.body.evaluate(this.thunkEnvironment, globalInfo);
 		//

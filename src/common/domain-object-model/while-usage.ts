@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/while-usage.ts
 
-import { EnvironmentFrame } from './environment-frame';
+import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
@@ -17,9 +17,15 @@ export class WhileUsage<T> implements IExpression<T> {
 		return `(if ${this.condition} ${this.body})`;
 	}
 
-	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
-		while (!globalInfo.valueIsFalse(this.condition.evaluate(localEnvironment, globalInfo))) {
-			this.body.evaluate(localEnvironment, globalInfo);
+	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	public evaluate(
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
+	): T {
+		while (!globalInfo.valueIsFalse(this.condition.evaluate(globalInfo, localEnvironment))) {
+			this.body.evaluate(globalInfo, localEnvironment);
 		}
 
 		return globalInfo.falseValue;

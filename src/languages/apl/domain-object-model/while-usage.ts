@@ -2,7 +2,7 @@
 
 import { IAPLValue } from './interfaces/ivalue';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 
@@ -18,12 +18,18 @@ export class APLWhileUsage implements IExpression<IAPLValue> {
 		return `(while ${this.condition} ${this.body})`;
 	}
 
+	// public evaluate(
+	// 	localEnvironment: EnvironmentFrame<IAPLValue>,
+	// 	globalInfo: IGlobalInfo<IAPLValue>
+	// ): IAPLValue {
 	public evaluate(
-		localEnvironment: EnvironmentFrame<IAPLValue>,
-		globalInfo: IGlobalInfo<IAPLValue>
+		globalInfo: IGlobalInfo<IAPLValue>,
+		localEnvironment?: IEnvironmentFrame<IAPLValue>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
 	): IAPLValue {
-		while (!this.condition.evaluate(localEnvironment, globalInfo).isFirstScalarEqualToZero) {
-			this.body.evaluate(localEnvironment, globalInfo);
+		while (!this.condition.evaluate(globalInfo, localEnvironment).isFirstScalarEqualToZero) {
+			this.body.evaluate(globalInfo, localEnvironment);
 		}
 
 		return globalInfo.falseValue;

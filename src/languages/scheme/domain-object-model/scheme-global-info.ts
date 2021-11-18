@@ -6,7 +6,7 @@ import { ArgumentException } from 'thaw-interpreter-core';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
-import { IExpression } from '../../../common/domain-object-model/iexpression';
+// import { IExpression } from '../../../common/domain-object-model/iexpression';
 
 import { FloatLiteral } from '../../lisp/domain-object-model/float-literal';
 import { IntegerLiteral } from '../../lisp/domain-object-model/integer-literal';
@@ -16,8 +16,8 @@ import { LISPSymbol } from '../../lisp/domain-object-model/lisp-symbol';
 import { NullSExpression } from '../../lisp/domain-object-model/null-sexpression';
 
 export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
-	private readonly tokenizer: ITokenizer | undefined;
-	private readonly parser: IParser | undefined;
+	// private readonly tokenizer: ITokenizer | undefined;
+	// private readonly parser: IParser | undefined;
 	private readonly trueValueForAccessor: ISExpression = new LISPSymbol('T'); // Symbols are immutable
 	private readonly falseValueForAccessor: ISExpression = new NullSExpression(); // This is immutable too
 	// private readonly Dictionary<Name, IMacroDefinition<ISExpression>> MacroDefs = new Dictionary<Name, IMacroDefinition<ISExpression>>();
@@ -29,10 +29,7 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 			tokenizer?: ITokenizer;
 		} = {}
 	) {
-		super();
-
-		this.tokenizer = options.tokenizer;
-		this.parser = options.parser;
+		super(options);
 	}
 
 	protected loadSASLSafePresets(): void {
@@ -526,20 +523,20 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 		return true;
 	}
 
-	public evaluate(str: string): ISExpression {
-		if (typeof this.tokenizer === 'undefined') {
-			throw new Error('SchemeGlobalInfo.evaluate() : this.tokenizer is undefined.');
-		} else if (typeof this.parser === 'undefined') {
-			throw new Error('SchemeGlobalInfo.evaluate() : this.parser is undefined.');
-		}
-
-		const parseResult = this.parser.parse(this.tokenizer.tokenize(str));
-		const expr = parseResult as IExpression<ISExpression>;
-
-		return expr.evaluate(this.globalEnvironment, this);
-	}
-
-	public evaluateToString(str: string): string {
-		return this.evaluate(str).toString();
-	}
+	// public evaluate(str: string): ISExpression {
+	// 	if (typeof this.tokenizer === 'undefined') {
+	// 		throw new Error('SchemeGlobalInfo.evaluate() : this.tokenizer is undefined.');
+	// 	} else if (typeof this.parser === 'undefined') {
+	// 		throw new Error('SchemeGlobalInfo.evaluate() : this.parser is undefined.');
+	// 	}
+	//
+	// 	const parseResult = this.parser.parse(this.tokenizer.tokenize(str));
+	// 	const expr = parseResult as IExpression<ISExpression>;
+	//
+	// 	return expr.evaluate(this.globalEnvironment, this);
+	// }
+	//
+	// public evaluateToString(str: string): string {
+	// 	return this.evaluate(str).toString();
+	// }
 }

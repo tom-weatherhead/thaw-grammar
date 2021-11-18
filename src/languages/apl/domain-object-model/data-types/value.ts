@@ -2,7 +2,7 @@
 
 import { product } from 'thaw-common-utilities.ts';
 
-import { EnvironmentFrame } from '../../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../../common/domain-object-model/environment-frame';
 
 import { IGlobalInfo } from '../../../../common/domain-object-model/iglobal-info';
 
@@ -358,8 +358,9 @@ export class APLValue implements IAPLValue {
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
-		localEnvironment: EnvironmentFrame<IAPLValue>,
-		globalInfo: IGlobalInfo<IAPLValue>
+		globalInfo: IGlobalInfo<IAPLValue>,
+		localEnvironment?: IEnvironmentFrame<IAPLValue>,
+		options?: unknown
 	): IAPLValue {
 		return this;
 	}

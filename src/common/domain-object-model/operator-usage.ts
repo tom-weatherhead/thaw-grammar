@@ -2,13 +2,11 @@
 
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
-// import { EvaluationException } from '../exceptions/evaluation-exception';
-import { EnvironmentFrame } from './environment-frame';
+import { EnvironmentFrame, IEnvironmentFrame } from './environment-frame';
 import { ExpressionList } from './expression-list';
 import { FunctionDefinition } from './function-definition';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
-// import { Name } from './name';
 
 export class OperatorUsage<T> implements IExpression<T> {
 	public readonly operatorName: Name;
@@ -63,7 +61,13 @@ export class OperatorUsage<T> implements IExpression<T> {
 
 	// This is virtual because Scheme.PrimOp overrides it.
 
-	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	public evaluate(
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
+	): T {
 		const actualNumArgs = this.expressionList.value.length;
 		const expectedNumArgs = this.tryGetExpectedNumArgs(globalInfo);
 
@@ -89,7 +93,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 		// }
 
 		const evaluatedArguments = this.expressionList.value.map((expr: IExpression<T>) =>
-			expr.evaluate(localEnvironment, globalInfo)
+			expr.evaluate(globalInfo, localEnvironment)
 		);
 		// var argTypesErrorMessage = CheckArgTypes(evaluatedArguments);
 
@@ -153,7 +157,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 
 	protected evaluateAux(
 		evaluatedArguments: T[],
-		localEnvironment: EnvironmentFrame<T>,
+		localEnvironment: IEnvironmentFrame<T> | undefined,
 		globalInfo: IGlobalInfo<T>
 	): T {
 		const firstArgAsInt =
@@ -220,7 +224,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 
 					newEnvironment.compose(fnDef.argList.value, evaluatedArguments);
 
-					return fnDef.body.evaluate(newEnvironment, globalInfo);
+					return fnDef.body.evaluate(globalInfo, newEnvironment);
 				}
 
 				throw new EvaluationException(

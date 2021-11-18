@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/if-usage.ts
 
-import { EnvironmentFrame } from './environment-frame';
+import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
@@ -22,17 +22,23 @@ export class IfUsage<T> implements IExpression<T> {
 		return `(if ${this.condition} ${this.ifBody} ${this.elseBody})`;
 	}
 
-	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
-		const conditionValue = this.condition.evaluate(localEnvironment, globalInfo);
+	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	public evaluate(
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
+	): T {
+		const conditionValue = this.condition.evaluate(globalInfo, localEnvironment);
 
 		// console.log(`IfUsage.evaluate() 1: conditionValue is ${typeof conditionValue} ${conditionValue}`);
 		// console.log(`IfUsage.evaluate() 2: globalInfo.falseValue is ${typeof globalInfo.falseValue} ${globalInfo.falseValue}`);
 		// console.log(`IfUsage.evaluate() 3: conditionValue is false? ${globalInfo.valueIsFalse(conditionValue)}`);
 
 		if (!globalInfo.valueIsFalse(conditionValue)) {
-			return this.ifBody.evaluate(localEnvironment, globalInfo);
+			return this.ifBody.evaluate(globalInfo, localEnvironment);
 		} else {
-			return this.elseBody.evaluate(localEnvironment, globalInfo);
+			return this.elseBody.evaluate(globalInfo, localEnvironment);
 		}
 	}
 }

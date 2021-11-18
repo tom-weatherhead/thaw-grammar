@@ -2,7 +2,11 @@
 
 'use strict';
 
+import { LanguageSelector } from 'thaw-interpreter-types';
+
 import { Name } from 'thaw-interpreter-core';
+
+import { createInfrastructure } from '../../create-infrastructure';
 
 import { GlobalInfoBase } from '../../../src/common/domain-object-model/global-info-base';
 import { IGlobalInfo } from '../../../src/common/domain-object-model/iglobal-info';
@@ -19,6 +23,8 @@ import { SExpressionList } from '../../../src/languages/lisp/domain-object-model
 import { PrimOp } from '../../../src/languages/scheme/domain-object-model/primitive-operator';
 import { SchemeGlobalInfo } from '../../../src/languages/scheme/domain-object-model/scheme-global-info';
 
+const ls = LanguageSelector.Scheme;
+
 // test('Dummy test', () => {
 // 	// Arrange
 // 	// Act
@@ -28,7 +34,8 @@ import { SchemeGlobalInfo } from '../../../src/languages/scheme/domain-object-mo
 
 test('SchemeGlobalInfo number to and from IntegerLiteral and FloatLiteral test', () => {
 	// Arrange
-	const globalInfo = new SchemeGlobalInfo();
+	const { tokenizer, parser } = createInfrastructure(ls);
+	const globalInfo = new SchemeGlobalInfo({ tokenizer, parser });
 
 	const exampleInteger = 13;
 	const exampleFloat = 7.125;

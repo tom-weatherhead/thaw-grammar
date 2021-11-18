@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/cond-usage.ts
 
-import { EnvironmentFrame } from './environment-frame';
+import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
@@ -25,10 +25,16 @@ export class CondUsage<T> implements IExpression<T> {
 			.join(' ')})`;
 	}
 
-	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	public evaluate(
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
+	): T {
 		for (const [expr1, expr2] of this.exprPairList) {
-			if (!globalInfo.valueIsFalse(expr1.evaluate(localEnvironment, globalInfo))) {
-				return expr2.evaluate(localEnvironment, globalInfo);
+			if (!globalInfo.valueIsFalse(expr1.evaluate(globalInfo, localEnvironment))) {
+				return expr2.evaluate(globalInfo, localEnvironment);
 			}
 		}
 

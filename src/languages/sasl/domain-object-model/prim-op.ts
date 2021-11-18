@@ -2,7 +2,7 @@
 
 import { Name } from 'thaw-interpreter-core';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
@@ -104,7 +104,7 @@ export class SASLPrimOp extends PrimOp implements IConvertibleToGraph {
 
 			const evExp = thunk.body as SASLEvaluableExpression;
 			const conditionExpression = evExp.firstExpression;
-			const conditionValue = conditionExpression.evaluate(thunk.thunkEnvironment, globalInfo);
+			const conditionValue = conditionExpression.evaluate(globalInfo, thunk.thunkEnvironment);
 
 			if (conditionValue.isNull()) {
 				continue;
@@ -116,7 +116,7 @@ export class SASLPrimOp extends PrimOp implements IConvertibleToGraph {
 				);
 			}
 
-			return evExp.expressionList.value[0].evaluate(thunk.thunkEnvironment, globalInfo);
+			return evExp.expressionList.value[0].evaluate(globalInfo, thunk.thunkEnvironment);
 		}
 
 		return new NullSExpression();
@@ -124,7 +124,7 @@ export class SASLPrimOp extends PrimOp implements IConvertibleToGraph {
 
 	public override call(
 		args: ExpressionList<ISExpression>,
-		localEnvironment: EnvironmentFrame<ISExpression>,
+		localEnvironment: IEnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
 		// const actualNumArgs = args.value.length;

@@ -43,7 +43,7 @@ function createFnEval(): (str: string) => IAPLValue {
 	return (str: string) => {
 		const expr = parser.parse(tokenizer.tokenize(str)) as IAPLExpression;
 
-		return expr.evaluate(localEnvironment, globalInfo);
+		return expr.evaluate(globalInfo, localEnvironment);
 	};
 }
 

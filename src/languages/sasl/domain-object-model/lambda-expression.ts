@@ -1,10 +1,12 @@
-// lambda-expression.ts
+// tom-weatherhead/thaw-grammar/src/languages/sasl/domain-object-model/lambda-expression.ts
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
+
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 // import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-import { Variable } from '../../../common/domain-object-model/variable';
+import { IVariable } from '../../../common/domain-object-model/variable';
 import { VariableList } from '../../../common/domain-object-model/variable-list';
 
 // import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
@@ -28,17 +30,29 @@ export class SASLLambdaExpression extends LambdaExpression implements IConvertib
 		super(argList, body, line, column);
 	}
 
+	// public override evaluate(
+	// 	localEnvironment: EnvironmentFrame<ISExpression>,
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	globalInfo: IGlobalInfo<ISExpression>
+	// ): ISExpression {
 	public override evaluate(
-		localEnvironment: EnvironmentFrame<ISExpression>,
+		globalInfo: IGlobalInfo<ISExpression>,
+		localEnvironment?: IEnvironmentFrame<ISExpression>,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		globalInfo: IGlobalInfo<ISExpression>
+		options?: unknown
 	): ISExpression {
-		return new SASLClosure(this.argList, this.body, localEnvironment, this.line, this.column);
+		return new SASLClosure(
+			this.argList,
+			this.body,
+			ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment),
+			this.line,
+			this.column
+		);
 	}
 
 	private makeAbstraction(
 		n: IExpression<ISExpression>,
-		variable: Variable<ISExpression>
+		variable: IVariable<ISExpression>
 	): IExpression<ISExpression> {
 		const nAsGraphReductionNode = n as unknown as GraphReductionNode;
 
@@ -54,7 +68,7 @@ export class SASLLambdaExpression extends LambdaExpression implements IConvertib
 			);
 		}
 
-		const nAsVariable = n as Variable<ISExpression>;
+		const nAsVariable = n as IVariable<ISExpression>;
 
 		// if (variable.equals(nAsVariable)) {
 		if (variable.name === nAsVariable.name) {

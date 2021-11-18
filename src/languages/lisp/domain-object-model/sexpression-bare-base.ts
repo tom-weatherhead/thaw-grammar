@@ -1,7 +1,5 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/sexpression-bare-base.ts
 
-'use strict';
-
 import { ISExpression } from './isexpression';
 
 export abstract class SExpressionBareBase implements ISExpression {

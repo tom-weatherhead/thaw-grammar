@@ -1,27 +1,38 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/let-star-usage.ts
 
-import { EnvironmentFrame } from './environment-frame';
+import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
+
+import { EnvironmentFrame, IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
-import { Variable } from './variable';
+import { IVariable } from './variable';
 
 export class LetStarUsage<T> implements IExpression<T> {
-	public readonly bindings: [Variable<T>, IExpression<T>][];
-	public readonly expression: IExpression<T>;
+	// public readonly bindings: [IVariable<T>, IExpression<T>][];
+	// public readonly expression: IExpression<T>;
 
-	constructor(bindings: [Variable<T>, IExpression<T>][], expression: IExpression<T>) {
-		this.bindings = bindings;
-		this.expression = expression;
+	constructor(
+		public readonly bindings: [IVariable<T>, IExpression<T>][],
+		public readonly expression: IExpression<T>
+	) {
+		// this.bindings = bindings;
+		// this.expression = expression;
 	}
 
 	public toString(): string {
-		const fnBindingAsString = ([v, expr]: [Variable<T>, IExpression<T>]) => `(${v} ${expr})`;
+		const fnBindingAsString = ([v, expr]: [IVariable<T>, IExpression<T>]) => `(${v} ${expr})`;
 		const bindingsAsString = this.bindings.map(fnBindingAsString).join(' ');
 
 		return `(let* (${bindingsAsString}) ${this.expression})`;
 	}
 
-	public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
+	public evaluate(
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
+	): T {
 		// 1) No:
 		// const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
@@ -49,16 +60,16 @@ export class LetStarUsage<T> implements IExpression<T> {
 
 		// 3)
 		const lastNewEnvFrame = this.bindings.reduce(
-			(previousEnvFrame: EnvironmentFrame<T>, [v, expr]: [Variable<T>, IExpression<T>]) => {
+			(previousEnvFrame: IEnvironmentFrame<T>, [v, expr]: [IVariable<T>, IExpression<T>]) => {
 				const newEnvFrame = new EnvironmentFrame<T>(previousEnvFrame);
 
-				newEnvFrame.add(v, expr.evaluate(previousEnvFrame, globalInfo));
+				newEnvFrame.add(v, expr.evaluate(globalInfo, previousEnvFrame));
 
 				return newEnvFrame;
 			},
-			localEnvironment
+			ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment)
 		);
 
-		return this.expression.evaluate(lastNewEnvFrame, globalInfo);
+		return this.expression.evaluate(globalInfo, lastNewEnvFrame);
 	}
 }

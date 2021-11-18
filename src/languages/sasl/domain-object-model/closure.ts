@@ -1,6 +1,6 @@
 // closure.ts
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 // import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
@@ -17,7 +17,7 @@ export class SASLClosure extends Closure {
 	constructor(
 		argList: VariableList<ISExpression>,
 		body: IExpression<ISExpression>,
-		closureEnvironment: EnvironmentFrame<ISExpression>,
+		closureEnvironment: IEnvironmentFrame<ISExpression>,
 		line = 0,
 		column = 0
 	) {
@@ -27,7 +27,7 @@ export class SASLClosure extends Closure {
 	// #if !DEAD_CODE
 	protected callHelper_EvaluateArguments(
 		args: ExpressionList<ISExpression>,
-		localEnvironment: EnvironmentFrame<ISExpression>,
+		localEnvironment: IEnvironmentFrame<ISExpression>,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		globalInfo: SASLGlobalInfo
 	): ISExpression[] {
