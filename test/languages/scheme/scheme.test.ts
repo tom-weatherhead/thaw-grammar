@@ -1121,40 +1121,56 @@ test('Scheme APL-Evaluator test', () => {
 	globalInfo.evaluate('(set -/ (combine id - 0))');
 	globalInfo.evaluate('(set */ (combine id * 1))');
 	globalInfo.evaluate('(set // (combine id / 1))');
-	//     globalInfo.evaluate("(set to-scalar-if-possible (lambda (x) (if (= (*/ (shape x)) 1) (get-first-scalar x) x)))");
-	//     Assert.AreEqual("13", globalInfo.evaluate("(to-scalar-if-possible 13)"));
-	//     Assert.AreEqual("7", globalInfo.evaluate("(to-scalar-if-possible '(7))"));
-	//     Assert.AreEqual("(8 9)", globalInfo.evaluate("(to-scalar-if-possible '(8 9))"));
-	//     Assert.AreEqual("20", globalInfo.evaluate("(to-scalar-if-possible '((1 1) 20))"));
-	//     Assert.AreEqual("((2 2) 1 0 0 1)", globalInfo.evaluate("(to-scalar-if-possible '((2 2) 1 0 0 1))"));
 
-	//     globalInfo.evaluate(@"
-	// (set get-matrix-rows (lambda (m)
-	// (letrec ((get-matrix-rows* (lambda (r c l)
-	//     (if (= r 0) '()
-	//         (cons (take c l) (get-matrix-rows* (- r 1) c (skip c l)))))))
-	// (get-matrix-rows* (caar m) (cadar m) (cdr m)))))");
+	globalInfo.evaluate(
+		'(set to-scalar-if-possible (lambda (x) (if (= (*/ (shape x)) 1) (get-first-scalar x) x)))'
+	);
 
-	//     Assert.AreEqual("((1 2 3 4) (5 6 7 8) (9 10 11 12))", globalInfo.evaluate("(get-matrix-rows m1)"));
+	expect(globalInfo.evaluateToString('(to-scalar-if-possible 13)')).toBe('13');
+	expect(globalInfo.evaluateToString("(to-scalar-if-possible '(7))")).toBe('7');
+	expect(globalInfo.evaluateToString("(to-scalar-if-possible '(8 9))")).toBe('(8 9)');
+	expect(globalInfo.evaluateToString("(to-scalar-if-possible '((1 1) 20))")).toBe('20');
+	expect(globalInfo.evaluateToString("(to-scalar-if-possible '((2 2) 1 0 0 1))")).toBe(
+		'((2 2) 1 0 0 1)'
+	);
 
-	//     globalInfo.evaluate("(set max-of-pair (lambda (x y) (if (> x y) x y)))");
-	//     globalInfo.evaluate("(set max/ (lambda (l) ((combine id max-of-pair (car l)) (cdr l))))");
-	//     globalInfo.evaluate("(set apl-and (lambda (x y) (if (and (<> x 0) (<> y 0)) 1 0)))");
-	//     globalInfo.evaluate("(set apl-or (lambda (x y) (if (or (<> x 0) (<> y 0)) 1 0)))");
-	//     globalInfo.evaluate("(set and/ (combine id apl-and 1))");
-	//     globalInfo.evaluate("(set or/ (combine id apl-or 0))");
-	//     globalInfo.evaluate(@"
-	// (set m-to-n (lambda (m n)
-	// (if (> m n) '()
-	// (cons m (m-to-n (+1 m) n)))))");
-	//     globalInfo.evaluate(@"
-	// (set repeat (lambda (n l)
-	// (letrec ((repeat* (lambda (n l l-original)
-	//         (cond
-	//             ((= n 0) '())
-	//             ((null? l) (repeat* n l-original l-original))
-	//             ('T (cons (car l) (repeat* (- n 1) (cdr l) l-original)))))))
-	// (repeat* n l l))))");
+	globalInfo.evaluate(
+		[
+			'(set get-matrix-rows (lambda (m)',
+			'(letrec ((get-matrix-rows* (lambda (r c l)',
+			"    (if (= r 0) '()",
+			'        (cons (take c l) (get-matrix-rows* (- r 1) c (skip c l)))))))',
+			'(get-matrix-rows* (caar m) (cadar m) (cdr m)))))'
+		].join(' ')
+	);
+
+	expect(globalInfo.evaluateToString('(get-matrix-rows m1)')).toBe(
+		'((1 2 3 4) (5 6 7 8) (9 10 11 12))'
+	);
+
+	globalInfo.evaluate('(set max-of-pair (lambda (x y) (if (> x y) x y)))');
+	globalInfo.evaluate('(set max/ (lambda (l) ((combine id max-of-pair (car l)) (cdr l))))');
+	globalInfo.evaluate('(set apl-and (lambda (x y) (if (and (<> x 0) (<> y 0)) 1 0)))');
+	globalInfo.evaluate('(set apl-or (lambda (x y) (if (or (<> x 0) (<> y 0)) 1 0)))');
+	globalInfo.evaluate('(set and/ (combine id apl-and 1))');
+	globalInfo.evaluate('(set or/ (combine id apl-or 0))');
+
+	globalInfo.evaluate(
+		['(set m-to-n (lambda (m n)', "(if (> m n) '()", '(cons m (m-to-n (+1 m) n)))))'].join(' ')
+	);
+
+	globalInfo.evaluate(
+		[
+			'(set repeat (lambda (n l)',
+			'	(letrec ((repeat* (lambda (n l l-original)',
+			'	        (cond',
+			"	            ((= n 0) '())",
+			'	            ((null? l) (repeat* n l-original l-original))',
+			"	            ('T (cons (car l) (repeat* (- n 1) (cdr l) l-original)))))))",
+			'	(repeat* n l l))))'
+		].join(' ')
+	);
+
 	//     globalInfo.evaluate(@"
 	// (set restruct (lambda (desired-shape src-data)
 	// (let* ((length-of-desired-shape (length desired-shape))
@@ -1164,6 +1180,7 @@ test('Scheme APL-Evaluator test', () => {
 	//     ((= length-of-desired-shape 0) 'restruct-to-scalar-error)
 	//     ((= length-of-desired-shape 1) dst-vector)
 	//     ('T (cons desired-shape dst-vector))))))");
+
 	//     globalInfo.evaluate(@"
 	// (set trans (lambda (matrix)
 	// (letrec ((get-column (lambda (n l) (mapcar ((curry nth) n) l)))
@@ -1173,6 +1190,7 @@ test('Scheme APL-Evaluator test', () => {
 	//             '())))
 	//      (new-shape (list (cadar matrix) (caar matrix))))
 	// (cons new-shape (get-data 0 (cadar matrix) (get-matrix-rows matrix))))))");
+
 	//     globalInfo.evaluate(@"
 	// (set [] (lambda (x y)
 	// (let ((type-of-x (get-type x))
@@ -1186,7 +1204,9 @@ test('Scheme APL-Evaluator test', () => {
 	//     ('T (restruct
 	//         (list (length vector-y) (cadar x))
 	//         (flatten (mapcar ((curry nth*-reversed-args) (get-matrix-rows x)) vector-y))))))))");
+
 	//     // Binary operators to implement:
+
 	//     // - compress
 	//     globalInfo.evaluate(@"
 	// (set compress (lambda (x y)
@@ -1210,6 +1230,7 @@ test('Scheme APL-Evaluator test', () => {
 	//     ('T (restruct
 	//         (list (+/ x) (cadar y))
 	//         (flatten (compress* x (get-matrix-rows y)))))))))");
+
 	//     globalInfo.evaluate(@"
 	// (set apply-binary-op (lambda (f x y)
 	// (letrec ((combine2 (lambda (f l1 l2)
@@ -1270,6 +1291,7 @@ test('Scheme APL-Evaluator test', () => {
 	//     ((= f 'compress) (compress x y))
 	//     ('T 'binary-op-error!)
 	// ))))");
+
 	//     globalInfo.evaluate(@"
 	// (set apply-unary-op (lambda (f x)
 	// (let* ((type-of-x (get-type x))
@@ -1293,7 +1315,7 @@ test('Scheme APL-Evaluator test', () => {
 	//     ('T 'unary-op-error!)
 	//     ; ('T f)
 	// ))))");
-	//
+
 	//     // begin
 	//     globalInfo.evaluate(@"
 	// (set do-begin (lambda (expr-list rho fundefs)
@@ -1302,7 +1324,7 @@ test('Scheme APL-Evaluator test', () => {
 	// (begin
 	//     (eval (car expr-list) rho fundefs)
 	//     (do-begin (cdr expr-list) rho fundefs)))))");
-	//
+
 	//     globalInfo.evaluate(@"
 	// (set eval (lambda (expr rho fundefs)
 	// (cond
@@ -1338,28 +1360,33 @@ test('Scheme APL-Evaluator test', () => {
 	// ('T (apply-binary-op (car expr)
 	//         (eval (cadr expr) rho fundefs)
 	//         (eval (caddr expr) rho fundefs))))))");
+
 	//     globalInfo.evaluate("(set userfun? (lambda (f fundefs) (assoc-contains-key f fundefs)))");
+
 	//     globalInfo.evaluate(@"
 	// (set apply-userfun (lambda (fundef args fundefs)
 	// (eval (cadr fundef) ; body of function
 	// (mkassoc* (car fundef) args '()) ; local env
 	// fundefs)))");
+
 	//     globalInfo.evaluate(@"
 	// (set evallist (lambda (el rho fundefs)
 	// (if (null? el) '()
 	// (cons (eval (car el) rho fundefs)
 	//     (evallist (cdr el) rho fundefs)))))");
+
 	//     globalInfo.evaluate(@"
 	// (set mkassoc* (lambda (keys values al)
 	// (if (null? keys) al
 	// (mkassoc* (cdr keys) (cdr values)
 	//     (mkassoc (car keys) (car values) al)))))");
-	//
+
 	//     globalInfo.evaluate(@"
 	// (set r-e-p-loop (lambda (inputs)
 	// (begin
 	// (set global-environment '())
 	// (r-e-p-loop* inputs '()))))");
+
 	//     globalInfo.evaluate(@"
 	// (set r-e-p-loop* (lambda (inputs fundefs)
 	// (cond
@@ -1369,22 +1396,24 @@ test('Scheme APL-Evaluator test', () => {
 	// ((= (caar inputs) 'define) ; input is function definition
 	//     (process-def (car inputs) (cdr inputs) fundefs))
 	// ('T (process-expr (car inputs) (cdr inputs) fundefs)))))");
+
 	//     globalInfo.evaluate(@"
 	// (set process-def (lambda (e inputs fundefs)
 	// (cons (cadr e) ; echo function name
 	// (r-e-p-loop* inputs
 	//     (mkassoc (cadr e) (cddr e) fundefs)))))");
+
 	//     globalInfo.evaluate(@"
 	// (set process-expr (lambda (e inputs fundefs)
 	// (cons (eval e '() fundefs) ; print value of expression
 	// (r-e-p-loop* inputs fundefs))))");
-	//
+
 	//     // indx test
 	//     Assert.AreEqual("((1 2 3 4 5 6 7 8))", globalInfo.evaluate(@"
 	// (r-e-p-loop '(
 	// (indx 8)
 	// ))"));
-	//
+
 	//     // max/ test
 	//     /*
 	//     Assert.AreEqual("(8 (10 9 12))", globalInfo.evaluate(@"
@@ -1398,7 +1427,7 @@ test('Scheme APL-Evaluator test', () => {
 	// (list 'max/ (list 'quote '(2 4 6 8 1 3 5 7)))
 	// (list 'max/ (list 'quote '((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))
 	// ))"));
-	//
+
 	//     // restruct test
 	//     /*
 	//     Assert.AreEqual("((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))", globalInfo.evaluate(@"
@@ -1412,7 +1441,7 @@ test('Scheme APL-Evaluator test', () => {
 	// (list 'restruct (list 'quote '(7)) (list 'quote '(8 9)))
 	// (list 'restruct (list 'quote '(4 4)) (list 'quote '(1 0 0 0 0)))
 	// ))"));
-	//
+
 	//     // trans test
 	//     /*
 	//     Assert.AreEqual("(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))", globalInfo.evaluate(@"
@@ -1426,7 +1455,7 @@ test('Scheme APL-Evaluator test', () => {
 	// (list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))
 	// '(trans m1)
 	// )))"));
-	//
+
 	//     // [] test
 	//     /*
 	//     Assert.AreEqual("((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))", globalInfo.evaluate(@"
@@ -1448,7 +1477,7 @@ test('Scheme APL-Evaluator test', () => {
 	// '([] m1 2)
 	// (list '[] 'm1 (list 'quote '(3 1)))
 	// )))"));
-	//
+
 	//     // compress test
 	//     /*
 	//     Assert.AreEqual("((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))", globalInfo.evaluate(@"
@@ -1466,7 +1495,7 @@ test('Scheme APL-Evaluator test', () => {
 	// (list 'compress (list 'quote '(1 0 1 1 0 1 0)) 'v1)
 	// (list 'compress (list 'quote '(0 1 0 1)) 'm1)
 	// )))"));
-	//
+
 	//     // primes<= test (see pages 74-75)
 	//     Assert.AreEqual("(((4 7) 0 1 1 1 1 1 1 0 0 2 2 2 2 2 0 1 0 3 3 3 3 0 0 1 0 4 4 4) (2 3 5 7))", globalInfo.evaluate(@"
 	// (select '(2 4) (r-e-p-loop '(
@@ -1479,7 +1508,7 @@ test('Scheme APL-Evaluator test', () => {
 	// (define primes<= (n) (compress (= 2 (+/ (= 0 (mod-outer-probe (set s (indx n)) s)))) s))
 	// (primes<= 7)
 	// )))"));
-	//
+
 	//     // +\ ("+-scan") test (see page 74).  This tests the "if" construct.
 	//     /*
 	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
@@ -1503,7 +1532,7 @@ test('Scheme APL-Evaluator test', () => {
 	// '(define foo (v) (if (= (shape v) 0) 1 0))
 	// (list 'foo (list 'quote '(1 3 5 7)))
 	// )))"));
-	//
+
 	//     /*
 	//     Assert.AreEqual("((1 4 9 16))", globalInfo.evaluate(@"
 	// (select '(2) (r-e-p-loop '(
