@@ -4,7 +4,7 @@
 
 import { LanguageSelector } from 'thaw-interpreter-types';
 
-// import { createParser /*, SyntaxException */ } from 'thaw-parser';
+// import { SyntaxException } from 'thaw-parser';
 
 import {
 	APLGlobalInfo,
@@ -34,12 +34,11 @@ const ls = LanguageSelector.APL;
 function createFnEval(): (str: string) => IAPLValue {
 	const { tokenizer, parser } = createInfrastructure(ls);
 	const localEnvironment = new EnvironmentFrame<IAPLValue>();
+
 	const globalInfo = new APLGlobalInfo();
+	// Or: const globalInfo = new APLGlobalInfo({ tokenizer, parser });
 
 	// globalInfo.loadPresets(tokenizer, parser);
-
-	// return (str: string) =>
-	// 	globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as IAPLExpression);
 
 	return (str: string) => {
 		const expr = parser.parse(tokenizer.tokenize(str)) as IAPLExpression;

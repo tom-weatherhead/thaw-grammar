@@ -27,6 +27,10 @@ function createFnEval(): (str: string) => ISmalltalkValue {
 
 	globalInfo.loadPresets(tokenizer, parser);
 
+	// Or:
+	// const globalInfo = new SmalltalkGlobalInfo({ tokenizer, parser });
+	// globalInfo.loadPresets();
+
 	return (str: string) =>
 		globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression);
 }

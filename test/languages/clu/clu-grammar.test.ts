@@ -4,7 +4,7 @@
 
 import { LanguageSelector } from 'thaw-interpreter-types';
 
-// import { createParser /*, SyntaxException */ } from 'thaw-parser';
+// import { SyntaxException } from 'thaw-parser';
 
 import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
@@ -15,12 +15,11 @@ const ls = LanguageSelector.CLU;
 function createFnEval(): (str: string) => ICLUValue {
 	const { tokenizer, parser } = createInfrastructure(ls);
 	const localEnvironment = new CLUEnvironmentFrame();
+
 	const globalInfo = new CLUGlobalInfo();
+	// Or: const globalInfo = new CLUGlobalInfo({ tokenizer, parser });
 
 	// globalInfo.loadPresets(tokenizer, parser);
-
-	// return (str: string) =>
-	// 	globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as IAPLExpression);
 
 	return (str: string) => {
 		const expr = parser.parse(tokenizer.tokenize(str)) as ICLUExpression;
