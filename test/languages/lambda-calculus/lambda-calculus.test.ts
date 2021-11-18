@@ -44,11 +44,14 @@
 
 import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 
-import { LanguageSelector, LexicalAnalyzerSelector, ParserSelector } from 'thaw-interpreter-types';
-
-import { createTokenizer } from 'thaw-lexical-analyzer';
+import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { createParser, SyntaxException } from 'thaw-parser';
+
+import {
+	createFnParser,
+	createFnRecognizer /*, createInfrastructure */
+} from '../../create-infrastructure';
 
 import {
 	areIsomorphic,
@@ -75,7 +78,7 @@ test('LambdaCalculus parser instance creation test', () => {
 	const grammar = createGrammar(ls);
 
 	// Act
-	const parser = createParser(ParserSelector.LL1, grammar);
+	const parser = createParser(grammar.defaultParser, grammar);
 
 	// Assert
 	expect(parser).toBeTruthy();
@@ -83,11 +86,12 @@ test('LambdaCalculus parser instance creation test', () => {
 
 test('LambdaCalculus recognize test', () => {
 	// Arrange
-	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	const parser = createParser(ParserSelector.LL1, grammar);
-
-	const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	// const grammar = createGrammar(ls);
+	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	// const parser = createParser(ParserSelector.LL1, grammar);
+	//
+	// const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	const f = createFnRecognizer(ls);
 
 	// For a list of combinators, see https://github.com/loophp/combinator ,
 	// all (?) of which can be implemented in terms of just S and K.
@@ -106,11 +110,13 @@ test('LambdaCalculus recognize test', () => {
 });
 
 function getParseFunction(): (str: string) => ILCExpression {
-	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	const parser = createParser(ParserSelector.LL1, grammar);
+	// const grammar = createGrammar(ls);
+	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	// const parser = createParser(ParserSelector.LL1, grammar);
+	//
+	// return (str: string) => parser.parse(tokenizer.tokenize(str)) as ILCExpression;
 
-	return (str: string) => parser.parse(tokenizer.tokenize(str)) as ILCExpression;
+	return createFnParser<ILCExpression>(ls);
 }
 
 test('LambdaCalculus parse test', () => {

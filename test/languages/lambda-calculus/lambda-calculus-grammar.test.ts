@@ -14,12 +14,3 @@ test('LambdaCalculusGrammar instance creation test', () => {
 	// Assert
 	expect(grammar).toBeTruthy();
 });
-
-// test('LambdaCalculusGrammar recognize test', () => {
-// 	// Arrange
-// 	const grammar = createGrammar(LanguageSelector.LambdaCalculus);
-//
-// 	// Act
-// 	// Assert
-// 	expect(grammar).toBeTruthy();
-// });

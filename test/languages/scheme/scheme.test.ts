@@ -46,9 +46,6 @@ test('LL(1) Scheme recognize test', () => {
 });
 
 function evaluateToISExpression(input: string): ISExpression {
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(grammar.defaultLexicalAnalyzer, ls);
-	// const parser = createParser(grammar.defaultParser, grammar);
 	const { tokenizer, parser } = createInfrastructure(ls);
 	const globalInfo = new SchemeGlobalInfo({ tokenizer, parser });
 
@@ -60,9 +57,6 @@ function evaluateToISExpression(input: string): ISExpression {
 
 function schemeTest(data: Array<[input: string, expectedResult: string | string[]]>): void {
 	// Arrange
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	// const parser = createParser(ParserSelector.LL1, grammar);
 	const { tokenizer, parser } = createInfrastructure(ls);
 
 	const schemeGlobalInfo = new SchemeGlobalInfo();

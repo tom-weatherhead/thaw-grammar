@@ -2,21 +2,22 @@
 
 'use strict';
 
-import { LanguageSelector, LexicalAnalyzerSelector, ParserSelector } from 'thaw-interpreter-types';
+import { LanguageSelector } from 'thaw-interpreter-types';
 
-import { createTokenizer } from 'thaw-lexical-analyzer';
+import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
 import { createGrammar, PrologClause, PrologGlobalInfo, PrologGoal } from '../../..';
 
 import { createParser, SyntaxException } from 'thaw-parser';
 
+const ls = LanguageSelector.Prolog2;
+
 test('LL(1) Prolog parser instance creation test', () => {
 	// Arrange
-	const ls = LanguageSelector.Prolog2;
 	const grammar = createGrammar(ls);
 
 	// Act
-	const parser = createParser(ParserSelector.LL1, grammar);
+	const parser = createParser(grammar.defaultParser, grammar);
 
 	// Assert
 	expect(parser).toBeTruthy();
@@ -24,13 +25,13 @@ test('LL(1) Prolog parser instance creation test', () => {
 
 test('LL(1) Prolog recognize test', () => {
 	// 	// Arrange
-	const ls = LanguageSelector.Prolog2;
 	// const prologGlobalInfo = new PrologGlobalInfo();
-	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	const parser = createParser(ParserSelector.LL1, grammar);
-
-	const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	// const grammar = createGrammar(ls);
+	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	// const parser = createParser(ParserSelector.LL1, grammar);
+	//
+	// const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	const f = createFnRecognizer(ls);
 
 	// expect(f('')).toBeTruthy();
 	f('pred1.');
@@ -77,11 +78,11 @@ function prologTest(
 	allMode = false
 ): void {
 	// Arrange
-	const ls = LanguageSelector.Prolog2;
+	// const grammar = createGrammar(ls);
+	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	// const parser = createParser(ParserSelector.LL1, grammar);
+	const { tokenizer, parser } = createInfrastructure(ls);
 	const prologGlobalInfo = new PrologGlobalInfo();
-	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	const parser = createParser(ParserSelector.LL1, grammar);
 
 	if (allMode) {
 		prologGlobalInfo.FindAllSolutions();

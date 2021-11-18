@@ -4,8 +4,6 @@
 
 import { LanguageSelector } from 'thaw-interpreter-types';
 
-// import { createTokenizer } from 'thaw-lexical-analyzer';
-
 import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
 import { createGrammar, IExpression, ISExpression, LISPGlobalInfo } from '../../..';
