@@ -111,7 +111,7 @@ export class SchemeGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalDivide);
 		this.terminals.push(GrammarSymbol.terminalEquals);
 		this.terminals.push(GrammarSymbol.terminalLessThan);
-		this.terminals.push(GrammarSymbol.terminalGreaterThan);
+		// this.terminals.push(GrammarSymbol.terminalGreaterThan);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
 		// this.terminals.push(GrammarSymbol.terminalFloatLiteral);
@@ -449,13 +449,13 @@ export class SchemeGrammar extends GrammarBase {
 		);
 
 		// Value-Op -> >
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalValueOp,
-				[GrammarSymbol.terminalGreaterThan],
-				31
-			)
-		);
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalValueOp,
+		// 		[GrammarSymbol.terminalGreaterThan],
+		// 		31
+		// 	)
+		// );
 
 		// Function -> Name
 		this.productions.push(
@@ -1255,7 +1255,8 @@ export class SchemeGrammar extends GrammarBase {
 			case LexicalState.tokenLess:
 				return GrammarSymbol.terminalLessThan;
 			case LexicalState.tokenGreater:
-				return GrammarSymbol.terminalGreaterThan;
+				// return GrammarSymbol.terminalGreaterThan;
+				return GrammarSymbol.terminalID;
 			case LexicalState.tokenLessEqual:
 				return GrammarSymbol.terminalID;
 			case LexicalState.tokenGreaterEqual:
@@ -1397,7 +1398,7 @@ export class SchemeGrammar extends GrammarBase {
 			case GrammarSymbol.terminalDivide:
 			case GrammarSymbol.terminalEquals:
 			case GrammarSymbol.terminalLessThan:
-			case GrammarSymbol.terminalGreaterThan:
+			// case GrammarSymbol.terminalGreaterThan:
 			case GrammarSymbol.terminalCons:
 			case GrammarSymbol.terminalCar:
 			case GrammarSymbol.terminalCdr:

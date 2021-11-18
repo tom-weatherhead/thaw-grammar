@@ -6,7 +6,6 @@ import { EnvironmentFrame } from '../../../common/domain-object-model/environmen
 import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-// import { Name } from '../../../common/domain-object-model/name';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 import { LISPOperatorUsage } from '../../lisp/domain-object-model/lisp-operator-usage';
@@ -73,7 +72,7 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 				'/',
 				'=',
 				'<',
-				'>',
+				// '>',
 				'number?',
 				'symbol?',
 				'list?',

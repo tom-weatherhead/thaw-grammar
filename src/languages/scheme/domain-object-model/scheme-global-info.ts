@@ -54,7 +54,7 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 		this.evaluate('(set compose2args (lambda (f g) (lambda (x y) (g (f x y)))))');
 		this.evaluate('(set reverse2args (lambda (f) (lambda (x y) (f y x))))');
 
-		// this.evaluate('(set > (reverse2args <))');
+		this.evaluate('(set > (reverse2args <))');
 		this.evaluate("(set not (lambda (x) (if x '() 'T)))");
 		this.evaluate('(set and (lambda (x y) (if x y x)))');
 		this.evaluate('(set or (lambda (x y) (if x x y)))');
