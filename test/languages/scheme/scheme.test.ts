@@ -2,9 +2,11 @@
 
 'use strict';
 
-import { LanguageSelector, LexicalAnalyzerSelector, ParserSelector } from 'thaw-interpreter-types';
+import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { createTokenizer } from 'thaw-lexical-analyzer';
+
+import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
 import { createGrammar, IExpression, ISExpression, PrimOp, SchemeGlobalInfo } from '../../..';
 
@@ -17,7 +19,7 @@ test('LL(1) Scheme parser instance creation test', () => {
 	const grammar = createGrammar(ls);
 
 	// Act
-	const parser = createParser(ParserSelector.LL1, grammar);
+	const parser = createParser(grammar.defaultParser, grammar);
 
 	// Assert
 	expect(parser).toBeTruthy();
@@ -25,13 +27,13 @@ test('LL(1) Scheme parser instance creation test', () => {
 
 test('LL(1) Scheme recognize test', () => {
 	// 	// Arrange
-	// const ls = LanguageSelector.Scheme;
-	// const prologGlobalInfo = new PrologGlobalInfo();
-	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	const parser = createParser(ParserSelector.LL1, grammar);
+	// const grammar = createGrammar(ls);
+	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	// const parser = createParser(ParserSelector.LL1, grammar);
+	// const { tokenizer, parser } = createInfrastructure(ls);
 
-	const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	// const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	const f = createFnRecognizer(ls);
 
 	f('(* 7 13)');
 
@@ -44,9 +46,10 @@ test('LL(1) Scheme recognize test', () => {
 });
 
 function evaluateToISExpression(input: string): ISExpression {
-	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(grammar.defaultLexicalAnalyzer, ls);
-	const parser = createParser(grammar.defaultParser, grammar);
+	// const grammar = createGrammar(ls);
+	// const tokenizer = createTokenizer(grammar.defaultLexicalAnalyzer, ls);
+	// const parser = createParser(grammar.defaultParser, grammar);
+	const { tokenizer, parser } = createInfrastructure(ls);
 	const globalInfo = new SchemeGlobalInfo({ tokenizer, parser });
 
 	const parseResult = parser.parse(tokenizer.tokenize(input));
@@ -57,11 +60,13 @@ function evaluateToISExpression(input: string): ISExpression {
 
 function schemeTest(data: Array<[input: string, expectedResult: string | string[]]>): void {
 	// Arrange
-	// const ls = LanguageSelector.Scheme;
+	// const grammar = createGrammar(ls);
+	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
+	// const parser = createParser(ParserSelector.LL1, grammar);
+	const { tokenizer, parser } = createInfrastructure(ls);
+
 	const schemeGlobalInfo = new SchemeGlobalInfo();
-	const grammar = createGrammar(ls);
-	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	const parser = createParser(ParserSelector.LL1, grammar);
+	// Or: const schemeGlobalInfo = new SchemeGlobalInfo({ tokenizer, parser });
 
 	for (const [input, expectedResult] of data) {
 		// Act
