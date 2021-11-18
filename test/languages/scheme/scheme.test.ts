@@ -1087,29 +1087,35 @@ test('Scheme APL-Evaluator test', () => {
 	expect(globalInfo.evaluateToString('(shape v1)')).toBe('(4)');
 	expect(globalInfo.evaluateToString('(shape m1)')).toBe('(3 4)');
 
-	//     globalInfo.evaluate(@"
-	// (set to-vector (lambda (x)
-	// (let ((type (get-type x)))
-	// (cond
-	//     ((= type 'scalar) (list x))
-	//     ((= type 'vector) x)
-	//     ('T (cdr x))))))");
+	globalInfo.evaluate(
+		[
+			'(set to-vector (lambda (x)',
+			'(let ((type (get-type x)))',
+			'(cond',
+			"    ((= type 'scalar) (list x))",
+			"    ((= type 'vector) x)",
+			"   ('T (cdr x))))))"
+		].join(' ')
+	);
 
-	//     Assert.AreEqual("(7)", globalInfo.evaluate("(to-vector s1)"));
-	//     Assert.AreEqual("(2 3 5 7)", globalInfo.evaluate("(to-vector v1)"));
-	//     Assert.AreEqual("(1 2 3 4 5 6 7 8 9 10 11 12)", globalInfo.evaluate("(to-vector m1)"));
+	expect(globalInfo.evaluateToString('(to-vector s1)')).toBe('(7)');
+	expect(globalInfo.evaluateToString('(to-vector v1)')).toBe('(2 3 5 7)');
+	expect(globalInfo.evaluateToString('(to-vector m1)')).toBe('(1 2 3 4 5 6 7 8 9 10 11 12)');
 
-	//     globalInfo.evaluate(@"
-	// (set get-first-scalar (lambda (x)
-	// (let ((type (get-type x)))
-	// (cond
-	//     ((= type 'scalar) x)
-	//     ((= type 'vector) (car x))
-	//     ('T (cadr x))))))");
+	globalInfo.evaluate(
+		[
+			'(set get-first-scalar (lambda (x)',
+			'(let ((type (get-type x)))',
+			'(cond',
+			"    ((= type 'scalar) x)",
+			"    ((= type 'vector) (car x))",
+			"    ('T (cadr x))))))"
+		].join(' ')
+	);
 
-	//     Assert.AreEqual("7", globalInfo.evaluate("(get-first-scalar 7)"));
-	//     Assert.AreEqual("13", globalInfo.evaluate("(get-first-scalar '(13 14 15))"));
-	//     Assert.AreEqual("9", globalInfo.evaluate("(get-first-scalar '((2 2) 9 3 5 7))"));
+	expect(globalInfo.evaluateToString('(get-first-scalar 7)')).toBe('7');
+	expect(globalInfo.evaluateToString("(get-first-scalar '(13 14 15))")).toBe('13');
+	expect(globalInfo.evaluateToString("(get-first-scalar '((2 2) 9 3 5 7))")).toBe('9');
 
 	globalInfo.evaluate('(set +/ (combine id + 0))');
 	globalInfo.evaluate('(set -/ (combine id - 0))');
@@ -1121,16 +1127,16 @@ test('Scheme APL-Evaluator test', () => {
 	//     Assert.AreEqual("(8 9)", globalInfo.evaluate("(to-scalar-if-possible '(8 9))"));
 	//     Assert.AreEqual("20", globalInfo.evaluate("(to-scalar-if-possible '((1 1) 20))"));
 	//     Assert.AreEqual("((2 2) 1 0 0 1)", globalInfo.evaluate("(to-scalar-if-possible '((2 2) 1 0 0 1))"));
-	//
+
 	//     globalInfo.evaluate(@"
 	// (set get-matrix-rows (lambda (m)
 	// (letrec ((get-matrix-rows* (lambda (r c l)
 	//     (if (= r 0) '()
 	//         (cons (take c l) (get-matrix-rows* (- r 1) c (skip c l)))))))
 	// (get-matrix-rows* (caar m) (cadar m) (cdr m)))))");
-	//
+
 	//     Assert.AreEqual("((1 2 3 4) (5 6 7 8) (9 10 11 12))", globalInfo.evaluate("(get-matrix-rows m1)"));
-	//
+
 	//     globalInfo.evaluate("(set max-of-pair (lambda (x y) (if (> x y) x y)))");
 	//     globalInfo.evaluate("(set max/ (lambda (l) ((combine id max-of-pair (car l)) (cdr l))))");
 	//     globalInfo.evaluate("(set apl-and (lambda (x y) (if (and (<> x 0) (<> y 0)) 1 0)))");
