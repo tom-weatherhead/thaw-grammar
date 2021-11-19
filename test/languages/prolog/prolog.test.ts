@@ -24,13 +24,7 @@ test('LL(1) Prolog parser instance creation test', () => {
 });
 
 test('LL(1) Prolog recognize test', () => {
-	// 	// Arrange
-	// const prologGlobalInfo = new PrologGlobalInfo();
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	// const parser = createParser(ParserSelector.LL1, grammar);
-	//
-	// const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	// Arrange
 	const f = createFnRecognizer(ls);
 
 	// expect(f('')).toBeTruthy();
@@ -78,9 +72,6 @@ function prologTest(
 	allMode = false
 ): void {
 	// Arrange
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	// const parser = createParser(ParserSelector.LL1, grammar);
 	const { tokenizer, parser } = createInfrastructure(ls);
 	const prologGlobalInfo = new PrologGlobalInfo();
 
@@ -345,20 +336,8 @@ test('LL(1) Prolog not test', () => {
 test('LL(1) Prolog basic cut test', () => {
 	// C# version of this test: 2014/03/08
 
-	// Assert.AreEqual(clauseAdded, globalInfo.ProcessInputString("G(X) :- H(X), !, I(X)."));
-	// Assert.AreEqual(clauseAdded, globalInfo.ProcessInputString("G(20)."));
-	// Assert.AreEqual(clauseAdded, globalInfo.ProcessInputString("H(7)."));
-	// Assert.AreEqual(clauseAdded, globalInfo.ProcessInputString("H(13)."));
-	// Assert.AreEqual(clauseAdded, globalInfo.ProcessInputString("I(13)."));
-
-	// Assert.AreEqual(notSatisfied, globalInfo.ProcessInputString("?- G(X)."));
-
 	// Assert.AreEqual(notSatisfied, globalInfo.ProcessInputString("?- G(_).")); // Before 2014/03/13 : This assert fails; the query is satisfied.
 
-	// My guess is that G(_) unifies with G(X) via the substitution X = _
-	// Then it satisfies G(_) via the rule by satisfying H(_) and I(_) via H(7) and I(13).
-	// This illustrates a potential hazard relating to the use of non-binding variables.
-	// Does real Prolog suffer from this same hazard?
 	// 2014/03/13 : Fixed: See PrologVariable.Unify(); we no longer create bindings such as { X = _ }
 
 	prologTest([

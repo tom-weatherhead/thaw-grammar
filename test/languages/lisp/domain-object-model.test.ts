@@ -9,13 +9,6 @@ import { LISPSymbol } from '../../../src/languages/lisp/domain-object-model/lisp
 import { NullSExpression } from '../../../src/languages/lisp/domain-object-model/null-sexpression';
 import { SExpressionList } from '../../../src/languages/lisp/domain-object-model/sexpression-list';
 
-// test('Dummy test', () => {
-// 	// Arrange
-// 	// Act
-// 	// Assert
-// 	expect(true).toBeTruthy();
-// });
-
 test('LISP list-to-string test', () => {
 	// Arrange
 	const nullSExpr = new NullSExpression();

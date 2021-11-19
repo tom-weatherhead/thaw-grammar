@@ -55,7 +55,7 @@ function lispTest(data: Array<[input: string, expectedResult: string | string[]]
 		const parseResult = parser.parse(tokenizer.tokenize(input));
 		const expr = parseResult as IExpression<ISExpression>;
 		const actualResult = expr
-			.evaluate(lispGlobalInfo.globalEnvironment, lispGlobalInfo)
+			.evaluate(lispGlobalInfo, lispGlobalInfo.globalEnvironment)
 			.toString();
 
 		// console.log(`input: ${input}\nactualResult:\n${actualResult}\n\n`);

@@ -60,6 +60,8 @@ import { Variable } from '../../common/domain-object-model/variable';
 
 import { VariableList } from '../../common/domain-object-model/variable-list';
 
+import { WhileUsage } from '../../common/domain-object-model/while-usage';
+
 import { IAPLExpression, IAPLValue } from './domain-object-model/interfaces/ivalue';
 
 import { APLValue } from './domain-object-model/data-types/value';
@@ -72,7 +74,7 @@ import { APLOperatorUsage } from './domain-object-model/operator-usage';
 
 import { VectorAssignmentUsage } from './domain-object-model/vector-assignment-usage';
 
-import { APLWhileUsage } from './domain-object-model/while-usage';
+// import { APLWhileUsage } from './domain-object-model/while-usage';
 
 export class APLGrammar extends GrammarBase {
 	// The APL grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -561,7 +563,8 @@ export class APLGrammar extends GrammarBase {
 			case '#while':
 				expression2 = semanticStack.pop() as IAPLExpression;
 				expression = semanticStack.pop() as IAPLExpression;
-				semanticStack.push(new APLWhileUsage(expression, expression2));
+				// semanticStack.push(new APLWhileUsage(expression, expression2));
+				semanticStack.push(new WhileUsage<IAPLValue>(expression, expression2));
 				break;
 
 			case '#begin':
