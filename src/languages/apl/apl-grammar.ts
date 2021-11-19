@@ -44,13 +44,9 @@ import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 
 import { CondUsage } from '../../common/domain-object-model/cond-usage';
 
-// import { EnvironmentFrame } from '../../common/domain-object-model/environment-frame';
-
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
 
 import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
-
-// import { IExpression } from '../../common/domain-object-model/iexpression';
 
 import { IfUsage } from '../../common/domain-object-model/if-usage';
 
@@ -578,26 +574,6 @@ export class APLGrammar extends GrammarBase {
 				semanticStack.push(new BeginUsage<IAPLValue>(expression, expressionList));
 				break;
 
-			// From C#:
-
-			// case '#makeFloatVector':
-			// 	floatList = (List<double>)semanticStack.Pop();
-			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
-			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
-			// 	semanticStack.Push(APLValue<double>.CreateVector(floatList));
-			// 	break;
-			//
-			// case '#floatList':
-			// 	floatList = (List<double>)semanticStack.Pop();
-			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
-			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
-			// 	semanticStack.Push(floatList);
-			// 	break;
-			//
-			// case '#emptyFloatList':
-			// 	semanticStack.Push(new List<double>());
-			// 	break;
-
 			case '#condUsage':
 				exprPairList = semanticStack.pop() as [IAPLExpression, IAPLExpression][];
 				expression2 = semanticStack.pop() as IAPLExpression;
@@ -637,6 +613,26 @@ export class APLGrammar extends GrammarBase {
 			case '#emptyVarExprList':
 				semanticStack.push([] as [Variable<IAPLValue>, IAPLExpression][]);
 				break;
+
+			// From C#:
+
+			// case '#makeFloatVector':
+			// 	floatList = (List<double>)semanticStack.Pop();
+			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
+			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
+			// 	semanticStack.Push(APLValue<double>.CreateVector(floatList));
+			// 	break;
+			//
+			// case '#floatList':
+			// 	floatList = (List<double>)semanticStack.Pop();
+			// 	floatScalar = (APLValue<double>)semanticStack.Pop();
+			// 	floatList.Insert(0, floatScalar.GetFirstScalar());
+			// 	semanticStack.Push(floatList);
+			// 	break;
+			//
+			// case '#emptyFloatList':
+			// 	semanticStack.Push(new List<double>());
+			// 	break;
 
 			default:
 				throw new GrammarException(`APL: Unrecognized semantic action: ${action}`);
@@ -725,14 +721,6 @@ export class APLGrammar extends GrammarBase {
 			case GrammarSymbol.terminalTrans:
 			case GrammarSymbol.terminalSquareBrackets:
 			case GrammarSymbol.terminalDoubleSubscripting:
-				// Handled by base class:
-				// case GrammarSymbol.terminalRandom:
-				// case GrammarSymbol.terminalPow:
-				// case GrammarSymbol.terminalExp:
-				// case GrammarSymbol.terminalLn:
-				// case GrammarSymbol.terminalSin:
-				// case GrammarSymbol.terminalCos:
-				// case GrammarSymbol.terminalTan:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				// Or: semanticStack.push(new Name(value.toString(), token.line, token.column));
 				// Or: semanticStack.push(new Name(`${value}`, token.line, token.column));

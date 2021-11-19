@@ -1,13 +1,13 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/iglobal-info.ts
 
-import { EnvironmentFrame } from './environment-frame';
+import { IEnvironmentFrame } from './environment-frame';
 import { FunctionDefinition } from './function-definition';
 
 // T is the language's value type.
 
 export interface IGlobalInfo<T> {
 	// **** Public instance fields ****
-	globalEnvironment: EnvironmentFrame<T>;
+	globalEnvironment: IEnvironmentFrame<T>;
 	functionDefinitions: Map<string, FunctionDefinition<T>>;
 	dynamicScoping: boolean;
 	debug: boolean;

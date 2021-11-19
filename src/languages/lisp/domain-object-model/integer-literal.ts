@@ -7,8 +7,20 @@ import { INumber } from './inumber';
 import { ISExpression } from './isexpression';
 import { SExpressionBase } from './sexpression-base';
 
+const typenameIntegerLiteral = 'IntegerLiteral';
+
+export function isIntegerLiteral(obj: unknown): obj is IntegerLiteral {
+	const otherIntegerLiteral = obj as IntegerLiteral;
+
+	return (
+		typeof otherIntegerLiteral !== 'undefined' &&
+		otherIntegerLiteral.typename === typenameIntegerLiteral
+	);
+}
+
 export class IntegerLiteral extends SExpressionBase implements INumber {
 	// , IConvertibleToGraph
+	public readonly typename: string = typenameIntegerLiteral;
 	public readonly value: number;
 
 	constructor(value: unknown) {

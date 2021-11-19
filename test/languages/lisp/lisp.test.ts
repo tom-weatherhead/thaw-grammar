@@ -48,7 +48,7 @@ function lispTest(data: Array<[input: string, expectedResult: string | string[]]
 	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
 	// const parser = createParser(ParserSelector.LL1, grammar);
 	const { tokenizer, parser } = createInfrastructure(ls);
-	const lispGlobalInfo = new LISPGlobalInfo();
+	const lispGlobalInfo = new LISPGlobalInfo({ tokenizer, parser });
 
 	for (const [input, expectedResult] of data) {
 		// Act

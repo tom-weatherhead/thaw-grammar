@@ -1,10 +1,12 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/lisp-global-info.ts
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 import { ArgumentException } from 'thaw-interpreter-core';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
-import { IntegerLiteral } from './integer-literal';
+import { IntegerLiteral, isIntegerLiteral } from './integer-literal';
 // import { INumber } from './inumber';
 import { ISExpression } from './isexpression';
 import { LISPSymbol } from './lisp-symbol';
@@ -16,140 +18,124 @@ export class LISPGlobalInfo extends GlobalInfoBase<ISExpression> {
 	// private readonly Dictionary<Name, IMacroDefinition<ISExpression>> MacroDefs = new Dictionary<Name, IMacroDefinition<ISExpression>>();
 	// public static readonly Variable<ISExpression> varStackTrace = new Variable<ISExpression>("__STACK_TRACE__", 0, 0);
 
-	// constructor(tokenizer: ITokenizer, parser: IParser) {
-	// 	super(tokenizer, parser);
-	// }
-
-	constructor() {
-		super();
+	constructor(
+		options: {
+			parser?: IParser;
+			tokenizer?: ITokenizer;
+		} = {}
+	) {
+		super(options);
 	}
 
-	// 	public override string LoadPreset(string presetName)
-	// 	{
+	public override loadPreset(presetName: string): string {
+		switch (presetName) {
+			// 			case "assoc":
+			// 				// Association list functions (from page 32)
+			// 				this.evaluate("(define caar (x) (car (car x)))");
+			// 				this.evaluate("(define cadar (x) (car (cdr (car x))))");
+			// 				this.evaluate(@"
+			// (define assoc (x alist)
+			// (if (null? alist) '()
+			// 	(if (= x (caar alist)) (cadar alist)
+			// 		(assoc x (cdr alist)))))");
+			// 				this.evaluate(@"
+			// (define mkassoc (x y alist)
+			// (if (null? alist)
+			// 	(list (list x y))
+			// 	(if (= x (caar alist)) (cons (list x y) (cdr alist))
+			// 		(cons (car alist) (mkassoc x y (cdr alist))))))");
+			// 				// Additional function
+			// 				this.evaluate(@"
+			// (define assoc-contains-key (x alist)
+			// (if (null? alist) '()
+			// 	(if (= x (caar alist)) 'T
+			// 		(assoc-contains-key x (cdr alist)))))");
+			// 				// From page 55
+			// 				this.evaluate(@"
+			// (define rplac-assoc (x y alist)
+			// (if (null? alist) '()
+			// 	(if (= x (caar alist))
+			// 		(rplacd (car alist) (list y))
+			// 		(if (null? (cdr alist))
+			// 			(rplacd alist (list (list x y)))
+			// 			(rplac-assoc x y (cdr alist))))))");
+			// 				break;
 
-	// 		switch (presetName.ToLower())
-	// 		{
-	// 			case "assoc":
-	// 				// Association list functions (from page 32)
-	// 				Evaluate("(define caar (x) (car (car x)))");
-	// 				Evaluate("(define cadar (x) (car (cdr (car x))))");
-	// 				Evaluate(@"
-	// (define assoc (x alist)
-	// (if (null? alist) '()
-	// 	(if (= x (caar alist)) (cadar alist)
-	// 		(assoc x (cdr alist)))))");
-	// 				Evaluate(@"
-	// (define mkassoc (x y alist)
-	// (if (null? alist)
-	// 	(list (list x y))
-	// 	(if (= x (caar alist)) (cons (list x y) (cdr alist))
-	// 		(cons (car alist) (mkassoc x y (cdr alist))))))");
-	// 				// Additional function
-	// 				Evaluate(@"
-	// (define assoc-contains-key (x alist)
-	// (if (null? alist) '()
-	// 	(if (= x (caar alist)) 'T
-	// 		(assoc-contains-key x (cdr alist)))))");
-	// 				// From page 55
-	// 				Evaluate(@"
-	// (define rplac-assoc (x y alist)
-	// (if (null? alist) '()
-	// 	(if (= x (caar alist))
-	// 		(rplacd (car alist) (list y))
-	// 		(if (null? (cdr alist))
-	// 			(rplacd alist (list (list x y)))
-	// 			(rplac-assoc x y (cdr alist))))))");
-	// 				break;
+			// 			case "set":
+			// 				// Set functions (from page 34)
+			// 				this.evaluate("(set nullset '())");
+			// 				this.evaluate(@"
+			// (define member? (x s)
+			// (if (null? s) '()
+			// 	(if (equal x (car s)) 'T (member? x (cdr s)))))");
+			// 				this.evaluate("(define addelt (x s) (if (member? x s) s (cons x s)))");
+			// 				this.evaluate("(define size (s) (length s))");
+			// 				this.evaluate(@"
+			// (define union (s1 s2)
+			// (if (null? s1) s2
+			// 	(if (member? (car s1) s2)
+			// 		(union (cdr s1) s2)
+			// 		(cons (car s1) (union (cdr s1) s2)))))");
+			// 				// Additional set functions (from page 43)
+			// 				this.evaluate(@"
+			// (define inter (s1 s2)
+			// (if (null? s1) s1
+			// 	(if (member? (car s1) s2)
+			// 		(cons (car s1) (inter (cdr s1) s2))
+			// 		(inter (cdr s1) s2))))");
+			// 				this.evaluate(@"
+			// (define diff (s1 s2)
+			// (if (null? s1) s1
+			// 	(if (null? s2) s1
+			// 		(if (member? (car s1) s2)
+			// 			(diff (cdr s1) s2)
+			// 			(cons (car s1) (diff (cdr s1) s2))))))");
+			// 				break;
 
-	// 			case "set":
-	// 				// Set functions (from page 34)
-	// 				Evaluate("(set nullset '())");
-	// 				Evaluate(@"
-	// (define member? (x s)
-	// (if (null? s) '()
-	// 	(if (equal x (car s)) 'T (member? x (cdr s)))))");
-	// 				Evaluate("(define addelt (x s) (if (member? x s) s (cons x s)))");
-	// 				Evaluate("(define size (s) (length s))");
-	// 				Evaluate(@"
-	// (define union (s1 s2)
-	// (if (null? s1) s2
-	// 	(if (member? (car s1) s2)
-	// 		(union (cdr s1) s2)
-	// 		(cons (car s1) (union (cdr s1) s2)))))");
-	// 				// Additional set functions (from page 43)
-	// 				Evaluate(@"
-	// (define inter (s1 s2)
-	// (if (null? s1) s1
-	// 	(if (member? (car s1) s2)
-	// 		(cons (car s1) (inter (cdr s1) s2))
-	// 		(inter (cdr s1) s2))))");
-	// 				Evaluate(@"
-	// (define diff (s1 s2)
-	// (if (null? s1) s1
-	// 	(if (null? s2) s1
-	// 		(if (member? (car s1) s2)
-	// 			(diff (cdr s1) s2)
-	// 			(cons (car s1) (diff (cdr s1) s2))))))");
-	// 				break;
+			case 'queue':
+				// Queue functions (from page 37)
+				this.evaluate("(set empty-queue '())");
+				this.evaluate('(define front (q) (car q))');
+				this.evaluate('(define rm-front (q) (cdr q))');
+				this.evaluate(
+					'(define enqueue (t q) (if (null? q) (list t) (cons (car q) (enqueue t (cdr q)))))'
+				);
+				this.evaluate('(define empty? (q) (null? q))');
+				break;
 
-	// 			case "queue":
-	// 				// Queue functions (from page 37)
-	// 				Evaluate("(set empty-queue '())");
-	// 				Evaluate("(define front (q) (car q))");
-	// 				Evaluate("(define rm-front (q) (cdr q))");
-	// 				Evaluate("(define enqueue (t q) (if (null? q) (list t) (cons (car q) (enqueue t (cdr q)))))");
-	// 				Evaluate("(define empty? (q) (null? q))");
-	// 				break;
+			default:
+				return super.loadPreset(presetName);
+		}
 
-	// 			default:
-	// 				//throw new Exception(string.Format("LoadPreset() : Unknown preset name '{0}'.", presetName));
-	// 				return base.LoadPreset(presetName);
-	// 		}
+		return `The preset '${presetName}' has been successfully loaded.`;
+	}
 
-	// 		return string.Format("The preset '{0}' has been successfully loaded.", presetName);
-	// 	}
+	public override loadPresets(): void {
+		// 		GlobalEnvironment.Add(varStackTrace, new NullSExpression());
+		// 		GlobalEnvironment.Add(new Variable<ISExpression>("e", 0, 0), new FloatLiteral(Math.E));
+		// 		GlobalEnvironment.Add(new Variable<ISExpression>("pi", 0, 0), new FloatLiteral(Math.PI));
 
-	// 	public override void LoadPresets()
-	// 	{
-	// 		GlobalEnvironment.Add(varStackTrace, new NullSExpression());
-	// 		GlobalEnvironment.Add(new Variable<ISExpression>("e", 0, 0), new FloatLiteral(Math.E));
-	// 		GlobalEnvironment.Add(new Variable<ISExpression>("pi", 0, 0), new FloatLiteral(Math.PI));
-
-	// 		Evaluate("(define > (x y) (< y x))");
-	// 		Evaluate("(define not (x) (if x '() 'T))"); // Page 30
-	// 		Evaluate("(define and (x y) (if x y x))");  // Page 30
-	// 		Evaluate("(define or (x y) (if x x y))");   // Page 30
-	// 		Evaluate("(define atom? (x) (or (null? x) (or (number? x) (symbol? x))))"); // Page 31
-	// 		Evaluate(@"
-	// (define equal (l1 l2)
-	// (if (atom? l1) (= l1 l2)
-	// 	(if (atom? l2) '()
-	// 		(if (equal (car l1) (car l2))
-	// 			(equal (cdr l1) (cdr l2))
-	// 			'()))))"); // Page 31
-	// 		Evaluate("(define +1 (n) (+ n 1))");
-	// 		Evaluate("(define append (list1 list2) (if (null? list1) list2 (cons (car list1) (append (cdr list1) list2))))");   // Similar to Page 45
-	// 		Evaluate("(define length (l) (if (null? l) 0 (+1 (length (cdr l)))))");     // Page 29
-	// 		Evaluate("(define nth (n l) (if (= n 0) (car l) (nth (- n 1) (cdr l))))");  // Page 43
-	// 		Evaluate("(define mod (m n) (- m (* n (/ m n))))");                 // Page 8
-	// 		Evaluate("(define gcd (m n) (if (= n 0) m (gcd n (mod m n))))");    // Page 8
-	// 	}
-
-	// public override ISExpression FalseValue
-	// {
-	// 	get
-	// 	{
-	// 		return FalseVal;
-	// 	}
-	// }
-
-	// public override ISExpression TrueValue
-	// {
-	// 	get
-	// 	{
-	// 		return TrueVal;
-	// 	}
-	// }
+		// 		Evaluate("(define > (x y) (< y x))");
+		this.evaluate("(define not (x) (if x '() 'T))"); // Page 30
+		this.evaluate('(define and (x y) (if x y x))'); // Page 30
+		this.evaluate('(define or (x y) (if x x y))'); // Page 30
+		this.evaluate('(define atom? (x) (or (null? x) (or (number? x) (symbol? x))))'); // Page 31
+		// 		this.evaluate(@"
+		// (define equal (l1 l2)
+		// (if (atom? l1) (= l1 l2)
+		// 	(if (atom? l2) '()
+		// 		(if (equal (car l1) (car l2))
+		// 			(equal (cdr l1) (cdr l2))
+		// 			'()))))"); // Page 31
+		this.evaluate('(define +1 (n) (+ n 1))');
+		this.evaluate(
+			'(define append (list1 list2) (if (null? list1) list2 (cons (car list1) (append (cdr list1) list2))))'
+		); // Similar to Page 45
+		this.evaluate('(define length (l) (if (null? l) 0 (+1 (length (cdr l)))))'); // Page 29
+		this.evaluate('(define nth (n l) (if (= n 0) (car l) (nth (- n 1) (cdr l))))'); // Page 43
+		this.evaluate('(define mod (m n) (- m (* n (/ m n))))'); // Page 8
+		this.evaluate('(define gcd (m n) (if (= n 0) m (gcd n (mod m n))))'); // Page 8
+	}
 
 	public get falseValue(): ISExpression {
 		return this.falseValueForAccessor;
@@ -172,25 +158,20 @@ export class LISPGlobalInfo extends GlobalInfoBase<ISExpression> {
 	// }
 
 	public valueIsInteger(value: ISExpression): boolean {
-		return (value as IntegerLiteral) !== undefined;
+		// return (value as IntegerLiteral) !== undefined;
+
+		return isIntegerLiteral(value);
 	}
 
 	public valueAsInteger(value: ISExpression): number {
-		// return 3081;
-
-		// TODO: 2019-12-22 : It looks like we need to combine ISExpression and INumber:
-
-		// const valueAsNumber = value as INumber;
-		const valueAsNumber = value as IntegerLiteral;
-
-		if (valueAsNumber === undefined) {
+		if (!isIntegerLiteral(value)) {
 			throw new ArgumentException(
 				'valueAsInteger() : The value is not an IntegerLiteral.',
-				'valueAsNumber'
+				'value'
 			);
 		}
 
-		return valueAsNumber.toInteger();
+		return value.toInteger();
 	}
 
 	public integerAsValue(value: number): ISExpression {
