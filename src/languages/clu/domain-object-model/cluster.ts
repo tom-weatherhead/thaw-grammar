@@ -38,7 +38,10 @@ export function isCluster(obj: unknown): obj is ICluster {
 export function isCluEvaluateOptions(obj: unknown): obj is ICluEvaluateOptions {
 	const other = obj as ICluEvaluateOptions;
 
-	return typeof other !== 'undefined' && (typeof other.cluster === 'undefined' || isCluster(other.cluster));
+	return (
+		typeof other !== 'undefined' &&
+		(typeof other.cluster === 'undefined' || isCluster(other.cluster))
+	);
 }
 
 export class Cluster implements ICluster {
