@@ -50,6 +50,8 @@ import { FunctionDefinition } from '../../common/domain-object-model/function-de
 
 // import { IExpression } from '../../common/domain-object-model/iexpression';
 
+import { IfUsage } from '../../common/domain-object-model/if-usage';
+
 import { LetUsage } from '../../common/domain-object-model/let-usage';
 
 import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
@@ -66,7 +68,7 @@ import { IAPLExpression, IAPLValue } from './domain-object-model/interfaces/ival
 
 import { APLValue } from './domain-object-model/data-types/value';
 
-import { APLIfUsage } from './domain-object-model/if-usage';
+// import { APLIfUsage } from './domain-object-model/if-usage';
 
 import { APLCondUsage } from './domain-object-model/cond-usage';
 
@@ -557,7 +559,8 @@ export class APLGrammar extends GrammarBase {
 				expression3 = semanticStack.pop() as IAPLExpression;
 				expression2 = semanticStack.pop() as IAPLExpression;
 				expression = semanticStack.pop() as IAPLExpression;
-				semanticStack.push(new APLIfUsage(expression, expression2, expression3));
+				// semanticStack.push(new APLIfUsage(expression, expression2, expression3));
+				semanticStack.push(new IfUsage<IAPLValue>(expression, expression2, expression3));
 				break;
 
 			case '#while':
