@@ -57,7 +57,9 @@ export class CLUNormalFunctionDefinition
 	// ): ICLUValue {
 	public evaluate(
 		globalInfo: ICLUGlobalInfo,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		localEnvironment?: ICLUEnvironmentFrame,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): ICLUValue {
 		globalInfo.functionDefinitions.set(this.functionName.value, this);

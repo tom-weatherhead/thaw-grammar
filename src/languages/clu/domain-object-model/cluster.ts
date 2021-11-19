@@ -63,7 +63,9 @@ export class Cluster implements ICluster {
 	// ): ICLUValue {
 	public evaluate(
 		globalInfo: IGlobalInfo<ICLUValue>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): ICLUValue {
 		if (!isCLUGlobalInfo(globalInfo)) {

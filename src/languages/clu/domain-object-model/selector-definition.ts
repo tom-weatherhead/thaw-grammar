@@ -45,6 +45,7 @@ export class CLUSelectorDefinition extends CLUFunctionDefinitionBase {
 	public evaluate(
 		globalInfo: IGlobalInfo<ICLUValue>,
 		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): ICLUValue {
 		if (typeof localEnvironment === 'undefined') {
