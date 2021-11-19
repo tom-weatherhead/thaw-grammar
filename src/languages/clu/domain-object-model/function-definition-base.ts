@@ -2,17 +2,25 @@
 
 import { Name } from 'thaw-interpreter-core';
 
+// import { IExpression } from '../../../common/domain-object-model/iexpression';
+//
+// import { IVariable } from '../../../common/domain-object-model/variable';
+
 import {
 	ICLUEnvironmentFrame,
 	ICLUExpression,
-	ICLUFunctionDefinition,
+	// ICLUFunctionDefinition,
 	ICLUGlobalInfo,
 	// ICluster,
 	ICLUValue
 } from './interfaces/ivalue';
 
-export abstract class CLUFunctionDefinitionBase implements ICLUExpression, ICLUFunctionDefinition {
-	protected constructor(public readonly functionName: Name) {}
+export abstract class CLUFunctionDefinitionBase implements ICLUExpression {
+	protected constructor(
+		public readonly functionName: Name /*,
+	public readonly argList: IVariable<ICLUValue>[],
+	public readonly body: IExpression<ICLUValue> */
+	) {}
 
 	// public abstract evaluate(
 	// 	localEnvironment: ICLUEnvironmentFrame,

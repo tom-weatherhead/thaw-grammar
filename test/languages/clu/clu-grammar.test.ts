@@ -26,7 +26,7 @@ function createFnEval(): (str: string) => ICLUValue {
 
 		// The 'undefined' is the cluster.
 
-		return expr.evaluate(localEnvironment, undefined, globalInfo);
+		return expr.evaluate(globalInfo, localEnvironment);
 	};
 }
 

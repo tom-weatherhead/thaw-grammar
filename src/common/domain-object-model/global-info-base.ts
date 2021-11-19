@@ -5,7 +5,7 @@ import { IParser, ITokenizer } from 'thaw-interpreter-types';
 import { ArgumentException } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame, IEnvironmentFrame } from './environment-frame';
-import { FunctionDefinition } from './function-definition';
+import { IFunctionDefinition } from './function-definition';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 // import { IGlobalInfoOps } from './iglobal-info-ops';
@@ -15,7 +15,7 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 	protected readonly tokenizer: ITokenizer | undefined;
 	protected readonly parser: IParser | undefined;
 	public readonly globalEnvironment: IEnvironmentFrame<T> = new EnvironmentFrame<T>();
-	public readonly functionDefinitions = new Map<string, FunctionDefinition<T>>();
+	public readonly functionDefinitions = new Map<string, IFunctionDefinition<T>>();
 	public dynamicScoping = false;
 	public debug = false;
 	private printedText = '';

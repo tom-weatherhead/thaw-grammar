@@ -4,6 +4,8 @@
 
 import { Name } from 'thaw-interpreter-core';
 
+import { IFunctionDefinition } from '../../../common/domain-object-model/function-definition';
+
 import {
 	ICLUEnvironmentFrame,
 	ICLUExpression,
@@ -27,7 +29,10 @@ export function isCLUNormalFunctionDefinition(obj: unknown): obj is CLUNormalFun
 	);
 }
 
-export class CLUNormalFunctionDefinition extends CLUFunctionDefinitionBase {
+export class CLUNormalFunctionDefinition
+	extends CLUFunctionDefinitionBase
+	implements IFunctionDefinition<ICLUValue>
+{
 	public readonly typename: string = typenameCLUNormalFunctionDefinition;
 
 	constructor(

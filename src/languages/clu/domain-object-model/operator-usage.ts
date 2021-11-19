@@ -239,11 +239,17 @@ export class CLUOperatorUsage implements ICLUExpression {
 		localEnvironment?: IEnvironmentFrame<ICLUValue>,
 		options?: unknown
 	): ICLUValue {
-		if (!isCluEvaluateOptions(options)) {
-			throw new Error('CLUOperatorUsage.evaluate() : options is not CluEvaluateOptions');
+		let cluster: ICluster | undefined;
+
+		if (typeof options !== 'undefined') {
+			if (!isCluEvaluateOptions(options)) {
+				throw new Error('CLUOperatorUsage.evaluate() : options is not CluEvaluateOptions');
+			}
+
+			cluster = options.cluster;
 		}
 
-		let { cluster } = options;
+		// let { cluster } = options;
 		const originalCluster = cluster;
 		let funDef: CLUFunctionDefinitionBase | undefined;
 

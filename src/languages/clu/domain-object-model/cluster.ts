@@ -10,6 +10,7 @@ import {
 	// ICLUEnvironmentFrame,
 	ICluEvaluateOptions,
 	// ICLUExpression,
+	ICLUFunctionDefinition,
 	// ICLUGlobalInfo,
 	ICluster,
 	ICLUValue,
@@ -42,8 +43,8 @@ export function isCluEvaluateOptions(obj: unknown): obj is ICluEvaluateOptions {
 
 export class Cluster implements ICluster {
 	public readonly typename: string = typenameCluster;
-	public readonly exportedDict = new Map<string, CLUFunctionDefinitionBase>();
-	public readonly nonExportedDict = new Map<string, CLUFunctionDefinitionBase>();
+	public readonly exportedDict = new Map<string, ICLUFunctionDefinition>();
+	public readonly nonExportedDict = new Map<string, ICLUFunctionDefinition>();
 
 	constructor(
 		public readonly clusterName: Name,

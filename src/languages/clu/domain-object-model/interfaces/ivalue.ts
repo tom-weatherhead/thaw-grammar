@@ -6,6 +6,8 @@ import { Name } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../../common/domain-object-model/environment-frame';
 
+// import { IFunctionDefinition } from '../../../../common/domain-object-model/function-definition';
+
 import { IExpression } from '../../../../common/domain-object-model/iexpression';
 
 import { IGlobalInfo } from '../../../../common/domain-object-model/iglobal-info';
@@ -47,6 +49,7 @@ export interface ICluEvaluateOptions {
 export interface ICLUFunctionDefinition extends ICLUExpression {
 	readonly functionName: Name;
 }
+// export type ICLUFunctionDefinition = IFunctionDefinition<ICLUValue>;
 
 export interface ICLUGlobalInfo extends IGlobalInfo<ICLUValue> {
 	// readonly trueValue: ICLUValue;
