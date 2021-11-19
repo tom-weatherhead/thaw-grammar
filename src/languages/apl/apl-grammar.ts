@@ -42,6 +42,8 @@ import { Name } from 'thaw-interpreter-core';
 
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 
+import { CondUsage } from '../../common/domain-object-model/cond-usage';
+
 // import { EnvironmentFrame } from '../../common/domain-object-model/environment-frame';
 
 import { ExpressionList } from '../../common/domain-object-model/expression-list';
@@ -70,7 +72,7 @@ import { APLValue } from './domain-object-model/data-types/value';
 
 // import { APLIfUsage } from './domain-object-model/if-usage';
 
-import { APLCondUsage } from './domain-object-model/cond-usage';
+// import { APLCondUsage } from './domain-object-model/cond-usage';
 
 import { APLOperatorUsage } from './domain-object-model/operator-usage';
 
@@ -601,7 +603,8 @@ export class APLGrammar extends GrammarBase {
 				expression2 = semanticStack.pop() as IAPLExpression;
 				expression = semanticStack.pop() as IAPLExpression;
 				exprPairList.unshift([expression, expression2]);
-				semanticStack.push(new APLCondUsage(exprPairList));
+				// semanticStack.push(new APLCondUsage(exprPairList));
+				semanticStack.push(new CondUsage<IAPLValue>(exprPairList));
 				break;
 
 			case '#exprPairList':
