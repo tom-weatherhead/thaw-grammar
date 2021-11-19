@@ -28,12 +28,16 @@ export interface IVariable<T> extends IExpression<T>, IStringifiable {
 export class Variable<T> implements IVariable<T> {
 	// , IConvertibleToGraph
 	public readonly typename: string = typenameVariableT;
-	public readonly name: string;
-	public readonly line: number;
-	public readonly column: number;
+	// public readonly name: string;
+	// public readonly line: number;
+	// public readonly column: number;
 
-	constructor(name: string, line: number, column: number) {
-		if (!name) {
+	constructor(
+		public readonly name: string,
+		public readonly line = 0,
+		public readonly column = 0
+	) {
+		if (!this.name) {
 			throw new ArgumentException('A Variable cannot have an empty name', 'name');
 		}
 
@@ -43,9 +47,9 @@ export class Variable<T> implements IVariable<T> {
 		// 	throw new Exception(string.Format("Error: Creating variable named '{0}'.", name));
 		// }
 
-		this.name = name;
-		this.line = line;
-		this.column = column;
+		// this.name = name;
+		// this.line = line;
+		// this.column = column;
 	}
 
 	public toString(): string {

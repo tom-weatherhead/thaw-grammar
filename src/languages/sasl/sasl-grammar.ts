@@ -12,11 +12,11 @@ import {
 
 import { createProduction, Name } from 'thaw-interpreter-core';
 
-import { ExpressionList } from '../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
 // import { Name } from '../../common/domain-object-model/name';
-// import { Variable }  from '../../common/domain-object-model/variable';
-import { VariableList } from '../../common/domain-object-model/variable-list';
+import { IVariable } from '../../common/domain-object-model/variable';
+// import { VariableList } from '../../common/domain-object-model/variable-list';
 
 // import { ArgumentException } from '../../common/exceptions/argument-exception';
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
@@ -95,7 +95,7 @@ export class SASLGrammar extends SchemeGrammar {
 
 		switch (action) {
 			case '#evaluableExpression':
-				const expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
+				const expressionList = semanticStack.pop() as IExpression<ISExpression>[];
 
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(new SASLEvaluableExpression(expression, expressionList));
@@ -103,7 +103,7 @@ export class SASLGrammar extends SchemeGrammar {
 
 			case '#lambdaExpression':
 				const body = semanticStack.pop() as IExpression<ISExpression>;
-				const argList = semanticStack.pop() as VariableList<ISExpression>;
+				const argList = semanticStack.pop() as IVariable<ISExpression>[];
 
 				// name = semanticStack.pop() as Name;
 				// semanticStack.push(new SASLLambdaExpression(argList, body, name.line, name.column));

@@ -1,9 +1,15 @@
 // clu/domain-object-model/settor-definition.ts
 
+import { Name } from 'thaw-interpreter-core';
+
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
+
 import {
-	ICLUEnvironmentFrame,
-	ICLUGlobalInfo,
-	ICluster,
+	// ICLUEnvironmentFrame,
+	// ICLUGlobalInfo,
+	// ICluster,
 	ICLUValue,
 	ICLUVariable
 } from './interfaces/ivalue';
@@ -26,19 +32,26 @@ export class CLUSettorDefinition extends CLUFunctionDefinitionBase {
 	public readonly typename: string = typenameCLUSettorDefinition;
 	public setValue: ICLUValue | undefined; // This must be set before Evaluate() is called.
 
-	constructor(funcName: string, public readonly associatedVariable: ICLUVariable) {
+	constructor(funcName: Name, public readonly associatedVariable: ICLUVariable) {
 		super(funcName);
 	}
 
+	// public evaluate(
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	cluster: ICluster | undefined,
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
 	public evaluate(
-		localEnvironment: ICLUEnvironmentFrame,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		cluster: ICluster | undefined,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>,
+		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		options?: unknown
 	): ICLUValue {
 		if (typeof this.setValue === 'undefined') {
 			throw new Error('CLUSettorDefinition.evaluate() : this.setValue is undefined');
+		} else if (typeof localEnvironment === 'undefined') {
+			throw new Error('CLUSettorDefinition.evaluate() : localEnvironment is undefined');
 		}
 
 		localEnvironment.add(this.associatedVariable, this.setValue);

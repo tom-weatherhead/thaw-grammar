@@ -8,7 +8,7 @@ import { IExpression } from '../../../common/domain-object-model/iexpression';
 
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
-import { Variable } from '../../../common/domain-object-model/variable';
+import { IVariable } from '../../../common/domain-object-model/variable';
 
 import { IAPLValue } from './interfaces/ivalue';
 
@@ -16,7 +16,7 @@ import { APLValue } from './data-types/value';
 
 export class VectorAssignmentUsage implements IExpression<IAPLValue> {
 	constructor(
-		public readonly variableName: Variable<IAPLValue>,
+		public readonly variableName: IVariable<IAPLValue>,
 		public readonly indicesExpression: IExpression<IAPLValue>,
 		public readonly valuesExpression: IExpression<IAPLValue>
 	) {}

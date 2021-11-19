@@ -7,7 +7,7 @@ import { IEnvironmentFrame } from '../../../common/domain-object-model/environme
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { IVariable } from '../../../common/domain-object-model/variable';
-import { VariableList } from '../../../common/domain-object-model/variable-list';
+// import { VariableList } from '../../../common/domain-object-model/variable-list';
 
 // import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
@@ -22,7 +22,7 @@ import { IConvertibleToGraph, isIConvertibleToGraph } from './iconvertible-to-gr
 
 export class SASLLambdaExpression extends LambdaExpression implements IConvertibleToGraph {
 	constructor(
-		argList: VariableList<ISExpression>,
+		argList: IVariable<ISExpression>[],
 		body: IExpression<ISExpression>,
 		line = 0,
 		column = 0
@@ -79,9 +79,9 @@ export class SASLLambdaExpression extends LambdaExpression implements IConvertib
 	}
 
 	public convertToGraph(): IExpression<ISExpression> {
-		if (this.argList.value.length !== 1) {
+		if (this.argList.length !== 1) {
 			throw new Error(
-				`SASLLambdaExpression.ConvertToGraph() : There are ${this.argList.value.length} arguments; expected 1.`
+				`SASLLambdaExpression.ConvertToGraph() : There are ${this.argList.length} arguments; expected 1.`
 			);
 		}
 
@@ -93,6 +93,6 @@ export class SASLLambdaExpression extends LambdaExpression implements IConvertib
 			);
 		}
 
-		return this.makeAbstraction(convertibleBody.convertToGraph(), this.argList.value[0]);
+		return this.makeAbstraction(convertibleBody.convertToGraph(), this.argList[0]);
 	}
 }

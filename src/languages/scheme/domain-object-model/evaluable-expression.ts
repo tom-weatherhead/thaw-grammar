@@ -5,7 +5,7 @@ import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 import { EvaluationException } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { isVariableT, IVariable } from '../../../common/domain-object-model/variable';
@@ -22,7 +22,7 @@ export class EvaluableExpression implements IExpression<ISExpression> {
 
 	constructor(
 		public readonly firstExpression: IExpression<ISExpression>,
-		public readonly expressionList: ExpressionList<ISExpression>
+		public readonly expressionList: IExpression<ISExpression>[]
 	) {
 		// console.log('Creating an instance of EvaluableExpression...');
 		// this.firstExpression = firstExpression;

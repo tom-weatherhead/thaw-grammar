@@ -5,17 +5,30 @@ import { Name } from 'thaw-interpreter-core';
 import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
-import { VariableList } from './variable-list';
+// import { VariableList } from './variable-list';
+import { IVariable } from './variable';
 
-export class FunctionDefinition<T> implements IExpression<T> {
-	public readonly functionName: Name;
-	public readonly argList: VariableList<T>;
-	public readonly body: IExpression<T>;
+// export function isFunctionDefinition<T>(obj: unknown): obj is FunctionDefinition<T> { ... }
 
-	constructor(functionName: Name, argList: VariableList<T>, body: IExpression<T>) {
-		this.functionName = functionName;
-		this.argList = argList;
-		this.body = body;
+export interface IFunctionDefinition<T> extends IExpression<T> {
+	readonly functionName: Name;
+	readonly argList: IVariable<T>[];
+	readonly body: IExpression<T>;
+}
+
+export class FunctionDefinition<T> implements IFunctionDefinition<T> {
+	// public readonly functionName: Name;
+	// public readonly argList: VariableList<T>;
+	// public readonly body: IExpression<T>;
+
+	constructor(
+		public readonly functionName: Name,
+		public readonly argList: IVariable<T>[],
+		public readonly body: IExpression<T>
+	) {
+		// this.functionName = functionName;
+		// this.argList = argList;
+		// this.body = body;
 	}
 
 	public toString(): string {

@@ -1,10 +1,14 @@
 // clu/domain-object-model/if-usage.ts
 
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
+
 import {
-	ICLUEnvironmentFrame,
+	// ICLUEnvironmentFrame,
 	ICLUExpression,
-	ICLUGlobalInfo,
-	ICluster,
+	// ICLUGlobalInfo,
+	// ICluster,
 	ICLUValue
 } from './interfaces/ivalue';
 
@@ -22,17 +26,22 @@ export class CLUIfUsage implements ICLUExpression {
 	}
 	 */
 
+	// public evaluate(
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	cluster: ICluster | undefined,
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
 	public evaluate(
-		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster | undefined,
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>,
+		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		options?: unknown
 	): ICLUValue {
-		const conditionValue = this.condition.evaluate(localEnvironment, cluster, globalInfo);
+		const conditionValue = this.condition.evaluate(globalInfo, localEnvironment, options);
 
 		if (!globalInfo.valueIsFalse(conditionValue)) {
-			return this.ifBody.evaluate(localEnvironment, cluster, globalInfo);
+			return this.ifBody.evaluate(globalInfo, localEnvironment, options);
 		} else {
-			return this.elseBody.evaluate(localEnvironment, cluster, globalInfo);
+			return this.elseBody.evaluate(globalInfo, localEnvironment, options);
 		}
 	}
 }

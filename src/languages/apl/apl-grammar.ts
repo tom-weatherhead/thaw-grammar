@@ -44,9 +44,11 @@ import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 
 import { CondUsage } from '../../common/domain-object-model/cond-usage';
 
-import { ExpressionList } from '../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 
 import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
+
+import { IExpression } from '../../common/domain-object-model/iexpression';
 
 import { IfUsage } from '../../common/domain-object-model/if-usage';
 
@@ -56,9 +58,9 @@ import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
 
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 
-import { Variable } from '../../common/domain-object-model/variable';
+import { IVariable, Variable } from '../../common/domain-object-model/variable';
 
-import { VariableList } from '../../common/domain-object-model/variable-list';
+// import { VariableList } from '../../common/domain-object-model/variable-list';
 
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
@@ -471,32 +473,32 @@ export class APLGrammar extends GrammarBase {
 		let expression: IAPLExpression;
 		let expression2: IAPLExpression;
 		let expression3: IAPLExpression;
-		let expressionList: ExpressionList<IAPLValue>;
+		let expressionList: IExpression<IAPLValue>[];
 		let exprPairList: [IAPLExpression, IAPLExpression][];
 		let intList: number[];
 		let intScalar: IAPLValue;
-		let variable: Variable<IAPLValue>;
-		let variableList: VariableList<IAPLValue>;
-		let argumentList: VariableList<IAPLValue>;
+		let variable: IVariable<IAPLValue>;
+		let variableList: IVariable<IAPLValue>[];
+		let argumentList: IVariable<IAPLValue>[];
 		let body: IAPLExpression;
-		let varExprList: [Variable<IAPLValue>, IAPLExpression][];
+		let varExprList: [IVariable<IAPLValue>, IAPLExpression][];
 
 		switch (action) {
 			case '#operatorUsage':
-				expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
+				expressionList = semanticStack.pop() as IExpression<IAPLValue>[];
 				name = semanticStack.pop() as Name;
 				semanticStack.push(new APLOperatorUsage(name, expressionList));
 				break;
 
 			case '#expressionList':
-				expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
+				expressionList = semanticStack.pop() as IExpression<IAPLValue>[];
 				expression = semanticStack.pop() as IAPLExpression;
-				expressionList.value.unshift(expression);
+				expressionList.unshift(expression);
 				semanticStack.push(expressionList);
 				break;
 
 			case '#emptyExpressionList':
-				semanticStack.push(new ExpressionList<IAPLValue>());
+				semanticStack.push([] as IExpression<IAPLValue>[]);
 				break;
 
 			case '#makeIntVector':
@@ -517,7 +519,7 @@ export class APLGrammar extends GrammarBase {
 
 			case '#functionDefinition':
 				body = semanticStack.pop() as IAPLExpression;
-				argumentList = semanticStack.pop() as VariableList<IAPLValue>;
+				argumentList = semanticStack.pop() as IVariable<IAPLValue>[];
 				functionName = semanticStack.pop() as Name;
 				semanticStack.push(
 					new FunctionDefinition<IAPLValue>(functionName, argumentList, body)
@@ -530,20 +532,20 @@ export class APLGrammar extends GrammarBase {
 				break;
 
 			case '#variableList':
-				variableList = semanticStack.pop() as VariableList<IAPLValue>;
-				variable = semanticStack.pop() as Variable<IAPLValue>;
-				variableList.value.unshift(variable);
+				variableList = semanticStack.pop() as IVariable<IAPLValue>[];
+				variable = semanticStack.pop() as IVariable<IAPLValue>;
+				variableList.unshift(variable);
 				semanticStack.push(variableList);
 				break;
 
 			case '#emptyVariableList':
-				semanticStack.push(new VariableList<IAPLValue>());
+				semanticStack.push([] as IVariable<IAPLValue>[]);
 				break;
 
 			case '#vecassign':
 				expression2 = semanticStack.pop() as IAPLExpression;
 				expression = semanticStack.pop() as IAPLExpression;
-				variable = semanticStack.pop() as Variable<IAPLValue>;
+				variable = semanticStack.pop() as IVariable<IAPLValue>;
 				semanticStack.push(new VectorAssignmentUsage(variable, expression, expression2));
 				break;
 
@@ -569,7 +571,7 @@ export class APLGrammar extends GrammarBase {
 				break;
 
 			case '#begin':
-				expressionList = semanticStack.pop() as ExpressionList<IAPLValue>;
+				expressionList = semanticStack.pop() as IExpression<IAPLValue>[];
 				expression = semanticStack.pop() as IAPLExpression;
 				semanticStack.push(new BeginUsage<IAPLValue>(expression, expressionList));
 				break;
@@ -597,7 +599,7 @@ export class APLGrammar extends GrammarBase {
 
 			case '#letUsage':
 				expression = semanticStack.pop() as IAPLExpression;
-				varExprList = semanticStack.pop() as [Variable<IAPLValue>, IAPLExpression][];
+				varExprList = semanticStack.pop() as [IVariable<IAPLValue>, IAPLExpression][];
 				letName = semanticStack.pop() as Name;
 				semanticStack.push(this.createLetUsage(letName, varExprList, expression));
 				break;
@@ -752,7 +754,7 @@ export class APLGrammar extends GrammarBase {
 
 	protected createLetUsage(
 		letName: Name,
-		varExprList: [Variable<IAPLValue>, IAPLExpression][],
+		varExprList: [IVariable<IAPLValue>, IAPLExpression][],
 		expression: IAPLExpression
 	): IAPLExpression {
 		switch (letName.value) {

@@ -5,14 +5,18 @@ import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
 export class IfUsage<T> implements IExpression<T> {
-	public readonly condition: IExpression<T>;
-	public readonly ifBody: IExpression<T>;
-	public readonly elseBody: IExpression<T>;
+	// public readonly condition: IExpression<T>;
+	// public readonly ifBody: IExpression<T>;
+	// public readonly elseBody: IExpression<T>;
 
-	constructor(condition: IExpression<T>, ifBody: IExpression<T>, elseBody: IExpression<T>) {
-		this.condition = condition;
-		this.ifBody = ifBody;
-		this.elseBody = elseBody;
+	constructor(
+		public readonly condition: IExpression<T>,
+		public readonly ifBody: IExpression<T>,
+		public readonly elseBody: IExpression<T>
+	) {
+		// this.condition = condition;
+		// this.ifBody = ifBody;
+		// this.elseBody = elseBody;
 	}
 
 	public toString(): string {

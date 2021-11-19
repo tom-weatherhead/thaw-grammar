@@ -15,7 +15,7 @@ import {
 
 import { createProduction, Name } from 'thaw-interpreter-core';
 
-import { ExpressionList } from '../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
 // import { Name } from '../../common/domain-object-model/name';
 
@@ -116,24 +116,24 @@ export class MinimalLanguageGrammar extends GrammarBase {
 
 		let name: Name;
 		let expression: IExpression<number>;
-		let expressionList: ExpressionList<number>;
+		let expressionList: IExpression<number>[];
 
 		switch (action) {
 			case '#operatorUsage':
-				expressionList = semanticStack.pop() as ExpressionList<number>;
+				expressionList = semanticStack.pop() as IExpression<number>[];
 				name = semanticStack.pop() as Name;
 				semanticStack.push(new OperatorUsage(name, expressionList));
 				break;
 
 			case '#expressionList':
-				expressionList = semanticStack.pop() as ExpressionList<number>;
+				expressionList = semanticStack.pop() as IExpression<number>[];
 				expression = semanticStack.pop() as IExpression<number>;
-				expressionList.value.unshift(expression);
+				expressionList.unshift(expression);
 				semanticStack.push(expressionList);
 				break;
 
 			case '#emptyExpressionList':
-				semanticStack.push(new ExpressionList<number>());
+				semanticStack.push([] as IExpression<number>[]);
 				break;
 
 			default:

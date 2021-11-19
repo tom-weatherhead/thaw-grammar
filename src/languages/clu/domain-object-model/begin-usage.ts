@@ -1,10 +1,14 @@
 // clu/domain-object-model/begin-usage.ts
 
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
+
 import {
-	ICLUEnvironmentFrame,
+	// ICLUEnvironmentFrame,
 	ICLUExpression,
-	ICLUGlobalInfo,
-	ICluster,
+	// ICLUGlobalInfo,
+	// ICluster,
 	ICLUValue
 } from './interfaces/ivalue';
 
@@ -21,15 +25,20 @@ export class CLUBeginUsage implements ICLUExpression {
 	}
 	 */
 
+	// public evaluate(
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	cluster: ICluster | undefined,
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
 	public evaluate(
-		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster | undefined,
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>,
+		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		options?: unknown
 	): ICLUValue {
-		let result = this.firstExpression.evaluate(localEnvironment, cluster, globalInfo);
+		let result = this.firstExpression.evaluate(globalInfo, localEnvironment, options);
 
 		for (const expression of this.expressionList) {
-			result = expression.evaluate(localEnvironment, cluster, globalInfo);
+			result = expression.evaluate(globalInfo, localEnvironment, options);
 		}
 
 		return result;

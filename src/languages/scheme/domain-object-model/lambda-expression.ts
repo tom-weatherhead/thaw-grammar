@@ -5,7 +5,8 @@ import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-import { VariableList } from '../../../common/domain-object-model/variable-list';
+import { IVariable } from '../../../common/domain-object-model/variable';
+// import { VariableList } from '../../../common/domain-object-model/variable-list';
 // import { ArgumentException } from '../../../common/exceptions/argument-exception';
 // import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
@@ -13,24 +14,24 @@ import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 import { Closure } from './closure';
 
 export class LambdaExpression implements IExpression<ISExpression> {
-	public readonly argList: VariableList<ISExpression>;
-	public readonly body: IExpression<ISExpression>;
-	public readonly line: number;
-	public readonly column: number;
+	// public readonly argList: IVariable<ISExpression>[];
+	// public readonly body: IExpression<ISExpression>;
+	// public readonly line: number;
+	// public readonly column: number;
 
 	constructor(
-		argList: VariableList<ISExpression>,
-		body: IExpression<ISExpression>,
-		line = 0,
-		column = 0
+		public readonly argList: IVariable<ISExpression>[],
+		public readonly body: IExpression<ISExpression>,
+		public readonly line = 0,
+		public readonly column = 0
 	) {
 		// console.log('Creating an instance of LambdaExpression...');
 		// console.log(`-> argList is ${typeof argList} ${argList}`);
 		// console.log(`-> body is ${typeof body} ${body}`);
-		this.argList = argList;
-		this.body = body;
-		this.line = line;
-		this.column = column;
+		// this.argList = argList;
+		// this.body = body;
+		// this.line = line;
+		// this.column = column;
 	}
 
 	public toString(): string {

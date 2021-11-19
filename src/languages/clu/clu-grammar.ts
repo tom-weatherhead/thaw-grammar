@@ -507,7 +507,7 @@ export class CluGrammar extends GrammarBase {
 				argumentList = semanticStack.pop() as ICLUVariable[];
 				functionName = semanticStack.pop() as Name;
 				semanticStack.push(
-					new CLUNormalFunctionDefinition(functionName.value, argumentList, body)
+					new CLUNormalFunctionDefinition(functionName, argumentList, body)
 				);
 				break;
 
@@ -544,7 +544,7 @@ export class CluGrammar extends GrammarBase {
 				variableList = semanticStack.pop() as ICLUVariable[];
 				exportSet = semanticStack.pop() as string[];
 				name = semanticStack.pop() as Name;
-				semanticStack.push(new Cluster(name.value, exportSet, variableList, funDefList));
+				semanticStack.push(new Cluster(name, exportSet, variableList, funDefList));
 				break;
 
 			case '#if':

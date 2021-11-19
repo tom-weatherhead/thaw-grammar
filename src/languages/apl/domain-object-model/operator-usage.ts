@@ -6,7 +6,9 @@ import { Name } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 
-import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+
+import { IExpression } from '../../../common/domain-object-model/iexpression';
 
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -17,7 +19,7 @@ import { IAPLValue } from './interfaces/ivalue';
 import { APLValue } from './data-types/value';
 
 export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
-	constructor(operatorName: Name, expressionList: ExpressionList<IAPLValue>) {
+	constructor(operatorName: Name, expressionList: IExpression<IAPLValue>[]) {
 		super(operatorName, expressionList);
 	}
 

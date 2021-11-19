@@ -3,7 +3,8 @@
 import { EvaluationException } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
@@ -39,11 +40,11 @@ export class Continuation extends SExpressionBase implements ICallableSExpressio
 	}
 
 	public call(
-		args: ExpressionList<ISExpression>,
+		args: IExpression<ISExpression>[],
 		localEnvironment: IEnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
-		const actualNumArgs = args.value.length;
+		const actualNumArgs = args.length;
 
 		if (actualNumArgs !== 1) {
 			throw new EvaluationException(
@@ -55,7 +56,7 @@ export class Continuation extends SExpressionBase implements ICallableSExpressio
 
 		throw new ContinuationException(
 			this.ccGuid,
-			args.value[0].evaluate(globalInfo, localEnvironment)
+			args[0].evaluate(globalInfo, localEnvironment)
 		);
 	}
 }

@@ -46,14 +46,14 @@ export class SASLEvaluableExpression extends EvaluableExpression implements ICon
 	}
 
 	public convertToGraph(): IExpression<ISExpression> {
-		if (this.expressionList.value.length !== 1) {
+		if (this.expressionList.length !== 1) {
 			throw new Error(
-				`SASLEvaluableExpression.ConvertToGraph() : Length of ExpressionList is ${this.expressionList.value.length}; expected 1.`
+				`SASLEvaluableExpression.ConvertToGraph() : Length of ExpressionList is ${this.expressionList.length}; expected 1.`
 			);
 		}
 
 		const e1 = this.firstExpression as unknown as IConvertibleToGraph;
-		const e2 = this.expressionList.value[0] as unknown as IConvertibleToGraph;
+		const e2 = this.expressionList[0] as unknown as IConvertibleToGraph;
 
 		if (!isIConvertibleToGraph(e1)) {
 			throw new Error(

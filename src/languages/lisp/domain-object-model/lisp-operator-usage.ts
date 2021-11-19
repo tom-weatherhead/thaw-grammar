@@ -5,7 +5,8 @@ import { createSet } from 'thaw-common-utilities.ts';
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';
 
@@ -19,7 +20,7 @@ import { SExpressionList } from './sexpression-list';
 export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	private readonly operatorsThatTakeEitherIntOrFloatArgs = createSet<string>();
 
-	constructor(operatorName: Name, expressionList: ExpressionList<ISExpression>) {
+	constructor(operatorName: Name, expressionList: IExpression<ISExpression>[]) {
 		super(operatorName, expressionList);
 
 		this.operatorsThatTakeEitherIntOrFloatArgs.add('<');

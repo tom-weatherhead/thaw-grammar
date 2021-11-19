@@ -3,17 +3,20 @@
 import { ArgumentException, EvaluationException, Name } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 export class OperatorUsage implements IExpression<number> {
-	public readonly operatorName: Name;
-	public readonly expressionList: ExpressionList<number>;
+	// public readonly operatorName: Name;
+	// public readonly expressionList: ExpressionList<number>;
 	// public readonly twoArgumentIntegerPredicates = new Map<string, (operand1: number, operand2: number) => boolean>();
 	// public readonly twoArgumentIntegerOperators = new Map<string, (operand1: number, operand2: number) => number>();
 
-	constructor(operatorName: Name, expressionList: ExpressionList<number>) {
+	constructor(
+		public readonly operatorName: Name,
+		public readonly expressionList: IExpression<number>[]
+	) {
 		if (operatorName.value !== '+') {
 			throw new ArgumentException(
 				"OperatorUsage constructor: operator name is not '+'.",
@@ -21,8 +24,8 @@ export class OperatorUsage implements IExpression<number> {
 			);
 		}
 
-		this.operatorName = operatorName;
-		this.expressionList = expressionList;
+		// this.operatorName = operatorName;
+		// this.expressionList = expressionList;
 
 		// this.twoArgumentIntegerPredicates.set('<', (operand1: number, operand2: number) => operand1 < operand2);
 		// this.twoArgumentIntegerPredicates.set('>', (operand1: number, operand2: number) => operand1 > operand2);
@@ -56,7 +59,7 @@ export class OperatorUsage implements IExpression<number> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): number {
-		const actualNumArgs = this.expressionList.value.length;
+		const actualNumArgs = this.expressionList.length;
 
 		if (actualNumArgs !== 2) {
 			throw new EvaluationException(
@@ -66,7 +69,7 @@ export class OperatorUsage implements IExpression<number> {
 			);
 		}
 
-		const evaluatedArguments = this.expressionList.value.map((expr: IExpression<number>) =>
+		const evaluatedArguments = this.expressionList.map((expr: IExpression<number>) =>
 			expr.evaluate(globalInfo, localEnvironment)
 		);
 

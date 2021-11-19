@@ -1,8 +1,18 @@
 // clu/domain-object-model/constructor-definition.ts
 
-import { ICLUEnvironmentFrame, ICLUGlobalInfo, ICluster, ICLUValue } from './interfaces/ivalue';
+import { Name } from 'thaw-interpreter-core';
+
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
+
+import {
+	/* ICLUEnvironmentFrame, ICLUGlobalInfo, ICluster, */ ICLUValue
+} from './interfaces/ivalue';
 
 import { CLUUserValue } from './data-types/user-value';
+
+import { isCluEvaluateOptions } from './cluster';
 
 import { CLUFunctionDefinitionBase } from './function-definition-base';
 
@@ -21,18 +31,31 @@ export function isCLUConstructorDefinition(obj: unknown): obj is CLUConstructorD
 export class CLUConstructorDefinition extends CLUFunctionDefinitionBase {
 	public readonly typename: string = typenameCLUConstructorDefinition;
 
-	constructor(/* string funcName, */ clusterName: string) {
+	constructor(/* string funcName, */ clusterName: Name) {
 		super(clusterName);
 	}
 
+	// public evaluate(
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	cluster: ICluster | undefined,
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
 	public evaluate(
-		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster | undefined,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>,
+		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		options?: unknown
 	): ICLUValue {
-		if (typeof cluster === 'undefined') {
-			throw new Error('CLUConstructorDefinition.evaluate() : cluster is undefined');
+		// if (typeof options === 'undefined' || !isCluster(options.cluster)) {
+		// 	throw new Error('CLUConstructorDefinition.evaluate() : cluster is undefined');
+		if (!isCluEvaluateOptions(options)) {
+			throw new Error(
+				'CLUConstructorDefinition.evaluate() : options is not CluEvaluateOptions'
+			);
+		} else if (typeof options.cluster === 'undefined') {
+			throw new Error('CLUConstructorDefinition.evaluate() : options.cluster is undefined');
+		} else if (typeof localEnvironment === 'undefined') {
+			throw new Error('CLUConstructorDefinition.evaluate() : localEnvironment is undefined');
 		}
 
 		/*
@@ -53,6 +76,6 @@ export class CLUConstructorDefinition extends CLUFunctionDefinitionBase {
 
 		return newInstance;
 		 */
-		return new CLUUserValue(cluster, localEnvironment);
+		return new CLUUserValue(options.cluster, localEnvironment);
 	}
 }

@@ -30,11 +30,11 @@ import { ArgumentException, createProduction, Name } from 'thaw-interpreter-core
 
 // import { LexicalState, Token } from 'thaw-lexical-analyzer';
 
-import { ExpressionList } from '../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
 // import { Name } from '../../common/domain-object-model/name';
-import { Variable } from '../../common/domain-object-model/variable';
-import { VariableList } from '../../common/domain-object-model/variable-list';
+import { IVariable, Variable } from '../../common/domain-object-model/variable';
+// import { VariableList } from '../../common/domain-object-model/variable-list';
 
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 import { CondUsage } from '../../common/domain-object-model/cond-usage';
@@ -1026,16 +1026,16 @@ export class SchemeGrammar extends GrammarBase {
 		// console.log(`SchemeGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
 		let name: Name;
-		let variable: Variable<ISExpression>;
-		let variableList: VariableList<ISExpression>;
+		let variable: IVariable<ISExpression>;
+		let variableList: IVariable<ISExpression>[];
 		let expression: IExpression<ISExpression>;
 		let expression2: IExpression<ISExpression>;
 		let expression3: IExpression<ISExpression>;
-		let expressionList: ExpressionList<ISExpression>;
+		let expressionList: IExpression<ISExpression>[];
 		let sexpression: ISExpression;
 		let head: ISExpression;
 		let tail: ISExpression;
-		let varExprList: [Variable<ISExpression>, IExpression<ISExpression>][];
+		let varExprList: [IVariable<ISExpression>, IExpression<ISExpression>][];
 		let exprPairList: [IExpression<ISExpression>, IExpression<ISExpression>][];
 
 		switch (action) {
@@ -1047,14 +1047,14 @@ export class SchemeGrammar extends GrammarBase {
 			// 	break;
 
 			case '#variableList':
-				variableList = semanticStack.pop() as VariableList<ISExpression>;
-				variable = semanticStack.pop() as Variable<ISExpression>;
-				variableList.value.unshift(variable);
+				variableList = semanticStack.pop() as IVariable<ISExpression>[];
+				variable = semanticStack.pop() as IVariable<ISExpression>;
+				variableList.unshift(variable);
 				semanticStack.push(variableList);
 				break;
 
 			case '#emptyVariableList':
-				semanticStack.push(new VariableList<ISExpression>()); // Add line and column?
+				semanticStack.push([] as IVariable<ISExpression>[]); // Add line and column?
 				break;
 
 			case '#if':
@@ -1077,7 +1077,7 @@ export class SchemeGrammar extends GrammarBase {
 				break;
 
 			case '#begin':
-				expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
+				expressionList = semanticStack.pop() as IExpression<ISExpression>[];
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(new BeginUsage<ISExpression>(expression, expressionList)); // Add line and column?
 				break;
@@ -1089,14 +1089,14 @@ export class SchemeGrammar extends GrammarBase {
 			// 	break;
 
 			case '#expressionList':
-				expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
+				expressionList = semanticStack.pop() as IExpression<ISExpression>[];
 				expression = semanticStack.pop() as IExpression<ISExpression>;
-				expressionList.value.unshift(expression);
+				expressionList.unshift(expression);
 				semanticStack.push(expressionList);
 				break;
 
 			case '#emptyExpressionList':
-				semanticStack.push(new ExpressionList<ISExpression>());
+				semanticStack.push([] as IExpression<ISExpression>[]);
 				break;
 
 			case '#variable':
@@ -1193,13 +1193,13 @@ export class SchemeGrammar extends GrammarBase {
 
 			case '#lambdaExpression':
 				const body = semanticStack.pop() as IExpression<ISExpression>;
-				const argList = semanticStack.pop() as VariableList<ISExpression>;
+				const argList = semanticStack.pop() as IVariable<ISExpression>[];
 
 				semanticStack.push(new LambdaExpression(argList, body));
 				break;
 
 			case '#evaluableExpression':
-				expressionList = semanticStack.pop() as ExpressionList<ISExpression>;
+				expressionList = semanticStack.pop() as IExpression<ISExpression>[];
 				expression = semanticStack.pop() as IExpression<ISExpression>;
 				semanticStack.push(new EvaluableExpression(expression, expressionList));
 				break;
@@ -1476,7 +1476,7 @@ export class SchemeGrammar extends GrammarBase {
 
 	protected createLetUsage(
 		letName: Name,
-		varExprList: [Variable<ISExpression>, IExpression<ISExpression>][],
+		varExprList: [IVariable<ISExpression>, IExpression<ISExpression>][],
 		expression: IExpression<ISExpression>
 	): IExpression<ISExpression> {
 		switch (letName.value) {

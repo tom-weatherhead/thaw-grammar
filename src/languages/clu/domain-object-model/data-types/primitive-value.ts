@@ -1,6 +1,12 @@
 // clu/domain-object-model/data-types/primitive-value.ts
 
-import { ICLUEnvironmentFrame, ICLUGlobalInfo, ICluster, ICLUValue } from '../interfaces/ivalue';
+import { IEnvironmentFrame } from '../../../../common/domain-object-model/environment-frame';
+
+import { IGlobalInfo } from '../../../../common/domain-object-model/iglobal-info';
+
+import {
+	/* ICLUEnvironmentFrame, ICLUGlobalInfo, ICluster, */ ICLUValue
+} from '../interfaces/ivalue';
 
 const typenameCLUPrimitiveValue = 'CLUPrimitiveValue';
 
@@ -27,14 +33,21 @@ export class CLUPrimitiveValue implements ICLUValue {
 		return isCLUPrimitiveValue(other) && other.value === this.value;
 	}
 
+	// public evaluate(
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	cluster: ICluster | undefined,
+	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		localEnvironment: ICLUEnvironmentFrame,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		cluster: ICluster | undefined,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>,
+		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		options?: unknown
 	): ICLUValue {
 		return this;
 	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

@@ -5,15 +5,18 @@ import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
-import { Variable } from './variable';
+import { IVariable } from './variable';
 
 export class SetUsage<T> implements IExpression<T> {
-	public readonly variableName: Variable<T>;
-	public readonly expression: IExpression<T>;
+	// public readonly variableName: Variable<T>;
+	// public readonly expression: IExpression<T>;
 
-	constructor(variableName: Variable<T>, expression: IExpression<T>) {
-		this.variableName = variableName;
-		this.expression = expression;
+	constructor(
+		public readonly variableName: IVariable<T>,
+		public readonly expression: IExpression<T>
+	) {
+		// this.variableName = variableName;
+		// this.expression = expression;
 	}
 
 	public toString(): string {

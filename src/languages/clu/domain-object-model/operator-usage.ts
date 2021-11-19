@@ -2,11 +2,15 @@
 
 // import { ArgumentException } from 'thaw-interpreter-core';
 
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
+
 import {
-	ICLUEnvironmentFrame,
+	// ICLUEnvironmentFrame,
 	ICLUExpression,
 	ICLUFunctionName,
-	ICLUGlobalInfo,
+	// ICLUGlobalInfo,
 	ICluster,
 	ICLUValue,
 	ICLUVariable
@@ -16,11 +20,15 @@ import {
 
 import { CLUUserValue, isCLUUserValue } from './data-types/user-value';
 
+import { isCluEvaluateOptions } from './cluster';
+
 import { isCLUConstructorDefinition } from './constructor-definition';
 
 import { CLUEnvironmentFrame } from './environment-frame';
 
 import { CLUFunctionDefinitionBase } from './function-definition-base';
+
+import { isCLUGlobalInfo } from './global-info';
 
 import {
 	CLUNormalFunctionDefinition,
@@ -82,7 +90,7 @@ export class CLUOperatorUsage implements ICLUExpression {
 		funDef: CLUFunctionDefinitionBase | undefined,
 		cluster: ICluster | undefined,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>
 	): number | undefined {
 		if (typeof funDef === 'undefined') {
 			switch (this.functionName) {
@@ -170,7 +178,7 @@ export class CLUOperatorUsage implements ICLUExpression {
 		funDef: CLUNormalFunctionDefinition | undefined,
 		evaluatedArguments: ICLUValue[],
 		cluster: ICluster | undefined,
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>
 	): ICLUValue {
 		const firstArgAsInt =
 			evaluatedArguments.length > 0 && globalInfo.valueIsInteger(evaluatedArguments[0])
@@ -218,18 +226,32 @@ export class CLUOperatorUsage implements ICLUExpression {
 
 		newEnvironment.compose(funDef.argList, evaluatedArguments);
 
-		return funDef.body.evaluate(newEnvironment, cluster, globalInfo);
+		return funDef.body.evaluate(globalInfo, newEnvironment, { cluster });
 	}
 
+	// public evaluate(
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	cluster: ICluster | undefined,
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
 	public evaluate(
-		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster | undefined,
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>,
+		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		options?: unknown
 	): ICLUValue {
+		if (!isCluEvaluateOptions(options)) {
+			throw new Error('CLUOperatorUsage.evaluate() : options is not CluEvaluateOptions');
+		}
+
+		let { cluster } = options;
 		const originalCluster = cluster;
 		let funDef: CLUFunctionDefinitionBase | undefined;
 
 		if (this.clusterName !== '') {
+			if (!isCLUGlobalInfo(globalInfo)) {
+				throw new Error('Cluster.evaluate() : globalInfo is not isCLUGlobalInfo.');
+			}
+
 			cluster = globalInfo.clusterDict.get(this.clusterName);
 
 			if (typeof cluster === 'undefined') {
@@ -293,7 +315,7 @@ export class CLUOperatorUsage implements ICLUExpression {
 
 		// Evaluate using originalCluster, not cluster:
 		const evaluatedArguments = this.expressionList.map((expr) =>
-			expr.evaluate(localEnvironment, originalCluster, globalInfo)
+			expr.evaluate(globalInfo, localEnvironment, { cluster: originalCluster })
 		);
 
 		this.checkArgTypes(funDef, cluster, evaluatedArguments);
@@ -312,13 +334,13 @@ export class CLUOperatorUsage implements ICLUExpression {
 		} else if (isCLUSelectorDefinition(funDef) && isCLUUserValue(evaluatedArguments[0])) {
 			const instance = evaluatedArguments[0];
 
-			return funDef.evaluate(instance.value, cluster, globalInfo);
+			return funDef.evaluate(globalInfo, instance.value, { cluster });
 		} else if (isCLUSettorDefinition(funDef) && isCLUUserValue(evaluatedArguments[0])) {
 			const settor = funDef;
 			const instance = evaluatedArguments[0];
 
 			settor.setValue = evaluatedArguments[1];
-			return funDef.evaluate(instance.value, cluster, globalInfo);
+			return funDef.evaluate(globalInfo, instance.value, { cluster });
 		} else {
 			throw new Error('CLUOperatorUsage : Failed to evaluate; unrecognized type of funDef.');
 		}

@@ -10,10 +10,10 @@ import {
 
 import { createProduction, Name } from 'thaw-interpreter-core';
 
-import { ExpressionList } from '../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
-import { Variable } from '../../common/domain-object-model/variable';
-import { VariableList } from '../../common/domain-object-model/variable-list';
+import { IVariable, Variable } from '../../common/domain-object-model/variable';
+// import { VariableList } from '../../common/domain-object-model/variable-list';
 
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
@@ -356,30 +356,30 @@ export class Chapter1Grammar extends GrammarBase {
 		// console.log(`Chapter1Grammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
 		let name: Name;
-		let variable: Variable<number>;
-		let variableList: VariableList<number>;
+		let variable: IVariable<number>;
+		let variableList: IVariable<number>[];
 		let expression: IExpression<number>;
 		let expression2: IExpression<number>;
 		let expression3: IExpression<number>;
-		let expressionList: ExpressionList<number>;
+		let expressionList: IExpression<number>[];
 
 		switch (action) {
 			case '#functionDefinition':
 				expression = semanticStack.pop() as IExpression<number>; // The function's body
-				variableList = semanticStack.pop() as VariableList<number>; // The function's formal argument list
+				variableList = semanticStack.pop() as IVariable<number>[]; // The function's formal argument list
 				name = semanticStack.pop() as Name; // The function name
 				semanticStack.push(new FunctionDefinition<number>(name, variableList, expression)); // Add line and column?
 				break;
 
 			case '#variableList':
-				variableList = semanticStack.pop() as VariableList<number>;
+				variableList = semanticStack.pop() as IVariable<number>[];
 				variable = semanticStack.pop() as Variable<number>;
-				variableList.value.unshift(variable);
+				variableList.unshift(variable);
 				semanticStack.push(variableList);
 				break;
 
 			case '#emptyVariableList':
-				semanticStack.push(new VariableList<number>()); // Add line and column?
+				semanticStack.push([] as IVariable<number>[]); // Add line and column?
 				break;
 
 			case '#if':
@@ -402,26 +402,26 @@ export class Chapter1Grammar extends GrammarBase {
 				break;
 
 			case '#begin':
-				expressionList = semanticStack.pop() as ExpressionList<number>;
+				expressionList = semanticStack.pop() as IExpression<number>[];
 				expression = semanticStack.pop() as IExpression<number>;
 				semanticStack.push(new BeginUsage<number>(expression, expressionList)); // Add line and column?
 				break;
 
 			case '#operatorUsage':
-				expressionList = semanticStack.pop() as ExpressionList<number>;
+				expressionList = semanticStack.pop() as IExpression<number>[];
 				name = semanticStack.pop() as Name;
 				semanticStack.push(new Chapter1OperatorUsage(name, expressionList)); // Add line and column?
 				break;
 
 			case '#expressionList':
-				expressionList = semanticStack.pop() as ExpressionList<number>;
+				expressionList = semanticStack.pop() as IExpression<number>[];
 				expression = semanticStack.pop() as IExpression<number>;
-				expressionList.value.unshift(expression);
+				expressionList.unshift(expression);
 				semanticStack.push(expressionList);
 				break;
 
 			case '#emptyExpressionList':
-				semanticStack.push(new ExpressionList<number>());
+				semanticStack.push([] as IExpression<number>[]);
 				break;
 
 			case '#variable':

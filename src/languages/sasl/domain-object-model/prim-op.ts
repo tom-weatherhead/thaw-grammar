@@ -3,7 +3,7 @@
 import { Name } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 // import { Name } from '../../../common/domain-object-model/name';
@@ -110,20 +110,20 @@ export class SASLPrimOp extends PrimOp implements IConvertibleToGraph {
 				continue;
 			}
 
-			if (evExp.expressionList.value.length !== 1) {
+			if (evExp.expressionList.length !== 1) {
 				throw new Error(
-					`ExecuteCond : evExp.ExpressionList length is ${evExp.expressionList.value.length} rather than 1.`
+					`ExecuteCond : evExp.ExpressionList length is ${evExp.expressionList.length} rather than 1.`
 				);
 			}
 
-			return evExp.expressionList.value[0].evaluate(globalInfo, thunk.thunkEnvironment);
+			return evExp.expressionList[0].evaluate(globalInfo, thunk.thunkEnvironment);
 		}
 
 		return new NullSExpression();
 	}
 
 	public override call(
-		args: ExpressionList<ISExpression>,
+		args: IExpression<ISExpression>[],
 		localEnvironment: IEnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
@@ -138,7 +138,7 @@ export class SASLPrimOp extends PrimOp implements IConvertibleToGraph {
 		// }
 
 		// ThAW 2012/12/07 : Do not create thunks out of arguments that are already S-expressions : See page 202, exercise 6.
-		const argumentsAsSExpressions = args.value.map((expr) =>
+		const argumentsAsSExpressions = args.map((expr) =>
 			isISExpression(expr) ? (expr as ISExpression) : new Thunk(expr, localEnvironment)
 		);
 

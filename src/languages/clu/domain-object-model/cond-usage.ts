@@ -1,24 +1,33 @@
 // clu/domain-object-model/cond-usage.ts
 
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
+
 import {
-	ICLUEnvironmentFrame,
+	// ICLUEnvironmentFrame,
 	ICLUExpression,
-	ICLUGlobalInfo,
-	ICluster,
+	// ICLUGlobalInfo,
+	// ICluster,
 	ICLUValue
 } from './interfaces/ivalue';
 
 export class CLUCondUsage implements ICLUExpression {
 	constructor(public readonly exprPairList: [ICLUExpression, ICLUExpression][]) {}
 
+	// public evaluate(
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	cluster: ICluster | undefined,
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
 	public evaluate(
-		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster | undefined,
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>,
+		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		options?: unknown
 	): ICLUValue {
 		for (const [key, value] of this.exprPairList) {
-			if (!globalInfo.valueIsFalse(key.evaluate(localEnvironment, cluster, globalInfo))) {
-				return value.evaluate(localEnvironment, cluster, globalInfo);
+			if (!globalInfo.valueIsFalse(key.evaluate(globalInfo, localEnvironment))) {
+				return value.evaluate(globalInfo, localEnvironment);
 			}
 		}
 

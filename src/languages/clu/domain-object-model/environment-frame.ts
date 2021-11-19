@@ -1,8 +1,12 @@
 // clu/domain-object-model/environment-frame.ts
 
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { IVariable } from '../../../common/domain-object-model/variable';
+
 import { ICLUEnvironmentFrame, ICLUValue, ICLUVariable } from './interfaces/ivalue';
 
-export class CLUEnvironmentFrame {
+export class CLUEnvironmentFrame implements IEnvironmentFrame<ICLUValue> {
 	public readonly dict = new Map<string, ICLUValue>();
 
 	constructor(public readonly next?: ICLUEnvironmentFrame) {}
@@ -12,8 +16,30 @@ export class CLUEnvironmentFrame {
 	// 	return string.Format("({0})", string.Join("; ", Dict.Keys.Select(key => string.Format("{0} = {1}", key, Dict[key]))));
 	// }
 
+	public isDefined(key: IVariable<ICLUValue>): boolean {
+		// if (this.dictionaryContainsKey(key)) {
+		// 	return true;
+		// }
+		//
+		// if (typeof this.next !== 'undefined') {
+		// 	return this.next.isDefined(key);
+		// }
+		//
+		// return false;
+
+		// return (
+		// 	this.dictionaryContainsKey(key) ||
+		// 	(typeof this.next !== 'undefined' && this.next.isDefined(key))
+		// );
+
+		return this.has(key);
+	}
+
 	public has(key: ICLUVariable): boolean {
-		return this.dict.has(key.name) || (typeof this.next !== 'undefined' && this.next.has(key));
+		return (
+			this.dict.has(key.name) ||
+			(typeof this.next !== 'undefined' && this.next.isDefined(key))
+		);
 	}
 
 	public lookup(key: ICLUVariable): ICLUValue {

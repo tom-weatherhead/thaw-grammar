@@ -8,9 +8,11 @@ import { IVariable } from './variable';
 
 export interface IEnvironmentFrame<T> {
 	readonly dict: Map<string, T>;
-	readonly next: IEnvironmentFrame<T> | undefined;
+	readonly next?: IEnvironmentFrame<T>;
 
-	isDefined(key: IVariable<T>): boolean;
+	isDefined(key: IVariable<T>): boolean; // Deprecated. Renamed to has() :
+	has(key: IVariable<T>): boolean;
+
 	lookup(key: IVariable<T>): T;
 	add(key: IVariable<T>, value: T): void;
 	addBubbleDown(key: IVariable<T>, value: T): void;
@@ -40,6 +42,13 @@ export class EnvironmentFrame<T> implements IEnvironmentFrame<T> {
 		return (
 			this.dictionaryContainsKey(key) ||
 			(typeof this.next !== 'undefined' && this.next.isDefined(key))
+		);
+	}
+
+	public has(key: IVariable<T>): boolean {
+		return (
+			this.dictionaryContainsKey(key) ||
+			(typeof this.next !== 'undefined' && this.next.has(key))
 		);
 	}
 

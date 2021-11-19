@@ -1,10 +1,14 @@
 // clu/domain-object-model/normal-function-definition.ts
 
+// TODO: Use the common FunctionDefinition<T> instead.
+
+import { Name } from 'thaw-interpreter-core';
+
 import {
 	ICLUEnvironmentFrame,
 	ICLUExpression,
 	ICLUGlobalInfo,
-	ICluster,
+	// ICluster,
 	ICLUValue,
 	ICLUVariable
 } from './interfaces/ivalue';
@@ -27,7 +31,7 @@ export class CLUNormalFunctionDefinition extends CLUFunctionDefinitionBase {
 	public readonly typename: string = typenameCLUNormalFunctionDefinition;
 
 	constructor(
-		functionName: string,
+		functionName: Name,
 		public readonly argList: ICLUVariable[],
 		public readonly body: ICLUExpression
 	) {
@@ -41,12 +45,17 @@ export class CLUNormalFunctionDefinition extends CLUFunctionDefinitionBase {
 	}
 	 */
 
+	// public evaluate(
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	cluster: ICluster | undefined,
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
 	public evaluate(
-		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster | undefined,
-		globalInfo: ICLUGlobalInfo
+		globalInfo: ICLUGlobalInfo,
+		localEnvironment?: ICLUEnvironmentFrame,
+		options?: unknown
 	): ICLUValue {
-		globalInfo.functionDefinitions.set(this.functionName, this);
+		globalInfo.functionDefinitions.set(this.functionName.value, this);
 
 		return globalInfo.trueValue;
 	}

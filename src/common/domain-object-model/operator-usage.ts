@@ -3,14 +3,14 @@
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame, IEnvironmentFrame } from './environment-frame';
-import { ExpressionList } from './expression-list';
+// import { ExpressionList } from './expression-list';
 import { FunctionDefinition } from './function-definition';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
 export class OperatorUsage<T> implements IExpression<T> {
-	public readonly operatorName: Name;
-	public readonly expressionList: ExpressionList<T>;
+	// public readonly operatorName: Name;
+	// public readonly expressionList: ExpressionList<T>;
 	private readonly twoArgumentIntegerPredicates = new Map<
 		string,
 		(operand1: number, operand2: number) => boolean
@@ -20,9 +20,12 @@ export class OperatorUsage<T> implements IExpression<T> {
 		(operand1: number, operand2: number) => number
 	>();
 
-	constructor(operatorName: Name, expressionList: ExpressionList<T>) {
-		this.operatorName = operatorName;
-		this.expressionList = expressionList;
+	constructor(
+		public readonly operatorName: Name,
+		public readonly expressionList: IExpression<T>[]
+	) {
+		// this.operatorName = operatorName;
+		// this.expressionList = expressionList;
 
 		this.twoArgumentIntegerPredicates.set(
 			'<',
@@ -52,7 +55,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 	}
 
 	public toString(): string {
-		if (this.expressionList.value.length === 0) {
+		if (this.expressionList.length === 0) {
 			return `(${this.operatorName})`;
 		}
 
@@ -68,7 +71,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
-		const actualNumArgs = this.expressionList.value.length;
+		const actualNumArgs = this.expressionList.length;
 		const expectedNumArgs = this.tryGetExpectedNumArgs(globalInfo);
 
 		if (expectedNumArgs === undefined) {
@@ -92,7 +95,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 		// 	return macroResult;
 		// }
 
-		const evaluatedArguments = this.expressionList.value.map((expr: IExpression<T>) =>
+		const evaluatedArguments = this.expressionList.map((expr: IExpression<T>) =>
 			expr.evaluate(globalInfo, localEnvironment)
 		);
 		// var argTypesErrorMessage = CheckArgTypes(evaluatedArguments);
@@ -126,7 +129,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 				if (fnDefRaw !== undefined) {
 					const fnDef = fnDefRaw as FunctionDefinition<T>;
 
-					return fnDef.argList.value.length;
+					return fnDef.argList.length;
 					// } else if (globalInfo.MacroDefinitions != null && globalInfo.MacroDefinitions.ContainsKey(this.operatorName)) {
 					// 	return globalInfo.MacroDefinitions[operatorName].ArgumentCount;
 				} else {
@@ -222,7 +225,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 
 					const fnDef = fnDefRaw as FunctionDefinition<T>;
 
-					newEnvironment.compose(fnDef.argList.value, evaluatedArguments);
+					newEnvironment.compose(fnDef.argList, evaluatedArguments);
 
 					return fnDef.body.evaluate(globalInfo, newEnvironment);
 				}

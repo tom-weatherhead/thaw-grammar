@@ -3,7 +3,7 @@
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-import { ExpressionList } from '../../../common/domain-object-model/expression-list';
+// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -60,7 +60,7 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 	}
 
 	public call(
-		expressionList: ExpressionList<ISExpression>,
+		expressionList: IExpression<ISExpression>[],
 		localEnvironment: IEnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
@@ -95,7 +95,7 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 		// First, check the number of arguments. (TODO)
 		// Then check the argument types. (TODO)
 		// Then:
-		const evaluatedArguments = expressionList.value.map((expr: IExpression<ISExpression>) =>
+		const evaluatedArguments = expressionList.map((expr: IExpression<ISExpression>) =>
 			expr.evaluate(globalInfo, localEnvironment)
 		);
 

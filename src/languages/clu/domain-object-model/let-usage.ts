@@ -1,10 +1,14 @@
 // clu/domain-object-model/let-usage.ts
 
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
+
 import {
-	ICLUEnvironmentFrame,
+	// ICLUEnvironmentFrame,
 	ICLUExpression,
-	ICLUGlobalInfo,
-	ICluster,
+	// ICLUGlobalInfo,
+	// ICluster,
 	ICLUValue,
 	ICLUVariable
 } from './interfaces/ivalue';
@@ -17,17 +21,23 @@ export class CLULetUsage implements ICLUExpression {
 		public readonly expression: ICLUExpression
 	) {}
 
+	// public evaluate(
+	// 	localEnvironment: ICLUEnvironmentFrame,
+	// 	cluster: ICluster | undefined,
+	// 	globalInfo: ICLUGlobalInfo
+	// ): ICLUValue {
 	public evaluate(
-		localEnvironment: ICLUEnvironmentFrame,
-		cluster: ICluster | undefined,
-		globalInfo: ICLUGlobalInfo
+		globalInfo: IGlobalInfo<ICLUValue>,
+		localEnvironment?: IEnvironmentFrame<ICLUValue>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		options?: unknown
 	): ICLUValue {
 		const newEnvFrame = new CLUEnvironmentFrame(localEnvironment);
 
 		for (const [key, value] of this.bindings) {
-			newEnvFrame.add(key, value.evaluate(localEnvironment, cluster, globalInfo));
+			newEnvFrame.add(key, value.evaluate(globalInfo, localEnvironment, options));
 		}
 
-		return this.expression.evaluate(newEnvFrame, cluster, globalInfo);
+		return this.expression.evaluate(globalInfo, newEnvFrame, options);
 	}
 }
