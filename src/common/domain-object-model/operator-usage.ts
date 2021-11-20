@@ -68,7 +68,6 @@ export class OperatorUsage<T> implements IExpression<T> {
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
 		const actualNumArgs = this.expressionList.length;
@@ -96,7 +95,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 		// }
 
 		const evaluatedArguments = this.expressionList.map((expr: IExpression<T>) =>
-			expr.evaluate(globalInfo, localEnvironment)
+			expr.evaluate(globalInfo, localEnvironment, options)
 		);
 		// var argTypesErrorMessage = CheckArgTypes(evaluatedArguments);
 
@@ -107,7 +106,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 		// 		operatorName.Line, operatorName.Column);
 		// }
 
-		return this.evaluateAux(evaluatedArguments, localEnvironment, globalInfo);
+		return this.evaluateAux(evaluatedArguments, globalInfo, localEnvironment, options);
 	}
 
 	protected tryGetExpectedNumArgs(globalInfo: IGlobalInfo<T>): number | undefined {
@@ -160,8 +159,9 @@ export class OperatorUsage<T> implements IExpression<T> {
 
 	protected evaluateAux(
 		evaluatedArguments: T[],
-		localEnvironment: IEnvironmentFrame<T> | undefined,
-		globalInfo: IGlobalInfo<T>
+		globalInfo: IGlobalInfo<T>,
+		localEnvironment?: IEnvironmentFrame<T>,
+		options?: unknown
 	): T {
 		const firstArgAsInt =
 			evaluatedArguments.length > 0 && globalInfo.valueIsInteger(evaluatedArguments[0])
@@ -227,7 +227,7 @@ export class OperatorUsage<T> implements IExpression<T> {
 
 					newEnvironment.compose(fnDef.argList, evaluatedArguments);
 
-					return fnDef.body.evaluate(globalInfo, newEnvironment);
+					return fnDef.body.evaluate(globalInfo, newEnvironment, options);
 				}
 
 				throw new EvaluationException(

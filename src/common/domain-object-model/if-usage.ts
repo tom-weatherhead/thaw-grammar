@@ -29,12 +29,12 @@ export class IfUsage<T> implements IExpression<T> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
-		const conditionValue = this.condition.evaluate(globalInfo, localEnvironment);
+		const conditionValue = this.condition.evaluate(globalInfo, localEnvironment, options);
 
 		if (!globalInfo.valueIsFalse(conditionValue)) {
-			return this.ifBody.evaluate(globalInfo, localEnvironment);
+			return this.ifBody.evaluate(globalInfo, localEnvironment, options);
 		} else {
-			return this.elseBody.evaluate(globalInfo, localEnvironment);
+			return this.elseBody.evaluate(globalInfo, localEnvironment, options);
 		}
 	}
 }

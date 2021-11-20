@@ -28,16 +28,15 @@ export class LetUsage<T> implements IExpression<T> {
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
 		const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
 		// this.bindings.for Each(([v, expr]: [Variable<T>, IExpression<T>]) => {
 		for (const [v, expr] of this.bindings) {
-			newEnvFrame.add(v, expr.evaluate(globalInfo, localEnvironment));
+			newEnvFrame.add(v, expr.evaluate(globalInfo, localEnvironment, options));
 		} // );
 
-		return this.expression.evaluate(globalInfo, newEnvFrame);
+		return this.expression.evaluate(globalInfo, newEnvFrame, options);
 	}
 }

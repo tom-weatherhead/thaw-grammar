@@ -4,7 +4,7 @@ import { createSet } from 'thaw-common-utilities.ts';
 
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 // import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
@@ -256,10 +256,16 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	// 	throw new Exception(string.Format("LISPOperatorUsage.EvaluateAuxFloat() : Invalid operator {0}", OperatorName.Value));
 	// }
 
+	// protected override evaluateAux(
+	// 	evaluatedArguments: ISExpression[],
+	// 	localEnvironment: EnvironmentFrame<ISExpression>,
+	// 	globalInfo: IGlobalInfo<ISExpression>
+	// ): ISExpression {
 	protected override evaluateAux(
 		evaluatedArguments: ISExpression[],
-		localEnvironment: EnvironmentFrame<ISExpression>,
-		globalInfo: IGlobalInfo<ISExpression>
+		globalInfo: IGlobalInfo<ISExpression>,
+		localEnvironment?: IEnvironmentFrame<ISExpression>,
+		options?: unknown
 	): ISExpression {
 		let sExprList: SExpressionList;
 
@@ -455,7 +461,7 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				// 		((INumber)evaluatedArguments[1]).ToDouble()));
 				// }
 
-				return super.evaluateAux(evaluatedArguments, localEnvironment, globalInfo); // This handles = for all types
+				return super.evaluateAux(evaluatedArguments, globalInfo, localEnvironment, options); // This handles = for all types
 		}
 	}
 }

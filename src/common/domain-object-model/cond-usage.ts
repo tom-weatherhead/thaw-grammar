@@ -24,12 +24,11 @@ export class CondUsage<T> implements IExpression<T> {
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
 		for (const [expr1, expr2] of this.exprPairList) {
-			if (!globalInfo.valueIsFalse(expr1.evaluate(globalInfo, localEnvironment))) {
-				return expr2.evaluate(globalInfo, localEnvironment);
+			if (!globalInfo.valueIsFalse(expr1.evaluate(globalInfo, localEnvironment, options))) {
+				return expr2.evaluate(globalInfo, localEnvironment, options);
 			}
 		}
 

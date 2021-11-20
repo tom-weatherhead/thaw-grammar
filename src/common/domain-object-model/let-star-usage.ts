@@ -30,7 +30,6 @@ export class LetStarUsage<T> implements IExpression<T> {
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
 		// 1) No:
@@ -63,13 +62,13 @@ export class LetStarUsage<T> implements IExpression<T> {
 			(previousEnvFrame: IEnvironmentFrame<T>, [v, expr]: [IVariable<T>, IExpression<T>]) => {
 				const newEnvFrame = new EnvironmentFrame<T>(previousEnvFrame);
 
-				newEnvFrame.add(v, expr.evaluate(globalInfo, previousEnvFrame));
+				newEnvFrame.add(v, expr.evaluate(globalInfo, previousEnvFrame, options));
 
 				return newEnvFrame;
 			},
 			ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment)
 		);
 
-		return this.expression.evaluate(globalInfo, lastNewEnvFrame);
+		return this.expression.evaluate(globalInfo, lastNewEnvFrame, options);
 	}
 }

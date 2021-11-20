@@ -25,7 +25,6 @@ export class BeginUsage<T> implements IExpression<T> {
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
 		// const env = ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment);
@@ -33,8 +32,8 @@ export class BeginUsage<T> implements IExpression<T> {
 		return this.expressionList.reduce(
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			(previousResult: T, expression: IExpression<T>) =>
-				expression.evaluate(globalInfo, localEnvironment),
-			this.firstExpression.evaluate(globalInfo, localEnvironment)
+				expression.evaluate(globalInfo, localEnvironment, options),
+			this.firstExpression.evaluate(globalInfo, localEnvironment, options)
 		);
 	}
 }

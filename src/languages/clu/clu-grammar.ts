@@ -10,22 +10,26 @@ import {
 
 import { ArgumentException, GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
+import { BeginUsage } from '../../common/domain-object-model/begin-usage';
+
+import { IfUsage } from '../../common/domain-object-model/if-usage';
+
 import {
 	ICLUExpression,
 	ICLUFunctionDefinition,
-	// ICLUValue,
+	ICLUValue,
 	ICLUVariable
 } from './domain-object-model/interfaces/ivalue';
 
 import { CLUPrimitiveValue } from './domain-object-model/data-types/primitive-value';
 
+// import { CLUBeginUsage } from './domain-object-model/begin-usage';
+
 import { Cluster } from './domain-object-model/cluster';
 
 import { CLUCondUsage } from './domain-object-model/cond-usage';
 
-import { CLUBeginUsage } from './domain-object-model/begin-usage';
-
-import { CLUIfUsage } from './domain-object-model/if-usage';
+// import { CLUIfUsage } from './domain-object-model/if-usage';
 
 import { CLULetUsage } from './domain-object-model/let-usage';
 
@@ -551,7 +555,8 @@ export class CluGrammar extends GrammarBase {
 				expression3 = semanticStack.pop() as ICLUExpression;
 				expression2 = semanticStack.pop() as ICLUExpression;
 				expression = semanticStack.pop() as ICLUExpression;
-				semanticStack.push(new CLUIfUsage(expression, expression2, expression3));
+				// semanticStack.push(new CLUIfUsage(expression, expression2, expression3));
+				semanticStack.push(new IfUsage<ICLUValue>(expression, expression2, expression3));
 				break;
 
 			case '#while':
@@ -569,7 +574,8 @@ export class CluGrammar extends GrammarBase {
 			case '#begin':
 				expressionList = semanticStack.pop() as ICLUExpression[];
 				expression = semanticStack.pop() as ICLUExpression;
-				semanticStack.push(new CLUBeginUsage(expression, expressionList));
+				// semanticStack.push(new CLUBeginUsage(expression, expressionList));
+				semanticStack.push(new BeginUsage<ICLUValue>(expression, expressionList));
 				break;
 
 			case '#condUsage':

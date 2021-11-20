@@ -4,7 +4,7 @@ import { generateFirstNNaturalNumbers } from 'thaw-common-utilities.ts';
 
 import { Name } from 'thaw-interpreter-core';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 
 // import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 
@@ -728,10 +728,16 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 		return APLValue.createVector1(intList);
 	}
 
+	// protected override evaluateAux(
+	// 	evaluatedArguments: IAPLValue[],
+	// 	localEnvironment: EnvironmentFrame<IAPLValue>,
+	// 	globalInfo: IGlobalInfo<IAPLValue>
+	// ): IAPLValue {
 	protected override evaluateAux(
 		evaluatedArguments: IAPLValue[],
-		localEnvironment: EnvironmentFrame<IAPLValue>,
-		globalInfo: IGlobalInfo<IAPLValue>
+		globalInfo: IGlobalInfo<IAPLValue>,
+		localEnvironment?: IEnvironmentFrame<IAPLValue>,
+		options?: unknown
 	): IAPLValue {
 		switch (this.operatorName.value) {
 			case '+':
@@ -801,7 +807,7 @@ export class APLOperatorUsage extends OperatorUsage<IAPLValue> {
 				return this.evaluateRandom(evaluatedArguments[0], evaluatedArguments[1]);
 
 			default:
-				return super.evaluateAux(evaluatedArguments, localEnvironment, globalInfo);
+				return super.evaluateAux(evaluatedArguments, globalInfo, localEnvironment, options);
 		}
 	}
 }

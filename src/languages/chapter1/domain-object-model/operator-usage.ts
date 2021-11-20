@@ -2,7 +2,7 @@
 
 import { EvaluationException } from 'thaw-interpreter-core';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';
 
@@ -24,10 +24,16 @@ export class Chapter1OperatorUsage extends OperatorUsage<number> {
 		}
 	}
 
+	// protected override evaluateAux(
+	// 	evaluatedArguments: number[],
+	// 	localEnvironment: EnvironmentFrame<number>,
+	// 	globalInfo: IGlobalInfo<number>
+	// ): number {
 	protected override evaluateAux(
 		evaluatedArguments: number[],
-		localEnvironment: EnvironmentFrame<number>,
-		globalInfo: IGlobalInfo<number>
+		globalInfo: IGlobalInfo<number>,
+		localEnvironment?: IEnvironmentFrame<number>,
+		options?: unknown
 	): number {
 		switch (this.operatorName.value) {
 			// 2019-12-22: Hack:
@@ -90,7 +96,7 @@ export class Chapter1OperatorUsage extends OperatorUsage<number> {
 				);
 
 			default:
-				return super.evaluateAux(evaluatedArguments, localEnvironment, globalInfo); // This handles = for all types
+				return super.evaluateAux(evaluatedArguments, globalInfo, localEnvironment, options); // This handles = for all types
 		}
 	}
 }
