@@ -16,6 +16,12 @@ import { CondUsage } from '../../common/domain-object-model/cond-usage';
 
 import { IfUsage } from '../../common/domain-object-model/if-usage';
 
+import { LetUsage } from '../../common/domain-object-model/let-usage';
+
+import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
+
+import { WhileUsage } from '../../common/domain-object-model/while-usage';
+
 import {
 	ICLUExpression,
 	ICLUFunctionDefinition,
@@ -33,9 +39,9 @@ import { Cluster } from './domain-object-model/cluster';
 
 // import { CLUIfUsage } from './domain-object-model/if-usage';
 
-import { CLULetUsage } from './domain-object-model/let-usage';
+// import { CLULetUsage } from './domain-object-model/let-usage';
 
-import { CLULetStarUsage } from './domain-object-model/let-star-usage';
+// import { CLULetStarUsage } from './domain-object-model/let-star-usage';
 
 import { CLUNormalFunctionDefinition } from './domain-object-model/normal-function-definition';
 
@@ -52,7 +58,7 @@ import {
 
 import { CLUVariable } from './domain-object-model/variable';
 
-import { CLUWhileUsage } from './domain-object-model/while-usage';
+// import { CLUWhileUsage } from './domain-object-model/while-usage';
 
 export class CluGrammar extends GrammarBase {
 	// The CLU grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -564,7 +570,7 @@ export class CluGrammar extends GrammarBase {
 			case '#while':
 				expression2 = semanticStack.pop() as ICLUExpression;
 				expression = semanticStack.pop() as ICLUExpression;
-				semanticStack.push(new CLUWhileUsage(expression, expression2));
+				semanticStack.push(new WhileUsage<ICLUValue>(expression, expression2));
 				break;
 
 			case '#set':
@@ -700,10 +706,10 @@ export class CluGrammar extends GrammarBase {
 	): ICLUExpression {
 		switch (letName.value) {
 			case 'let':
-				return new CLULetUsage(varExprList, expression);
+				return new LetUsage<ICLUValue>(varExprList, expression);
 
 			case 'let*':
-				return new CLULetStarUsage(varExprList, expression);
+				return new LetStarUsage<ICLUValue>(varExprList, expression);
 
 			default:
 				throw new ArgumentException(
