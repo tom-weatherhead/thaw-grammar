@@ -29,16 +29,6 @@ export class EnvironmentFrame<T> implements IEnvironmentFrame<T> {
 	}
 
 	public isDefined(key: IVariable<T>): boolean {
-		// if (this.dictionaryContainsKey(key)) {
-		// 	return true;
-		// }
-		//
-		// if (typeof this.next !== 'undefined') {
-		// 	return this.next.isDefined(key);
-		// }
-		//
-		// return false;
-
 		return (
 			this.dictionaryContainsKey(key) ||
 			(typeof this.next !== 'undefined' && this.next.isDefined(key))
@@ -69,7 +59,9 @@ export class EnvironmentFrame<T> implements IEnvironmentFrame<T> {
 			// }
 
 			if (typeof lookupResult === 'undefined') {
-				throw new Error(`EnvironmentFrame.lookup('${key.name}') : Value is undefined`);
+				throw new Error(
+					`EnvironmentFrame.lookup('${key.name}') : Value was found but is undefined.`
+				);
 			}
 
 			return lookupResult;
@@ -119,8 +111,6 @@ export class EnvironmentFrame<T> implements IEnvironmentFrame<T> {
 	}
 
 	private dictionaryContainsKey(key: IVariable<T>): boolean {
-		// return typeof this.dict.get(key.name) !== 'undefined';
-
-		return this.dict.has(key.name);
+		return this.dict.has(key.name); // This calls the .has() of the Map class, not this class.
 	}
 }

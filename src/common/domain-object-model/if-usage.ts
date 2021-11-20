@@ -5,19 +5,11 @@ import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
 export class IfUsage<T> implements IExpression<T> {
-	// public readonly condition: IExpression<T>;
-	// public readonly ifBody: IExpression<T>;
-	// public readonly elseBody: IExpression<T>;
-
 	constructor(
 		public readonly condition: IExpression<T>,
 		public readonly ifBody: IExpression<T>,
 		public readonly elseBody: IExpression<T>
-	) {
-		// this.condition = condition;
-		// this.ifBody = ifBody;
-		// this.elseBody = elseBody;
-	}
+	) {}
 
 	public toString(): string {
 		return `(if ${this.condition} ${this.ifBody} ${this.elseBody})`;
@@ -26,7 +18,6 @@ export class IfUsage<T> implements IExpression<T> {
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
 		const conditionValue = this.condition.evaluate(globalInfo, localEnvironment, options);

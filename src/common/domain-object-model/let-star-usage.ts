@@ -8,16 +8,10 @@ import { IGlobalInfo } from './iglobal-info';
 import { IVariable } from './variable';
 
 export class LetStarUsage<T> implements IExpression<T> {
-	// public readonly bindings: [IVariable<T>, IExpression<T>][];
-	// public readonly expression: IExpression<T>;
-
 	constructor(
 		public readonly bindings: [IVariable<T>, IExpression<T>][],
 		public readonly expression: IExpression<T>
-	) {
-		// this.bindings = bindings;
-		// this.expression = expression;
-	}
+	) {}
 
 	public toString(): string {
 		const fnBindingAsString = ([v, expr]: [IVariable<T>, IExpression<T>]) => `(${v} ${expr})`;
@@ -26,7 +20,6 @@ export class LetStarUsage<T> implements IExpression<T> {
 		return `(let* (${bindingsAsString}) ${this.expression})`;
 	}
 
-	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,

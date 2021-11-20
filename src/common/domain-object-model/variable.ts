@@ -28,9 +28,6 @@ export interface IVariable<T> extends IExpression<T>, IStringifiable {
 export class Variable<T> implements IVariable<T> {
 	// , IConvertibleToGraph
 	public readonly typename: string = typenameVariableT;
-	// public readonly name: string;
-	// public readonly line: number;
-	// public readonly column: number;
 
 	constructor(
 		public readonly name: string,
@@ -46,10 +43,6 @@ export class Variable<T> implements IVariable<T> {
 		// if (name.StartsWith("Inference")) {
 		// 	throw new Exception(string.Format("Error: Creating variable named '{0}'.", name));
 		// }
-
-		// this.name = name;
-		// this.line = line;
-		// this.column = column;
 	}
 
 	public toString(): string {

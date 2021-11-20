@@ -3,14 +3,11 @@
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame, IEnvironmentFrame } from './environment-frame';
-// import { ExpressionList } from './expression-list';
 import { FunctionDefinition } from './function-definition';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
 export class OperatorUsage<T> implements IExpression<T> {
-	// public readonly operatorName: Name;
-	// public readonly expressionList: ExpressionList<T>;
 	private readonly twoArgumentIntegerPredicates = new Map<
 		string,
 		(operand1: number, operand2: number) => boolean
@@ -24,9 +21,6 @@ export class OperatorUsage<T> implements IExpression<T> {
 		public readonly operatorName: Name,
 		public readonly expressionList: IExpression<T>[]
 	) {
-		// this.operatorName = operatorName;
-		// this.expressionList = expressionList;
-
 		this.twoArgumentIntegerPredicates.set(
 			'<',
 			(operand1: number, operand2: number) => operand1 < operand2

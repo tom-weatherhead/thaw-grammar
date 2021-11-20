@@ -25,6 +25,7 @@ export class SetUsage<T> implements IExpression<T> {
 		const expressionValue = this.expression.evaluate(globalInfo, localEnvironment, options);
 
 		// If the variable is not already defined in a local env, we may have to assign it to the global env.
+
 		// console.log(`SetUsage<T>.Evaluate() : var is ${this.variableName.Name}; value is ${expressionValue}`);
 		ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment).addBubbleDown(
 			this.variableName,

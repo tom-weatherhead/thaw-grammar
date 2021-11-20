@@ -5,11 +5,7 @@ import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
 export class CondUsage<T> implements IExpression<T> {
-	// public readonly exprPairList: [IExpression<T>, IExpression<T>][];
-
-	constructor(public readonly exprPairList: [IExpression<T>, IExpression<T>][]) {
-		// this.exprPairList = exprPairList;
-	}
+	constructor(public readonly exprPairList: [IExpression<T>, IExpression<T>][]) {}
 
 	public toString(): string {
 		return `(cond ${this.exprPairList
@@ -20,7 +16,6 @@ export class CondUsage<T> implements IExpression<T> {
 			.join(' ')})`;
 	}
 
-	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,
