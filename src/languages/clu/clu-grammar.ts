@@ -22,6 +22,8 @@ import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
 
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 
+import { Variable } from '../../common/domain-object-model/variable';
+
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
 import {
@@ -33,17 +35,7 @@ import {
 
 import { CLUPrimitiveValue } from './domain-object-model/data-types/primitive-value';
 
-// import { CLUBeginUsage } from './domain-object-model/begin-usage';
-
 import { Cluster } from './domain-object-model/cluster';
-
-// import { CLUCondUsage } from './domain-object-model/cond-usage';
-
-// import { CLUIfUsage } from './domain-object-model/if-usage';
-
-// import { CLULetUsage } from './domain-object-model/let-usage';
-
-// import { CLULetStarUsage } from './domain-object-model/let-star-usage';
 
 import { CLUNormalFunctionDefinition } from './domain-object-model/normal-function-definition';
 
@@ -51,16 +43,12 @@ import { CLUOperatorUsage } from './domain-object-model/operator-usage';
 
 import { OnePartFunctionName } from './domain-object-model/one-part-function-name';
 
-// import { CLUSetUsage } from './domain-object-model/set-usage';
-
 import {
 	isTwoPartFunctionName,
 	TwoPartFunctionName
 } from './domain-object-model/two-part-function-name';
 
-import { CLUVariable } from './domain-object-model/variable';
-
-// import { CLUWhileUsage } from './domain-object-model/while-usage';
+// import { CLUVariable } from './domain-object-model/variable';
 
 export class CluGrammar extends GrammarBase {
 	// The CLU grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -502,7 +490,7 @@ export class CluGrammar extends GrammarBase {
 
 			case '#variable':
 				name = semanticStack.pop() as Name;
-				semanticStack.push(new CLUVariable(name.value));
+				semanticStack.push(new Variable<ICLUValue>(name.value));
 				break;
 
 			case '#variableList':

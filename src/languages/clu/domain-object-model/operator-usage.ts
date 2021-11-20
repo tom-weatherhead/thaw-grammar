@@ -10,10 +10,8 @@ import {
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 import {
-	// ICLUEnvironmentFrame,
 	ICLUExpression,
 	ICLUFunctionName,
-	// ICLUGlobalInfo,
 	ICluster,
 	ICLUValue,
 	ICLUVariable
@@ -26,8 +24,6 @@ import { CLUUserValue, isCLUUserValue } from './data-types/user-value';
 import { isCluEvaluateOptions } from '../utilities/type-guards';
 
 import { isCLUConstructorDefinition } from './constructor-definition';
-
-// import { CLUEnvironmentFrame } from './environment-frame';
 
 import { CLUFunctionDefinitionBase } from './function-definition-base';
 
