@@ -3,25 +3,19 @@
 import {
 	GrammarSymbol,
 	IToken,
-	LexicalState,
-	// ParserSelector,
-	SemanticStackType
+	/* LexicalState, */ SemanticStackType
 } from 'thaw-interpreter-types';
 
 import { createProduction, Name } from 'thaw-interpreter-core';
 
-// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
 import { IVariable, Variable } from '../../common/domain-object-model/variable';
-// import { VariableList } from '../../common/domain-object-model/variable-list';
 
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
 import { IfUsage } from '../../common/domain-object-model/if-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
-
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
@@ -348,13 +342,7 @@ export class Chapter1Grammar extends GrammarBase {
 		return 'Chapter 1';
 	}
 
-	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	return [ParserSelector.LL1];
-	// }
-
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
-		// console.log(`Chapter1Grammar.executeSemanticAction() : action is ${typeof action} ${action}`);
-
 		let name: Name;
 		let variable: IVariable<number>;
 		let variableList: IVariable<number>[];
@@ -434,69 +422,69 @@ export class Chapter1Grammar extends GrammarBase {
 		}
 	}
 
-	public override tokenToSymbol(token: IToken): GrammarSymbol {
-		// const tokenValueAsString: string = token.tokenValue as string;
-
-		switch (token.tokenType) {
-			case LexicalState.tokenEOF:
-				return GrammarSymbol.terminalEOF;
-			case LexicalState.tokenIntLit:
-				return GrammarSymbol.terminalIntegerLiteral;
-			case LexicalState.tokenFltLit:
-				return GrammarSymbol.terminalFloatLiteral;
-			case LexicalState.tokenStrLit:
-				return GrammarSymbol.terminalStringLiteral;
-			case LexicalState.tokenLeftBracket:
-				return GrammarSymbol.terminalLeftBracket;
-			case LexicalState.tokenRightBracket:
-				return GrammarSymbol.terminalRightBracket;
-			case LexicalState.tokenPlus:
-				return GrammarSymbol.terminalPlus;
-			case LexicalState.tokenMinus:
-				return GrammarSymbol.terminalMinus;
-			case LexicalState.tokenMult:
-				return GrammarSymbol.terminalMultiply;
-			case LexicalState.tokenDiv:
-				return GrammarSymbol.terminalDivide;
-			case LexicalState.tokenEqual:
-				return GrammarSymbol.terminalEquals;
-			case LexicalState.tokenLess:
-				return GrammarSymbol.terminalLessThan;
-			case LexicalState.tokenGreater:
-				return GrammarSymbol.terminalGreaterThan;
-
-			case LexicalState.tokenIdent:
-				switch (token.tokenValue as string) {
-					case 'define':
-						return GrammarSymbol.terminalDefine;
-					case 'if':
-						return GrammarSymbol.terminalIf;
-					case 'while':
-						return GrammarSymbol.terminalWhile;
-					case 'set':
-						return GrammarSymbol.terminalSet;
-					case 'begin':
-						return GrammarSymbol.terminalBegin;
-					case 'print':
-						return GrammarSymbol.terminalPrint;
-					// case 'random': return GrammarSymbol.terminalRandom;
-					// case 'throw': return GrammarSymbol.terminalThrow;
-					default:
-						return GrammarSymbol.terminalID;
-				}
-
-			// break;
-
-			default:
-				break;
-		}
-
-		throw new GrammarException(
-			`No grammar symbol matches token ${token.tokenType} ${token.tokenValue}`,
-			token.line,
-			token.column
-		);
-	}
+	// public override tokenToSymbol(token: IToken): GrammarSymbol {
+	// 	// const tokenValueAsString: string = token.tokenValue as string;
+	//
+	// 	switch (token.tokenType) {
+	// 		// case LexicalState.tokenEOF:
+	// 		// 	return GrammarSymbol.terminalEOF;
+	// 		// case LexicalState.tokenIntLit:
+	// 		// 	return GrammarSymbol.terminalIntegerLiteral;
+	// 		// case LexicalState.tokenFltLit:
+	// 		// 	return GrammarSymbol.terminalFloatLiteral;
+	// 		// case LexicalState.tokenStrLit:
+	// 		// 	return GrammarSymbol.terminalStringLiteral;
+	// 		// case LexicalState.tokenLeftBracket:
+	// 		// 	return GrammarSymbol.terminalLeftBracket;
+	// 		// case LexicalState.tokenRightBracket:
+	// 		// 	return GrammarSymbol.terminalRightBracket;
+	// 		// case LexicalState.tokenPlus:
+	// 		// 	return GrammarSymbol.terminalPlus;
+	// 		// case LexicalState.tokenMinus:
+	// 		// 	return GrammarSymbol.terminalMinus;
+	// 		// case LexicalState.tokenMult:
+	// 		// 	return GrammarSymbol.terminalMultiply;
+	// 		// case LexicalState.tokenDiv:
+	// 		// 	return GrammarSymbol.terminalDivide;
+	// 		// case LexicalState.tokenEqual:
+	// 		// 	return GrammarSymbol.terminalEquals;
+	// 		// case LexicalState.tokenLess:
+	// 		// 	return GrammarSymbol.terminalLessThan;
+	// 		// case LexicalState.tokenGreater:
+	// 		// 	return GrammarSymbol.terminalGreaterThan;
+	//
+	// 		case LexicalState.tokenIdent:
+	// 			switch (token.tokenValue as string) {
+	// 				case 'define':
+	// 					return GrammarSymbol.terminalDefine;
+	// 				case 'if':
+	// 					return GrammarSymbol.terminalIf;
+	// 				case 'while':
+	// 					return GrammarSymbol.terminalWhile;
+	// 				case 'set':
+	// 					return GrammarSymbol.terminalSet;
+	// 				case 'begin':
+	// 					return GrammarSymbol.terminalBegin;
+	// 				case 'print':
+	// 					return GrammarSymbol.terminalPrint;
+	// 				// case 'random': return GrammarSymbol.terminalRandom;
+	// 				// case 'throw': return GrammarSymbol.terminalThrow;
+	// 				default:
+	// 					return GrammarSymbol.terminalID;
+	// 			}
+	//
+	// 		// break;
+	//
+	// 		default:
+	// 			break;
+	// 	}
+	//
+	// 	throw new GrammarException(
+	// 		`No grammar symbol matches token ${token.tokenType} ${token.tokenValue}`,
+	// 		token.line,
+	// 		token.column
+	// 	);
+	// }
 
 	public override pushTokenOntoSemanticStack(
 		semanticStack: SemanticStackType,
@@ -506,17 +494,17 @@ export class Chapter1Grammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case GrammarSymbol.terminalID:
-			case GrammarSymbol.terminalPrint:
-			case GrammarSymbol.terminalPlus:
-			case GrammarSymbol.terminalMinus:
-			case GrammarSymbol.terminalMultiply:
-			case GrammarSymbol.terminalDivide:
-			case GrammarSymbol.terminalEquals:
-			case GrammarSymbol.terminalLessThan:
-			case GrammarSymbol.terminalGreaterThan:
-			case GrammarSymbol.terminalRandom:
-			case GrammarSymbol.terminalThrow:
+			// case GrammarSymbol.terminalID:
+			// case GrammarSymbol.terminalPrint:
+			// case GrammarSymbol.terminalPlus:
+			// case GrammarSymbol.terminalMinus:
+			// case GrammarSymbol.terminalMultiply:
+			// case GrammarSymbol.terminalDivide:
+			// case GrammarSymbol.terminalEquals:
+			// case GrammarSymbol.terminalLessThan:
+			// case GrammarSymbol.terminalGreaterThan:
+			// case GrammarSymbol.terminalRandom:
+			case GrammarSymbol.terminalThrow: // TODO: Comment this out later.
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
 
@@ -524,22 +512,24 @@ export class Chapter1Grammar extends GrammarBase {
 				semanticStack.push(new IntegerLiteral(value, token.line, token.column));
 				break;
 
-			case GrammarSymbol.terminalLeftBracket:
-			case GrammarSymbol.terminalRightBracket:
-			case GrammarSymbol.terminalDefine:
-			case GrammarSymbol.terminalIf:
-			case GrammarSymbol.terminalWhile:
-			case GrammarSymbol.terminalSet:
-			case GrammarSymbol.terminalBegin:
-			case GrammarSymbol.terminalEOF:
-				break;
+			// case GrammarSymbol.terminalLeftBracket:
+			// case GrammarSymbol.terminalRightBracket:
+			// case GrammarSymbol.terminalDefine:
+			// case GrammarSymbol.terminalIf:
+			// case GrammarSymbol.terminalWhile:
+			// case GrammarSymbol.terminalSet:
+			// case GrammarSymbol.terminalBegin:
+			// case GrammarSymbol.terminalEOF:
+			// 	break;
 
 			default:
-				throw new GrammarException(
-					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} ${tokenAsSymbol}`,
-					token.line,
-					token.column
-				);
+				// throw new GrammarException(
+				// 	`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} ${tokenAsSymbol}`,
+				// 	token.line,
+				// 	token.column
+				// );
+				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
+				break;
 		}
 	}
 }

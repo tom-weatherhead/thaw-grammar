@@ -8,10 +8,8 @@ import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 export class IntegerLiteral implements IExpression<number> {
 	public readonly value: number;
-	public readonly line: number;
-	public readonly column: number;
 
-	constructor(value: unknown, line = 0, column = 0) {
+	constructor(value: unknown, public readonly line = 0, public readonly column = 0) {
 		if (typeof value !== 'number') {
 			throw new ArgumentException(
 				`IntegerLiteral constructor: typeof value is not 'number'; it is '${typeof value}'.`,
@@ -30,8 +28,6 @@ export class IntegerLiteral implements IExpression<number> {
 		}
 
 		this.value = value as number;
-		this.line = line;
-		this.column = column;
 	}
 
 	public toString(): string {
@@ -41,14 +37,9 @@ export class IntegerLiteral implements IExpression<number> {
 	}
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
-	// public evaluate(
-	// 	localEnvironment: EnvironmentFrame<number>,
-	// 	globalInfo: IGlobalInfo<number>
-	// ): number {
 	public evaluate(
 		globalInfo: IGlobalInfo<number>,
 		localEnvironment?: IEnvironmentFrame<number>,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): number {
 		return this.value;

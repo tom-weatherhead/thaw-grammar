@@ -1,22 +1,20 @@
 // tom-weatherhead/thaw-grammar/src/languages/chapter1/domain-object-model/global-info.ts
 
-// import { ITokenizer } from 'thaw-lexical-analyzer';
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
 
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
-// import { ArgumentException } from '../../../common/exceptions/argument-exception';
-// import { IParser } from '../../../common/parser/iparser';
-// import { IntegerLiteral } from './integer-literal';
 
 export class Chapter1GlobalInfo extends GlobalInfoBase<number> {
 	private readonly trueValueForAccessor = 1;
 	private readonly falseValueForAccessor = 0;
 
-	// constructor(tokenizer: ITokenizer, parser: IParser) {
-	// 	super(tokenizer, parser);
-	// }
-
-	constructor() {
-		super();
+	constructor(
+		options: {
+			parser?: IParser;
+			tokenizer?: ITokenizer;
+		} = {}
+	) {
+		super(options);
 	}
 
 	public get falseValue(): number {

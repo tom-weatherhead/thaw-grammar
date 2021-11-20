@@ -22,6 +22,18 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 	public debug = false;
 	private printedText = '';
 
+	// 2021-11-20 : TODO: Uncomment these lines:
+
+	// protected readonly abstract tv: T;
+	// protected readonly abstract fv: T;
+
+	// ... and then make these functions non-abstract:
+
+	// public abstract get falseValue(): T;
+	// public abstract get trueValue(): T;
+
+	// ... and then set the values of tv and fv in each languages GlobalInfo constructor.
+
 	protected constructor(
 		options: {
 			parser?: IParser;
