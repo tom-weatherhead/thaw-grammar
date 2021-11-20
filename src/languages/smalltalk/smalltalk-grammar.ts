@@ -22,8 +22,6 @@ import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-int
 
 import { ArgumentException, GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
-// import { ArgumentException } from '../../common/exceptions/argument-exception';
-
 import {
 	ISmalltalkExpression,
 	ISmalltalkFunctionDefinition,
@@ -777,8 +775,8 @@ export class SmalltalkGrammar extends GrammarBase {
 					return GrammarSymbol.terminalStringPred;
 				case 'object?':
 					return GrammarSymbol.terminalObjectPred;
-				case 'random':
-					return GrammarSymbol.terminalRandom;
+				// case 'random':
+				// 	return GrammarSymbol.terminalRandom;
 				case 'tostring':
 					return GrammarSymbol.terminalToString;
 				case 'stringtosymbol':
@@ -820,12 +818,6 @@ export class SmalltalkGrammar extends GrammarBase {
 				default:
 					break;
 			}
-
-			// 		break;
-			//
-			// 	default:
-			// 		break;
-			// }
 		}
 
 		return super.tokenToSymbol(token);
@@ -839,25 +831,6 @@ export class SmalltalkGrammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			// case GrammarSymbol.terminalID:
-			// case GrammarSymbol.terminalPrint:
-			// case GrammarSymbol.terminalPlus:
-			// case GrammarSymbol.terminalMinus:
-			// case GrammarSymbol.terminalMultiply:
-			// case GrammarSymbol.terminalDivide:
-			// case GrammarSymbol.terminalEquals:
-			// case GrammarSymbol.terminalLessThan:
-			//case GrammarSymbol.terminalGreaterThan:
-			// case GrammarSymbol.terminalLet:
-			// case GrammarSymbol.terminalLetStar:
-			// case GrammarSymbol.terminalRandom:
-			// case GrammarSymbol.terminalPow:
-			// case GrammarSymbol.terminalExp:
-			// case GrammarSymbol.terminalLn:
-			// case GrammarSymbol.terminalSin:
-			// case GrammarSymbol.terminalCos:
-			// case GrammarSymbol.terminalTan:
-
 			case GrammarSymbol.terminalNumberPred:
 			case GrammarSymbol.terminalSymbolPred:
 			case GrammarSymbol.terminalStringPred:
@@ -898,18 +871,18 @@ export class SmalltalkGrammar extends GrammarBase {
 				semanticStack.push(new SmalltalkString(value, token.line, token.column));
 				break;
 
-			case GrammarSymbol.terminalLeftBracket:
-			case GrammarSymbol.terminalRightBracket:
-			case GrammarSymbol.terminalBegin:
+			// case GrammarSymbol.terminalLeftBracket:
+			// case GrammarSymbol.terminalRightBracket:
+			// case GrammarSymbol.terminalBegin:
 			case GrammarSymbol.terminalClass:
-			case GrammarSymbol.terminalCond:
-			case GrammarSymbol.terminalDefine:
+			// case GrammarSymbol.terminalCond:
+			// case GrammarSymbol.terminalDefine:
 			case GrammarSymbol.terminalDollar:
-			case GrammarSymbol.terminalIf:
+			// case GrammarSymbol.terminalIf:
 			case GrammarSymbol.terminalOctothorpe:
-			case GrammarSymbol.terminalSet:
-			case GrammarSymbol.terminalWhile:
-			case GrammarSymbol.terminalEOF:
+				// case GrammarSymbol.terminalSet:
+				// case GrammarSymbol.terminalWhile:
+				// case GrammarSymbol.terminalEOF:
 				// For these terminals, push nothing onto the semantic stack.
 				break;
 
