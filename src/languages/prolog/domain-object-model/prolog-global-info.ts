@@ -154,6 +154,14 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		return new PrologIntegerLiteral(1);
 	}
 
+	public valueIsFalse(value: IPrologExpression): boolean {
+		// return value === this.falseValue;
+
+		return this.valueIsInteger(value) && this.valueAsInteger(value) === 0;
+
+		// Or: return this.valueIsInteger(value) && this.valueAsInteger(value) === this.valueAsInteger(this.falseValue);
+	}
+
 	public valueIsInteger(value: IPrologExpression): boolean {
 		const pn = value.EvaluateToNumber();
 

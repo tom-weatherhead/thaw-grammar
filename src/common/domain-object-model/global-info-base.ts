@@ -53,6 +53,11 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 	public abstract get falseValue(): T;
 	public abstract get trueValue(): T;
 
+	// public valueIsFalse(value: T): boolean {
+	// 	return value === this.falseValue;
+	// }
+	public abstract valueIsFalse(value: T): boolean;
+
 	public abstract valueIsInteger(value: T): boolean;
 	public abstract valueAsInteger(value: T): number; // Shoud we return Number.NaN if value is not a (safe) integer?
 	public abstract integerAsValue(value: number): T;
@@ -65,10 +70,6 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 	// public abstract valueAsNumber(value: T): number;
 	// public abstract numberAsIntegerValue(value: number): T; // Convert to the language's native integer data type
 	// public abstract numberAsFloatValue(value: number): T; // Convert to the language's native floating-point number data type
-
-	public valueIsFalse(value: T): boolean {
-		return value === this.falseValue;
-	}
 
 	public loadPreset(presetName: string): string {
 		throw new ArgumentException(
