@@ -7,15 +7,14 @@ import { IEnvironmentFrame } from '../../../common/domain-object-model/environme
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 import {
-	// ICLUEnvironmentFrame,
-	ICluEvaluateOptions,
-	// ICLUExpression,
+	// ICluEvaluateOptions,
 	ICLUFunctionDefinition,
-	// ICLUGlobalInfo,
 	ICluster,
 	ICLUValue,
 	ICLUVariable
 } from './interfaces/ivalue';
+
+import { typenameCluster } from '../utilities/type-guards';
 
 import { CLUConstructorDefinition } from './constructor-definition';
 
@@ -26,23 +25,6 @@ import { isCLUGlobalInfo } from './global-info';
 import { CLUSelectorDefinition } from './selector-definition';
 
 import { CLUSettorDefinition } from './settor-definition';
-
-const typenameCluster = 'Cluster';
-
-export function isCluster(obj: unknown): obj is ICluster {
-	const other = obj as Cluster;
-
-	return typeof other !== 'undefined' && other.typename === typenameCluster;
-}
-
-export function isCluEvaluateOptions(obj: unknown): obj is ICluEvaluateOptions {
-	const other = obj as ICluEvaluateOptions;
-
-	return (
-		typeof other !== 'undefined' &&
-		(typeof other.cluster === 'undefined' || isCluster(other.cluster))
-	);
-}
 
 export class Cluster implements ICluster {
 	public readonly typename: string = typenameCluster;

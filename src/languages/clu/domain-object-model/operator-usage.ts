@@ -23,7 +23,7 @@ import {
 
 import { CLUUserValue, isCLUUserValue } from './data-types/user-value';
 
-import { isCluEvaluateOptions } from './cluster';
+import { isCluEvaluateOptions } from '../utilities/type-guards';
 
 import { isCLUConstructorDefinition } from './constructor-definition';
 

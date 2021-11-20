@@ -35,6 +35,7 @@ export type ICLUVariable = IVariable<ICLUValue>;
 export type ICLUEnvironmentFrame = IEnvironmentFrame<ICLUValue>;
 
 export interface ICluster extends ICLUExpression {
+	readonly typename: string;
 	readonly clusterName: Name;
 	readonly clRep: ICLUVariable[];
 	readonly exportedDict: Map<string, ICLUFunctionDefinition>;

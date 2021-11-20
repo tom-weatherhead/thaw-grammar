@@ -2,7 +2,7 @@
 
 import { ifDefinedThenElse, IStringifiable } from 'thaw-common-utilities.ts';
 
-import { ArgumentException, EvaluationException } from 'thaw-interpreter-core';
+import { ArgumentException /*, EvaluationException */ } from 'thaw-interpreter-core';
 
 // import { ArgumentNullException } from '../exceptions/argument-null-exception';
 // import { KeyNotFoundException } from '../exceptions/key-not-found-exception';
@@ -55,15 +55,15 @@ export class Variable<T> implements IVariable<T> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
-		try {
-			return ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment).lookup(this);
-		} catch (KeyNotFoundException) {
-			throw new EvaluationException(
-				`Variable<T>.Evaluate() : No value found for variable ${this.name}`,
-				this.line,
-				this.column
-			);
-		}
+		// try {
+		return ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment).lookup(this);
+		// } catch (KeyNotFoundException) {
+		// 	throw new EvaluationException(
+		// 		`Variable<T>.Evaluate() : No value found for variable ${this.name}`,
+		// 		this.line,
+		// 		this.column
+		// 	);
+		// }
 	}
 
 	// public ConvertToGraph(): IExpression<ISExpression> {
