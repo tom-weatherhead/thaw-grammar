@@ -148,20 +148,12 @@
 
 // import { Stack } from 'thaw-common-utilities.ts';
 
-import {
-	GrammarSymbol,
-	IToken,
-	LexicalState,
-	// ParserSelector,
-	SemanticStackType
-} from 'thaw-interpreter-types';
+import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { ArgumentException, createProduction, Name } from 'thaw-interpreter-core';
 
-// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
 import { IVariable, Variable } from '../../common/domain-object-model/variable';
-// import { VariableList } from '../../common/domain-object-model/variable-list';
 
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 import { CondUsage } from '../../common/domain-object-model/cond-usage';
@@ -171,8 +163,6 @@ import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
 import { LetUsage } from '../../common/domain-object-model/let-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
-
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
@@ -1125,35 +1115,35 @@ export class LISPGrammar extends GrammarBase {
 		const tokenValueAsString: string = token.tokenValue as string;
 
 		switch (token.tokenType) {
-			case LexicalState.tokenEOF:
-				return GrammarSymbol.terminalEOF;
-			case LexicalState.tokenIntLit:
-				return GrammarSymbol.terminalIntegerLiteral;
-			case LexicalState.tokenFltLit:
-				return GrammarSymbol.terminalFloatLiteral;
-			case LexicalState.tokenStrLit:
-				return GrammarSymbol.terminalStringLiteral;
+			// case LexicalState.tokenEOF:
+			// 	return GrammarSymbol.terminalEOF;
+			// case LexicalState.tokenIntLit:
+			// 	return GrammarSymbol.terminalIntegerLiteral;
+			// case LexicalState.tokenFltLit:
+			// 	return GrammarSymbol.terminalFloatLiteral;
+			// case LexicalState.tokenStrLit:
+			// 	return GrammarSymbol.terminalStringLiteral;
 			// case LexicalState.tokenIdent: return GrammarSymbol.terminalID;
-			case LexicalState.tokenLeftBracket:
-				return GrammarSymbol.terminalLeftBracket;
-			case LexicalState.tokenRightBracket:
-				return GrammarSymbol.terminalRightBracket;
-			case LexicalState.tokenPlus:
-				return GrammarSymbol.terminalPlus;
-			case LexicalState.tokenMinus:
-				return GrammarSymbol.terminalMinus;
-			case LexicalState.tokenMult:
-				return GrammarSymbol.terminalMultiply;
-			case LexicalState.tokenDiv:
-				return GrammarSymbol.terminalDivide;
-			case LexicalState.tokenEqual:
-				return GrammarSymbol.terminalEquals;
-			case LexicalState.tokenLess:
-				return GrammarSymbol.terminalLessThan;
-			case LexicalState.tokenGreater:
-				return GrammarSymbol.terminalGreaterThan;
-			case LexicalState.tokenApostrophe:
-				return GrammarSymbol.terminalApostrophe;
+			// case LexicalState.tokenLeftBracket:
+			// 	return GrammarSymbol.terminalLeftBracket;
+			// case LexicalState.tokenRightBracket:
+			// 	return GrammarSymbol.terminalRightBracket;
+			// case LexicalState.tokenPlus:
+			// 	return GrammarSymbol.terminalPlus;
+			// case LexicalState.tokenMinus:
+			// 	return GrammarSymbol.terminalMinus;
+			// case LexicalState.tokenMult:
+			// 	return GrammarSymbol.terminalMultiply;
+			// case LexicalState.tokenDiv:
+			// 	return GrammarSymbol.terminalDivide;
+			// case LexicalState.tokenEqual:
+			// 	return GrammarSymbol.terminalEquals;
+			// case LexicalState.tokenLess:
+			// 	return GrammarSymbol.terminalLessThan;
+			// case LexicalState.tokenGreater:
+			// 	return GrammarSymbol.terminalGreaterThan;
+			// case LexicalState.tokenApostrophe:
+			// 	return GrammarSymbol.terminalApostrophe;
 			case LexicalState.tokenQuoteKeyword:
 				return GrammarSymbol.terminalQuoteKeyword;
 
@@ -1173,18 +1163,18 @@ export class LISPGrammar extends GrammarBase {
 				}
 
 				switch (tokenValueAsString) {
-					case 'define':
-						return GrammarSymbol.terminalDefine;
-					case 'if':
-						return GrammarSymbol.terminalIf;
-					case 'while':
-						return GrammarSymbol.terminalWhile;
-					case 'set':
-						return GrammarSymbol.terminalSet;
-					case 'begin':
-						return GrammarSymbol.terminalBegin;
-					case 'print':
-						return GrammarSymbol.terminalPrint;
+					// case 'define':
+					// 	return GrammarSymbol.terminalDefine;
+					// case 'if':
+					// 	return GrammarSymbol.terminalIf;
+					// case 'while':
+					// 	return GrammarSymbol.terminalWhile;
+					// case 'set':
+					// 	return GrammarSymbol.terminalSet;
+					// case 'begin':
+					// 	return GrammarSymbol.terminalBegin;
+					// case 'print':
+					// 	return GrammarSymbol.terminalPrint;
 					case 'cons':
 						return GrammarSymbol.terminalCons;
 					case 'car':
@@ -1209,8 +1199,8 @@ export class LISPGrammar extends GrammarBase {
 						return GrammarSymbol.terminalRplacd;
 					case 'define-macro':
 						return GrammarSymbol.terminalDefineMacro;
-					case 'random':
-						return GrammarSymbol.terminalRandom;
+					// case 'random':
+					// 	return GrammarSymbol.terminalRandom;
 					case 'tostring':
 						return GrammarSymbol.terminalToString;
 					case 'listtostring':
@@ -1219,18 +1209,18 @@ export class LISPGrammar extends GrammarBase {
 						return GrammarSymbol.terminalStringToList;
 					case 'stringtosymbol':
 						return GrammarSymbol.terminalStringToSymbol;
-					case 'pow':
-						return GrammarSymbol.terminalPow;
-					case 'exp':
-						return GrammarSymbol.terminalExp;
-					case 'ln':
-						return GrammarSymbol.terminalLn;
-					case 'sin':
-						return GrammarSymbol.terminalSin;
-					case 'cos':
-						return GrammarSymbol.terminalCos;
-					case 'tan':
-						return GrammarSymbol.terminalTan;
+					// case 'pow':
+					// 	return GrammarSymbol.terminalPow;
+					// case 'exp':
+					// 	return GrammarSymbol.terminalExp;
+					// case 'ln':
+					// 	return GrammarSymbol.terminalLn;
+					// case 'sin':
+					// 	return GrammarSymbol.terminalSin;
+					// case 'cos':
+					// 	return GrammarSymbol.terminalCos;
+					// case 'tan':
+					// 	return GrammarSymbol.terminalTan;
 					case 'atan2':
 						return GrammarSymbol.terminalAtan2;
 					case 'floor':
@@ -1240,22 +1230,24 @@ export class LISPGrammar extends GrammarBase {
 					case 'string<':
 						return GrammarSymbol.terminalStringLessThan;
 					default:
-						return GrammarSymbol.terminalID;
+						// return GrammarSymbol.terminalID;
+						break;
 				}
 
-			// break;
+				break;
 
 			default:
 				break;
 		}
 
-		throw new GrammarException(
-			`No grammar symbol matches token ${token.tokenType} ${
-				LexicalState[token.tokenType]
-			} (value '${token.tokenValue}')`,
-			token.line,
-			token.column
-		);
+		// throw new GrammarException(
+		// 	`No grammar symbol matches token ${token.tokenType} ${
+		// 		LexicalState[token.tokenType]
+		// 	} (value '${token.tokenValue}')`,
+		// 	token.line,
+		// 	token.column
+		// );
+		return super.tokenToSymbol(token);
 	}
 
 	public override pushTokenOntoSemanticStack(
@@ -1266,15 +1258,15 @@ export class LISPGrammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case GrammarSymbol.terminalID:
-			case GrammarSymbol.terminalPrint:
-			case GrammarSymbol.terminalPlus:
-			case GrammarSymbol.terminalMinus:
-			case GrammarSymbol.terminalMultiply:
-			case GrammarSymbol.terminalDivide:
-			case GrammarSymbol.terminalEquals:
-			case GrammarSymbol.terminalLessThan:
-			case GrammarSymbol.terminalGreaterThan:
+			// case GrammarSymbol.terminalID:
+			// case GrammarSymbol.terminalPrint:
+			// case GrammarSymbol.terminalPlus:
+			// case GrammarSymbol.terminalMinus:
+			// case GrammarSymbol.terminalMultiply:
+			// case GrammarSymbol.terminalDivide:
+			// case GrammarSymbol.terminalEquals:
+			// case GrammarSymbol.terminalLessThan:
+			// case GrammarSymbol.terminalGreaterThan:
 			case GrammarSymbol.terminalCons:
 			case GrammarSymbol.terminalCar:
 			case GrammarSymbol.terminalCdr:
@@ -1286,17 +1278,17 @@ export class LISPGrammar extends GrammarBase {
 			case GrammarSymbol.terminalList:
 			case GrammarSymbol.terminalRplaca:
 			case GrammarSymbol.terminalRplacd:
-			case GrammarSymbol.terminalRandom:
+			// case GrammarSymbol.terminalRandom:
 			case GrammarSymbol.terminalToString:
 			case GrammarSymbol.terminalListToString:
 			case GrammarSymbol.terminalStringToList:
 			case GrammarSymbol.terminalStringToSymbol:
-			case GrammarSymbol.terminalPow:
-			case GrammarSymbol.terminalExp:
-			case GrammarSymbol.terminalLn:
-			case GrammarSymbol.terminalSin:
-			case GrammarSymbol.terminalCos:
-			case GrammarSymbol.terminalTan:
+			// case GrammarSymbol.terminalPow:
+			// case GrammarSymbol.terminalExp:
+			// case GrammarSymbol.terminalLn:
+			// case GrammarSymbol.terminalSin:
+			// case GrammarSymbol.terminalCos:
+			// case GrammarSymbol.terminalTan:
 			case GrammarSymbol.terminalAtan2:
 			case GrammarSymbol.terminalFloor:
 			case GrammarSymbol.terminalThrow:
@@ -1316,24 +1308,26 @@ export class LISPGrammar extends GrammarBase {
 				semanticStack.push(new LISPString(value as string));
 				break;
 
-			case GrammarSymbol.terminalLeftBracket:
-			case GrammarSymbol.terminalRightBracket:
+			// case GrammarSymbol.terminalLeftBracket:
+			// case GrammarSymbol.terminalRightBracket:
 			case GrammarSymbol.terminalApostrophe:
 			case GrammarSymbol.terminalQuoteKeyword:
-			case GrammarSymbol.terminalDefine:
-			case GrammarSymbol.terminalIf:
-			case GrammarSymbol.terminalWhile:
-			case GrammarSymbol.terminalSet:
-			case GrammarSymbol.terminalBegin:
-			case GrammarSymbol.terminalEOF:
+				// case GrammarSymbol.terminalDefine:
+				// case GrammarSymbol.terminalIf:
+				// case GrammarSymbol.terminalWhile:
+				// case GrammarSymbol.terminalSet:
+				// case GrammarSymbol.terminalBegin:
+				// case GrammarSymbol.terminalEOF:
 				break;
 
 			default:
-				throw new GrammarException(
-					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
-					token.line,
-					token.column
-				);
+				// throw new GrammarException(
+				// 	`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
+				// 	token.line,
+				// 	token.column
+				// );
+				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
+				break;
 		}
 	}
 
