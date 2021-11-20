@@ -2,7 +2,10 @@
 
 // import { ArgumentException } from 'thaw-interpreter-core';
 
-import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import {
+	EnvironmentFrame,
+	IEnvironmentFrame
+} from '../../../common/domain-object-model/environment-frame';
 
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -24,7 +27,7 @@ import { isCluEvaluateOptions } from './cluster';
 
 import { isCLUConstructorDefinition } from './constructor-definition';
 
-import { CLUEnvironmentFrame } from './environment-frame';
+// import { CLUEnvironmentFrame } from './environment-frame';
 
 import { CLUFunctionDefinitionBase } from './function-definition-base';
 
@@ -222,7 +225,7 @@ export class CLUOperatorUsage implements ICLUExpression {
 		}
 
 		// Evaluate a user-defined function.
-		const newEnvironment = new CLUEnvironmentFrame(globalInfo.globalEnvironment);
+		const newEnvironment = new EnvironmentFrame<ICLUValue>(globalInfo.globalEnvironment);
 
 		newEnvironment.compose(funDef.argList, evaluatedArguments);
 
@@ -333,7 +336,7 @@ export class CLUOperatorUsage implements ICLUExpression {
 				throw new Error('CLUOperatorUsage.evaluate() : cluster is undefined');
 			}
 
-			const newEnvironment = new CLUEnvironmentFrame(globalInfo.globalEnvironment);
+			const newEnvironment = new EnvironmentFrame<ICLUValue>(globalInfo.globalEnvironment);
 
 			newEnvironment.compose(cluster.clRep, evaluatedArguments);
 			return new CLUUserValue(cluster, newEnvironment);

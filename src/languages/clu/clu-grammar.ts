@@ -12,6 +12,8 @@ import { ArgumentException, GrammarBase, GrammarException, Name } from 'thaw-int
 
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 
+import { CondUsage } from '../../common/domain-object-model/cond-usage';
+
 import { IfUsage } from '../../common/domain-object-model/if-usage';
 
 import {
@@ -27,7 +29,7 @@ import { CLUPrimitiveValue } from './domain-object-model/data-types/primitive-va
 
 import { Cluster } from './domain-object-model/cluster';
 
-import { CLUCondUsage } from './domain-object-model/cond-usage';
+// import { CLUCondUsage } from './domain-object-model/cond-usage';
 
 // import { CLUIfUsage } from './domain-object-model/if-usage';
 
@@ -583,7 +585,8 @@ export class CluGrammar extends GrammarBase {
 				expression2 = semanticStack.pop() as ICLUExpression;
 				expression = semanticStack.pop() as ICLUExpression;
 				exprPairList.unshift([expression, expression2]);
-				semanticStack.push(new CLUCondUsage(exprPairList));
+				// semanticStack.push(new CLUCondUsage(exprPairList));
+				semanticStack.push(new CondUsage<ICLUValue>(exprPairList));
 				break;
 
 			case '#exprPairList':

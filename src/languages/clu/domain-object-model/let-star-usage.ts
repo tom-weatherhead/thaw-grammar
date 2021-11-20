@@ -1,6 +1,9 @@
 // clu/domain-object-model/let-star-usage.ts
 
-import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import {
+	EnvironmentFrame,
+	IEnvironmentFrame
+} from '../../../common/domain-object-model/environment-frame';
 
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -13,7 +16,7 @@ import {
 	ICLUVariable
 } from './interfaces/ivalue';
 
-import { CLUEnvironmentFrame } from './environment-frame';
+// import { CLUEnvironmentFrame } from './environment-frame';
 
 export class CLULetStarUsage implements ICLUExpression {
 	constructor(
@@ -47,7 +50,7 @@ export class CLULetStarUsage implements ICLUExpression {
 		let lastEnv = localEnvironment;
 
 		for (const [key, value] of this.bindings) {
-			const newEnvFrame = new CLUEnvironmentFrame(lastEnv);
+			const newEnvFrame = new EnvironmentFrame<ICLUValue>(lastEnv);
 
 			newEnvFrame.add(key, value.evaluate(globalInfo, lastEnv, options));
 			lastEnv = newEnvFrame;

@@ -1,6 +1,9 @@
 // clu/domain-object-model/let-usage.ts
 
-import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import {
+	EnvironmentFrame,
+	IEnvironmentFrame
+} from '../../../common/domain-object-model/environment-frame';
 
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -13,7 +16,7 @@ import {
 	ICLUVariable
 } from './interfaces/ivalue';
 
-import { CLUEnvironmentFrame } from './environment-frame';
+// import { CLUEnvironmentFrame } from './environment-frame';
 
 export class CLULetUsage implements ICLUExpression {
 	constructor(
@@ -32,7 +35,7 @@ export class CLULetUsage implements ICLUExpression {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): ICLUValue {
-		const newEnvFrame = new CLUEnvironmentFrame(localEnvironment);
+		const newEnvFrame = new EnvironmentFrame<ICLUValue>(localEnvironment);
 
 		for (const [key, value] of this.bindings) {
 			newEnvFrame.add(key, value.evaluate(globalInfo, localEnvironment, options));

@@ -12,7 +12,7 @@ import {
 
 import { CLUUserValue } from './data-types/user-value';
 
-import { isCluEvaluateOptions } from './cluster';
+import { isCluEvaluateOptions } from './cluster'; // Move to utils to break circular dependency
 
 import { CLUFunctionDefinitionBase } from './function-definition-base';
 

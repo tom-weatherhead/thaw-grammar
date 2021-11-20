@@ -8,13 +8,14 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
-import { CLUEnvironmentFrame, CLUGlobalInfo, ICLUExpression, ICLUValue } from '../../..';
+// CLUEnvironmentFrame,
+import { CLUGlobalInfo, EnvironmentFrame, ICLUExpression, ICLUValue } from '../../..';
 
 const ls = LanguageSelector.CLU;
 
 function createFnEval(): (str: string) => ICLUValue {
 	const { tokenizer, parser } = createInfrastructure(ls);
-	const localEnvironment = new CLUEnvironmentFrame();
+	const localEnvironment = new EnvironmentFrame<ICLUValue>();
 
 	const globalInfo = new CLUGlobalInfo();
 	// Or: const globalInfo = new CLUGlobalInfo({ tokenizer, parser });
