@@ -5,10 +5,11 @@ import { IParser, ITokenizer } from 'thaw-interpreter-types';
 import { ArgumentException } from 'thaw-interpreter-core';
 
 import { EnvironmentFrame, IEnvironmentFrame } from './environment-frame';
-import { IFunctionDefinition } from './function-definition';
 import { IExpression } from './iexpression';
+import { IFunctionDefinition } from './function-definition';
 import { IGlobalInfo } from './iglobal-info';
 // import { IGlobalInfoOps } from './iglobal-info-ops';
+import { IMacroDefinition } from './imacro-definition';
 
 // export abstract class GlobalInfoBase<T> implements IGlobalInfo<T>, IGlobalInfoOps {
 export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
@@ -16,6 +17,7 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 	protected readonly parser: IParser | undefined;
 	public readonly globalEnvironment: IEnvironmentFrame<T> = new EnvironmentFrame<T>();
 	public readonly functionDefinitions = new Map<string, IFunctionDefinition<T>>();
+	public readonly macroDefinitions = new Map<string, IMacroDefinition<T>>();
 	public dynamicScoping = false;
 	public debug = false;
 	private printedText = '';
@@ -29,10 +31,6 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 		this.tokenizer = options.tokenizer;
 		this.parser = options.parser;
 
-		// this.dynamicScoping = false;
-		// this.debug = false;
-		// this.printedText = '';
-
 		if (typeof this.tokenizer !== 'undefined' && typeof this.parser !== 'undefined') {
 			this.loadPresets();
 		}
@@ -43,8 +41,8 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 		this.globalEnvironment.dict.clear();
 		this.functionDefinitions.clear();
 
-		// if (MacroDefinitions !== null) {
-		// 	MacroDefinitions.clear();
+		// if (typeof this.macroDefinitions !== 'undefined') {
+		this.macroDefinitions.clear();
 		// }
 
 		this.setScoping(false); // Set the scope rules to "static" rather than "dynamic".

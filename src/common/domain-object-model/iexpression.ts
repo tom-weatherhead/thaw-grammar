@@ -6,6 +6,8 @@ import { IEnvironmentFrame } from './environment-frame';
 import { IGlobalInfo } from './iglobal-info';
 
 export interface IExpression<T> extends IStringifiable {
+	// readonly typename: string; // TODO
+
 	// By default, if localEnvironment is undefined, then use globalInfo.globalEnvironment
 	// options will be used by Clu and Smalltalk.
 	evaluate(
