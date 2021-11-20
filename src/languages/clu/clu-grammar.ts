@@ -20,6 +20,8 @@ import { LetUsage } from '../../common/domain-object-model/let-usage';
 
 import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
 
+import { SetUsage } from '../../common/domain-object-model/set-usage';
+
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
 import {
@@ -49,7 +51,7 @@ import { CLUOperatorUsage } from './domain-object-model/operator-usage';
 
 import { OnePartFunctionName } from './domain-object-model/one-part-function-name';
 
-import { CLUSetUsage } from './domain-object-model/set-usage';
+// import { CLUSetUsage } from './domain-object-model/set-usage';
 
 import {
 	isTwoPartFunctionName,
@@ -576,7 +578,7 @@ export class CluGrammar extends GrammarBase {
 			case '#set':
 				expression = semanticStack.pop() as ICLUExpression;
 				variable = semanticStack.pop() as ICLUVariable;
-				semanticStack.push(new CLUSetUsage(variable, expression));
+				semanticStack.push(new SetUsage<ICLUValue>(variable, expression));
 				break;
 
 			case '#begin':
