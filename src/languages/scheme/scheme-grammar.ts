@@ -17,24 +17,12 @@
 // VarExprList -> Lambda
 // BracketedExpression -> call/cc Expression
 
-import {
-	GrammarSymbol,
-	IToken,
-	// LanguageSelector,
-	LexicalState,
-	// ParserSelector,
-	SemanticStackType
-} from 'thaw-interpreter-types';
+import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { ArgumentException, createProduction, Name } from 'thaw-interpreter-core';
 
-// import { LexicalState, Token } from 'thaw-lexical-analyzer';
-
-// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
-// import { Name } from '../../common/domain-object-model/name';
 import { IVariable, Variable } from '../../common/domain-object-model/variable';
-// import { VariableList } from '../../common/domain-object-model/variable-list';
 
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 import { CondUsage } from '../../common/domain-object-model/cond-usage';
@@ -44,12 +32,7 @@ import { LetUsage } from '../../common/domain-object-model/let-usage';
 import { SetUsage } from '../../common/domain-object-model/set-usage';
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
-
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
-// import { ParserSelector } from '../../common/parser-selectors';
-// import { createProduction } from '../../common/production';
-// import { Symbol } from '../../common/symbol';
 
 // import { FloatLiteral } from '../lisp/domain-object-model/float-literal';
 import { IntegerLiteral } from '../lisp/domain-object-model/integer-literal';
@@ -1364,22 +1347,24 @@ export class SchemeGrammar extends GrammarBase {
 					case 'call/cc':
 						return GrammarSymbol.terminalCallCC;
 					default:
-						return GrammarSymbol.terminalID;
+						// return GrammarSymbol.terminalID;
+						break;
 				}
 
-			// break;
+				break;
 
 			default:
 				break;
 		}
 
-		throw new GrammarException(
-			`No grammar symbol matches token ${token.tokenType} ${
-				LexicalState[token.tokenType]
-			} (value '${token.tokenValue}')`,
-			token.line,
-			token.column
-		);
+		// throw new GrammarException(
+		// 	`No grammar symbol matches token ${token.tokenType} ${
+		// 		LexicalState[token.tokenType]
+		// 	} (value '${token.tokenValue}')`,
+		// 	token.line,
+		// 	token.column
+		// );
+		return super.tokenToSymbol(token);
 	}
 
 	public override pushTokenOntoSemanticStack(
@@ -1390,14 +1375,14 @@ export class SchemeGrammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			case GrammarSymbol.terminalID:
-			case GrammarSymbol.terminalPrint:
-			case GrammarSymbol.terminalPlus:
-			case GrammarSymbol.terminalMinus:
-			case GrammarSymbol.terminalMultiply:
-			case GrammarSymbol.terminalDivide:
-			case GrammarSymbol.terminalEquals:
-			case GrammarSymbol.terminalLessThan:
+			// case GrammarSymbol.terminalID:
+			// case GrammarSymbol.terminalPrint:
+			// case GrammarSymbol.terminalPlus:
+			// case GrammarSymbol.terminalMinus:
+			// case GrammarSymbol.terminalMultiply:
+			// case GrammarSymbol.terminalDivide:
+			// case GrammarSymbol.terminalEquals:
+			// case GrammarSymbol.terminalLessThan:
 			// case GrammarSymbol.terminalGreaterThan:
 			case GrammarSymbol.terminalCons:
 			case GrammarSymbol.terminalCar:
@@ -1417,18 +1402,18 @@ export class SchemeGrammar extends GrammarBase {
 			case GrammarSymbol.terminalListToString:
 			case GrammarSymbol.terminalStringToList:
 			case GrammarSymbol.terminalStringToSymbol:
-			case GrammarSymbol.terminalPow:
-			case GrammarSymbol.terminalExp:
-			case GrammarSymbol.terminalLn:
-			case GrammarSymbol.terminalSin:
-			case GrammarSymbol.terminalCos:
-			case GrammarSymbol.terminalTan:
+			// case GrammarSymbol.terminalPow:
+			// case GrammarSymbol.terminalExp:
+			// case GrammarSymbol.terminalLn:
+			// case GrammarSymbol.terminalSin:
+			// case GrammarSymbol.terminalCos:
+			// case GrammarSymbol.terminalTan:
 			case GrammarSymbol.terminalAtan2:
 			case GrammarSymbol.terminalFloor:
-			case GrammarSymbol.terminalThrow:
+			// case GrammarSymbol.terminalThrow:
 			case GrammarSymbol.terminalStringLessThan:
-			case GrammarSymbol.terminalLet:
-			case GrammarSymbol.terminalLetStar:
+			// case GrammarSymbol.terminalLet:
+			// case GrammarSymbol.terminalLetStar:
 			case GrammarSymbol.terminalLetRec:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
@@ -1450,27 +1435,29 @@ export class SchemeGrammar extends GrammarBase {
 				semanticStack.push(new LISPString(value as string));
 				break;
 
-			case GrammarSymbol.terminalLeftBracket:
-			case GrammarSymbol.terminalRightBracket:
+			// case GrammarSymbol.terminalLeftBracket:
+			// case GrammarSymbol.terminalRightBracket:
 			case GrammarSymbol.terminalApostrophe:
 			case GrammarSymbol.terminalQuoteKeyword:
-			case GrammarSymbol.terminalDefine:
-			case GrammarSymbol.terminalIf:
-			case GrammarSymbol.terminalWhile:
-			case GrammarSymbol.terminalSet:
-			case GrammarSymbol.terminalBegin:
-			case GrammarSymbol.terminalCond:
+			// case GrammarSymbol.terminalDefine:
+			// case GrammarSymbol.terminalIf:
+			// case GrammarSymbol.terminalWhile:
+			// case GrammarSymbol.terminalSet:
+			// case GrammarSymbol.terminalBegin:
+			// case GrammarSymbol.terminalCond:
 			case GrammarSymbol.terminalLambdaKeyword: // Added for Scheme
 			case GrammarSymbol.terminalCallCC: // Added for Scheme
-			case GrammarSymbol.terminalEOF:
+				// case GrammarSymbol.terminalEOF:
 				break;
 
 			default:
-				throw new GrammarException(
-					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
-					token.line,
-					token.column
-				);
+				// throw new GrammarException(
+				// 	`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
+				// 	token.line,
+				// 	token.column
+				// );
+				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
+				break;
 		}
 	}
 
