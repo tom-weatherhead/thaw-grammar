@@ -48,8 +48,6 @@ import {
 	TwoPartFunctionName
 } from './domain-object-model/two-part-function-name';
 
-// import { CLUVariable } from './domain-object-model/variable';
-
 export class CluGrammar extends GrammarBase {
 	// The CLU grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
 
