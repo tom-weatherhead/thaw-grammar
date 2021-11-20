@@ -9,16 +9,10 @@ import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { IVariable } from '../../../common/domain-object-model/variable';
 
 export class LetRecUsage<T> implements IExpression<T> {
-	// public readonly bindings: [Variable<T>, IExpression<T>][];
-	// public readonly expression: IExpression<T>;
-
 	constructor(
 		public readonly bindings: [IVariable<T>, IExpression<T>][],
 		public readonly expression: IExpression<T>
-	) {
-		// this.bindings = bindings;
-		// this.expression = expression;
-	}
+	) {}
 
 	public toString(): string {
 		const fnBindingAsString = ([v, expr]: [IVariable<T>, IExpression<T>]) => `(${v} ${expr})`;
@@ -27,11 +21,10 @@ export class LetRecUsage<T> implements IExpression<T> {
 		return `(letrec (${bindingsAsString}) ${this.expression})`;
 	}
 
-	// public evaluate(localEnvironment: EnvironmentFrame<T>, globalInfo: IGlobalInfo<T>): T {
-	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
 		globalInfo: IGlobalInfo<T>,
 		localEnvironment?: IEnvironmentFrame<T>,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
 		const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);

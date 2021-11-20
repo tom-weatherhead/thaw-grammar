@@ -417,6 +417,8 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 		// return (value as IntegerLiteral) !== undefined; // No.
 
 		return value instanceof IntegerLiteral;
+
+		// TODO: Use a type guard: return isIntegerLiteral(value);
 	}
 
 	public valueAsInteger(value: ISExpression): number {
@@ -519,21 +521,4 @@ export class SchemeGlobalInfo extends GlobalInfoBase<ISExpression> {
 
 		return true;
 	}
-
-	// public evaluate(str: string): ISExpression {
-	// 	if (typeof this.tokenizer === 'undefined') {
-	// 		throw new Error('SchemeGlobalInfo.evaluate() : this.tokenizer is undefined.');
-	// 	} else if (typeof this.parser === 'undefined') {
-	// 		throw new Error('SchemeGlobalInfo.evaluate() : this.parser is undefined.');
-	// 	}
-	//
-	// 	const parseResult = this.parser.parse(this.tokenizer.tokenize(str));
-	// 	const expr = parseResult as IExpression<ISExpression>;
-	//
-	// 	return expr.evaluate(this.globalEnvironment, this);
-	// }
-	//
-	// public evaluateToString(str: string): string {
-	// 	return this.evaluate(str).toString();
-	// }
 }

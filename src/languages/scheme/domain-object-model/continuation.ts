@@ -3,7 +3,6 @@
 import { EvaluationException } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -15,20 +14,12 @@ import { ContinuationException } from '../exceptions/continuation-exception';
 import { ICallableSExpression } from './icallable-sexpression';
 
 export class Continuation extends SExpressionBase implements ICallableSExpression {
-	// public readonly ccGuid: number; // was Guid in C#
-	// public readonly line: number;
-	// public readonly column: number;
-
 	constructor(
-		public readonly ccGuid: number,
+		public readonly ccGuid: number, // type was Guid in C#
 		public readonly line = 0,
 		public readonly column = 0
 	) {
 		super();
-
-		// this.ccGuid = ccGuid;
-		// this.line = line;
-		// this.column = column;
 	}
 
 	public toString(): string {

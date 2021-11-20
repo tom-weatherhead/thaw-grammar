@@ -5,7 +5,6 @@ import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 import { EvaluationException } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -17,16 +16,8 @@ import { Closure } from './closure';
 import { Continuation } from './continuation';
 
 export class CallCCUsage implements IExpression<ISExpression> {
-	// public readonly body: IExpression<ISExpression>;
+	constructor(public readonly body: IExpression<ISExpression>) {}
 
-	constructor(public readonly body: IExpression<ISExpression>) {
-		// this.body = body;
-	}
-
-	// public evaluate(
-	// 	localEnvironment: EnvironmentFrame<ISExpression>,
-	// 	globalInfo: IGlobalInfo<ISExpression>
-	// ): ISExpression {
 	public evaluate(
 		globalInfo: IGlobalInfo<ISExpression>,
 		localEnvironment?: IEnvironmentFrame<ISExpression>,

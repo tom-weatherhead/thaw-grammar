@@ -3,7 +3,6 @@
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
@@ -41,22 +40,18 @@ import { ICallableSExpression } from './icallable-sexpression';
 
 export class PrimOp extends SExpressionBase implements ICallableSExpression {
 	// Old (C#) comment: We cannot inherit from SExpressionBase here because we already inherit from LISPOperatorUsage.
-	public readonly name: Name;
+	// public readonly name: Name;
 	public readonly line: number;
 	public readonly column: number;
 
-	constructor(name: Name) {
+	constructor(public readonly name: Name) {
 		super();
 		// super(name, new ExpressionList<ISExpression>());
 
-		// if (['+', '-', '*', '/', '=', '<', '>'].indexOf(name.value) < 0) {
-		// 	throw new ArgumentException(`Primitive operator '${name.value}' not yet supported`, 'name', name.line, name.column);
-		// }
-
-		this.name = name;
+		// this.name = name;
 		// this.expectedNumArgs = 2; // Hard-coded for the operator +
-		this.line = name.line;
-		this.column = name.column;
+		this.line = this.name.line;
+		this.column = this.name.column;
 	}
 
 	public call(
@@ -117,8 +112,6 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 					this.name.column
 				);
 		}
-
-		// return globalInfo.falseValue;
 	}
 
 	public override isPrimOp(): boolean {
@@ -164,64 +157,6 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 //         }
 
 //         ExpectedNumArgs = expectedNumArgs;
-//     }
-
-//     public int ExpectedNumArgs { get; private set; }
-
-//     public int Line
-//     {
-//         get
-//         {
-//             return OperatorName.Line;
-//         }
-//     }
-
-//     public int Column
-//     {
-//         get
-//         {
-//             return OperatorName.Column;
-//         }
-//     }
-
-//     public bool IsNumber()
-//     {
-//         return false;
-//     }
-
-//     public bool IsSymbol()
-//     {
-//         return false;
-//     }
-
-//     public bool IsList()
-//     {
-//         return false;
-//     }
-
-//     public bool IsNull()
-//     {
-//         return false;
-//     }
-
-//     public bool IsPrimOp()
-//     {
-//         return true;
-//     }
-
-//     public bool IsClosure()
-//     {
-//         return false;
-//     }
-
-//     public bool IsString()
-//     {
-//         return false;
-//     }
-
-//     public override ISExpression Evaluate(EnvironmentFrame<ISExpression> localEnvironment, IGlobalInfo<ISExpression> globalInfo)
-//     {
-//         return this;
 //     }
 
 //     protected override bool TryGetExpectedNumArgs(IGlobalInfo<ISExpression> globalInfo, out int result)

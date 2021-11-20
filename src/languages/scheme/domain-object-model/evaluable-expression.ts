@@ -5,46 +5,26 @@ import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 import { EvaluationException } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { isVariableT, IVariable } from '../../../common/domain-object-model/variable';
-
-// import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 
 import { ICallableSExpression } from './icallable-sexpression';
 
 export class EvaluableExpression implements IExpression<ISExpression> {
-	// public readonly firstExpression: IExpression<ISExpression>;
-	// public readonly expressionList: ExpressionList<ISExpression>;
-
 	constructor(
 		public readonly firstExpression: IExpression<ISExpression>,
 		public readonly expressionList: IExpression<ISExpression>[]
-	) {
-		// console.log('Creating an instance of EvaluableExpression...');
-		// this.firstExpression = firstExpression;
-		// this.expressionList = expressionList;
-	}
+	) {}
 
-	// public evaluate(
-	// 	localEnvironment: EnvironmentFrame<ISExpression>,
-	// 	globalInfo: IGlobalInfo<ISExpression>
-	// ): ISExpression {
 	public evaluate(
 		globalInfo: IGlobalInfo<ISExpression>,
 		localEnvironment?: IEnvironmentFrame<ISExpression>,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): ISExpression {
-		// console.log('Evaluating an instance of EvaluableExpression...');
-		// const firstExprAsVariable = this.firstExpression as Variable<ISExpression>;
-		// console.log('this.firstExpression =', this.firstExpression);
-		// console.log('this.firstExpression as Variable<ISExpression> =', this.firstExpression as Variable<ISExpression>);
-		// console.log('this.firstExpression instanceof Variable<ISExpression> =', this.firstExpression instanceof Variable);
-
 		const env = ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment);
 
 		// if (firstExprAsVariable === undefined || localEnvironment.isDefined(firstExprAsVariable)) {
