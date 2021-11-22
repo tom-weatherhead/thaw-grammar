@@ -1,7 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/cond-usage.ts
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	// ISmalltalkFunctionDefinition,
@@ -13,30 +13,23 @@ import {
 import { unblockValue } from './data-types/block';
 
 export class SmalltalkCondUsage implements ISmalltalkExpression {
-	// public readonly List<KeyValuePair<ISmalltalkExpression, ISmalltalkExpression>> ExprPairList;
-
-	constructor(public readonly exprPairList: [ISmalltalkExpression, ISmalltalkExpression][]) {
-		// ExprPairList = exprPairList;
-	}
+	constructor(public readonly exprPairList: [ISmalltalkExpression, ISmalltalkExpression][]) {}
 
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
 		for (const [key, value] of this.exprPairList) {
-			//if (!exprPair.Key.Evaluate(localEnvironment, receiver, c, globalInfo).Equals(falseValue))
 			if (
 				!globalInfo.valueIsFalse(
-					unblockValue(key.evaluate(localEnvironment, receiver, c, globalInfo))
+					unblockValue(key.evaluate(globalInfo, localEnvironment, options))
 				)
 			) {
-				return value.evaluate(localEnvironment, receiver, c, globalInfo);
+				return value.evaluate(globalInfo, localEnvironment, options);
 			}
 		}
 
-		//return falseValue;
 		return globalInfo.falseValue;
 	}
 }

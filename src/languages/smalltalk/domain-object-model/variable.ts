@@ -11,8 +11,9 @@ import { ArgumentException } from 'thaw-interpreter-core';
 // import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
+	ISmalltalkEvaluateOptions,
 	ISmalltalkExpression,
 	ISmalltalkGlobalInfo,
 	ISmalltalkValue,
@@ -75,13 +76,21 @@ export class SmalltalkVariable implements ISmalltalkExpression, ISmalltalkVariab
 	// 	}
 	// }
 
+	/* eslint-disable no-unused-vars */
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
+		/* eslint-enable @typescript-eslint/no-unused-vars */
 	): ISmalltalkValue {
 		// See Kamin page 295.
+
+		// if (typeof options === 'undefined') {
+		// 	throw new Error('SmalltalkVariable.evaluate() : options is undefined');
+		// }
+
+		const optionsX = options as ISmalltalkEvaluateOptions;
+		const receiver = typeof optionsX !== 'undefined' ? optionsX.receiver : undefined;
 		const userVal = typeof receiver !== 'undefined' ? receiver.toUserValue() : undefined;
 
 		if (typeof localEnvironment !== 'undefined' && localEnvironment.isDefined(this)) {
@@ -97,6 +106,8 @@ export class SmalltalkVariable implements ISmalltalkExpression, ISmalltalkVariab
 			// ? Perhaps in class hierarchies, e.g. where class D inherits from C which inherits from B; one can imagine an instance where
 			//   userVal.Owner is class D, and c is class C (so that "super" refers to class B).
 			//   - I.e. if userVal is an object of type D, but we are in a function in class C.
+
+			const c = typeof optionsX !== 'undefined' ? optionsX.c : undefined;
 
 			if (typeof c !== 'undefined') {
 				// TODO: Should we use userVal.Owner instead of c?  2013/12/05 : I think not; the current implementation matches the code in SmalltalkSetUsage.Evaluate().

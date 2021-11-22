@@ -1,7 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/let-usage.ts
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkGlobalInfo,
@@ -18,17 +18,16 @@ export class SmalltalkLetUsage implements ISmalltalkExpression {
 	) {}
 
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
 		const newEnvFrame = new SmalltalkEnvironmentFrame(localEnvironment);
 
 		for (const [key, value] of this.bindings) {
-			newEnvFrame.add(key, value.evaluate(localEnvironment, receiver, c, globalInfo));
+			newEnvFrame.add(key, value.evaluate(globalInfo, localEnvironment, options));
 		}
 
-		return this.expression.evaluate(newEnvFrame, receiver, c, globalInfo);
+		return this.expression.evaluate(globalInfo, newEnvFrame, options);
 	}
 }

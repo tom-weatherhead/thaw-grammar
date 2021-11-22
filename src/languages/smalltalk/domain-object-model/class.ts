@@ -16,17 +16,10 @@ import {
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 export class SmalltalkClass implements ISmalltalkClass {
-	// public readonly className: string;
-	// public readonly superClassName: string;
 	public superClass: ISmalltalkClass | undefined = undefined;
-	// public readonly classVariableList: ISmalltalkVariable[];
-	// public readonly clRep: ISmalltalkVariable[];  // In other words, the list of instance variables.
-	// private exportedList: ISmalltalkFunctionDefinition[];
 	public readonly exportedDict = new Map<string, ISmalltalkFunctionDefinition>();
 	public readonly classVariableEnvFrame = new SmalltalkEnvironmentFrame();
 	// private static readonly reservedTypeNames = new HashSet<string>() { "int", "float", "symbol", "char", "string", "array" };
-	// private readonly line: number;
-	// private readonly column: number;
 
 	constructor(
 		public readonly className: string,
@@ -36,38 +29,7 @@ export class SmalltalkClass implements ISmalltalkClass {
 		private exportedList: ISmalltalkFunctionDefinition[],
 		public readonly line = 0,
 		public readonly column = 0
-	) {
-		// ClassName = className.Value;
-		// SuperClassName = superClassName;
-		// ClassVariableList = classVariableList;
-		// ClRep = clRep;
-		// ExportedList = exportedList;
-		// LineNumber = className.Line;
-		// ColumnNumber = className.Column;
-	}
-
-	// public SmalltxalkClass(string className, string superClassName, List<SmalltalkVariable> classVariableList, List<SmalltalkVariable> clRep, List<SmalltalkFunctionDefinition> exportedList)
-	//     : this(new Name(className, 0, 0), superClassName, classVariableList, clRep, exportedList)
-	// {
-	// }
-
-	// public override bool Equals(object obj)
-	// {
-	//
-	//     if (object.ReferenceEquals(this, obj))
-	//     {
-	//         return true;
-	//     }
-	//
-	//     var otherClass = obj as SmalltalkClass;
-	//
-	//     return otherClass != null && ClassName == otherClass.ClassName;
-	// }
-
-	// public override int GetHashCode()
-	// {
-	//     return ClassName.GetHashCode();
-	// }
+	) {}
 
 	public findMethod(methodName: string): {
 		method: ISmalltalkFunctionDefinition | undefined;
@@ -114,15 +76,22 @@ export class SmalltalkClass implements ISmalltalkClass {
 			tokenizer.tokenize(functionAsString)
 		) as ISmalltalkFunctionDefinition;
 
-		this.exportedDict.set(funcDef.functionName, funcDef);
+		this.exportedDict.set(funcDef.functionName.value, funcDef);
 	}
 
 	/* eslint-disable no-unused-vars */
+	// public evaluate(
+	// 	localEnvironment: ISmalltalkEnvironmentFrame | undefined,
+	// 	receiver: ISmalltalkValue, // | undefined,
+	// 	c: ISmalltalkClass | undefined,
+	// 	globalInfo: ISmalltalkGlobalInfo
+	// ): ISmalltalkValue {
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
+		/* eslint-enable @typescript-eslint/no-unused-vars */
 	): ISmalltalkValue {
 		// if (reservedTypeNames.indexOf(this.className) >= 0) {
 		//     throw new EvaluationException(
@@ -161,7 +130,7 @@ export class SmalltalkClass implements ISmalltalkClass {
 		}
 
 		for (const exportedFuncDef of this.exportedList) {
-			this.exportedDict.set(exportedFuncDef.functionName, exportedFuncDef);
+			this.exportedDict.set(exportedFuncDef.functionName.value, exportedFuncDef);
 		}
 
 		for (const classVariable of this.classVariableList) {

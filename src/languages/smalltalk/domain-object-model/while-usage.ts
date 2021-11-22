@@ -1,7 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/while-usage.ts
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkGlobalInfo,
@@ -16,18 +16,10 @@ export class SmalltalkWhileUsage implements ISmalltalkExpression {
 		public readonly body: ISmalltalkExpression
 	) {}
 
-	/*
-    public override string ToString()
-    {
-        return string.Format("(while {0} {1})", Condition, Body);
-    }
-     */
-
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
 		// #if DEAD_CODE
 		// ISmalltalkValue conditionValue;
@@ -50,10 +42,10 @@ export class SmalltalkWhileUsage implements ISmalltalkExpression {
 
 		while (
 			!globalInfo.valueIsFalse(
-				unblockValue(this.condition.evaluate(localEnvironment, receiver, c, globalInfo))
+				unblockValue(this.condition.evaluate(globalInfo, localEnvironment, options))
 			)
 		) {
-			this.body.evaluate(localEnvironment, receiver, c, globalInfo);
+			this.body.evaluate(globalInfo, localEnvironment, options);
 		}
 
 		return globalInfo.falseValue;

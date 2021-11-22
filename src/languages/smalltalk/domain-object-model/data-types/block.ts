@@ -5,7 +5,7 @@
 // SmalltalkBlock objects are immutable.
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkGlobalInfo,
@@ -42,11 +42,11 @@ export class SmalltalkBlock extends SmalltalkValueBase {
 
 	constructor(
 		public readonly expression: ISmalltalkExpression,
+		public readonly globalInfo: ISmalltalkGlobalInfo,
 		public readonly localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		public readonly receiver: ISmalltalkValue,
-		public readonly classX: ISmalltalkClass | undefined,
-		public readonly globalInfo: ISmalltalkGlobalInfo
-	) {
+		public readonly evalOptions: unknown | undefined // public readonly receiver: ISmalltalkValue,
+	) // public readonly classX: ISmalltalkClass | undefined,
+	{
 		super(objectClass);
 	}
 
@@ -75,10 +75,10 @@ export class SmalltalkBlock extends SmalltalkValueBase {
 			}
 
 			result = block.expression.evaluate(
+				block.globalInfo,
 				block.localEnvironment,
-				block.receiver,
-				block.classX,
-				block.globalInfo
+				// { c: block.classX, receiver: block.receiver }
+				block.evalOptions
 			);
 		}
 

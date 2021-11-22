@@ -564,7 +564,7 @@ export class SmalltalkGrammar extends GrammarBase {
 
 				functionName = semanticStack.pop() as Name;
 				semanticStack.push(
-					new SmalltalkFunctionDefinition(functionName.value, argumentList, body)
+					new SmalltalkFunctionDefinition(functionName, argumentList, body)
 				);
 				break;
 

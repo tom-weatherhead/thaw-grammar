@@ -4,6 +4,8 @@
 
 // **** BEGIN Bootstrapping Code Part 1: Set up objectClass ****
 
+import { Name } from 'thaw-interpreter-core';
+
 import { SmalltalkClass } from './class';
 
 import { SmalltalkFunctionDefinition } from './function-definition';
@@ -26,8 +28,8 @@ export const objectClass = new SmalltalkClass(
 	[],
 	[selfVar],
 	[
-		new SmalltalkFunctionDefinition('isNil', [], falseVar),
-		new SmalltalkFunctionDefinition('notNil', [], trueVar)
+		new SmalltalkFunctionDefinition(new Name('isNil'), [], falseVar),
+		new SmalltalkFunctionDefinition(new Name('notNil'), [], trueVar)
 	]
 );
 

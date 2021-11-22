@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/clu/domain-object-model/interfaces/ivalue.ts
 
-import { IEqualityComparable, IStringifiable } from 'thaw-common-utilities.ts';
+import { IEqualityComparable } from 'thaw-common-utilities.ts';
 
 import { Name } from 'thaw-interpreter-core';
 
@@ -19,7 +19,7 @@ export interface ICLUFunctionName {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ICLUValue extends ICLUExpression, IEqualityComparable, IStringifiable {}
+export interface ICLUValue extends ICLUExpression, IEqualityComparable {}
 
 // export interface ICLUVariable extends ICLUExpression {
 // 	readonly name: string;

@@ -1,7 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/let-star-usage.ts
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkGlobalInfo,
@@ -18,10 +18,9 @@ export class SmalltalkLetStarUsage implements ISmalltalkExpression {
 	) {}
 
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
 		// #if DEAD_CODE
 		// var newEnvFrame = new SmalltalkEnvironmentFrame(localEnvironment);
@@ -40,11 +39,11 @@ export class SmalltalkLetStarUsage implements ISmalltalkExpression {
 		for (const [key, value] of this.bindings) {
 			const newEnvFrame = new SmalltalkEnvironmentFrame(lastEnv);
 
-			newEnvFrame.add(key, value.evaluate(lastEnv, receiver, c, globalInfo));
+			newEnvFrame.add(key, value.evaluate(globalInfo, lastEnv, options));
 			lastEnv = newEnvFrame;
 		}
 
-		return this.expression.evaluate(lastEnv, receiver, c, globalInfo);
+		return this.expression.evaluate(globalInfo, lastEnv, options);
 		// #endif
 	}
 }

@@ -1,8 +1,9 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/set-usage.ts
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
+	ISmalltalkEvaluateOptions,
 	ISmalltalkExpression,
 	ISmalltalkGlobalInfo,
 	ISmalltalkValue,
@@ -17,22 +18,24 @@ export class SmalltalkSetUsage implements ISmalltalkExpression {
 		public readonly expression: ISmalltalkExpression
 	) {}
 
-	/*
-    public override string ToString()
-    {
-        return string.Format("(set {0} {1})", VariableName, Expression);
-    }
-     */
-
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
+		if (typeof options === 'undefined') {
+			throw new Error('SmalltalkVariable.evaluate() : options is undefined');
+		}
+
+		const optionsX = options as ISmalltalkEvaluateOptions;
+		const c = optionsX.c;
+		const receiver = optionsX.receiver;
+
 		const expressionValue = unblockValue(
-			this.expression.evaluate(localEnvironment, receiver, c, globalInfo)
+			this.expression.evaluate(globalInfo, localEnvironment, options)
 		);
+		// const receiver = options.receiver;
+		// const c = options.c;
 		const userVal = typeof receiver !== 'undefined' ? receiver.toUserValue() : undefined;
 
 		if (

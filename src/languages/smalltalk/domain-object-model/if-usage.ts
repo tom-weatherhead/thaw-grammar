@@ -1,7 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/if-usage.ts
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkGlobalInfo,
@@ -17,27 +17,19 @@ export class SmalltalkIfUsage implements ISmalltalkExpression {
 		public readonly elseBody: ISmalltalkExpression
 	) {}
 
-	/*
-    public override string ToString()
-    {
-        return string.Format("(if {0} {1} {2})", Condition, IfBody, ElseBody);
-    }
-     */
-
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
 		const conditionValue = unblockValue(
-			this.condition.evaluate(localEnvironment, receiver, c, globalInfo)
+			this.condition.evaluate(globalInfo, localEnvironment, options)
 		);
 
 		if (!globalInfo.valueIsFalse(conditionValue)) {
-			return this.ifBody.evaluate(localEnvironment, receiver, c, globalInfo);
+			return this.ifBody.evaluate(globalInfo, localEnvironment, options);
 		} else {
-			return this.elseBody.evaluate(localEnvironment, receiver, c, globalInfo);
+			return this.elseBody.evaluate(globalInfo, localEnvironment, options);
 		}
 	}
 }

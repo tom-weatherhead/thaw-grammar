@@ -2,9 +2,12 @@
 
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
+import { IVariable } from '../../../common/domain-object-model/variable';
+
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
+	ISmalltalkEvaluateOptions,
 	ISmalltalkExpression,
 	ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
@@ -923,14 +926,14 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 			// var funDef = globalInfo.FunctionDefinitions[OperatorName.Value];
 			const newEnvironment = new SmalltalkEnvironmentFrame();
 
-			newEnvironment.compose(funDef.argList, evaluatedArguments);
-
-			return funDef.body.evaluate(
-				newEnvironment,
-				globalInfo.objectInstance,
-				undefined,
-				globalInfo
+			newEnvironment.compose(
+				funDef.argList as IVariable<ISmalltalkValue>[],
+				evaluatedArguments
 			);
+
+			return funDef.body.evaluate(globalInfo, newEnvironment, {
+				receiver: globalInfo.objectInstance
+			});
 			// } catch (error: EvaluationException) {
 			// 	throw error;
 		} catch (error) {
@@ -945,22 +948,22 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 	private evaluateMethod(
 		method: ISmalltalkFunctionDefinition,
 		evaluatedArguments: ISmalltalkValue[],
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		// receiver: ISmalltalkValue, // | undefined,
+		// c: ISmalltalkClass | undefined,
+		globalInfo: ISmalltalkGlobalInfo,
+		options?: unknown
 	): ISmalltalkValue {
 		const newEnvironment = new SmalltalkEnvironmentFrame(/* globalInfo.GlobalEnvironment */);
 
-		newEnvironment.compose(method.argList, evaluatedArguments);
+		newEnvironment.compose(method.argList as IVariable<ISmalltalkValue>[], evaluatedArguments);
 
-		return method.body.evaluate(newEnvironment, receiver, c, globalInfo);
+		return method.body.evaluate(globalInfo, newEnvironment, options);
 	}
 
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
 		if (this.operatorName.value === 'new') {
 			return this.evaluateNew(globalInfo);
@@ -969,6 +972,16 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		let evaluatedArguments: ISmalltalkValue[];
 		// let method: ISmalltalkFunctionDefinition;
 		// SmalltalkClass classInWhichMethodWasFound;
+
+		// if (typeof options === 'undefined') {
+		// 	throw new Error('SmalltalkOperatorUsage.evaluate() : options is undefined');
+		// }
+
+		const optionsX = options as ISmalltalkEvaluateOptions;
+		// const c = optionsX.c;
+		const c = typeof optionsX !== 'undefined' ? optionsX.c : undefined;
+		// const receiver = optionsX.receiver;
+		// const receiver = typeof optionsX !== 'undefined' ? optionsX.receiver : undefined;
 
 		if (this.expressionList.length > 0) {
 			// const variable = this.expressionList[0] as ISmalltalkVariable;
@@ -1004,32 +1017,39 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 					);
 				}
 
-				const selfValue = selfVar.evaluate(localEnvironment, receiver, c, globalInfo);
+				const selfValue = selfVar.evaluate(globalInfo, localEnvironment, options);
 
 				evaluatedArguments = this.expressionList
 					.slice(1)
-					.map((expr) => expr.evaluate(localEnvironment, receiver, c, globalInfo));
+					.map((expr) => expr.evaluate(globalInfo, localEnvironment, options));
 
 				return this.evaluateMethod(
 					method,
 					evaluatedArguments,
-					selfValue,
-					classInWhichMethodWasFound,
-					globalInfo
+					// selfValue,
+					// classInWhichMethodWasFound,
+					globalInfo,
+					{ c: classInWhichMethodWasFound, receiver: selfValue }
 				);
 			}
 		}
 
 		// #if USE_BLOCKS
+
+		// if (typeof receiver === 'undefined') {
+		// 	throw new Error('SmalltalkOperatorUsage.evaluate() : receiver is undefined');
+		// }
+
 		// Create blocks (suspended computations) from the expressions.
 		evaluatedArguments = this.expressionList.map(
 			(expr) =>
 				new SmalltalkBlock(
 					expr,
+					globalInfo,
 					localEnvironment,
-					receiver,
-					c,
-					globalInfo
+					options
+					// receiver,
+					// c,
 				) as ISmalltalkValue
 		);
 		// #else
@@ -1069,9 +1089,10 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 				result = this.evaluateMethod(
 					method,
 					evaluatedArguments.slice(1),
-					evaluatedArguments[0],
-					newReceiverClass,
-					globalInfo
+					// evaluatedArguments[0],
+					// newReceiverClass,
+					globalInfo,
+					{ c: newReceiverClass, receiver: evaluatedArguments[0] }
 				);
 			} else {
 				result = this.evaluateGlobalFunction(evaluatedArguments, globalInfo);

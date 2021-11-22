@@ -2,6 +2,8 @@
 
 // **** BEGIN Bootstrapping Code Part 2 ****
 
+import { Name } from 'thaw-interpreter-core';
+
 import { SmalltalkBeginUsage } from './begin-usage';
 
 import { falseVar, objectClass, objectClassName, selfVar, trueVar } from './bootstrap';
@@ -109,15 +111,15 @@ export const nilClass = new SmalltalkClass(
 	[stringValueVar],
 	[
 		new SmalltalkFunctionDefinition(
-			'init',
+			new Name('init'),
 			[],
 			new SmalltalkBeginUsage(
 				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(nilValueAsString)),
 				[selfVar]
 			)
 		),
-		new SmalltalkFunctionDefinition('isNil', [], trueVar),
-		new SmalltalkFunctionDefinition('notNil', [], falseVar)
+		new SmalltalkFunctionDefinition(new Name('isNil'), [], trueVar),
+		new SmalltalkFunctionDefinition(new Name('notNil'), [], falseVar)
 	]
 );
 
@@ -129,14 +131,14 @@ export const falseClass = new SmalltalkClass(
 	[
 		// (define init () (begin (set stringValue '{1}') self)) :
 		new SmalltalkFunctionDefinition(
-			'init',
+			new Name('init'),
 			[],
 			new SmalltalkBeginUsage(
 				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(falseValueAsString)),
 				[selfVar]
 			)
 		),
-		new SmalltalkFunctionDefinition('if', [x, y], y)
+		new SmalltalkFunctionDefinition(new Name('if'), [x, y], y)
 		// ... and, or, xor, not
 	]
 );
@@ -149,14 +151,14 @@ export const trueClass = new SmalltalkClass(
 	[
 		// (define init () (begin (set stringValue '{1}') self)) :
 		new SmalltalkFunctionDefinition(
-			'init',
+			new Name('init'),
 			[],
 			new SmalltalkBeginUsage(
 				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(trueValueAsString)),
 				[selfVar]
 			)
 		),
-		new SmalltalkFunctionDefinition('if', [x, y], x)
+		new SmalltalkFunctionDefinition(new Name('if'), [x, y], x)
 		// ... and, or, xor, not
 	]
 );

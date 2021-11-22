@@ -1,7 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/begin-usage.ts
 
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkGlobalInfo,
@@ -14,23 +14,15 @@ export class SmalltalkBeginUsage implements ISmalltalkExpression {
 		public readonly expressionList: ISmalltalkExpression[]
 	) {}
 
-	/*
-    public override string ToString()
-    {
-        return string.Format("(begin {0} {1})", FirstExpression, ExpressionList);
-    }
-     */
-
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
-		let result = this.firstExpression.evaluate(localEnvironment, receiver, c, globalInfo);
+		let result = this.firstExpression.evaluate(globalInfo, localEnvironment, options);
 
 		for (const expression of this.expressionList) {
-			result = expression.evaluate(localEnvironment, receiver, c, globalInfo);
+			result = expression.evaluate(globalInfo, localEnvironment, options);
 		}
 
 		return result;

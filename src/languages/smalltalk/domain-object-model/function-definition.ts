@@ -1,7 +1,9 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/function-definition.ts
 
+import { Name } from 'thaw-interpreter-core';
+
 import {
-	ISmalltalkClass,
+	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkFunctionDefinition,
@@ -12,28 +14,20 @@ import {
 
 export class SmalltalkFunctionDefinition implements ISmalltalkFunctionDefinition {
 	constructor(
-		public readonly functionName: string,
+		public readonly functionName: Name,
 		public readonly argList: ISmalltalkVariable[],
 		public readonly body: ISmalltalkExpression
 	) {}
 
-	/*
-    public override string ToString()
-    {
-        return string.Format("(define {0} {1} {2})", FunctionName, ArgList, Body);
-    }
-     */
-
-	/* eslint-disable no-unused-vars */
+	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public evaluate(
-		localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		receiver: ISmalltalkValue, // | undefined,
-		c: ISmalltalkClass | undefined,
-		globalInfo: ISmalltalkGlobalInfo
+		globalInfo: ISmalltalkGlobalInfo, // I.e. IGlobalInfo<ISmalltalkValue>
+		localEnvironment: ISmalltalkEnvironmentFrame | undefined, // I.e. IEnvironmentFrame<ISmalltalkValue> | undefined
+		options?: unknown
 	): ISmalltalkValue {
-		globalInfo.functionDefinitions.set(this.functionName, this);
+		globalInfo.functionDefinitions.set(this.functionName.value, this);
 
 		return globalInfo.falseValue;
 	}
-	/* eslint-enable no-unused-vars */
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 }
