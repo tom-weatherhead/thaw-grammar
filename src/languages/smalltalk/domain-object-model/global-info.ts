@@ -390,6 +390,8 @@ import { ArgumentException } from 'thaw-interpreter-core';
 
 // import { IGlobalInfoOps } from '../../../common/domain-object-model/iglobal-info-ops';
 
+import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
 import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
@@ -406,7 +408,7 @@ import { SmalltalkInteger } from './data-types/integer';
 
 import { falseVar, objectClass, trueVar } from './bootstrap';
 
-import { SmalltalkEnvironmentFrame } from './environment-frame';
+// import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import {
 	falseValue,
@@ -420,7 +422,7 @@ import {
 export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
 	protected readonly tokenizer: ITokenizer | undefined;
 	protected readonly parser: IParser | undefined;
-	public readonly globalEnvironment = new SmalltalkEnvironmentFrame();
+	public readonly globalEnvironment = new EnvironmentFrame<ISmalltalkValue>();
 	public readonly functionDefinitions = new Map<string, ISmalltalkFunctionDefinition>();
 	public readonly classDict = new Map<string, ISmalltalkClass>();
 	public readonly objectInstance: ISmalltalkUserValue; // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.

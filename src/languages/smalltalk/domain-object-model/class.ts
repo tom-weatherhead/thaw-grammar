@@ -2,6 +2,8 @@
 
 import { IParser, ITokenizer } from 'thaw-interpreter-types';
 
+import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
 import {
 	ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
@@ -13,12 +15,12 @@ import {
 } from './interfaces/iexpression';
 // import { ISmalltalkValue } from './interfaces/ivalue';
 
-import { SmalltalkEnvironmentFrame } from './environment-frame';
+// import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 export class SmalltalkClass implements ISmalltalkClass {
 	public superClass: ISmalltalkClass | undefined = undefined;
 	public readonly exportedDict = new Map<string, ISmalltalkFunctionDefinition>();
-	public readonly classVariableEnvFrame = new SmalltalkEnvironmentFrame();
+	public readonly classVariableEnvFrame = new EnvironmentFrame<ISmalltalkValue>();
 	// private static readonly reservedTypeNames = new HashSet<string>() { "int", "float", "symbol", "char", "string", "array" };
 
 	constructor(

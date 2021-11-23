@@ -50,7 +50,7 @@ export { CLUGlobalInfo } from './languages/clu/domain-object-model/global-info';
 // Smalltalk (Kamin 7/8)
 export * from './languages/smalltalk/domain-object-model/interfaces/iexpression';
 export { SmalltalkGlobalInfo } from './languages/smalltalk/domain-object-model/global-info';
-export { SmalltalkEnvironmentFrame } from './languages/smalltalk/domain-object-model/environment-frame';
+// export { SmalltalkEnvironmentFrame } from './languages/smalltalk/domain-object-model/environment-frame';
 
 // Prolog (Kamin 8/8)
 export { PrologClause } from './languages/prolog/domain-object-model/prolog-clause';

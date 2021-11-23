@@ -7,9 +7,10 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 // import { SyntaxException } from 'thaw-parser';
 
 import {
+	EnvironmentFrame,
 	ISmalltalkExpression,
 	ISmalltalkValue,
-	SmalltalkEnvironmentFrame,
+	// SmalltalkEnvironmentFrame,
 	SmalltalkGlobalInfo
 } from '../../..';
 
@@ -146,7 +147,7 @@ test('SmalltalkGrammar recognize test', () => {
 // }
 
 test('SmalltalkGrammar addition test', () => {
-	const localEnvironment = new SmalltalkEnvironmentFrame();
+	const localEnvironment = new EnvironmentFrame<ISmalltalkValue>();
 	const globalInfo = new SmalltalkGlobalInfo();
 
 	const f = createFnParser<ISmalltalkExpression>(ls);

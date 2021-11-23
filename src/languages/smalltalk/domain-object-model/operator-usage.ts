@@ -2,6 +2,8 @@
 
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
+import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
 import { IVariable } from '../../../common/domain-object-model/variable';
 
 import {
@@ -33,7 +35,7 @@ import { SmalltalkUserValue } from './data-types/user-value';
 
 import { selfVar } from './bootstrap';
 
-import { SmalltalkEnvironmentFrame } from './environment-frame';
+// import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import { isSmalltalkVariable } from './variable';
 
@@ -327,7 +329,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 			);
 		}
 
-		const env = new SmalltalkEnvironmentFrame();
+		const env = new EnvironmentFrame<ISmalltalkValue>();
 
 		for (const memberVariable of smalltalkClass.clRep) {
 			env.dict.set(memberVariable.name, globalInfo.falseValue);
@@ -924,7 +926,7 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 			}
 
 			// var funDef = globalInfo.FunctionDefinitions[OperatorName.Value];
-			const newEnvironment = new SmalltalkEnvironmentFrame();
+			const newEnvironment = new EnvironmentFrame<ISmalltalkValue>();
 
 			newEnvironment.compose(
 				funDef.argList as IVariable<ISmalltalkValue>[],
@@ -953,7 +955,8 @@ export class SmalltalkOperatorUsage implements ISmalltalkExpression {
 		globalInfo: ISmalltalkGlobalInfo,
 		options?: unknown
 	): ISmalltalkValue {
-		const newEnvironment = new SmalltalkEnvironmentFrame(/* globalInfo.GlobalEnvironment */);
+		const newEnvironment =
+			new EnvironmentFrame<ISmalltalkValue>(/* globalInfo.GlobalEnvironment */);
 
 		newEnvironment.compose(method.argList as IVariable<ISmalltalkValue>[], evaluatedArguments);
 

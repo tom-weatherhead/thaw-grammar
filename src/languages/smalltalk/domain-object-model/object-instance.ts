@@ -6,6 +6,8 @@ import { Name } from 'thaw-interpreter-core';
 
 import { BeginUsage } from '../../../common/domain-object-model/begin-usage';
 
+import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
 import { FunctionDefinition } from '../../../common/domain-object-model/function-definition';
 
 import { ISmalltalkValue } from './interfaces/iexpression';
@@ -22,7 +24,7 @@ import { falseVar, objectClass, objectClassName, selfVar, trueVar } from './boot
 
 import { SmalltalkClass } from './class';
 
-import { SmalltalkEnvironmentFrame } from './environment-frame';
+// import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 // import { SmalltalkFunctionDefinition } from './function-definition';
 
@@ -32,7 +34,7 @@ import { SmalltalkVariable } from './variable';
 
 // Create objectInstance
 
-const objectInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+const objectInstanceEnvFrame = new EnvironmentFrame<ISmalltalkValue>();
 export const defaultValue = new SmalltalkInteger(0);
 
 objectInstanceEnvFrame.add(selfVar, defaultValue);
@@ -171,7 +173,7 @@ export const trueClass = new SmalltalkClass(
 
 // Create nilInstance
 
-const nilInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+const nilInstanceEnvFrame = new EnvironmentFrame<ISmalltalkValue>();
 
 nilInstanceEnvFrame.add(selfVar, defaultValue);
 
@@ -182,7 +184,7 @@ nilInstance.value.dict.set(selfVar.name, nilInstance);
 
 // Create falseInstance ...
 
-const falseInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+const falseInstanceEnvFrame = new EnvironmentFrame<ISmalltalkValue>();
 
 falseInstanceEnvFrame.add(selfVar, defaultValue);
 
@@ -193,7 +195,7 @@ falseInstance.value.dict.set(selfVar.name, falseInstance);
 
 // Create trueInstance ...
 
-const trueInstanceEnvFrame = new SmalltalkEnvironmentFrame();
+const trueInstanceEnvFrame = new EnvironmentFrame<ISmalltalkValue>();
 
 trueInstanceEnvFrame.add(selfVar, defaultValue);
 
