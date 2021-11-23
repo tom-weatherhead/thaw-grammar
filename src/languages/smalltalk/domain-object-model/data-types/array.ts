@@ -26,7 +26,7 @@ export function isSmalltalkArray(obj: unknown): obj is SmalltalkArray {
 
 export class SmalltalkArray extends SmalltalkValueBase implements ISmalltalkArray {
 	public readonly typename: string = typenameSmalltalkArray;
-	public readonly value: ISmalltalkValue[]; // = [];
+	public readonly value: ISmalltalkValue[];
 
 	constructor(size: number) {
 		super(objectClass);
@@ -39,24 +39,17 @@ export class SmalltalkArray extends SmalltalkValueBase implements ISmalltalkArra
 	}
 
 	public override toString(): string {
-		// return string.Join(" ", (IEnumerable<ISmalltalkValue>)Value);
+		return this.value.join(' ');
 
-		return '<array>';
+		// return '<array>';
 	}
 
-	// // Uncomment this method once ISmalltalkValue extends IEqualityComparable from common-utils.
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public equals(other: unknown): boolean {
-		// return isSmalltalkArray(other) && other.value.length === this.value.length && other.value.every((element: ISmalltalkValue, i: number) => element.equals(this.value[i]));
-
 		return (
 			isSmalltalkArray(other) &&
 			other.value.length === this.value.length &&
 			other.value.every((element, i) => element.equals(this.value[i]))
 		);
-
-		// return false;
 	}
 
 	public override getTypename(): string {

@@ -2,32 +2,8 @@
 
 // public class SmalltalkGlobalInfo : IGlobalInfoOps
 // {
-// 	public readonly SmalltalkEnvironmentFrame GlobalEnvironment = new SmalltalkEnvironmentFrame(null);
-// 	public readonly Dictionary<string, SmalltalkFunctionDefinition> FunctionDefinitions = new Dictionary<string, SmalltalkFunctionDefinition>();
-// 	public readonly Dictionary<string, SmalltalkClass> ClassDict = new Dictionary<string, SmalltalkClass>();
-// 	public readonly SmalltalkUserValue ObjectInstance;  // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.
-// 	public readonly Random RandomNumberGenerator = new Random();
-// 	private readonly HashSet<string> LoadedPresets = new HashSet<string>();
-//
-// 	public void Clear()
-// 	{
-// 		GlobalEnvironment.Dict.Clear();
-// 		FunctionDefinitions.Clear();
-// 		ClassDict.Clear();
-// 		LoadedPresets.Clear();
-//
-// 		ClassDict[SmalltalkObjectClassKeeper.ObjectClass.ClassName] = SmalltalkObjectClassKeeper.ObjectClass;
-// 	}
-//
 // 	public string LoadPreset(string presetName)
 // 	{
-// 		var presetNameToLower = presetName.ToLower();
-//
-// 		if (LoadedPresets.Contains(presetNameToLower))
-// 		{
-// 			return string.Format("The preset '{0}' has already been loaded.", presetName);
-// 		}
-//
 // 		switch (presetNameToLower)
 // 		{
 // 			case "collection":
@@ -390,15 +366,11 @@ import { ArgumentException } from 'thaw-interpreter-core';
 
 // import { IGlobalInfoOps } from '../../../common/domain-object-model/iglobal-info-ops';
 
-// import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 import {
 	ISmalltalkClass,
-	// ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
-	// ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
 	ISmalltalkUserValue,
 	ISmalltalkValue
@@ -409,8 +381,6 @@ import { unblockValue } from './data-types/block';
 import { SmalltalkInteger } from './data-types/integer';
 
 import { falseVar, objectClass, trueVar } from './bootstrap';
-
-// import { SmalltalkEnvironmentFrame } from './environment-frame';
 
 import {
 	falseValue,
@@ -425,15 +395,8 @@ export class SmalltalkGlobalInfo
 	extends GlobalInfoBase<ISmalltalkValue>
 	implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo
 {
-	// protected readonly tokenizer: ITokenizer | undefined;
-	// protected readonly parser: IParser | undefined;
-	// public readonly globalEnvironment = new EnvironmentFrame<ISmalltalkValue>();
-	// public readonly functionDefinitions = new Map<string, ISmalltalkFunctionDefinition>();
 	public readonly classDict = new Map<string, ISmalltalkClass>();
 	public readonly objectInstance: ISmalltalkUserValue; // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.
-	// public dynamicScoping = false;
-	// public debug = false;
-	// private printedText = '';
 
 	constructor(
 		options: {
@@ -442,13 +405,7 @@ export class SmalltalkGlobalInfo
 		} = {}
 	) {
 		super(options);
-		// this.tokenizer = options.tokenizer;
-		// this.parser = options.parser;
-		//
-		// this.loadPresets();
-		// }
 
-		// constructor() {
 		// if (typeof options.parser !== 'undefined' && typeof options.tokenizer !== 'undefined') {
 		// 	// new SmalltalkFunctionDefinition('isNil', [], new SmalltalkVariable('false'));
 		// 	objectClass.addFunction(
@@ -489,20 +446,6 @@ export class SmalltalkGlobalInfo
 		// C: this.globalEnvironment.add(trueVar, trueInstance);
 	}
 
-	// public initialize(): void {
-	// 	// Restore the state of the interpreter to its newly-created state.
-	// 	this.globalEnvironment.dict.clear();
-	// 	this.functionDefinitions.clear();
-	//
-	// 	// if (typeof this.macroDefinitions !== 'undefined') {
-	// 	// this.macroDefinitions.clear();
-	// 	// }
-	//
-	// 	// this.setScoping(false); // Set the scope rules to "static" rather than "dynamic".
-	// 	// this.setDebug(false); // Turn debug mode off.
-	// 	// this.clearPrintedText();
-	// }
-
 	public get falseValue(): ISmalltalkValue {
 		return falseValue;
 	}
@@ -541,10 +484,6 @@ export class SmalltalkGlobalInfo
 	}
 
 	public override loadPresets(): void {
-		// expr.Evaluate(null, ObjectInstance, null, this); ->
-
-		// const f = (str: string) => (parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression).evaluate(this.globalEnvironment, this.objectInstance, undefined, this);
-
 		if (typeof this.tokenizer === 'undefined' || typeof this.parser === 'undefined') {
 			return;
 		}
@@ -614,43 +553,7 @@ export class SmalltalkGlobalInfo
 	// )", NilValueAsString, TrueVariableName, FalseVariableName));
 	// 		Evaluate("(set nil (init (new UndefinedObject)))");
 
-	// public loadPreset(presetName: string): string {
-	// 	throw new ArgumentException(
-	// 		`SmalltalkGlobalInfo.loadPreset() : Unknown preset name '${presetName}'.`,
-	// 		'presetName'
-	// 	);
-	// }
-	//
-	// public clearPrintedText(): void {
-	// 	this.printedText = '';
-	// }
-	//
-	// public print(evaluatedArguments: ISmalltalkValue[]): void {
-	// 	this.printedText =
-	// 		this.printedText +
-	// 		evaluatedArguments
-	// 			.map((evaluatedArgument: ISmalltalkValue) => `${evaluatedArgument}`)
-	// 			.join(', ') +
-	// 		'\n';
-	// }
-
-	// protected printDirect(str: string): void {
-	// 	// ThAW 2021-06-24 : Temporary
-	// 	this.printedText = this.printedText + str + '\n';
-	// }
-
-	// public getPrintedText(): string {
-	// 	return this.printedText;
-	// }
-
-	public override evaluate(
-		str: string
-		// ,
-		// options: {
-		// 	localEnvironment?: ISmalltalkEnvironmentFrame;
-		// 	c?: ISmalltalkClass;
-		// } = {}
-	): ISmalltalkValue {
+	public override evaluate(str: string): ISmalltalkValue {
 		if (typeof this.tokenizer === 'undefined') {
 			throw new Error('GlobalInfoBase.evaluate() : this.tokenizer is undefined.');
 		} else if (typeof this.parser === 'undefined') {

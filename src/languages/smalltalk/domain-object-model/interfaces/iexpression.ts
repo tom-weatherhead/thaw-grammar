@@ -101,7 +101,7 @@ export interface ISmalltalkGlobalInfo extends IGlobalInfo<ISmalltalkValue> {
 	// evaluate(expr: ISmalltalkExpression): ISmalltalkValue;
 }
 
-export interface ISmalltalkVariable extends IVariable<ISmalltalkValue> {
+export interface ISmalltalkVariable extends IEqualityComparable, IVariable<ISmalltalkValue> {
 	readonly typename: string;
 	// readonly name: string;
 }
