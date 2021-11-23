@@ -6,7 +6,15 @@ import { Name } from 'thaw-interpreter-core';
 
 import { BeginUsage } from '../../../common/domain-object-model/begin-usage';
 
+import { FunctionDefinition } from '../../../common/domain-object-model/function-definition';
+
 import { ISmalltalkValue } from './interfaces/iexpression';
+
+import { SmalltalkInteger } from './data-types/integer';
+
+import { SmalltalkString } from './data-types/string';
+
+import { SmalltalkUserValue } from './data-types/user-value';
 
 // import { SmalltalkBeginUsage } from './begin-usage';
 
@@ -16,15 +24,9 @@ import { SmalltalkClass } from './class';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
-import { SmalltalkFunctionDefinition } from './function-definition';
-
-import { SmalltalkInteger } from './data-types/integer';
+// import { SmalltalkFunctionDefinition } from './function-definition';
 
 import { SmalltalkSetUsage } from './set-usage';
-
-import { SmalltalkString } from './data-types/string';
-
-import { SmalltalkUserValue } from './data-types/user-value';
 
 import { SmalltalkVariable } from './variable';
 
@@ -114,7 +116,7 @@ export const nilClass = new SmalltalkClass(
 	[],
 	[stringValueVar],
 	[
-		new SmalltalkFunctionDefinition(
+		new FunctionDefinition<ISmalltalkValue>(
 			new Name('init'),
 			[],
 			new BeginUsage<ISmalltalkValue>(
@@ -122,8 +124,8 @@ export const nilClass = new SmalltalkClass(
 				[selfVar]
 			)
 		),
-		new SmalltalkFunctionDefinition(new Name('isNil'), [], trueVar),
-		new SmalltalkFunctionDefinition(new Name('notNil'), [], falseVar)
+		new FunctionDefinition<ISmalltalkValue>(new Name('isNil'), [], trueVar),
+		new FunctionDefinition<ISmalltalkValue>(new Name('notNil'), [], falseVar)
 	]
 );
 
@@ -134,7 +136,7 @@ export const falseClass = new SmalltalkClass(
 	[stringValueVar],
 	[
 		// (define init () (begin (set stringValue '{1}') self)) :
-		new SmalltalkFunctionDefinition(
+		new FunctionDefinition<ISmalltalkValue>(
 			new Name('init'),
 			[],
 			new BeginUsage<ISmalltalkValue>(
@@ -142,7 +144,7 @@ export const falseClass = new SmalltalkClass(
 				[selfVar]
 			)
 		),
-		new SmalltalkFunctionDefinition(new Name('if'), [x, y], y)
+		new FunctionDefinition<ISmalltalkValue>(new Name('if'), [x, y], y)
 		// ... and, or, xor, not
 	]
 );
@@ -154,7 +156,7 @@ export const trueClass = new SmalltalkClass(
 	[stringValueVar],
 	[
 		// (define init () (begin (set stringValue '{1}') self)) :
-		new SmalltalkFunctionDefinition(
+		new FunctionDefinition<ISmalltalkValue>(
 			new Name('init'),
 			[],
 			new BeginUsage<ISmalltalkValue>(
@@ -162,7 +164,7 @@ export const trueClass = new SmalltalkClass(
 				[selfVar]
 			)
 		),
-		new SmalltalkFunctionDefinition(new Name('if'), [x, y], x)
+		new FunctionDefinition<ISmalltalkValue>(new Name('if'), [x, y], x)
 		// ... and, or, xor, not
 	]
 );

@@ -28,6 +28,8 @@ import { IfUsage } from '../../common/domain-object-model/if-usage';
 
 import { CondUsage } from '../../common/domain-object-model/cond-usage';
 
+import { FunctionDefinition } from '../../common/domain-object-model/function-definition';
+
 import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
 
 import { LetUsage } from '../../common/domain-object-model/let-usage';
@@ -48,7 +50,7 @@ import { SmalltalkCharacter } from './domain-object-model/data-types/character';
 import { SmalltalkClass } from './domain-object-model/class';
 // import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
 import { SmalltalkFloat } from './domain-object-model/data-types/float';
-import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
+// import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 // import { SmalltalkIfUsage } from './domain-object-model/if-usage';
 import { SmalltalkInteger } from './domain-object-model/data-types/integer';
 // import { SmalltalkLetStarUsage } from './domain-object-model/let-star-usage';
@@ -577,7 +579,7 @@ export class SmalltalkGrammar extends GrammarBase {
 
 				functionName = semanticStack.pop() as Name;
 				semanticStack.push(
-					new SmalltalkFunctionDefinition(functionName, argumentList, body)
+					new FunctionDefinition<ISmalltalkValue>(functionName, argumentList, body)
 				);
 				break;
 

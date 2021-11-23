@@ -6,9 +6,13 @@
 
 import { Name } from 'thaw-interpreter-core';
 
+import { FunctionDefinition } from '../../../common/domain-object-model/function-definition';
+
+import { ISmalltalkValue } from './interfaces/iexpression';
+
 import { SmalltalkClass } from './class';
 
-import { SmalltalkFunctionDefinition } from './function-definition';
+// import { SmalltalkFunctionDefinition } from './function-definition';
 
 import { SmalltalkVariable } from './variable';
 
@@ -28,8 +32,8 @@ export const objectClass = new SmalltalkClass(
 	[],
 	[selfVar],
 	[
-		new SmalltalkFunctionDefinition(new Name('isNil'), [], falseVar),
-		new SmalltalkFunctionDefinition(new Name('notNil'), [], trueVar)
+		new FunctionDefinition<ISmalltalkValue>(new Name('isNil'), [], falseVar),
+		new FunctionDefinition<ISmalltalkValue>(new Name('notNil'), [], trueVar)
 	]
 );
 
