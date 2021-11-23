@@ -43,9 +43,9 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 		this.tokenizer = options.tokenizer;
 		this.parser = options.parser;
 
-		if (typeof this.tokenizer !== 'undefined' && typeof this.parser !== 'undefined') {
-			this.loadPresets();
-		}
+		// if (typeof this.tokenizer !== 'undefined' && typeof this.parser !== 'undefined') {
+		// 	this.loadPresets();
+		// }
 	}
 
 	public initialize(): void {
@@ -60,6 +60,10 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 		this.setScoping(false); // Set the scope rules to "static" rather than "dynamic".
 		this.setDebug(false); // Turn debug mode off.
 		this.clearPrintedText();
+
+		if (typeof this.tokenizer !== 'undefined' && typeof this.parser !== 'undefined') {
+			this.loadPresets();
+		}
 	}
 
 	public abstract get falseValue(): T;
