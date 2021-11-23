@@ -24,16 +24,17 @@ const ls = LanguageSelector.Smalltalk;
 
 function createFnEval(): (str: string) => ISmalltalkValue {
 	const { tokenizer, parser } = createInfrastructure(ls);
-	const globalInfo = new SmalltalkGlobalInfo();
+	const globalInfo = new SmalltalkGlobalInfo({ tokenizer, parser });
 
-	globalInfo.loadPresets(tokenizer, parser);
+	// globalInfo.loadPresets(tokenizer, parser);
 
 	// Or:
 	// const globalInfo = new SmalltalkGlobalInfo({ tokenizer, parser });
 	// globalInfo.loadPresets();
 
 	return (str: string) =>
-		globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression);
+		// globalInfo.evaluate(parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression);
+		globalInfo.evaluate(str);
 }
 
 function evalStringsToValues(strs: string[], n = 1): ISmalltalkValue[] {
@@ -156,12 +157,7 @@ test('SmalltalkGrammar addition test', () => {
 
 	const str = `(+ ${a} ${b})`;
 	const actualSmalltalkExpression = f(str);
-	const actualSmalltalkValue = actualSmalltalkExpression.evaluate(
-		localEnvironment,
-		undefined,
-		undefined,
-		globalInfo
-	);
+	const actualSmalltalkValue = actualSmalltalkExpression.evaluate(globalInfo, localEnvironment);
 
 	// Evaluation: Method 1:
 	expect(actualSmalltalkValue.isInteger).toBe(true);

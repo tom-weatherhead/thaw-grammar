@@ -390,13 +390,15 @@ import { ArgumentException } from 'thaw-interpreter-core';
 
 // import { IGlobalInfoOps } from '../../../common/domain-object-model/iglobal-info-ops';
 
-import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+// import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+
+import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 import {
 	ISmalltalkClass,
-	ISmalltalkEnvironmentFrame,
+	// ISmalltalkEnvironmentFrame,
 	ISmalltalkExpression,
-	ISmalltalkFunctionDefinition,
+	// ISmalltalkFunctionDefinition,
 	ISmalltalkGlobalInfo,
 	ISmalltalkUserValue,
 	ISmalltalkValue
@@ -419,16 +421,19 @@ import {
 	trueValue
 } from './object-instance';
 
-export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo {
-	protected readonly tokenizer: ITokenizer | undefined;
-	protected readonly parser: IParser | undefined;
-	public readonly globalEnvironment = new EnvironmentFrame<ISmalltalkValue>();
-	public readonly functionDefinitions = new Map<string, ISmalltalkFunctionDefinition>();
+export class SmalltalkGlobalInfo
+	extends GlobalInfoBase<ISmalltalkValue>
+	implements /* IGlobalInfoOps, */ ISmalltalkGlobalInfo
+{
+	// protected readonly tokenizer: ITokenizer | undefined;
+	// protected readonly parser: IParser | undefined;
+	// public readonly globalEnvironment = new EnvironmentFrame<ISmalltalkValue>();
+	// public readonly functionDefinitions = new Map<string, ISmalltalkFunctionDefinition>();
 	public readonly classDict = new Map<string, ISmalltalkClass>();
 	public readonly objectInstance: ISmalltalkUserValue; // Passed to Evaluate() by the interpreter; see Kamin pages 297-298.
-	public dynamicScoping = false;
-	public debug = false;
-	private printedText = '';
+	// public dynamicScoping = false;
+	// public debug = false;
+	// private printedText = '';
 
 	constructor(
 		options: {
@@ -436,10 +441,11 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 			tokenizer?: ITokenizer;
 		} = {}
 	) {
-		this.tokenizer = options.tokenizer;
-		this.parser = options.parser;
-
-		this.loadPresets();
+		super(options);
+		// this.tokenizer = options.tokenizer;
+		// this.parser = options.parser;
+		//
+		// this.loadPresets();
 		// }
 
 		// constructor() {
@@ -483,19 +489,19 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		// C: this.globalEnvironment.add(trueVar, trueInstance);
 	}
 
-	public initialize(): void {
-		// Restore the state of the interpreter to its newly-created state.
-		this.globalEnvironment.dict.clear();
-		this.functionDefinitions.clear();
-
-		// if (typeof this.macroDefinitions !== 'undefined') {
-		// this.macroDefinitions.clear();
-		// }
-
-		// this.setScoping(false); // Set the scope rules to "static" rather than "dynamic".
-		// this.setDebug(false); // Turn debug mode off.
-		// this.clearPrintedText();
-	}
+	// public initialize(): void {
+	// 	// Restore the state of the interpreter to its newly-created state.
+	// 	this.globalEnvironment.dict.clear();
+	// 	this.functionDefinitions.clear();
+	//
+	// 	// if (typeof this.macroDefinitions !== 'undefined') {
+	// 	// this.macroDefinitions.clear();
+	// 	// }
+	//
+	// 	// this.setScoping(false); // Set the scope rules to "static" rather than "dynamic".
+	// 	// this.setDebug(false); // Turn debug mode off.
+	// 	// this.clearPrintedText();
+	// }
 
 	public get falseValue(): ISmalltalkValue {
 		return falseValue;
@@ -534,7 +540,7 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 		return new SmalltalkInteger(value);
 	}
 
-	public loadPresets(): void {
+	public override loadPresets(): void {
 		// expr.Evaluate(null, ObjectInstance, null, this); ->
 
 		// const f = (str: string) => (parser.parse(tokenizer.tokenize(str)) as ISmalltalkExpression).evaluate(this.globalEnvironment, this.objectInstance, undefined, this);
@@ -608,44 +614,57 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 	// )", NilValueAsString, TrueVariableName, FalseVariableName));
 	// 		Evaluate("(set nil (init (new UndefinedObject)))");
 
-	public loadPreset(presetName: string): string {
-		throw new ArgumentException(
-			`SmalltalkGlobalInfo.loadPreset() : Unknown preset name '${presetName}'.`,
-			'presetName'
-		);
-	}
-
-	public clearPrintedText(): void {
-		this.printedText = '';
-	}
-
-	public print(evaluatedArguments: ISmalltalkValue[]): void {
-		this.printedText =
-			this.printedText +
-			evaluatedArguments
-				.map((evaluatedArgument: ISmalltalkValue) => `${evaluatedArgument}`)
-				.join(', ') +
-			'\n';
-	}
+	// public loadPreset(presetName: string): string {
+	// 	throw new ArgumentException(
+	// 		`SmalltalkGlobalInfo.loadPreset() : Unknown preset name '${presetName}'.`,
+	// 		'presetName'
+	// 	);
+	// }
+	//
+	// public clearPrintedText(): void {
+	// 	this.printedText = '';
+	// }
+	//
+	// public print(evaluatedArguments: ISmalltalkValue[]): void {
+	// 	this.printedText =
+	// 		this.printedText +
+	// 		evaluatedArguments
+	// 			.map((evaluatedArgument: ISmalltalkValue) => `${evaluatedArgument}`)
+	// 			.join(', ') +
+	// 		'\n';
+	// }
 
 	// protected printDirect(str: string): void {
 	// 	// ThAW 2021-06-24 : Temporary
 	// 	this.printedText = this.printedText + str + '\n';
 	// }
 
-	public getPrintedText(): string {
-		return this.printedText;
-	}
+	// public getPrintedText(): string {
+	// 	return this.printedText;
+	// }
 
-	public evaluate(
-		expr: ISmalltalkExpression,
-		options: {
-			localEnvironment?: ISmalltalkEnvironmentFrame;
-			c?: ISmalltalkClass;
-		} = {}
+	public override evaluate(
+		str: string
+		// ,
+		// options: {
+		// 	localEnvironment?: ISmalltalkEnvironmentFrame;
+		// 	c?: ISmalltalkClass;
+		// } = {}
 	): ISmalltalkValue {
-		return expr.evaluate(this, options.localEnvironment, {
-			c: options.c,
+		if (typeof this.tokenizer === 'undefined') {
+			throw new Error('GlobalInfoBase.evaluate() : this.tokenizer is undefined.');
+		} else if (typeof this.parser === 'undefined') {
+			throw new Error('GlobalInfoBase.evaluate() : this.parser is undefined.');
+		}
+
+		const parseResult = this.parser.parse(this.tokenizer.tokenize(str));
+		const expr = parseResult as ISmalltalkExpression;
+
+		// return expr.evaluate(this, options.localEnvironment, {
+		// 	c: options.c,
+		// 	receiver: this.objectInstance
+		// });
+		return expr.evaluate(this, undefined, {
 			receiver: this.objectInstance
 		});
 	}
