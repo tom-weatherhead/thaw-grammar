@@ -26,6 +26,8 @@ import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 
 import { IfUsage } from '../../common/domain-object-model/if-usage';
 
+import { CondUsage } from '../../common/domain-object-model/cond-usage';
+
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
 import {
@@ -40,7 +42,7 @@ import { SmalltalkArray } from './domain-object-model/data-types/array';
 // import { SmalltalkBeginUsage } from './domain-object-model/begin-usage';
 import { SmalltalkCharacter } from './domain-object-model/data-types/character';
 import { SmalltalkClass } from './domain-object-model/class';
-import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
+// import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
 import { SmalltalkFloat } from './domain-object-model/data-types/float';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 // import { SmalltalkIfUsage } from './domain-object-model/if-usage';
@@ -685,7 +687,8 @@ export class SmalltalkGrammar extends GrammarBase {
 				expression2 = semanticStack.pop() as ISmalltalkExpression;
 				expression = semanticStack.pop() as ISmalltalkExpression;
 				exprPairList.unshift([expression, expression2]);
-				semanticStack.push(new SmalltalkCondUsage(exprPairList));
+				// semanticStack.push(new SmalltalkCondUsage(exprPairList));
+				semanticStack.push(new CondUsage<ISmalltalkValue>(exprPairList));
 				break;
 
 			case '#exprPairList':

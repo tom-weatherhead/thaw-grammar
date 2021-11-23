@@ -1,7 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/smalltalk/domain-object-model/set-usage.ts
 
 import {
-	// ISmalltalkClass,
 	ISmalltalkEnvironmentFrame,
 	ISmalltalkEvaluateOptions,
 	ISmalltalkExpression,
@@ -34,8 +33,6 @@ export class SmalltalkSetUsage implements ISmalltalkExpression {
 		const expressionValue = unblockValue(
 			this.expression.evaluate(globalInfo, localEnvironment, options)
 		);
-		// const receiver = options.receiver;
-		// const c = options.c;
 		const userVal = typeof receiver !== 'undefined' ? receiver.toUserValue() : undefined;
 
 		if (

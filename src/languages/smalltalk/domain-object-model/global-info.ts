@@ -382,16 +382,6 @@
 // 		LoadedPresets.Add(presetNameToLower);
 // 		return string.Format("The preset '{0}' has been successfully loaded.", presetName);
 // 	}
-//
-// 	public bool SetScoping(bool dynamicScoping)
-// 	{
-// 		return false;
-// 	}
-//
-// 	public bool SetDebug(bool debug)
-// 	{
-// 		return false;
-// 	}
 // }
 
 import { IParser, ITokenizer } from 'thaw-interpreter-types';
@@ -410,13 +400,14 @@ import {
 	ISmalltalkValue
 } from './interfaces/iexpression';
 
+import { unblockValue } from './data-types/block';
+
+import { SmalltalkInteger } from './data-types/integer';
+
 import { falseVar, objectClass, trueVar } from './bootstrap';
 
 import { SmalltalkEnvironmentFrame } from './environment-frame';
 
-import { SmalltalkInteger } from './data-types/integer';
-
-// import { falseClass, falseInstance, falseValue, nilClass, nilInstance, nilVar, objectInstance, trueClass, trueInstance, trueValue } from './object-instance';
 import {
 	falseValue,
 	nilClass,
@@ -513,7 +504,7 @@ export class SmalltalkGlobalInfo implements /* IGlobalInfoOps, */ ISmalltalkGlob
 	}
 
 	public valueIsFalse(value: ISmalltalkValue): boolean {
-		return value.toInteger() === 0;
+		return unblockValue(value).toInteger() === 0;
 	}
 
 	public valueIsTrue(value: ISmalltalkValue): boolean {
