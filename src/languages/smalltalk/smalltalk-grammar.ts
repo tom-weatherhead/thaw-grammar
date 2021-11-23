@@ -28,6 +28,10 @@ import { IfUsage } from '../../common/domain-object-model/if-usage';
 
 import { CondUsage } from '../../common/domain-object-model/cond-usage';
 
+import { LetStarUsage } from '../../common/domain-object-model/let-star-usage';
+
+import { LetUsage } from '../../common/domain-object-model/let-usage';
+
 import { WhileUsage } from '../../common/domain-object-model/while-usage';
 
 import {
@@ -47,8 +51,8 @@ import { SmalltalkFloat } from './domain-object-model/data-types/float';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
 // import { SmalltalkIfUsage } from './domain-object-model/if-usage';
 import { SmalltalkInteger } from './domain-object-model/data-types/integer';
-import { SmalltalkLetStarUsage } from './domain-object-model/let-star-usage';
-import { SmalltalkLetUsage } from './domain-object-model/let-usage';
+// import { SmalltalkLetStarUsage } from './domain-object-model/let-star-usage';
+// import { SmalltalkLetUsage } from './domain-object-model/let-usage';
 import { SmalltalkOperatorUsage } from './domain-object-model/operator-usage';
 import { SmalltalkSetUsage } from './domain-object-model/set-usage';
 import { SmalltalkString } from './domain-object-model/data-types/string';
@@ -532,10 +536,10 @@ export class SmalltalkGrammar extends GrammarBase {
 
 		switch (letKeyword) {
 			case 'let':
-				return new SmalltalkLetUsage(varExprList, expression);
+				return new LetUsage<ISmalltalkValue>(varExprList, expression);
 
 			case 'let*':
-				return new SmalltalkLetStarUsage(varExprList, expression);
+				return new LetStarUsage<ISmalltalkValue>(varExprList, expression);
 
 			default:
 				throw new ArgumentException(
