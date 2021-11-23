@@ -5,7 +5,17 @@ import { IFunctionDefinition } from './function-definition';
 
 // T is the language's value type.
 
-export interface IGlobalInfo<T> {
+export interface IGlobalInfoForInterpreter {
+	initialize(): void; // Restore the state of the global info object to its newly-created state.
+
+	evaluateToString(str: string): string;
+
+	// **** Printing text to stdout ****
+	clearPrintedText(): void;
+	getPrintedText(): string;
+}
+
+export interface IGlobalInfo<T> extends IGlobalInfoForInterpreter {
 	// **** Public instance fields ****
 	globalEnvironment: IEnvironmentFrame<T>;
 	functionDefinitions: Map<string, IFunctionDefinition<T>>;
@@ -16,8 +26,6 @@ export interface IGlobalInfo<T> {
 	trueValue: T;
 
 	// **** Public instance methods ****
-	initialize(): void; // Restore the state of the global info object to its newly-created state.
-
 	valueIsFalse(value: T): boolean;
 
 	valueIsInteger(value: T): boolean;
@@ -38,7 +46,7 @@ export interface IGlobalInfo<T> {
 	loadPresets(): void;
 
 	// **** Printing text to stdout ****
-	clearPrintedText(): void;
+	// clearPrintedText(): void;
 	print(evaluatedArguments: T[]): void;
-	getPrintedText(): string;
+	// getPrintedText(): string;
 }

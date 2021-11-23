@@ -12,11 +12,12 @@ export { KeyNotFoundException } from './common/exceptions/key-not-found-exceptio
 export { EnvironmentFrame } from './common/domain-object-model/environment-frame';
 export { IExpression } from './common/domain-object-model/iexpression';
 export { GlobalInfoBase } from './common/domain-object-model/global-info-base';
-export { IGlobalInfo } from './common/domain-object-model/iglobal-info';
+export { IGlobalInfo, IGlobalInfoForInterpreter } from './common/domain-object-model/iglobal-info';
 // export { IGlobalInfoOps } from './common/domain-object-model/iglobal-info-ops';
 export { Variable } from './common/domain-object-model/variable';
 
 // Other common stuff
+export { createGlobalInfo } from './common/global-info-factory';
 export { createGrammar } from './common/grammar-factory';
 
 // My (ThAW's) minimal language
