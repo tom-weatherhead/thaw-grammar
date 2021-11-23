@@ -44,9 +44,8 @@ export class SmalltalkBlock extends SmalltalkValueBase {
 		public readonly expression: ISmalltalkExpression,
 		public readonly globalInfo: ISmalltalkGlobalInfo,
 		public readonly localEnvironment: ISmalltalkEnvironmentFrame | undefined,
-		public readonly evalOptions: unknown | undefined // public readonly receiver: ISmalltalkValue,
-	) // public readonly classX: ISmalltalkClass | undefined,
-	{
+		public readonly evalOptions: unknown | undefined // public readonly receiver: ISmalltalkValue, // public readonly classX: ISmalltalkClass | undefined,
+	) {
 		super(objectClass);
 	}
 

@@ -4,7 +4,11 @@
 
 import { Name } from 'thaw-interpreter-core';
 
-import { SmalltalkBeginUsage } from './begin-usage';
+import { BeginUsage } from '../../../common/domain-object-model/begin-usage';
+
+import { ISmalltalkValue } from './interfaces/iexpression';
+
+// import { SmalltalkBeginUsage } from './begin-usage';
 
 import { falseVar, objectClass, objectClassName, selfVar, trueVar } from './bootstrap';
 
@@ -113,7 +117,7 @@ export const nilClass = new SmalltalkClass(
 		new SmalltalkFunctionDefinition(
 			new Name('init'),
 			[],
-			new SmalltalkBeginUsage(
+			new BeginUsage<ISmalltalkValue>(
 				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(nilValueAsString)),
 				[selfVar]
 			)
@@ -133,7 +137,7 @@ export const falseClass = new SmalltalkClass(
 		new SmalltalkFunctionDefinition(
 			new Name('init'),
 			[],
-			new SmalltalkBeginUsage(
+			new BeginUsage<ISmalltalkValue>(
 				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(falseValueAsString)),
 				[selfVar]
 			)
@@ -153,7 +157,7 @@ export const trueClass = new SmalltalkClass(
 		new SmalltalkFunctionDefinition(
 			new Name('init'),
 			[],
-			new SmalltalkBeginUsage(
+			new BeginUsage<ISmalltalkValue>(
 				new SmalltalkSetUsage(stringValueVar, new SmalltalkString(trueValueAsString)),
 				[selfVar]
 			)

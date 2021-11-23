@@ -22,6 +22,12 @@ import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-int
 
 import { ArgumentException, GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
 
+import { BeginUsage } from '../../common/domain-object-model/begin-usage';
+
+import { IfUsage } from '../../common/domain-object-model/if-usage';
+
+import { WhileUsage } from '../../common/domain-object-model/while-usage';
+
 import {
 	ISmalltalkExpression,
 	ISmalltalkFunctionDefinition,
@@ -30,13 +36,14 @@ import {
 } from './domain-object-model/interfaces/iexpression';
 
 import { SmalltalkArray } from './domain-object-model/data-types/array';
-import { SmalltalkBeginUsage } from './domain-object-model/begin-usage';
+
+// import { SmalltalkBeginUsage } from './domain-object-model/begin-usage';
 import { SmalltalkCharacter } from './domain-object-model/data-types/character';
 import { SmalltalkClass } from './domain-object-model/class';
 import { SmalltalkCondUsage } from './domain-object-model/cond-usage';
 import { SmalltalkFloat } from './domain-object-model/data-types/float';
 import { SmalltalkFunctionDefinition } from './domain-object-model/function-definition';
-import { SmalltalkIfUsage } from './domain-object-model/if-usage';
+// import { SmalltalkIfUsage } from './domain-object-model/if-usage';
 import { SmalltalkInteger } from './domain-object-model/data-types/integer';
 import { SmalltalkLetStarUsage } from './domain-object-model/let-star-usage';
 import { SmalltalkLetUsage } from './domain-object-model/let-usage';
@@ -45,7 +52,7 @@ import { SmalltalkSetUsage } from './domain-object-model/set-usage';
 import { SmalltalkString } from './domain-object-model/data-types/string';
 import { SmalltalkSymbol } from './domain-object-model/data-types/symbol';
 import { SmalltalkVariable } from './domain-object-model/variable';
-import { SmalltalkWhileUsage } from './domain-object-model/while-usage';
+// import { SmalltalkWhileUsage } from './domain-object-model/while-usage';
 
 export class SmalltalkGrammar extends GrammarBase {
 	// The Smalltalk grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
@@ -584,14 +591,18 @@ export class SmalltalkGrammar extends GrammarBase {
 				expression3 = semanticStack.pop() as ISmalltalkExpression;
 				expression2 = semanticStack.pop() as ISmalltalkExpression;
 				expression = semanticStack.pop() as ISmalltalkExpression;
-				semanticStack.push(new SmalltalkIfUsage(expression, expression2, expression3));
+				// semanticStack.push(new SmalltalkIfUsage(expression, expression2, expression3));
+				semanticStack.push(
+					new IfUsage<ISmalltalkValue>(expression, expression2, expression3)
+				);
 				break;
 			// #endif
 
 			case '#while':
 				expression2 = semanticStack.pop() as ISmalltalkExpression;
 				expression = semanticStack.pop() as ISmalltalkExpression;
-				semanticStack.push(new SmalltalkWhileUsage(expression, expression2));
+				// semanticStack.push(new SmalltalkWhileUsage(expression, expression2));
+				semanticStack.push(new WhileUsage<ISmalltalkValue>(expression, expression2));
 				break;
 
 			case '#set':
@@ -603,7 +614,8 @@ export class SmalltalkGrammar extends GrammarBase {
 			case '#begin':
 				expressionList = semanticStack.pop() as ISmalltalkExpression[];
 				expression = semanticStack.pop() as ISmalltalkExpression;
-				semanticStack.push(new SmalltalkBeginUsage(expression, expressionList));
+				// semanticStack.push(new SmalltalkBeginUsage(expression, expressionList));
+				semanticStack.push(new BeginUsage<ISmalltalkValue>(expression, expressionList));
 				break;
 
 			case '#operatorUsage':
