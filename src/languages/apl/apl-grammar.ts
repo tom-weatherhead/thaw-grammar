@@ -34,6 +34,14 @@
 // Assign
 // DoubleSubscripting
 
+// - APL symbols: From http://xahlee.info/comp/unicode_APL_symbols.html :
+//
+// ¯ × ÷ ∘ ∣ ∼ ≠ ≤ ≥ ≬ ⌶ ⋆ ⌾ ⍟ ⌽ ⍉ ⍝ ⍦ ⍧ ⍪ ⍫ ⍬ ⍭ ← ↑ → ↓ ∆ ∇ ∧ ∨ ∩ ∪ ⌈ ⌊ ⊤ ⊥ ⊂ ⊃ ⌿ ⍀ ⍅ ⍆ ⍏ ⍖ ⍊ ⍑ ⍋ ⍒ ⍎ ⍕ ⍱ ⍲ ○
+// ⍳ ⍴ ⍵ ⍺
+// ⍶ ⍷ ⍸ ⍹ ⍘ ⍙ ⍚ ⍛ ⍜ ⍮
+// ¨ ⍡ ⍢ ⍣ ⍤ ⍥ ⍨ ⍩
+// ⎕ ⍞ ⍠ ⍯ ⍰ ⍌ ⍍ ⍐ ⍓ ⍔ ⍗ ⌷ ⌸ ⌹ ⌺ ⌻ ⌼ ⍁ ⍂ ⍃ ⍄ ⍇ ⍈
+
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { ArgumentException, GrammarBase, GrammarException } from 'thaw-interpreter-core';

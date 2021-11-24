@@ -1170,65 +1170,77 @@ test('Scheme APL-Evaluator test', () => {
 		].join(' ')
 	);
 
-	//     globalInfo.evaluate(@"
-	// (set restruct (lambda (desired-shape src-data)
-	// (let* ((length-of-desired-shape (length desired-shape))
-	//    (src-vector (to-vector src-data))
-	//    (dst-vector (repeat (*/ desired-shape) src-vector)))
-	// (cond
-	//     ((= length-of-desired-shape 0) 'restruct-to-scalar-error)
-	//     ((= length-of-desired-shape 1) dst-vector)
-	//     ('T (cons desired-shape dst-vector))))))");
+	globalInfo.evaluate(
+		[
+			'(set restruct (lambda (desired-shape src-data)',
+			'(let* ((length-of-desired-shape (length desired-shape))',
+			'   (src-vector (to-vector src-data))',
+			'   (dst-vector (repeat (*/ desired-shape) src-vector)))',
+			'(cond',
+			"    ((= length-of-desired-shape 0) 'restruct-to-scalar-error)",
+			'    ((= length-of-desired-shape 1) dst-vector)',
+			"    ('T (cons desired-shape dst-vector))))))"
+		].join(' ')
+	);
 
-	//     globalInfo.evaluate(@"
-	// (set trans (lambda (matrix)
-	// (letrec ((get-column (lambda (n l) (mapcar ((curry nth) n) l)))
-	//      (get-data (lambda (n num-cols l)
-	//         (if (< n num-cols)
-	//             (append (get-column n l) (get-data (+1 n) num-cols l))
-	//             '())))
-	//      (new-shape (list (cadar matrix) (caar matrix))))
-	// (cons new-shape (get-data 0 (cadar matrix) (get-matrix-rows matrix))))))");
+	globalInfo.evaluate(
+		[
+			'(set trans (lambda (matrix)',
+			'(letrec ((get-column (lambda (n l) (mapcar ((curry nth) n) l)))',
+			'     (get-data (lambda (n num-cols l)',
+			'        (if (< n num-cols)',
+			'            (append (get-column n l) (get-data (+1 n) num-cols l))',
+			"            '())))",
+			'     (new-shape (list (cadar matrix) (caar matrix))))',
+			'(cons new-shape (get-data 0 (cadar matrix) (get-matrix-rows matrix))))))'
+		].join(' ')
+	);
 
-	//     globalInfo.evaluate(@"
-	// (set [] (lambda (x y)
-	// (let ((type-of-x (get-type x))
-	//   (type-of-y (get-type y))
-	//   (vector-y (to-vector y))
-	//   (nth*-reversed-args (lambda (l n) (nth (- n 1) l))))
-	// (cond
-	//     ((= type-of-x 'scalar) '[]-x-scalar-error)
-	//     ((= type-of-y 'matrix) '[]-x-matrix-error)
-	//     ((= type-of-x 'vector) (mapcar ((curry nth*-reversed-args) x) vector-y))
-	//     ('T (restruct
-	//         (list (length vector-y) (cadar x))
-	//         (flatten (mapcar ((curry nth*-reversed-args) (get-matrix-rows x)) vector-y))))))))");
+	globalInfo.evaluate(
+		[
+			'(set [] (lambda (x y)',
+			'(let ((type-of-x (get-type x))',
+			'  (type-of-y (get-type y))',
+			'  (vector-y (to-vector y))',
+			'  (nth*-reversed-args (lambda (l n) (nth (- n 1) l))))',
+			'(cond',
+			"    ((= type-of-x 'scalar) '[]-x-scalar-error)",
+			"    ((= type-of-y 'matrix) '[]-x-matrix-error)",
+			"    ((= type-of-x 'vector) (mapcar ((curry nth*-reversed-args) x) vector-y))",
+			"    ('T (restruct",
+			'        (list (length vector-y) (cadar x))',
+			'        (flatten (mapcar ((curry nth*-reversed-args) (get-matrix-rows x)) vector-y))))))))'
+		].join(' ')
+	);
 
-	//     // Binary operators to implement:
+	// Binary operators to implement:
 
-	//     // - compress
-	//     globalInfo.evaluate(@"
-	// (set compress (lambda (x y)
-	// (letrec ((type-of-x (get-type x))
-	//      (type-of-y (get-type y))
-	//      (is-logical (lambda (v)
-	//         (if (null? v) 'T
-	//             (if (or (= (car v) 0) (= (car v) 1))
-	//                 (is-logical (cdr v))
-	//                 '()))))
-	//      (compress* (lambda (logv l)
-	//         (if (or (null? logv) (null? l)) '()
-	//             (if (= (car logv) 0)
-	//                 (compress* (cdr logv) (cdr l))
-	//                 (cons (car l) (compress* (cdr logv) (cdr l))))))))
-	// (cond
-	//     ((<> type-of-x 'vector) 'compress-x-not-vector-error)
-	//     ((not (is-logical x)) 'compress-vector-not-logical-error)
-	//     ((= type-of-y 'scalar) 'compress-y-scalar-error)
-	//     ((= type-of-y 'vector) (compress* x y))
-	//     ('T (restruct
-	//         (list (+/ x) (cadar y))
-	//         (flatten (compress* x (get-matrix-rows y)))))))))");
+	// - compress
+	globalInfo.evaluate(
+		[
+			'(set compress (lambda (x y)',
+			'(letrec ((type-of-x (get-type x))',
+			'     (type-of-y (get-type y))',
+			'     (is-logical (lambda (v)',
+			"        (if (null? v) 'T",
+			'            (if (or (= (car v) 0) (= (car v) 1))',
+			'                (is-logical (cdr v))',
+			"                '()))))",
+			'     (compress* (lambda (logv l)',
+			"        (if (or (null? logv) (null? l)) '()",
+			'            (if (= (car logv) 0)',
+			'                (compress* (cdr logv) (cdr l))',
+			'                (cons (car l) (compress* (cdr logv) (cdr l))))))))',
+			'(cond',
+			"    ((<> type-of-x 'vector) 'compress-x-not-vector-error)",
+			"    ((not (is-logical x)) 'compress-vector-not-logical-error)",
+			"    ((= type-of-y 'scalar) 'compress-y-scalar-error)",
+			"    ((= type-of-y 'vector) (compress* x y))",
+			"    ('T (restruct",
+			'        (list (+/ x) (cadar y))',
+			'        (flatten (compress* x (get-matrix-rows y)))))))))'
+		].join(' ')
+	);
 
 	//     globalInfo.evaluate(@"
 	// (set apply-binary-op (lambda (f x y)
@@ -1315,14 +1327,17 @@ test('Scheme APL-Evaluator test', () => {
 	//     ; ('T f)
 	// ))))");
 
-	//     // begin
-	//     globalInfo.evaluate(@"
-	// (set do-begin (lambda (expr-list rho fundefs)
-	// (if (null? (cdr expr-list))
-	// (eval (car expr-list) rho fundefs)
-	// (begin
-	//     (eval (car expr-list) rho fundefs)
-	//     (do-begin (cdr expr-list) rho fundefs)))))");
+	// begin
+	globalInfo.evaluate(
+		[
+			'(set do-begin (lambda (expr-list rho fundefs)',
+			'(if (null? (cdr expr-list))',
+			'(eval (car expr-list) rho fundefs)',
+			'(begin',
+			'    (eval (car expr-list) rho fundefs)',
+			'    (do-begin (cdr expr-list) rho fundefs)))))'
+		].join(' ')
+	);
 
 	//     globalInfo.evaluate(@"
 	// (set eval (lambda (expr rho fundefs)
@@ -1360,13 +1375,13 @@ test('Scheme APL-Evaluator test', () => {
 	//         (eval (cadr expr) rho fundefs)
 	//         (eval (caddr expr) rho fundefs))))))");
 
-	//     globalInfo.evaluate("(set userfun? (lambda (f fundefs) (assoc-contains-key f fundefs)))");
+	globalInfo.evaluate('(set userfun? (lambda (f fundefs) (assoc-contains-key f fundefs)))');
 
-	//     globalInfo.evaluate(@"
-	// (set apply-userfun (lambda (fundef args fundefs)
-	// (eval (cadr fundef) ; body of function
-	// (mkassoc* (car fundef) args '()) ; local env
-	// fundefs)))");
+	//     globalInfo.evaluate([
+	// '(set apply-userfun (lambda (fundef args fundefs)',
+	// '(eval (cadr fundef)', // ; body of function
+	// '(mkassoc* (car fundef) args \'())', // ; local env
+	// 'fundefs)))'].join(' '));
 
 	//     globalInfo.evaluate(@"
 	// (set evallist (lambda (el rho fundefs)
@@ -1374,11 +1389,14 @@ test('Scheme APL-Evaluator test', () => {
 	// (cons (eval (car el) rho fundefs)
 	//     (evallist (cdr el) rho fundefs)))))");
 
-	//     globalInfo.evaluate(@"
-	// (set mkassoc* (lambda (keys values al)
-	// (if (null? keys) al
-	// (mkassoc* (cdr keys) (cdr values)
-	//     (mkassoc (car keys) (car values) al)))))");
+	globalInfo.evaluate(
+		[
+			'(set mkassoc* (lambda (keys values al)',
+			'(if (null? keys) al',
+			'(mkassoc* (cdr keys) (cdr values)',
+			'    (mkassoc (car keys) (car values) al)))))'
+		].join(' ')
+	);
 
 	//     globalInfo.evaluate(@"
 	// (set r-e-p-loop (lambda (inputs)
