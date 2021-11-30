@@ -1205,6 +1205,12 @@ export class SchemeGrammar extends GrammarBase {
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
+		if (token.isQuoted && tokenValueAsString !== '.') {
+			// 2021-11-29 : This allows e.g. '+ to be an S-expression
+
+			return GrammarSymbol.terminalID;
+		}
+
 		switch (token.tokenType) {
 			case LexicalState.tokenEOF:
 				return GrammarSymbol.terminalEOF;
@@ -1357,13 +1363,6 @@ export class SchemeGrammar extends GrammarBase {
 				break;
 		}
 
-		// throw new GrammarException(
-		// 	`No grammar symbol matches token ${token.tokenType} ${
-		// 		LexicalState[token.tokenType]
-		// 	} (value '${token.tokenValue}')`,
-		// 	token.line,
-		// 	token.column
-		// );
 		return super.tokenToSymbol(token);
 	}
 
@@ -1375,15 +1374,6 @@ export class SchemeGrammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			// case GrammarSymbol.terminalID:
-			// case GrammarSymbol.terminalPrint:
-			// case GrammarSymbol.terminalPlus:
-			// case GrammarSymbol.terminalMinus:
-			// case GrammarSymbol.terminalMultiply:
-			// case GrammarSymbol.terminalDivide:
-			// case GrammarSymbol.terminalEquals:
-			// case GrammarSymbol.terminalLessThan:
-			// case GrammarSymbol.terminalGreaterThan:
 			case GrammarSymbol.terminalCons:
 			case GrammarSymbol.terminalCar:
 			case GrammarSymbol.terminalCdr:
@@ -1402,18 +1392,9 @@ export class SchemeGrammar extends GrammarBase {
 			case GrammarSymbol.terminalListToString:
 			case GrammarSymbol.terminalStringToList:
 			case GrammarSymbol.terminalStringToSymbol:
-			// case GrammarSymbol.terminalPow:
-			// case GrammarSymbol.terminalExp:
-			// case GrammarSymbol.terminalLn:
-			// case GrammarSymbol.terminalSin:
-			// case GrammarSymbol.terminalCos:
-			// case GrammarSymbol.terminalTan:
 			case GrammarSymbol.terminalAtan2:
 			case GrammarSymbol.terminalFloor:
-			// case GrammarSymbol.terminalThrow:
 			case GrammarSymbol.terminalStringLessThan:
-			// case GrammarSymbol.terminalLet:
-			// case GrammarSymbol.terminalLetStar:
 			case GrammarSymbol.terminalLetRec:
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
@@ -1435,27 +1416,13 @@ export class SchemeGrammar extends GrammarBase {
 				semanticStack.push(new LISPString(value as string));
 				break;
 
-			// case GrammarSymbol.terminalLeftBracket:
-			// case GrammarSymbol.terminalRightBracket:
 			case GrammarSymbol.terminalApostrophe:
 			case GrammarSymbol.terminalQuoteKeyword:
-			// case GrammarSymbol.terminalDefine:
-			// case GrammarSymbol.terminalIf:
-			// case GrammarSymbol.terminalWhile:
-			// case GrammarSymbol.terminalSet:
-			// case GrammarSymbol.terminalBegin:
-			// case GrammarSymbol.terminalCond:
 			case GrammarSymbol.terminalLambdaKeyword: // Added for Scheme
 			case GrammarSymbol.terminalCallCC: // Added for Scheme
-				// case GrammarSymbol.terminalEOF:
 				break;
 
 			default:
-				// throw new GrammarException(
-				// 	`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} (${tokenAsSymbol})`,
-				// 	token.line,
-				// 	token.column
-				// );
 				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
 				break;
 		}
