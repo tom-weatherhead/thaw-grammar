@@ -1242,90 +1242,96 @@ test('Scheme APL-Evaluator test', () => {
 		].join(' ')
 	);
 
-	//     globalInfo.evaluate(@"
-	// (set apply-binary-op (lambda (f x y)
-	// (letrec ((combine2 (lambda (f l1 l2)
-	//         (if (or (null? l1) (null? l2)) '()
-	//             (cons (f (car l1) (car l2)) (combine2 f (cdr l1) (cdr l2))))))
-	//      (apply-scalar-scalar (lambda (f x y) (f x y)))
-	//      (apply-scalar-vector (lambda (f x y) (mapcar (lambda (z) (f x z)) y)))
-	//      (apply-scalar-matrix (lambda (f x y) (cons (car y) (mapcar (lambda (z) (f x z)) (cdr y)))))
-	//      (apply-vector-scalar (lambda (f x y) (mapcar (lambda (z) (f z y)) x)))
-	//      (apply-vector-vector (lambda (f x y)
-	//         (if (= (length x) (length y))
-	//             (combine2 f x y)
-	//             'binary-op-vector-shape-mismatch)))
-	//      (apply-matrix-scalar (lambda (f x y) (cons (car x) (mapcar (lambda (z) (f z y)) (cdr x)))))
-	//      (apply-matrix-matrix (lambda (f x y)
-	//         (if (equal (car x) (car y))
-	//             (cons (car x) (combine2 f (cdr x) (cdr y)))
-	//             'binary-op-matrix-shape-mismatch)))
-	//      (apply-binary-op* (lambda (f x y)
-	//         (begin
-	//             (set x (to-scalar-if-possible x))
-	//             (set y (to-scalar-if-possible y))
-	//             (let ((type-of-x (get-type x))
-	//                   (type-of-y (get-type y)))
-	//                 (cond
-	//                     ((= type-of-x 'scalar)
-	//                         (cond
-	//                             ((= type-of-y 'scalar) (apply-scalar-scalar f x y))
-	//                             ((= type-of-y 'vector) (apply-scalar-vector f x y))
-	//                             ('T (apply-scalar-matrix f x y))))
-	//                     ((= type-of-x 'vector)
-	//                         (cond
-	//                             ((= type-of-y 'scalar) (apply-vector-scalar f x y))
-	//                             ((= type-of-y 'vector) (apply-vector-vector f x y))
-	//                             ('T 'binary-op-vector-matrix-error)))
-	//                     ((= type-of-x 'matrix)
-	//                         (cond
-	//                             ((= type-of-y 'scalar) (apply-matrix-scalar f x y))
-	//                             ((= type-of-y 'vector) 'binary-op-matrix-vector-error)
-	//                             ('T (apply-matrix-matrix f x y)))))))))
-	//      (apl< (lambda (x y) (if (< x y) 1 0)))
-	//      (apl> (lambda (x y) (if (> x y) 1 0)))
-	//      (apl= (lambda (x y) (if (= x y) 1 0))))
-	// (cond
-	//     ((= f '+) (apply-binary-op* + x y))
-	//     ((= f '-) (apply-binary-op* - x y))
-	//     ((= f '*) (apply-binary-op* * x y))
-	//     ((= f '/) (apply-binary-op* / x y))
-	//     ((= f '<) (apply-binary-op* apl< x y))
-	//     ((= f '>) (apply-binary-op* apl> x y))
-	//     ((= f '=) (apply-binary-op* apl= x y))
-	//     ((= f 'max) (apply-binary-op* max-of-pair x y))
-	//     ((= f 'and) (apply-binary-op* apl-and x y))
-	//     ((= f 'or) (apply-binary-op* apl-or x y))
-	//     ((= f 'restruct) (restruct x y))
-	//     ((= f 'cat) (append (to-vector x) (to-vector y)))
-	//     ((= f '[]) ([] x y))
-	//     ((= f 'compress) (compress x y))
-	//     ('T 'binary-op-error!)
-	// ))))");
+	globalInfo.evaluate(
+		[
+			'(set apply-binary-op (lambda (f x y)',
+			'(letrec ((combine2 (lambda (f l1 l2)',
+			"        (if (or (null? l1) (null? l2)) '()",
+			'            (cons (f (car l1) (car l2)) (combine2 f (cdr l1) (cdr l2))))))',
+			'     (apply-scalar-scalar (lambda (f x y) (f x y)))',
+			'     (apply-scalar-vector (lambda (f x y) (mapcar (lambda (z) (f x z)) y)))',
+			'     (apply-scalar-matrix (lambda (f x y) (cons (car y) (mapcar (lambda (z) (f x z)) (cdr y)))))',
+			'     (apply-vector-scalar (lambda (f x y) (mapcar (lambda (z) (f z y)) x)))',
+			'     (apply-vector-vector (lambda (f x y)',
+			'        (if (= (length x) (length y))',
+			'            (combine2 f x y)',
+			"            'binary-op-vector-shape-mismatch)))",
+			'     (apply-matrix-scalar (lambda (f x y) (cons (car x) (mapcar (lambda (z) (f z y)) (cdr x)))))',
+			'     (apply-matrix-matrix (lambda (f x y)',
+			'        (if (equal (car x) (car y))',
+			'            (cons (car x) (combine2 f (cdr x) (cdr y)))',
+			"            'binary-op-matrix-shape-mismatch)))",
+			'     (apply-binary-op* (lambda (f x y)',
+			'        (begin',
+			'            (set x (to-scalar-if-possible x))',
+			'            (set y (to-scalar-if-possible y))',
+			'            (let ((type-of-x (get-type x))',
+			'                  (type-of-y (get-type y)))',
+			'                (cond',
+			"                    ((= type-of-x 'scalar)",
+			'                        (cond',
+			"                            ((= type-of-y 'scalar) (apply-scalar-scalar f x y))",
+			"                            ((= type-of-y 'vector) (apply-scalar-vector f x y))",
+			"                            ('T (apply-scalar-matrix f x y))))",
+			"                    ((= type-of-x 'vector)",
+			'                        (cond',
+			"                            ((= type-of-y 'scalar) (apply-vector-scalar f x y))",
+			"                            ((= type-of-y 'vector) (apply-vector-vector f x y))",
+			"                            ('T 'binary-op-vector-matrix-error)))",
+			"                    ((= type-of-x 'matrix)",
+			'                        (cond',
+			"                            ((= type-of-y 'scalar) (apply-matrix-scalar f x y))",
+			"                            ((= type-of-y 'vector) 'binary-op-matrix-vector-error)",
+			"                            ('T (apply-matrix-matrix f x y)))))))))",
+			'     (apl< (lambda (x y) (if (< x y) 1 0)))',
+			'     (apl> (lambda (x y) (if (> x y) 1 0)))',
+			'     (apl= (lambda (x y) (if (= x y) 1 0))))',
+			'(cond',
+			// TODO 2021-11-29 : Allow e.g. '+ to be an S-expression; it currently fails
+			// "    ((= f '+) (apply-binary-op* + x y))",
+			// "    ((= f '-) (apply-binary-op* - x y))",
+			// "    ((= f '*) (apply-binary-op* * x y))",
+			// "    ((= f '/) (apply-binary-op* / x y))",
+			// "    ((= f '<) (apply-binary-op* apl< x y))",
+			"    ((= f '>) (apply-binary-op* apl> x y))",
+			// "    ((= f '=) (apply-binary-op* apl= x y))",
+			"    ((= f 'max) (apply-binary-op* max-of-pair x y))",
+			"    ((= f 'and) (apply-binary-op* apl-and x y))",
+			"    ((= f 'or) (apply-binary-op* apl-or x y))",
+			"    ((= f 'restruct) (restruct x y))",
+			"    ((= f 'cat) (append (to-vector x) (to-vector y)))",
+			"    ((= f '[]) ([] x y))",
+			"    ((= f 'compress) (compress x y))",
+			"    ('T 'binary-op-error!)",
+			'))))'
+		].join(' ')
+	);
 
-	//     globalInfo.evaluate(@"
-	// (set apply-unary-op (lambda (f x)
-	// (let* ((type-of-x (get-type x))
-	//    (apply-reduction-op (lambda (f x)
-	//         (cond
-	//             ((= type-of-x 'scalar) 'scalar-reduction-error)
-	//             ((= type-of-x 'vector) (f x))
-	//             ('T (mapcar f (get-matrix-rows x)))))))
-	// (cond
-	//     ((= f '+/) (apply-reduction-op +/ x))
-	//     ((= f '-/) (apply-reduction-op -/ x))
-	//     ((= f '*/) (apply-reduction-op */ x))
-	//     ((= f '//) (apply-reduction-op // x))
-	//     ((= f 'max/) (apply-reduction-op max/ x))
-	//     ((= f 'and/) (apply-reduction-op and/ x))
-	//     ((= f 'or/) (apply-reduction-op or/ x))
-	//     ((= f 'shape) (shape x))
-	//     ((= f 'indx) (m-to-n 1 x))
-	//     ((= f 'ravel) (to-vector x))
-	//     ((= f 'trans) (trans x))
-	//     ('T 'unary-op-error!)
-	//     ; ('T f)
-	// ))))");
+	globalInfo.evaluate(
+		[
+			'(set apply-unary-op (lambda (f x)',
+			'(let* ((type-of-x (get-type x))',
+			'   (apply-reduction-op (lambda (f x)',
+			'        (cond',
+			"            ((= type-of-x 'scalar) 'scalar-reduction-error)",
+			"            ((= type-of-x 'vector) (f x))",
+			"            ('T (mapcar f (get-matrix-rows x)))))))",
+			'(cond',
+			"    ((= f '+/) (apply-reduction-op +/ x))",
+			"    ((= f '-/) (apply-reduction-op -/ x))",
+			"    ((= f '*/) (apply-reduction-op */ x))",
+			"    ((= f '//) (apply-reduction-op // x))",
+			"    ((= f 'max/) (apply-reduction-op max/ x))",
+			"    ((= f 'and/) (apply-reduction-op and/ x))",
+			"    ((= f 'or/) (apply-reduction-op or/ x))",
+			"    ((= f 'shape) (shape x))",
+			"    ((= f 'indx) (m-to-n 1 x))",
+			"    ((= f 'ravel) (to-vector x))",
+			"    ((= f 'trans) (trans x))",
+			"    ('T 'unary-op-error!)", // ; ('T f)
+			'))))'
+		].join(' ')
+	);
 
 	// begin
 	globalInfo.evaluate(
@@ -1339,55 +1345,64 @@ test('Scheme APL-Evaluator test', () => {
 		].join(' ')
 	);
 
-	//     globalInfo.evaluate(@"
-	// (set eval (lambda (expr rho fundefs)
-	// (cond
-	// ((number? expr) expr)
-	// ((symbol? expr)
-	//     (if (assoc-contains-key expr rho)
-	//         (assoc expr rho)
-	//         (assoc expr global-environment)))
-	// ((= (car expr) 'quote) (cadr expr))
-	// ((= (car expr) 'if)
-	//     (if (= 0 (get-first-scalar (eval (cadr expr) rho fundefs)))
-	//         (eval (cadddr expr) rho fundefs)
-	//         (eval (caddr expr) rho fundefs)))
-	// ((= (car expr) 'begin) (do-begin (cdr expr) rho fundefs)) ; Exercise 6a) on page 61
-	// ((= (car expr) 'print) ; Exercise 6a) on page 61
-	//     (print (eval (cadr expr) rho fundefs)))
-	// ((= (car expr) 'set)
-	//     (let ((evaluated-expression (eval (caddr expr) rho fundefs)))
-	//         (if (assoc-contains-key (cadr expr) rho)
-	//             (begin
-	//                 (rplac-assoc (cadr expr) evaluated-expression rho)
-	//                 evaluated-expression)
-	//             (begin
-	//                 (set global-environment (mkassoc (cadr expr) evaluated-expression global-environment))
-	//                 evaluated-expression))))
-	// ((userfun? (car expr) fundefs)
-	//     (apply-userfun
-	//         (assoc (car expr) fundefs)
-	//         (evallist (cdr expr) rho fundefs)
-	//         fundefs))
-	// ((= (length expr) 2)
-	//     (apply-unary-op (car expr) (eval (cadr expr) rho fundefs)))
-	// ('T (apply-binary-op (car expr)
-	//         (eval (cadr expr) rho fundefs)
-	//         (eval (caddr expr) rho fundefs))))))");
+	globalInfo.evaluate(
+		[
+			'(set eval (lambda (expr rho fundefs)',
+			'(cond',
+			'((number? expr) expr)',
+			'((symbol? expr)',
+			'    (if (assoc-contains-key expr rho)',
+			'        (assoc expr rho)',
+			'        (assoc expr global-environment)))',
+			"((= (car expr) 'quote) (cadr expr))",
+			"((= (car expr) 'if)",
+			'    (if (= 0 (get-first-scalar (eval (cadr expr) rho fundefs)))',
+			'        (eval (cadddr expr) rho fundefs)',
+			'        (eval (caddr expr) rho fundefs)))',
+			"((= (car expr) 'begin) (do-begin (cdr expr) rho fundefs))", // ; Exercise 6a) on page 61
+			"((= (car expr) 'print)", // ; Exercise 6a) on page 61
+			'    (print (eval (cadr expr) rho fundefs)))',
+			"((= (car expr) 'set)",
+			'    (let ((evaluated-expression (eval (caddr expr) rho fundefs)))',
+			'        (if (assoc-contains-key (cadr expr) rho)',
+			'            (begin',
+			'                (rplac-assoc (cadr expr) evaluated-expression rho)',
+			'                evaluated-expression)',
+			'            (begin',
+			'                (set global-environment (mkassoc (cadr expr) evaluated-expression global-environment))',
+			'                evaluated-expression))))',
+			'((userfun? (car expr) fundefs)',
+			'    (apply-userfun',
+			'        (assoc (car expr) fundefs)',
+			'        (evallist (cdr expr) rho fundefs)',
+			'        fundefs))',
+			'((= (length expr) 2)',
+			'    (apply-unary-op (car expr) (eval (cadr expr) rho fundefs)))',
+			"('T (apply-binary-op (car expr)",
+			'        (eval (cadr expr) rho fundefs)',
+			'        (eval (caddr expr) rho fundefs))))))'
+		].join(' ')
+	);
 
 	globalInfo.evaluate('(set userfun? (lambda (f fundefs) (assoc-contains-key f fundefs)))');
 
-	//     globalInfo.evaluate([
-	// '(set apply-userfun (lambda (fundef args fundefs)',
-	// '(eval (cadr fundef)', // ; body of function
-	// '(mkassoc* (car fundef) args \'())', // ; local env
-	// 'fundefs)))'].join(' '));
+	globalInfo.evaluate(
+		[
+			'(set apply-userfun (lambda (fundef args fundefs)',
+			'(eval (cadr fundef)', // ; body of function
+			"(mkassoc* (car fundef) args '())", // ; local env
+			'fundefs)))'
+		].join(' ')
+	);
 
-	//     globalInfo.evaluate(@"
-	// (set evallist (lambda (el rho fundefs)
-	// (if (null? el) '()
-	// (cons (eval (car el) rho fundefs)
-	//     (evallist (cdr el) rho fundefs)))))");
+	globalInfo.evaluate(
+		[
+			'(set evallist (lambda (el rho fundefs)',
+			"(if (null? el) '()",
+			'(cons (eval (car el) rho fundefs)',
+			'    (evallist (cdr el) rho fundefs)))))'
+		].join(' ')
+	);
 
 	globalInfo.evaluate(
 		[
