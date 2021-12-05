@@ -55,12 +55,21 @@ function evaluateToISExpression(input: string): ISExpression {
 	return expr.evaluate(globalInfo, globalInfo.globalEnvironment);
 }
 
-function schemeTest(data: Array<[input: string, expectedResult: string | string[]]>): void {
+function schemeTest(data: Array<[input: string, expectedResult: string | string[]]>, options: {
+	presets?: string[];
+} = {}): void {
 	// Arrange
 	const { tokenizer, parser } = createInfrastructure(ls);
 
 	const schemeGlobalInfo = new SchemeGlobalInfo({ tokenizer, parser });
-	// Or: const schemeGlobalInfo = new SchemeGlobalInfo({ tokenizer, parser });
+
+	schemeGlobalInfo.loadPresets();
+
+	if (typeof options.presets !== 'undefined') {
+		for (const preset of options.presets) {
+			schemeGlobalInfo.loadPreset(preset);
+		}
+	}
 
 	for (const [input, expectedResult] of data) {
 		// Act
@@ -299,7 +308,7 @@ test('LL(1) Scheme Streams test', () => {
 //     Assert.AreEqual("(d . e)", Evaluate("y"));
 //     Assert.AreEqual("(d . e)", Evaluate("x"));
 // }
-//
+
 // [Test]
 // public void MacroTest()     // From pages 56-57, and Exercise 12, from pages 62-63 (in the LISP chapter)
 // {
@@ -316,7 +325,7 @@ test('LL(1) Scheme Streams test', () => {
 //     Evaluate("(for x 1 10 (set sum (+ sum x)))");
 //     Assert.AreEqual("55", Evaluate("sum"));
 // }
-//
+
 // [Test]
 // public void RandomTest()
 // {
@@ -326,19 +335,24 @@ test('LL(1) Scheme Streams test', () => {
 //     Assert.IsTrue(x >= 0);
 //     Assert.IsTrue(x < maxValue);
 // }
-//
-// [Test]
-// public void SetsTest()  // See pages 104-105
-// {
-//     globalInfo.LoadPreset("set");
-//
+
+test('Scheme Sets test', () => { // // See pages 104-105
+    // globalInfo.LoadPreset("set");
+
 //     Assert.AreEqual("(a b)", Evaluate("(set s1 (addelt 'a (addelt 'b nullset)))"));
 //     Assert.AreEqual("T", Evaluate("(member? 'a s1)"));
 //     Assert.AreEqual("()", Evaluate("(member? 'c s1)"));
 //     Assert.AreEqual("(b c)", Evaluate("(set s2 (addelt 'b (addelt 'c nullset)))"));
 //     Assert.AreEqual("(c a b)", Evaluate("(set s3 (union s1 s2))"));
-// }
-//
+	schemeTest([
+		['(set s1 (addelt \'a (addelt \'b nullset)))', '(a b)'],
+		['(member? \'a s1)', 'T'],
+		['(member? \'c s1)', '()'],
+		['(set s2 (addelt \'b (addelt \'c nullset)))', '(b c)'],
+		['(set s3 (union s1 s2))', '(c a b)']
+	], { presets: ['set'] });
+});
+
 // private void DefineTermRewritingSystem()  // See section 4.4 on pages 116-122
 // {
 //     globalInfo.LoadPreset("set");   // For "member?"
@@ -443,7 +457,7 @@ test('LL(1) Scheme Streams test', () => {
 // ((Dx (/ X Y)) (/ (- (* Y (Dx X)) (* X (Dx Y))) (* Y Y)))))");
 //     Evaluate("(set differentiate (compile-trs diff-rules))");
 // }
-//
+
 // [Test]
 // public void TermRewritingSystemsTest()  // See section 4.4 on pages 116-122
 // {
@@ -451,7 +465,7 @@ test('LL(1) Scheme Streams test', () => {
 //
 //     Assert.AreEqual("(+ 1 0)", Evaluate("(differentiate '(Dx (+ x c)))"));
 // }
-//
+
 // [Test]
 // public void Exercise1Test() // Exercise 1 on pages 148-149.
 // {
@@ -491,7 +505,7 @@ test('LL(1) Scheme Streams test', () => {
 //     Assert.AreEqual("((a) (a b c) (a d) (a (e f)))",
 //         Evaluate("((mkpairsfn 'a) '(() (b c) (d) ((e f))))"));
 // }
-//
+
 // [Test]
 // public void Exercise2Test() // Exercise 2 on page 149 : lex-order*
 // {
@@ -509,7 +523,7 @@ test('LL(1) Scheme Streams test', () => {
 //     Assert.AreEqual("T", Evaluate("(alpha-order '(4 15 7) '(4 15 7 5))"));
 //     Assert.AreEqual("()", Evaluate("(alpha-order '(4 15 7) '(4 15 6 6))"));
 // }
-//
+
 // [Test]
 // public void Exercise3Test() // Exercise 3 on page 149 : Sets implemented using characteristic functions
 // {
@@ -553,7 +567,7 @@ test('LL(1) Scheme Streams test', () => {
 //     Assert.AreEqual("()", Evaluate("(member? 'b s5)"));
 //     Assert.AreEqual("()", Evaluate("(member? 'c s5)"));
 // }
-//
+
 // [Test]
 // public void Exercise4Test() // Exercise 4 on page 149 : Optimizing gcd* and gcds (from pages 108-109)
 // {
@@ -589,7 +603,7 @@ test('LL(1) Scheme Streams test', () => {
 //     Assert.AreEqual("1", Evaluate("(gcds '((3 5) 7 (9 11)))"));
 //     //Assert.AreEqual("1", Evaluate("(gcds '((NotANumber 3) 5))")); // gcds only accepts S-expressions of numbers and pairs (lists), not symbols.
 // }
-//
+
 // [Test]
 // public void Exercise5aTest()  // Exercise 5a on pages 150-151; TermRewritingSystems
 // {
@@ -604,7 +618,7 @@ test('LL(1) Scheme Streams test', () => {
 //
 //     Assert.AreEqual("(+ 1 0)", Evaluate("(differentiate '(Dx (+ x c)))"));
 // }
-//
+
 // [Test]
 // public void Exercise5bTest()  // Exercise 5b on pages 150-151; TermRewritingSystems; modifications to apply-inside-exp
 // {
@@ -626,7 +640,7 @@ test('LL(1) Scheme Streams test', () => {
 //
 //     Assert.AreEqual("(+ 1 0)", Evaluate("(differentiate '(Dx (+ x c)))"));
 // }
-//
+
 // [Test]
 // public void LetMacroTest()  // Part of exercise 15 on page 152.
 // {
@@ -639,7 +653,7 @@ test('LL(1) Scheme Streams test', () => {
 // (list-of-cadrs declarations)))");
 //     Assert.AreEqual("(12 5)", Evaluate("(letm ((m (* 3 4)) (n (+ 2 3))) (list m n))"));
 // }
-//
+
 // [Test]
 // public void LetStarMacroTest()  // Part of exercise 15 on page 152.
 // {
@@ -655,7 +669,7 @@ test('LL(1) Scheme Streams test', () => {
 //     Evaluate("(define-macro let*m (declarations body) (build-expr declarations body))");
 //     Assert.AreEqual("25", Evaluate("(let*m ((x (+ 2 3)) (y (* x x))) y)"));
 // }
-//
+
 // [Test]
 // public void LetRecMacroTest()  // Part of exercise 15 on page 152.
 // {
@@ -692,7 +706,7 @@ test('LL(1) Scheme Streams test', () => {
 //         (countones (cdr l)))))))
 // (countones '(1 2 3 1 0 1 1 5)))"));
 // }
-//
+
 // [Test]
 // public void EvalInSchemeTest()  // From section 4.5, on pages 123-124.  Also part of exercise 17 on page 152.
 // {
@@ -943,31 +957,6 @@ test('LL(1) Scheme Streams test', () => {
 // ))"));
 //
 //     // Test of letrec (see exercise 6 on page 150)
-// #if DEAD_CODE
-//     Assert.AreEqual("(15 120 54)", Evaluate(@"
-// (select '(1 2 3) (r-e-p-loop '(
-// (set eval-ex6 (lambda (e)
-// (letrec
-//     ((combine (lambda (f sum zero) (lambda (l) (if (null? l) zero (sum (f (car l)) ((combine f sum zero) (cdr l)))))))
-//      (id (lambda (x) x))
-//      (+/ (combine id + 0))
-//      (*/ (combine id * 1))
-//      (ev (lambda (expr)
-//         (if (number? expr) expr
-//             (if (= (car expr) (quote +))
-//                 (+/ (evlis (cdr expr)))
-//                 (*/ (evlis (cdr expr)))))))
-//      (mapcar (lambda (f l) (if (null? l) l (cons (f (car l)) (mapcar f (cdr l))))))
-//      (curry (lambda (f) (lambda (x) (lambda (y) (f x y)))))
-//      (mapc (curry mapcar))
-//      (evlis (mapc ev))
-//     )
-//     (ev e))))
-// (eval-ex6 (quote (+ 1 2 3 4 5)))
-// (eval-ex6 (quote (* 1 2 3 4 5)))
-// (eval-ex6 (quote (* (+ 1 2 3) (+ 4 5))))
-// )))"));
-// #else
 //     Assert.AreEqual("(15 120 54)", Evaluate(@"
 // (select '(1 2 3) (r-e-p-loop (list
 // (list 'set 'eval-ex6 (list 'lambda '(e)
@@ -992,8 +981,6 @@ test('LL(1) Scheme Streams test', () => {
 // (list 'eval-ex6 (list 'quote '(* 1 2 3 4 5)))
 // (list 'eval-ex6 (list 'quote '(* (+ 1 2 3) (+ 4 5))))
 // )))"));
-// #endif
-//
 //
 //     // Note: If you get an error saying that car's argument is null, it is probably because you forgot to declare something
 //     // (e.g. a function like id or mapc).
@@ -1472,13 +1459,6 @@ test('Scheme APL-Evaluator test', () => {
 	')))'].join(' '))).toBe('((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))');
 
     // compress test
-	//     Assert.AreEqual("((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))", globalInfo.evaluate(@"
-	// (select '(2 3) (r-e-p-loop (list
-	// (list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))
-	// (list 'set 'm1 (list 'restruct (list 'quote '(4 4)) '(indx 16)))
-	// (list 'compress (list 'quote '(1 0 1 1 0 1 0)) 'v1)
-	// (list 'compress (list 'quote '(0 1 0 1)) 'm1)
-	// )))"));
 	expect(globalInfo.evaluateToString([
 		'(select \'(2 3) (r-e-p-loop (list',
 		'(list \'set \'v1 (list \'quote \'(8 6 7 5 3 0 9)))',
@@ -1488,37 +1468,37 @@ test('Scheme APL-Evaluator test', () => {
 		')))'].join(' '))).toBe('((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))');
 
     // primes<= test (see pages 74-75)
-	//     Assert.AreEqual("(((4 7) 0 1 1 1 1 1 1 0 0 2 2 2 2 2 0 1 0 3 3 3 3 0 0 1 0 4 4 4) (2 3 5 7))", globalInfo.evaluate(@"
-	// (select '(2 4) (r-e-p-loop '(
-	// (define mod (m n) (- m (* n (/ m n))))
-	// (define mod-outer-probe (v1 v2)
-	// (mod (trans (restruct (cat (shape v2) (shape v1)) v1))
-	//     (restruct (cat (shape v1) (shape v2)) v2)))
-	// (mod-outer-probe (indx 4) (indx 7))
-	// ; Perhaps we could implement 'let', and then use (let ((s (indx n))) ...)
-	// (define primes<= (n) (compress (= 2 (+/ (= 0 (mod-outer-probe (set s (indx n)) s)))) s))
-	// (primes<= 7)
-	// )))"));
+	expect(globalInfo.evaluateToString([
+		'(select \'(2 4) (r-e-p-loop \'(',
+		'(define mod (m n) (- m (* n (/ m n))))',
+		'(define mod-outer-probe (v1 v2)',
+		'(mod (trans (restruct (cat (shape v2) (shape v1)) v1))',
+		'    (restruct (cat (shape v1) (shape v2)) v2)))',
+		'(mod-outer-probe (indx 4) (indx 7))',
+		// ; Perhaps we could implement 'let', and then use (let ((s (indx n))) ...)
+		'(define primes<= (n) (compress (= 2 (+/ (= 0 (mod-outer-probe (set s (indx n)) s)))) s))',
+		'(primes<= 7)',
+		')))'].join(' '))).toBe('(((4 7) 0 1 1 1 1 1 1 0 0 2 2 2 2 2 0 1 0 3 3 3 3 0 0 1 0 4 4 4) (2 3 5 7))');
 
     // +\ ("+-scan") test (see page 74).  This tests the "if" construct.
-	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
-	// (select '(0) (r-e-p-loop (list
-	// (list '= (list 'shape (list 'quote '(1 3 5 7))) 0)
-	// )))"));
-	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
-	// (select '(1) (r-e-p-loop (list
-	// '(define foo (v) (if (= (shape v) 0) 1 0))
-	// (list 'foo (list 'quote '(1 3 5 7)))
-	// )))"));
+	expect(globalInfo.evaluateToString([
+		'(select \'(0) (r-e-p-loop (list',
+		'(list \'= (list \'shape (list \'quote \'(1 3 5 7))) 0)',
+		')))'].join(' '))).toBe('(0)');
+	expect(globalInfo.evaluateToString([
+		'(select \'(1) (r-e-p-loop (list',
+		'\'(define foo (v) (if (= (shape v) 0) 1 0))',
+		'(list \'foo (list \'quote \'(1 3 5 7)))',
+		')))'].join(' '))).toBe('(0)');
 
-	//     Assert.AreEqual("((1 4 9 16))", globalInfo.evaluate(@"
-	// (select '(2) (r-e-p-loop (list
-	// '(define dropend (v) ([] v (indx (- (shape v) 1))))
-	// '(define +\ (v)
-	// (if (= (shape v) 0) v
-	//     (cat (+\ (dropend v)) (+/ v))))
-	// (list '+\ (list 'quote '(1 3 5 7)))
-	// )))"));
+	expect(globalInfo.evaluateToString([
+		'(select \'(2) (r-e-p-loop (list',
+		'\'(define dropend (v) ([] v (indx (- (shape v) 1))))',
+		'\'(define +\ (v)',
+		'(if (= (shape v) 0) v',
+		'    (cat (+\ (dropend v)) (+/ v))))',
+		'(list \'+\ (list \'quote \'(1 3 5 7)))',
+		')))'].join(' '))).toBe('((1 4 9 16))');
 });
 
 // [Test]
@@ -1531,7 +1511,7 @@ test('Scheme APL-Evaluator test', () => {
 //     Assert.AreEqual("(letrec ((foo (quote bar))) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(letrec ((foo 'bar)) 'baz)")));
 //     Assert.AreEqual("(call/cc (lambda (foo) (foo (quote bar))))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(call/cc (lambda (foo) (foo 'bar)))")));
 // }
-//
+
 // [Test]
 // public void ComposeListTest() // 2013/11/30
 // {
@@ -1550,7 +1530,7 @@ test('Scheme APL-Evaluator test', () => {
 //
 //     Assert.AreEqual("18", Evaluate("(sumplus3 7 8)"));
 // }
-//
+
 // [Test]
 // public void GeneralFindTest() // 2013/12/03
 // {
@@ -1601,19 +1581,19 @@ test('Scheme APL-Evaluator test', () => {
 //     Assert.AreEqual("13", Evaluate("(alist-alt 3 sample-alist)"));
 //     Assert.AreEqual("()", Evaluate("(alist-alt 4 sample-alist)"));
 // }
-//
+
 // [Test]
 // public void SyntaxExceptionTest() // 2013/12/12
 // {
 //     InferenceAssert.ThrowsWithLineAndColumnNumbers<SyntaxException>(() => Evaluate("(if 'T 7 13 'SyntaxError)"), 1, 13);
 // }
-//
+
 // [Test]
 // public void EvaluationExceptionTest() // 2013/12/12
 // {
 //     InferenceAssert.ThrowsWithLineAndColumnNumbers<EvaluationException>(() => Evaluate("(car 7)"), 1, 2);
 // }
-//
+
 // [Test]
 // public void StringLessThanTest()    // 2013/12/14
 // {
@@ -1625,7 +1605,7 @@ test('Scheme APL-Evaluator test', () => {
 //     Assert.AreEqual("T", Evaluate("(string< \"abac\" \"abacus\")"));
 //     Assert.AreEqual("T", Evaluate("(string< \"abacab\" \"abacus\")"));
 // }
-//
+
 // [Test]
 // public void StringSortTest()    // 2013/12/14
 // {
@@ -1643,7 +1623,7 @@ test('Scheme APL-Evaluator test', () => {
 //     Assert.AreEqual("(a ab abacab abacus abbot abbreviate abcess baa)",
 //         Evaluate("((merge-sort string<) '(\"abbreviate\" \"abacab\" \"abbot\" \"a\" \"baa\" \"abcess\" \"ab\" \"abacus\"))"));
 // }
-//
+
 // [Test]
 // public void RepeatListTest()    // 2014/02/15.  This might be useful in "restruct" in our Scheme APL interpreter.
 // {
