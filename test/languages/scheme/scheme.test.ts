@@ -1412,38 +1412,35 @@ test('Scheme APL-Evaluator test', () => {
 		].join(' ')
 	);
 
-	//     globalInfo.evaluate(@"
-	// (set r-e-p-loop (lambda (inputs)
-	// (begin
-	// (set global-environment '())
-	// (r-e-p-loop* inputs '()))))");
+	    globalInfo.evaluate([
+	'(set r-e-p-loop (lambda (inputs)',
+	'(begin',
+	'(set global-environment \'())',
+	'(r-e-p-loop* inputs \'()))))'].join(' '));
 
-	//     globalInfo.evaluate(@"
-	// (set r-e-p-loop* (lambda (inputs fundefs)
-	// (cond
-	// ((null? inputs) '()) ; session done
-	// ((atom? (car inputs)) ; input is variable or number
-	//     (process-expr (car inputs) (cdr inputs) fundefs))
-	// ((= (caar inputs) 'define) ; input is function definition
-	//     (process-def (car inputs) (cdr inputs) fundefs))
-	// ('T (process-expr (car inputs) (cdr inputs) fundefs)))))");
+	    globalInfo.evaluate([
+	'(set r-e-p-loop* (lambda (inputs fundefs)',
+	'(cond',
+	'((null? inputs) \'())', // ; session done
+	'((atom? (car inputs))', // ; input is variable or number
+	'    (process-expr (car inputs) (cdr inputs) fundefs))',
+	'((= (caar inputs) \'define)', // ; input is function definition
+	'    (process-def (car inputs) (cdr inputs) fundefs))',
+	'(\'T (process-expr (car inputs) (cdr inputs) fundefs)))))'].join(' '));
 
-	//     globalInfo.evaluate(@"
-	// (set process-def (lambda (e inputs fundefs)
-	// (cons (cadr e) ; echo function name
-	// (r-e-p-loop* inputs
-	//     (mkassoc (cadr e) (cddr e) fundefs)))))");
+	    globalInfo.evaluate([
+	'(set process-def (lambda (e inputs fundefs)',
+	'(cons (cadr e)', // ; echo function name
+	'(r-e-p-loop* inputs',
+	'    (mkassoc (cadr e) (cddr e) fundefs)))))'].join(' '));
 
-	//     globalInfo.evaluate(@"
-	// (set process-expr (lambda (e inputs fundefs)
-	// (cons (eval e '() fundefs) ; print value of expression
-	// (r-e-p-loop* inputs fundefs))))");
+	    globalInfo.evaluate([
+	'(set process-expr (lambda (e inputs fundefs)',
+	'(cons (eval e \'() fundefs)', // ; print value of expression
+	'(r-e-p-loop* inputs fundefs))))'].join(' '));
 
-	//     // indx test
-	//     Assert.AreEqual("((1 2 3 4 5 6 7 8))", globalInfo.evaluate(@"
-	// (r-e-p-loop '(
-	// (indx 8)
-	// ))"));
+	    // indx test
+	expect(globalInfo.evaluateToString('(r-e-p-loop \'((indx 8)))')).toBe('((1 2 3 4 5 6 7 8))');
 
 	//     // max/ test
 	//     /*
