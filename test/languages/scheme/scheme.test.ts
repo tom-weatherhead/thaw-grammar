@@ -1439,83 +1439,39 @@ test('Scheme APL-Evaluator test', () => {
 	'(cons (eval e \'() fundefs)', // ; print value of expression
 	'(r-e-p-loop* inputs fundefs))))'].join(' '));
 
-	    // indx test
+    // indx test
 	expect(globalInfo.evaluateToString('(r-e-p-loop \'((indx 8)))')).toBe('((1 2 3 4 5 6 7 8))');
 
-	//     // max/ test
-	//     /*
-	//     Assert.AreEqual("(8 (10 9 12))", globalInfo.evaluate(@"
-	// (r-e-p-loop '(
-	// (max/ (quote (2 4 6 8 1 3 5 7)))
-	// (max/ (quote ((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))
-	// ))"));
-	//      */
-	//     Assert.AreEqual("(8 (10 9 12))", globalInfo.evaluate(@"
-	// (r-e-p-loop (list
-	// (list 'max/ (list 'quote '(2 4 6 8 1 3 5 7)))
-	// (list 'max/ (list 'quote '((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))
-	// ))"));
+    // max/ test
+	expect(globalInfo.evaluateToString(['(r-e-p-loop (list',
+	'(list \'max/ (list \'quote \'(2 4 6 8 1 3 5 7)))',
+	'(list \'max/ (list \'quote \'((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))))'].join(' '))).toBe('(8 (10 9 12))');
 
-	//     // restruct test
-	//     /*
-	//     Assert.AreEqual("((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))", globalInfo.evaluate(@"
-	// (r-e-p-loop '(
-	// (restruct (quote (7)) (quote (8 9)))
-	// (restruct (quote (4 4)) (quote (1 0 0 0 0)))
-	// ))"));
-	//      */
-	//     Assert.AreEqual("((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))", globalInfo.evaluate(@"
-	// (r-e-p-loop (list
-	// (list 'restruct (list 'quote '(7)) (list 'quote '(8 9)))
-	// (list 'restruct (list 'quote '(4 4)) (list 'quote '(1 0 0 0 0)))
-	// ))"));
+    // restruct test
+	expect(globalInfo.evaluateToString(['(r-e-p-loop (list',
+	'(list \'restruct (list \'quote \'(7)) (list \'quote \'(8 9)))',
+	'(list \'restruct (list \'quote \'(4 4)) (list \'quote \'(1 0 0 0 0)))',
+	'))'].join(' '))).toBe('((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))');
 
-	//     // trans test
-	//     /*
-	//     Assert.AreEqual("(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))", globalInfo.evaluate(@"
-	// (select '(1) (r-e-p-loop '(
-	// (set m1 (restruct (quote (3 4)) (indx 12)))
-	// (trans m1)
-	// )))"));
-	//      */
-	//     Assert.AreEqual("(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))", globalInfo.evaluate(@"
-	// (select '(1) (r-e-p-loop (list
-	// (list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))
-	// '(trans m1)
-	// )))"));
+    // trans test
+	expect(globalInfo.evaluateToString([
+		'(select \'(1) (r-e-p-loop (list',
+		'(list \'set \'m1 (list \'restruct (list \'quote \'(3 4)) \'(indx 12)))',
+		'\'(trans m1)',
+		')))'].join(' '))).toBe('(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))');
 
-	//     // [] test
-	//     /*
-	//     Assert.AreEqual("((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))", globalInfo.evaluate(@"
-	// (select '(2 3 4 5) (r-e-p-loop '(
-	// (set v1 (quote (8 6 7 5 3 0 9)))
-	// (set m1 (restruct (quote (3 4)) (indx 12)))
-	// ([] v1 4)
-	// ([] v1 (quote (3 1 7 6)))
-	// ([] m1 2)
-	// ([] m1 (quote (3 1)))
-	// )))"));
-	//      */
-	//     Assert.AreEqual("((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))", globalInfo.evaluate(@"
-	// (select '(2 3 4 5) (r-e-p-loop (list
-	// (list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))
-	// (list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))
-	// '([] v1 4)
-	// (list '[] 'v1 (list 'quote '(3 1 7 6)))
-	// '([] m1 2)
-	// (list '[] 'm1 (list 'quote '(3 1)))
-	// )))"));
+    // [] test
+	expect(globalInfo.evaluateToString([
+		'(select \'(2 3 4 5) (r-e-p-loop (list',
+		'(list \'set \'v1 (list \'quote \'(8 6 7 5 3 0 9)))',
+		'(list \'set \'m1 (list \'restruct (list \'quote \'(3 4)) \'(indx 12)))',
+		'\'([] v1 4)',
+		'(list \'[] \'v1 (list \'quote \'(3 1 7 6)))',
+		'\'([] m1 2)',
+		'(list \'[] \'m1 (list \'quote \'(3 1)))',
+	')))'].join(' '))).toBe('((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))');
 
-	//     // compress test
-	//     /*
-	//     Assert.AreEqual("((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))", globalInfo.evaluate(@"
-	// (select '(2 3) (r-e-p-loop '(
-	// (set v1 (quote (8 6 7 5 3 0 9)))
-	// (set m1 (restruct (quote (4 4)) (indx 16)))
-	// (compress (quote (1 0 1 1 0 1 0)) v1)
-	// (compress (quote (0 1 0 1)) m1)
-	// )))"));
-	//      */
+    // compress test
 	//     Assert.AreEqual("((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))", globalInfo.evaluate(@"
 	// (select '(2 3) (r-e-p-loop (list
 	// (list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))
@@ -1523,8 +1479,15 @@ test('Scheme APL-Evaluator test', () => {
 	// (list 'compress (list 'quote '(1 0 1 1 0 1 0)) 'v1)
 	// (list 'compress (list 'quote '(0 1 0 1)) 'm1)
 	// )))"));
+	expect(globalInfo.evaluateToString([
+		'(select \'(2 3) (r-e-p-loop (list',
+		'(list \'set \'v1 (list \'quote \'(8 6 7 5 3 0 9)))',
+		'(list \'set \'m1 (list \'restruct (list \'quote \'(4 4)) \'(indx 16)))',
+		'(list \'compress (list \'quote \'(1 0 1 1 0 1 0)) \'v1)',
+		'(list \'compress (list \'quote \'(0 1 0 1)) \'m1)',
+		')))'].join(' '))).toBe('((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))');
 
-	//     // primes<= test (see pages 74-75)
+    // primes<= test (see pages 74-75)
 	//     Assert.AreEqual("(((4 7) 0 1 1 1 1 1 1 0 0 2 2 2 2 2 0 1 0 3 3 3 3 0 0 1 0 4 4 4) (2 3 5 7))", globalInfo.evaluate(@"
 	// (select '(2 4) (r-e-p-loop '(
 	// (define mod (m n) (- m (* n (/ m n))))
@@ -1537,40 +1500,17 @@ test('Scheme APL-Evaluator test', () => {
 	// (primes<= 7)
 	// )))"));
 
-	//     // +\ ("+-scan") test (see page 74).  This tests the "if" construct.
-	//     /*
-	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
-	// (select '(0) (r-e-p-loop '(
-	// (= (shape (quote (1 3 5 7))) 0)
-	// )))"));
-	//      */
+    // +\ ("+-scan") test (see page 74).  This tests the "if" construct.
 	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
 	// (select '(0) (r-e-p-loop (list
 	// (list '= (list 'shape (list 'quote '(1 3 5 7))) 0)
 	// )))"));
-	//     /*
-	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
-	// (select '(1) (r-e-p-loop '(
-	// (define foo (v) (if (= (shape v) 0) 1 0))
-	// (foo (quote (1 3 5 7)))
-	// )))"));
-	//      */
 	//     Assert.AreEqual("(0)", globalInfo.evaluate(@"
 	// (select '(1) (r-e-p-loop (list
 	// '(define foo (v) (if (= (shape v) 0) 1 0))
 	// (list 'foo (list 'quote '(1 3 5 7)))
 	// )))"));
 
-	//     /*
-	//     Assert.AreEqual("((1 4 9 16))", globalInfo.evaluate(@"
-	// (select '(2) (r-e-p-loop '(
-	// (define dropend (v) ([] v (indx (- (shape v) 1))))
-	// (define +\ (v)
-	// (if (= (shape v) 0) v
-	//     (cat (+\ (dropend v)) (+/ v))))
-	// (+\ (quote (1 3 5 7)))
-	// )))"));
-	//      */
 	//     Assert.AreEqual("((1 4 9 16))", globalInfo.evaluate(@"
 	// (select '(2) (r-e-p-loop (list
 	// '(define dropend (v) ([] v (indx (- (shape v) 1))))
