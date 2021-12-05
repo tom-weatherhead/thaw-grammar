@@ -55,9 +55,12 @@ function evaluateToISExpression(input: string): ISExpression {
 	return expr.evaluate(globalInfo, globalInfo.globalEnvironment);
 }
 
-function schemeTest(data: Array<[input: string, expectedResult: string | string[]]>, options: {
-	presets?: string[];
-} = {}): void {
+function schemeTest(
+	data: Array<[input: string, expectedResult: string | string[]]>,
+	options: {
+		presets?: string[];
+	} = {}
+): void {
 	// Arrange
 	const { tokenizer, parser } = createInfrastructure(ls);
 
@@ -336,21 +339,18 @@ test('LL(1) Scheme Streams test', () => {
 //     Assert.IsTrue(x < maxValue);
 // }
 
-test('Scheme Sets test', () => { // // See pages 104-105
-    // globalInfo.LoadPreset("set");
-
-//     Assert.AreEqual("(a b)", Evaluate("(set s1 (addelt 'a (addelt 'b nullset)))"));
-//     Assert.AreEqual("T", Evaluate("(member? 'a s1)"));
-//     Assert.AreEqual("()", Evaluate("(member? 'c s1)"));
-//     Assert.AreEqual("(b c)", Evaluate("(set s2 (addelt 'b (addelt 'c nullset)))"));
-//     Assert.AreEqual("(c a b)", Evaluate("(set s3 (union s1 s2))"));
-	schemeTest([
-		['(set s1 (addelt \'a (addelt \'b nullset)))', '(a b)'],
-		['(member? \'a s1)', 'T'],
-		['(member? \'c s1)', '()'],
-		['(set s2 (addelt \'b (addelt \'c nullset)))', '(b c)'],
-		['(set s3 (union s1 s2))', '(c a b)']
-	], { presets: ['set'] });
+test('Scheme Sets test', () => {
+	// // See pages 104-105
+	schemeTest(
+		[
+			["(set s1 (addelt 'a (addelt 'b nullset)))", '(a b)'],
+			["(member? 'a s1)", 'T'],
+			["(member? 'c s1)", '()'],
+			["(set s2 (addelt 'b (addelt 'c nullset)))", '(b c)'],
+			['(set s3 (union s1 s2))', '(c a b)']
+		],
+		{ presets: ['set'] }
+	);
 });
 
 // private void DefineTermRewritingSystem()  // See section 4.4 on pages 116-122
@@ -1399,106 +1399,165 @@ test('Scheme APL-Evaluator test', () => {
 		].join(' ')
 	);
 
-	    globalInfo.evaluate([
-	'(set r-e-p-loop (lambda (inputs)',
-	'(begin',
-	'(set global-environment \'())',
-	'(r-e-p-loop* inputs \'()))))'].join(' '));
+	globalInfo.evaluate(
+		[
+			'(set r-e-p-loop (lambda (inputs)',
+			'(begin',
+			"(set global-environment '())",
+			"(r-e-p-loop* inputs '()))))"
+		].join(' ')
+	);
 
-	    globalInfo.evaluate([
-	'(set r-e-p-loop* (lambda (inputs fundefs)',
-	'(cond',
-	'((null? inputs) \'())', // ; session done
-	'((atom? (car inputs))', // ; input is variable or number
-	'    (process-expr (car inputs) (cdr inputs) fundefs))',
-	'((= (caar inputs) \'define)', // ; input is function definition
-	'    (process-def (car inputs) (cdr inputs) fundefs))',
-	'(\'T (process-expr (car inputs) (cdr inputs) fundefs)))))'].join(' '));
+	globalInfo.evaluate(
+		[
+			'(set r-e-p-loop* (lambda (inputs fundefs)',
+			'(cond',
+			"((null? inputs) '())", // ; session done
+			'((atom? (car inputs))', // ; input is variable or number
+			'    (process-expr (car inputs) (cdr inputs) fundefs))',
+			"((= (caar inputs) 'define)", // ; input is function definition
+			'    (process-def (car inputs) (cdr inputs) fundefs))',
+			"('T (process-expr (car inputs) (cdr inputs) fundefs)))))"
+		].join(' ')
+	);
 
-	    globalInfo.evaluate([
-	'(set process-def (lambda (e inputs fundefs)',
-	'(cons (cadr e)', // ; echo function name
-	'(r-e-p-loop* inputs',
-	'    (mkassoc (cadr e) (cddr e) fundefs)))))'].join(' '));
+	globalInfo.evaluate(
+		[
+			'(set process-def (lambda (e inputs fundefs)',
+			'(cons (cadr e)', // ; echo function name
+			'(r-e-p-loop* inputs',
+			'    (mkassoc (cadr e) (cddr e) fundefs)))))'
+		].join(' ')
+	);
 
-	    globalInfo.evaluate([
-	'(set process-expr (lambda (e inputs fundefs)',
-	'(cons (eval e \'() fundefs)', // ; print value of expression
-	'(r-e-p-loop* inputs fundefs))))'].join(' '));
+	globalInfo.evaluate(
+		[
+			'(set process-expr (lambda (e inputs fundefs)',
+			"(cons (eval e '() fundefs)", // ; print value of expression
+			'(r-e-p-loop* inputs fundefs))))'
+		].join(' ')
+	);
 
-    // indx test
-	expect(globalInfo.evaluateToString('(r-e-p-loop \'((indx 8)))')).toBe('((1 2 3 4 5 6 7 8))');
+	// indx test
+	expect(globalInfo.evaluateToString("(r-e-p-loop '((indx 8)))")).toBe('((1 2 3 4 5 6 7 8))');
 
-    // max/ test
-	expect(globalInfo.evaluateToString(['(r-e-p-loop (list',
-	'(list \'max/ (list \'quote \'(2 4 6 8 1 3 5 7)))',
-	'(list \'max/ (list \'quote \'((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))))'].join(' '))).toBe('(8 (10 9 12))');
+	// max/ test
+	expect(
+		globalInfo.evaluateToString(
+			[
+				'(r-e-p-loop (list',
+				"(list 'max/ (list 'quote '(2 4 6 8 1 3 5 7)))",
+				"(list 'max/ (list 'quote '((3 4) 8 4 10 1 9 2 5 7 3 11 6 12)))))"
+			].join(' ')
+		)
+	).toBe('(8 (10 9 12))');
 
-    // restruct test
-	expect(globalInfo.evaluateToString(['(r-e-p-loop (list',
-	'(list \'restruct (list \'quote \'(7)) (list \'quote \'(8 9)))',
-	'(list \'restruct (list \'quote \'(4 4)) (list \'quote \'(1 0 0 0 0)))',
-	'))'].join(' '))).toBe('((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))');
+	// restruct test
+	expect(
+		globalInfo.evaluateToString(
+			[
+				'(r-e-p-loop (list',
+				"(list 'restruct (list 'quote '(7)) (list 'quote '(8 9)))",
+				"(list 'restruct (list 'quote '(4 4)) (list 'quote '(1 0 0 0 0)))",
+				'))'
+			].join(' ')
+		)
+	).toBe('((8 9 8 9 8 9 8) ((4 4) 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1))');
 
-    // trans test
-	expect(globalInfo.evaluateToString([
-		'(select \'(1) (r-e-p-loop (list',
-		'(list \'set \'m1 (list \'restruct (list \'quote \'(3 4)) \'(indx 12)))',
-		'\'(trans m1)',
-		')))'].join(' '))).toBe('(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))');
+	// trans test
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(1) (r-e-p-loop (list",
+				"(list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))",
+				"'(trans m1)",
+				')))'
+			].join(' ')
+		)
+	).toBe('(((4 3) 1 5 9 2 6 10 3 7 11 4 8 12))');
 
-    // [] test
-	expect(globalInfo.evaluateToString([
-		'(select \'(2 3 4 5) (r-e-p-loop (list',
-		'(list \'set \'v1 (list \'quote \'(8 6 7 5 3 0 9)))',
-		'(list \'set \'m1 (list \'restruct (list \'quote \'(3 4)) \'(indx 12)))',
-		'\'([] v1 4)',
-		'(list \'[] \'v1 (list \'quote \'(3 1 7 6)))',
-		'\'([] m1 2)',
-		'(list \'[] \'m1 (list \'quote \'(3 1)))',
-	')))'].join(' '))).toBe('((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))');
+	// [] test
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(2 3 4 5) (r-e-p-loop (list",
+				"(list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))",
+				"(list 'set 'm1 (list 'restruct (list 'quote '(3 4)) '(indx 12)))",
+				"'([] v1 4)",
+				"(list '[] 'v1 (list 'quote '(3 1 7 6)))",
+				"'([] m1 2)",
+				"(list '[] 'm1 (list 'quote '(3 1)))",
+				')))'
+			].join(' ')
+		)
+	).toBe('((5) (7 8 9 0) ((1 4) 5 6 7 8) ((2 4) 9 10 11 12 1 2 3 4))');
 
-    // compress test
-	expect(globalInfo.evaluateToString([
-		'(select \'(2 3) (r-e-p-loop (list',
-		'(list \'set \'v1 (list \'quote \'(8 6 7 5 3 0 9)))',
-		'(list \'set \'m1 (list \'restruct (list \'quote \'(4 4)) \'(indx 16)))',
-		'(list \'compress (list \'quote \'(1 0 1 1 0 1 0)) \'v1)',
-		'(list \'compress (list \'quote \'(0 1 0 1)) \'m1)',
-		')))'].join(' '))).toBe('((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))');
+	// compress test
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(2 3) (r-e-p-loop (list",
+				"(list 'set 'v1 (list 'quote '(8 6 7 5 3 0 9)))",
+				"(list 'set 'm1 (list 'restruct (list 'quote '(4 4)) '(indx 16)))",
+				"(list 'compress (list 'quote '(1 0 1 1 0 1 0)) 'v1)",
+				"(list 'compress (list 'quote '(0 1 0 1)) 'm1)",
+				')))'
+			].join(' ')
+		)
+	).toBe('((8 7 5 0) ((2 4) 5 6 7 8 13 14 15 16))');
 
-    // primes<= test (see pages 74-75)
-	expect(globalInfo.evaluateToString([
-		'(select \'(2 4) (r-e-p-loop \'(',
-		'(define mod (m n) (- m (* n (/ m n))))',
-		'(define mod-outer-probe (v1 v2)',
-		'(mod (trans (restruct (cat (shape v2) (shape v1)) v1))',
-		'    (restruct (cat (shape v1) (shape v2)) v2)))',
-		'(mod-outer-probe (indx 4) (indx 7))',
-		// ; Perhaps we could implement 'let', and then use (let ((s (indx n))) ...)
-		'(define primes<= (n) (compress (= 2 (+/ (= 0 (mod-outer-probe (set s (indx n)) s)))) s))',
-		'(primes<= 7)',
-		')))'].join(' '))).toBe('(((4 7) 0 1 1 1 1 1 1 0 0 2 2 2 2 2 0 1 0 3 3 3 3 0 0 1 0 4 4 4) (2 3 5 7))');
+	// primes<= test (see pages 74-75)
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(2 4) (r-e-p-loop '(",
+				'(define mod (m n) (- m (* n (/ m n))))',
+				'(define mod-outer-probe (v1 v2)',
+				'(mod (trans (restruct (cat (shape v2) (shape v1)) v1))',
+				'    (restruct (cat (shape v1) (shape v2)) v2)))',
+				'(mod-outer-probe (indx 4) (indx 7))',
+				// ; Perhaps we could implement 'let', and then use (let ((s (indx n))) ...)
+				'(define primes<= (n) (compress (= 2 (+/ (= 0 (mod-outer-probe (set s (indx n)) s)))) s))',
+				'(primes<= 7)',
+				')))'
+			].join(' ')
+		)
+	).toBe('(((4 7) 0 1 1 1 1 1 1 0 0 2 2 2 2 2 0 1 0 3 3 3 3 0 0 1 0 4 4 4) (2 3 5 7))');
 
-    // +\ ("+-scan") test (see page 74).  This tests the "if" construct.
-	expect(globalInfo.evaluateToString([
-		'(select \'(0) (r-e-p-loop (list',
-		'(list \'= (list \'shape (list \'quote \'(1 3 5 7))) 0)',
-		')))'].join(' '))).toBe('(0)');
-	expect(globalInfo.evaluateToString([
-		'(select \'(1) (r-e-p-loop (list',
-		'\'(define foo (v) (if (= (shape v) 0) 1 0))',
-		'(list \'foo (list \'quote \'(1 3 5 7)))',
-		')))'].join(' '))).toBe('(0)');
+	// +\ ("+-scan") test (see page 74).  This tests the "if" construct.
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(0) (r-e-p-loop (list",
+				"(list '= (list 'shape (list 'quote '(1 3 5 7))) 0)",
+				')))'
+			].join(' ')
+		)
+	).toBe('(0)');
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(1) (r-e-p-loop (list",
+				"'(define foo (v) (if (= (shape v) 0) 1 0))",
+				"(list 'foo (list 'quote '(1 3 5 7)))",
+				')))'
+			].join(' ')
+		)
+	).toBe('(0)');
 
-	expect(globalInfo.evaluateToString([
-		'(select \'(2) (r-e-p-loop (list',
-		'\'(define dropend (v) ([] v (indx (- (shape v) 1))))',
-		'\'(define +\ (v)',
-		'(if (= (shape v) 0) v',
-		'    (cat (+\ (dropend v)) (+/ v))))',
-		'(list \'+\ (list \'quote \'(1 3 5 7)))',
-		')))'].join(' '))).toBe('((1 4 9 16))');
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(2) (r-e-p-loop (list",
+				"'(define dropend (v) ([] v (indx (- (shape v) 1))))",
+				"'(define + (v)",
+				'(if (= (shape v) 0) v',
+				'    (cat (+ (dropend v)) (+/ v))))',
+				"(list '+ (list 'quote '(1 3 5 7)))",
+				')))'
+			].join(' ')
+		)
+	).toBe('((1 4 9 16))');
 });
 
 // [Test]
