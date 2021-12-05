@@ -14,27 +14,27 @@ import {
 	areIsomorphic,
 	BetaReductionStrategy,
 	churchNumeralToInteger,
-	createCombinator,
+	// createCombinator,
 	createGrammar,
-	createOperatorDecrementUsage,
-	createOperatorIncrementUsage,
-	createOperatorIsZeroUsage,
+	// createOperatorDecrementUsage,
+	// createOperatorIncrementUsage,
+	// createOperatorIsZeroUsage,
 	createValueFalse,
 	createValueTrue,
 	createVariableNameGenerator,
-	getfb2,
+	// getfb2,
 	ILCExpression,
 	ILCVariable,
-	integerToChurchNumeral,
-	isList,
-	lcaCons,
-	lcaConsUsage,
-	lcaCreateNil,
-	lcaHead,
-	lcaIsNull,
-	// , lcaIsNullUsage
-	lcaTail,
-	listToString
+	integerToChurchNumeral
+	// isList,
+	// lcaCons,
+	// lcaConsUsage,
+	// lcaCreateNil,
+	// lcaHead,
+	// lcaIsNull,
+	// // , lcaIsNullUsage
+	// lcaTail,
+	// listToString
 } from '../../..';
 
 const ls = LanguageSelector.LambdaCalculusWithAugmentedSyntax;
