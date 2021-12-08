@@ -49,9 +49,9 @@ export function createGlobalInfo(
 		case LanguageSelector.Smalltalk:
 			return new SmalltalkGlobalInfo(options);
 
-		// case LanguageSelector.Prolog:
-		case LanguageSelector.Prolog2: // 'Real' Prolog
-			return new PrologGlobalInfo(); // (options);
+		// case LanguageSelector.Prolog: // Kamin's LISP-like Prolog syntax
+		case LanguageSelector.Prolog2: // 'Real' Prolog syntax
+			return new PrologGlobalInfo(options);
 
 		// case LanguageSelector.Inference:
 		// 	return new InferenceGlobalInfo(options);

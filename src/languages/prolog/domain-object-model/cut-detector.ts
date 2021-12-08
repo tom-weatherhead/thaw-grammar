@@ -1,13 +1,14 @@
-// cut-detector.ts
+// tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/cut-detector.ts
 
-import { v4 as uuidv4 } from 'uuid';
+// import 'react-native-get-random-values';
+// import { v4 as uuidv4 } from 'uuid';
 
 export class CutDetector {
-	public readonly guid: string;
+	// public readonly guid: string;
 	//public bool CutDetected { get; set; }
 
-	constructor() {
-		this.guid = uuidv4();
+	constructor(public readonly guid: string) {
+		// this.guid = uuidv4();
 		//CutDetected = false;
 	}
 }

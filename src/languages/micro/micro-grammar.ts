@@ -27,10 +27,6 @@ export class MicroGrammar extends GrammarBase {
 		return 'Micro';
 	}
 
-	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	return [ParserSelector.LL1];
-	// }
-
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {}
 

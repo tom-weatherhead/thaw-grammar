@@ -10,6 +10,9 @@ export interface IGlobalInfoForInterpreter {
 
 	evaluateToString(str: string): string;
 
+	// **** Presets ****
+	loadPreset(presetName: string): string;
+
 	// **** Printing text to stdout ****
 	clearPrintedText(): void;
 	getPrintedText(): string;
@@ -42,7 +45,7 @@ export interface IGlobalInfo<T> extends IGlobalInfoForInterpreter {
 	// numberAsFloatValue(value: number): T; // Convert to the language's native floating-point number data type
 
 	// **** Presets ****
-	loadPreset(presetName: string): string;
+	// loadPreset(presetName: string): string;
 	loadPresets(): void;
 
 	// **** Printing text to stdout ****

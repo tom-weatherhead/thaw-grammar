@@ -2,6 +2,8 @@
 
 import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 import { GlobalInfoBase } from '../../../common/domain-object-model/global-info-base';
 
 import { CutBacktrackException } from './cut-backtrack-exception';
@@ -62,13 +64,23 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// public IInterpreterFileLoader FileLoader = null;
 	private readonly DefaultModule = new PrologModule();
 	// private readonly dictModules = new Map<string, PrologModule>(); // The keys are file paths.
+	private guidNumber = 0;
 
 	// constructor(gs: LanguageSelector, t: ITokenizer) {
-	constructor() {
-		super();
+	// constructor() {
+	// 	super();
+	//
+	// 	// this.gs = gs;
+	// 	// this.tokenizer = t;
+	// }
 
-		// this.gs = gs;
-		// this.tokenizer = t;
+	constructor(
+		options: {
+			parser?: IParser;
+			tokenizer?: ITokenizer;
+		} = {}
+	) {
+		super(options);
 	}
 
 	//     public PrologGlobalInfo(LanguageSelector gs, ITokenizer t, IParser p)
@@ -2065,7 +2077,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			);
 
 			// ThAW 2014/03/06 : We want to support cuts in goal disjunctions and if/then/else constructs.
-			const cutDetector = new CutDetector();
+			const cutDetector = new CutDetector(this.getNextGuid());
 
 			const goalListLengthBeforeSplice = goalList.length;
 
@@ -2255,7 +2267,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// var goalList = new List<PrologGoal>((List<PrologGoal>)parseResult);
 			const cutDetectorList: CutDetector[] = [];
 			const listOfCurrentModules: PrologModule[] = [];
-			const cutDetector = new CutDetector();
+			const cutDetector = new CutDetector(this.getNextGuid());
 			let substitution: ISubstitution | undefined;
 
 			// sbOutput.Clear();
@@ -2381,5 +2393,26 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		// }
 
 		return this.DefaultModule;
+	}
+
+	public override evaluateToString(str: string): string {
+		if (typeof this.tokenizer === 'undefined') {
+			throw new Error('PrologGlobalInfo.evaluateToString() : this.tokenizer is undefined.');
+		} else if (typeof this.parser === 'undefined') {
+			throw new Error('PrologGlobalInfo.evaluateToString() : this.parser is undefined.');
+		}
+
+		const parseResult = this.parser.parse(this.tokenizer.tokenize(str));
+		const expr = parseResult as PrologClause | PrologGoal[];
+
+		this.clearPrintedText();
+
+		const evaluationResultAsString = this.ProcessInput(expr);
+
+		return this.getPrintedText() + evaluationResultAsString;
+	}
+
+	private getNextGuid(): string {
+		return `guid-${this.guidNumber++}`;
 	}
 }
