@@ -74,7 +74,7 @@
 	"publishConfig": {},
 	"dependencies": {
 		"thaw-common-utilities.ts": "^0.0.11",
-		"thaw-interpreter-core": "^0.0.3"
+		"thaw-interpreter-core": "file:thaw-interpreter-core.tgz"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.16.0",
@@ -92,9 +92,9 @@
 		"prettier": "^2.4.1",
 		"rollup": "^2.60.1",
 		"rollup-plugin-terser": "^7.0.2",
-		"thaw-interpreter-types": "^0.0.3",
-		"thaw-lexical-analyzer": "^0.0.7",
-		"thaw-parser": "^0.0.7",
+		"thaw-interpreter-types": "file:thaw-interpreter-types.tgz",
+		"thaw-lexical-analyzer": "file:thaw-lexical-analyzer.tgz",
+		"thaw-parser": "file:thaw-parser.tgz",
 		"typescript": "^4.5.2",
 		"typescript-eslint-language-service": "^4.1.5"
 	},

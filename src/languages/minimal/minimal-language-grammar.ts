@@ -3,29 +3,15 @@
 // A minimal grammar that supports the input: (+ 2 3)
 // I.e. Tokens: LeftBracket, Plus, IntegerLiteral_2, IntegerLiteral_3, RightBracket, EOF.
 
-// import { Stack } from 'thaw-common-utilities.ts';
-
-import {
-	GrammarSymbol,
-	IToken,
-	LexicalState,
-	// ParserSelector,
-	SemanticStackType
-} from 'thaw-interpreter-types';
+import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { createProduction, Name } from 'thaw-interpreter-core';
 
-// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
-// import { Name } from '../../common/domain-object-model/name';
 
 // import { GrammarException } from '../../common/exceptions/grammar-exception';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
-// import { ParserSelector } from '../../common/parser-selectors';
-// import { createProduction } from '../../common/production';
-
-// import { Symbol } from '../../common/symbol';
 
 import { IntegerLiteral } from './domain-object-model/integer-literal';
 import { OperatorUsage } from './domain-object-model/operator-usage';
@@ -106,11 +92,6 @@ export class MinimalLanguageGrammar extends GrammarBase {
 		return 'The minimal language';
 	}
 
-	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	return [ParserSelector.LL1];
-	// }
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		// console.log(`MinimalLanguageGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
@@ -169,7 +150,6 @@ export class MinimalLanguageGrammar extends GrammarBase {
 	}
 
 	public override pushTokenOntoSemanticStack(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		semanticStack: SemanticStackType,
 		tokenAsSymbol: number,
 		token: IToken

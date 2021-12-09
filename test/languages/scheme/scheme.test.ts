@@ -26,13 +26,7 @@ test('LL(1) Scheme parser instance creation test', () => {
 });
 
 test('LL(1) Scheme recognize test', () => {
-	// 	// Arrange
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	// const parser = createParser(ParserSelector.LL1, grammar);
-	// const { tokenizer, parser } = createInfrastructure(ls);
-
-	// const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
+	// Arrange
 	const f = createFnRecognizer(ls);
 
 	f('(* 7 13)');

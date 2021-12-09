@@ -4,6 +4,7 @@ import { IGrammar, LanguageSelector } from 'thaw-interpreter-types';
 
 import { ArgumentException } from 'thaw-interpreter-core';
 
+import { ArithmeticGrammar } from '../languages/arithmetic/arithmetic-grammar';
 import { APLGrammar } from '../languages/apl/apl-grammar';
 import { Chapter1Grammar } from '../languages/chapter1/chapter1-grammar';
 import { CluGrammar } from '../languages/clu/clu-grammar';
@@ -67,6 +68,9 @@ export function createGrammar(ls: LanguageSelector): IGrammar {
 
 		case LanguageSelector.LambdaCalculusIntegerExtension:
 			return new LambdaCalculusIntegerExtensionGrammar();
+
+		case LanguageSelector.Arithmetic:
+			return new ArithmeticGrammar();
 
 		default:
 			throw new ArgumentException(
