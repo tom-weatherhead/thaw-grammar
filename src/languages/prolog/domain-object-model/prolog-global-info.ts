@@ -576,37 +576,40 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	//         return goal.ExpressionList[2].Unify(new PrologIntegerLiteral(sum));
 	//     }
 
-	//     private PrologSubstitution ApplyBuiltInComparisonOperator(
-	//         PrologGoal goal,
-	//         Func<int, int, bool> intComparisonOperator,
-	//         Func<double, double, bool> floatComparisonOperator)
-	//     {
-	//         var lhsEvalated = goal.ExpressionList[0].EvaluateToNumber();
-	//         var rhsEvalated = goal.ExpressionList[1].EvaluateToNumber();
-
-	//         if (lhsEvalated == null || rhsEvalated == null)
-	//         {
-	//             return null;
-	//         }
-
-	//         bool comparisonResult;
-
-	//         if (lhsEvalated is PrologIntegerLiteral && rhsEvalated is PrologIntegerLiteral)
-	//         {
-	//             comparisonResult = intComparisonOperator(lhsEvalated.ToInteger(), rhsEvalated.ToInteger());
-	//         }
-	//         else
-	//         {
-	//             comparisonResult = floatComparisonOperator(lhsEvalated.ToDouble(), rhsEvalated.ToDouble());
-	//         }
-
-	//         if (comparisonResult)
-	//         {
-	//             return new PrologSubstitution();
-	//         }
-
-	//         return null;
+	// private applyBuiltInComparisonOperator(
+	//     goal: PrologGoal,
+	//     // Func<int, int, bool> intComparisonOperator,
+	//     // Func<double, double, bool> floatComparisonOperator
+	// 	comparisonOperator: (x: number, y: number) => boolean
+	// ): ISubstitution | undefined {
+	//     const lhsEvalated = goal.ExpressionList[0].EvaluateToNumber();
+	//     const rhsEvalated = goal.ExpressionList[1].EvaluateToNumber();
+	//
+	//     if (typeof lhsEvalated === 'undefined' || typeof rhsEvalated === 'undefined') {
+	//         return undefined;
 	//     }
+	//
+	//     // let comparisonResult: boolean;
+	// 	//
+	//     // if (lhsEvalated is PrologIntegerLiteral && rhsEvalated is PrologIntegerLiteral)
+	//     // {
+	//     //     comparisonResult = intComparisonOperator(lhsEvalated.ToInteger(), rhsEvalated.ToInteger());
+	//     // }
+	//     // else
+	//     // {
+	//     //     comparisonResult = floatComparisonOperator(lhsEvalated.ToDouble(), rhsEvalated.ToDouble());
+	//     // }
+	//
+	//     if (comparisonOperator(lhsEvalated.ToDouble(), rhsEvalated.ToDouble())) {
+	//         return createSubstitution();
+	//     }
+	//
+	//     return undefined;
+	// }
+	//
+	// private greaterThan2(goal: PrologGoal): ISubstitution | undefined {
+	//     return this.applyBuiltInComparisonOperator(goal, (x, y) => x > y);
+	// }
 
 	//     private PrologSubstitution GoalDisjunction2(
 	//         PrologGoal goal,
@@ -1341,8 +1344,10 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			case 'add':
 				return n1 + n2;
 			case 'sub':
+			case '-':
 				return n1 - n2;
 			case 'mult':
+			case '*':
 				return n1 * n2;
 			case 'div':
 				if (n2 === 0) {
@@ -1368,6 +1373,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			case 'le': // '<=':
 				return n1 <= n2;
 			case 'gt': // '>':
+			case '>':
 				return n1 > n2;
 			case 'ge': // '>=':
 				return n1 >= n2;
@@ -1530,7 +1536,9 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 			case 'add':
 			case 'sub':
+			case '-':
 			case 'mult':
+			case '*':
 			case 'div':
 			case 'mod':
 				if (
@@ -1583,6 +1591,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			case 'lt': // '<':
 			case 'le': // '<=':
 			case 'gt': // '>':
+			case '>':
 			case 'ge': // '>=':
 			case 'eq': // '=':
 			case 'ne': // '!=':
@@ -1667,7 +1676,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 					if (typeof n1 === 'undefined') {
 						console.error(
-							`Goal is/3 : '${goal.ExpressionList[1]}' does not evaluate to a number.`
+							`Goal is/2 : '${goal.ExpressionList[1]}' does not evaluate to a number.`
 						);
 
 						return undefined;

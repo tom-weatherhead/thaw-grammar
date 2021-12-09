@@ -5,7 +5,6 @@ import {
 	IToken,
 	LanguageSelector,
 	LexicalState,
-	// ParserSelector,
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
@@ -63,6 +62,9 @@ export class PrologGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalOrBar);
 		this.terminals.push(GrammarSymbol.terminalNotSymbol);
 		this.terminals.push(GrammarSymbol.terminalIs);
+		this.terminals.push(GrammarSymbol.terminalGreaterThan);
+		this.terminals.push(GrammarSymbol.terminalMinus);
+		this.terminals.push(GrammarSymbol.terminalMultiply);
 		// this.terminals.push(GrammarSymbol.terminal);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
@@ -104,6 +106,7 @@ export class PrologGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunctorExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionListTail);
+		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 		// this.nonTerminals.push(GrammarSymbol.nonterminal);
 
 		// Non-Terminals:
@@ -421,9 +424,9 @@ export class PrologGrammar extends GrammarBase {
 				GrammarSymbol.nonterminalGoal,
 				[
 					GrammarSymbol.nonterminalVariable,
-					GrammarSymbol.terminalIs,
+					GrammarSymbol.nonterminalOptr, // terminalIs,
 					GrammarSymbol.nonterminalExpression,
-					'#createGoal_Is'
+					'#createGoal_ArithmeticOperator'
 				],
 				30
 			)
@@ -434,11 +437,45 @@ export class PrologGrammar extends GrammarBase {
 				GrammarSymbol.nonterminalGoal,
 				[
 					GrammarSymbol.terminalIntegerLiteral,
-					GrammarSymbol.terminalIs,
+					GrammarSymbol.nonterminalOptr, // terminalIs,
 					GrammarSymbol.nonterminalExpression,
-					'#createGoal_Is'
+					'#createGoal_ArithmeticOperator'
 				],
 				31
+			)
+		);
+
+		this.productions.push(
+			createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalIs], 32)
+		);
+
+		this.productions.push(
+			createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalGreaterThan], 33)
+		);
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[
+					GrammarSymbol.terminalMinus,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpression,
+					'#prefixBinaryArithmeticOperator'
+				],
+				34
+			)
+		);
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[
+					GrammarSymbol.terminalMultiply,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpression,
+					'#prefixBinaryArithmeticOperator'
+				],
+				35
 			)
 		);
 	}
@@ -570,11 +607,26 @@ export class PrologGrammar extends GrammarBase {
 				semanticStack.push(new PrologFunctorExpression(gs, 'not', [functorExpr]));
 				break;
 
-			case '#createGoal_Is':
+			case '#createGoal_ArithmeticOperator': // I.e. goal with an arithmetic operator
+				expr2 = semanticStack.pop() as IPrologExpression;
+				str = semanticStack.pop() as string;
+				expr = semanticStack.pop() as IPrologExpression;
+				semanticStack.push(new PrologGoal(gs, str, [expr, expr2]));
+				break;
+
+			case '#prefixBinaryArithmeticOperator': // I.e. goal with an arithmetic operator
 				expr2 = semanticStack.pop() as IPrologExpression;
 				expr = semanticStack.pop() as IPrologExpression;
-				semanticStack.push(new PrologGoal(gs, 'is', [expr, expr2]));
+				str = semanticStack.pop() as string;
+				// semanticStack.push(new Prolog?(gs, str, [expr, expr2]));
+				semanticStack.push(new PrologFunctorExpression(gs, str, [expr, expr2]));
 				break;
+
+			// case '#createGoal_GreaterThan':
+			// 	expr2 = semanticStack.pop() as IPrologExpression;
+			// 	expr = semanticStack.pop() as IPrologExpression;
+			// 	semanticStack.push(new PrologGoal(gs, 'gt', [expr, expr2]));
+			// 	break;
 
 			// // case "#arithExpr_Prefix":   // The same as #infix, except for the order of the items on the stack.
 			// // expr2 = (IPrologExpression)semanticStack.Pop();
@@ -670,10 +722,15 @@ export class PrologGrammar extends GrammarBase {
 					// case "+": return Symbol.T_Plus;
 					// case "-": return Symbol.T_Minus;
 					// case "*": return Symbol.T_Multiply;
+					case '-':
+						return GrammarSymbol.terminalMinus;
+					case '*':
+						return GrammarSymbol.terminalMultiply;
 					// case "/": return Symbol.T_Divide;
 					// case "mod": return Symbol.T_Mod;
 					// case "<": return Symbol.T_LessThan;
-					// case ">": return Symbol.T_GreaterThan;
+					case '>':
+						return GrammarSymbol.terminalGreaterThan;
 					// case "=<": return Symbol.T_LessEqual; // Not <=.  See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
 					// case ">=": return Symbol.T_GreaterEqual;
 					case '\\+':
@@ -754,7 +811,8 @@ export class PrologGrammar extends GrammarBase {
 			// case TokenType.T_Colon: return Symbol.T_Colon;
 			// case TokenType.T_Less: return Symbol.T_LessThan;
 			// case TokenType.T_EqualLessThan: return Symbol.T_LessEqual;
-			// case TokenType.T_Greater: return Symbol.T_GreaterThan;
+			case LexicalState.tokenGreater:
+				return GrammarSymbol.terminalGreaterThan;
 			// case TokenType.T_GreaterEqual: return Symbol.T_GreaterEqual;
 			// case TokenType.T_BackslashEqual: return Symbol.T_NotUnifiable;
 			// case TokenType.T_EqualEqual: return Symbol.T_Equals;
@@ -764,6 +822,10 @@ export class PrologGrammar extends GrammarBase {
 			// case TokenType.T_MinusMinusGreaterThan: return Symbol.T_DCGArrow;
 			// case TokenType.T_EqualDotDot: return Symbol.T_Univ;
 			// case TokenType.T_Plus: return Symbol.T_Plus;
+			case LexicalState.tokenMinus:
+				return GrammarSymbol.terminalMinus;
+			case LexicalState.tokenMult:
+				return GrammarSymbol.terminalMultiply;
 			// case TokenType.T_Minus: return Symbol.T_Minus;
 			// case TokenType.T_Mult: return Symbol.T_Multiply;
 			// case TokenType.T_Div: return Symbol.T_Divide;
@@ -803,8 +865,10 @@ export class PrologGrammar extends GrammarBase {
 
 			case GrammarSymbol.terminalNameBeginningWithCapital:
 			case GrammarSymbol.terminalNameNotBeginningWithCapital:
-				// case Symbol.terminalIs:
-
+			case GrammarSymbol.terminalIs:
+			case GrammarSymbol.terminalMinus:
+			case GrammarSymbol.terminalMultiply:
+			case GrammarSymbol.terminalGreaterThan:
 				if (typeof value !== 'string') {
 					throw new Error('Oh bugger.');
 				}
@@ -818,8 +882,6 @@ export class PrologGrammar extends GrammarBase {
 			// 	break;
 
 			// case Symbol.T_Plus:
-			// case Symbol.T_Minus:
-			// case Symbol.T_Multiply:
 			// case Symbol.T_Divide:
 			// case Symbol.T_Mod:
 			// case Symbol.T_LessThan:
@@ -833,8 +895,8 @@ export class PrologGrammar extends GrammarBase {
 			// case Symbol.T_NotEqual:
 			// case Symbol.T_NotUnifiable:
 			// case Symbol.T_Univ:
-			// 	semanticStack.push(value);
-			// 	break;
+			// semanticStack.push(value);
+			// break;
 
 			default:
 				break;
