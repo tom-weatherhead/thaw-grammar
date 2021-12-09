@@ -71,3 +71,15 @@ function arithmeticTest(
 test('Arithmetic addition test 1', () => {
 	arithmeticTest([['2 + 3', 5]]);
 });
+
+test('Arithmetic subtraction test 1', () => {
+	arithmeticTest([['9 - 2', 7]]);
+});
+
+test('Arithmetic subtraction test 2', () => {
+	arithmeticTest([['9 - 2 - 3', 4]]);
+});
+
+test('Arithmetic addition and subtraction test 1', () => {
+	arithmeticTest([['9 - (2 - 3)', 10]]);
+});
