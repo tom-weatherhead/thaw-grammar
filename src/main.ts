@@ -87,3 +87,6 @@ export * from './languages/lambda-calculus/domain-object-model/lambda-expression
 export * from './languages/lambda-calculus-integer-extension/domain-object-model/integer-literal';
 
 export * from './languages/lambda-calculus-integer-extension/domain-object-model/primitive-operator';
+
+// The arithmetic lenguage
+export * from './languages/arithmetic/domain-object-model/global-info';

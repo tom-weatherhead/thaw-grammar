@@ -24,17 +24,14 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { createProduction /* , Name */ } from 'thaw-interpreter-core';
+import { createProduction, Name } from 'thaw-interpreter-core';
 
-// import { IExpression } from '../../common/domain-object-model/iexpression';
-
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
+import { IExpression } from '../../common/domain-object-model/iexpression';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
-// import { createProduction } from '../../common/production';
 
-// import { IntegerLiteral } from './domain-object-model/integer-literal';
-// import { OperatorUsage } from './domain-object-model/operator-usage';
+import { IntegerLiteral } from './domain-object-model/number';
+import { OperatorUsage } from './domain-object-model/operator-usage';
 
 export class ArithmeticGrammar extends GrammarBase {
 	constructor() {
@@ -68,13 +65,9 @@ export class ArithmeticGrammar extends GrammarBase {
 				[
 					GrammarSymbol.nonterminalArithmeticExpression1,
 					GrammarSymbol.terminalPlus,
-					GrammarSymbol.nonterminalArithmeticExpression2
+					GrammarSymbol.nonterminalArithmeticExpression2,
+					'#operatorUsage'
 				],
-				// [
-				// 	GrammarSymbol.nonterminalArithmeticExpression2,
-				// 	GrammarSymbol.terminalPlus,
-				// 	GrammarSymbol.nonterminalArithmeticExpression1
-				// ],
 				2
 			)
 		);
@@ -85,13 +78,9 @@ export class ArithmeticGrammar extends GrammarBase {
 				[
 					GrammarSymbol.nonterminalArithmeticExpression1,
 					GrammarSymbol.terminalMinus,
-					GrammarSymbol.nonterminalArithmeticExpression2
+					GrammarSymbol.nonterminalArithmeticExpression2,
+					'#operatorUsage'
 				],
-				// [
-				// 	GrammarSymbol.nonterminalArithmeticExpression2,
-				// 	GrammarSymbol.terminalMinus,
-				// 	GrammarSymbol.nonterminalArithmeticExpression1
-				// ],
 				3
 			)
 		);
@@ -123,51 +112,9 @@ export class ArithmeticGrammar extends GrammarBase {
 				6
 			)
 		);
-
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalExpression,
-		// 		[
-		// 			GrammarSymbol.terminalLeftBracket,
-		// 			GrammarSymbol.nonterminalBracketedExpression,
-		// 			GrammarSymbol.terminalRightBracket
-		// 		],
-		// 		3
-		// 	)
-		// );
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalBracketedExpression,
-		// 		[
-		// 			GrammarSymbol.terminalPlus,
-		// 			GrammarSymbol.nonterminalExpressionList,
-		// 			'#operatorUsage'
-		// 		],
-		// 		4
-		// 	)
-		// );
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalExpressionList,
-		// 		[
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			GrammarSymbol.nonterminalExpressionList,
-		// 			'#expressionList'
-		// 		],
-		// 		5
-		// 	)
-		// );
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalExpressionList,
-		// 		[GrammarSymbol.Lambda, '#emptyExpressionList'],
-		// 		6
-		// 	)
-		// );
 	}
 
 	public get languageName(): string {
-		// This is a 'get' accessor.
 		return 'An arithmetic language';
 	}
 
@@ -175,42 +122,39 @@ export class ArithmeticGrammar extends GrammarBase {
 		return ParserSelector.SLR1;
 	}
 
-	// public override get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	// return [ParserSelector.LL1];
-	// 	return [ParserSelector.SLR1];
-	// }
-
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
-		throw new Error('executeSemanticAction() : Not implemented');
+		// throw new Error('executeSemanticAction() : Not implemented');
 
 		// console.log(`Grammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
-		// let name: Name;
-		// let expression: IExpression<number>;
+		let operatorName: Name;
+		let expressionL: IExpression<number>;
+		let expressionR: IExpression<number>;
 		// let expressionList: IExpression<number>[];
-		//
-		// switch (action) {
-		// 	case '#operatorUsage':
-		// 		expressionList = semanticStack.pop() as IExpression<number>[];
-		// 		name = semanticStack.pop() as Name;
-		// 		semanticStack.push(new OperatorUsage(name, expressionList));
-		// 		break;
-		//
-		// 	case '#expressionList':
-		// 		expressionList = semanticStack.pop() as IExpression<number>[];
-		// 		expression = semanticStack.pop() as IExpression<number>;
-		// 		expressionList.unshift(expression);
-		// 		semanticStack.push(expressionList);
-		// 		break;
-		//
-		// 	case '#emptyExpressionList':
-		// 		semanticStack.push([] as IExpression<number>[]);
-		// 		break;
-		//
-		// 	default:
-		// 		throw new GrammarException(`Unrecognized semantic action: ${action}`);
-		// }
+
+		switch (action) {
+			case '#operatorUsage':
+				expressionR = semanticStack.pop() as IExpression<number>;
+				operatorName = semanticStack.pop() as Name;
+				expressionL = semanticStack.pop() as IExpression<number>;
+				semanticStack.push(new OperatorUsage(operatorName, [expressionL, expressionR]));
+				break;
+
+			// case '#expressionList':
+			// 	expressionList = semanticStack.pop() as IExpression<number>[];
+			// 	expression = semanticStack.pop() as IExpression<number>;
+			// 	expressionList.unshift(expression);
+			// 	semanticStack.push(expressionList);
+			// 	break;
+			//
+			// case '#emptyExpressionList':
+			// 	semanticStack.push([] as IExpression<number>[]);
+			// 	break;
+
+			default:
+				throw new GrammarException(`Unrecognized semantic action: ${action}`);
+		}
 	}
 
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
@@ -230,6 +174,10 @@ export class ArithmeticGrammar extends GrammarBase {
 				return GrammarSymbol.terminalPlus;
 			case LexicalState.tokenMinus:
 				return GrammarSymbol.terminalMinus;
+			case LexicalState.tokenMult:
+				return GrammarSymbol.terminalMultiply;
+			case LexicalState.tokenDiv:
+				return GrammarSymbol.terminalDivide;
 
 			default:
 				break;
@@ -247,33 +195,36 @@ export class ArithmeticGrammar extends GrammarBase {
 		tokenAsSymbol: number,
 		token: IToken
 	): void {
-		throw new Error('pushTokenOntoSemanticStack() : Not implemented');
+		// throw new Error('pushTokenOntoSemanticStack() : Not implemented');
 
-		// switch (tokenAsSymbol) {
-		// 	case GrammarSymbol.terminalIntegerLiteral:
-		// 		// console.log(`Pushing IntegerLiteral ${token.tokenValue as number} onto the semanticStack`);
-		// 		semanticStack.push(new IntegerLiteral(token.tokenValue));
-		// 		break;
-		//
-		// 	case GrammarSymbol.terminalPlus:
-		// 		// console.log(`Pushing Name '${token.tokenValue as string}' onto the semanticStack`);
-		// 		semanticStack.push(
-		// 			new Name(token.tokenValue as string, token.line, token.column /*, false */)
-		// 		);
-		// 		break;
-		//
-		// 	case GrammarSymbol.terminalLeftBracket:
-		// 	case GrammarSymbol.terminalRightBracket:
-		// 	case GrammarSymbol.terminalEOF:
-		// 		break;
-		//
-		// 	default:
-		// 		throw new GrammarException(
-		// 			`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${tokenAsSymbol}`,
-		// 			token.line,
-		// 			token.column
-		// 		);
-		// }
+		switch (tokenAsSymbol) {
+			case GrammarSymbol.terminalIntegerLiteral:
+				// console.log(`Pushing IntegerLiteral ${token.tokenValue as number} onto the semanticStack`);
+				semanticStack.push(new IntegerLiteral(token.tokenValue));
+				break;
+
+			case GrammarSymbol.terminalPlus:
+			case GrammarSymbol.terminalMinus:
+			case GrammarSymbol.terminalMultiply:
+			case GrammarSymbol.terminalDivide:
+				// console.log(`Pushing Name '${token.tokenValue as string}' onto the semanticStack`);
+				semanticStack.push(
+					new Name(token.tokenValue as string, token.line, token.column /*, false */)
+				);
+				break;
+
+			case GrammarSymbol.terminalLeftBracket:
+			case GrammarSymbol.terminalRightBracket:
+			case GrammarSymbol.terminalEOF:
+				break;
+
+			default:
+				throw new GrammarException(
+					`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${tokenAsSymbol}`,
+					token.line,
+					token.column
+				);
+		}
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

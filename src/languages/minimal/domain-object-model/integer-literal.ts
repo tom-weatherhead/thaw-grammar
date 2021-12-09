@@ -37,10 +37,6 @@ export class IntegerLiteral implements IExpression<number> {
 	// }
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
-	// public evaluate(
-	// 	localEnvironment: EnvironmentFrame<number>,
-	// 	globalInfo: IGlobalInfo<number>
-	// ): number {
 	public evaluate(
 		globalInfo: IGlobalInfo<number>,
 		localEnvironment?: IEnvironmentFrame<number>,

@@ -9,8 +9,6 @@ import { createProduction, Name } from 'thaw-interpreter-core';
 
 import { IExpression } from '../../common/domain-object-model/iexpression';
 
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
-
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
 import { IntegerLiteral } from './domain-object-model/integer-literal';

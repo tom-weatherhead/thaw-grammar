@@ -6,11 +6,11 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 // import { createTokenizer } from 'thaw-lexical-analyzer';
 
-import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
+import { createParser, SyntaxException } from 'thaw-parser';
 
 import { createGrammar, IExpression, ISExpression, PrimOp, SchemeGlobalInfo } from '../../..';
 
-import { createParser, SyntaxException } from 'thaw-parser';
+import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
 
 const ls = LanguageSelector.Scheme;
 
