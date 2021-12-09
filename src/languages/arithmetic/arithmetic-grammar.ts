@@ -65,42 +65,42 @@ export class ArithmeticGrammar extends GrammarBase {
 		this.productions.push(
 			createProduction(
 				GrammarSymbol.nonterminalArithmeticExpression1,
-				// [
-				// 	GrammarSymbol.nonterminalArithmeticExpression1,
-				// 	GrammarSymbol.terminalPlus,
-				// 	GrammarSymbol.nonterminalArithmeticExpression2
-				// ],
 				[
-					GrammarSymbol.nonterminalArithmeticExpression2,
+					GrammarSymbol.nonterminalArithmeticExpression1,
 					GrammarSymbol.terminalPlus,
-					GrammarSymbol.nonterminalArithmeticExpression1
+					GrammarSymbol.nonterminalArithmeticExpression2
 				],
+				// [
+				// 	GrammarSymbol.nonterminalArithmeticExpression2,
+				// 	GrammarSymbol.terminalPlus,
+				// 	GrammarSymbol.nonterminalArithmeticExpression1
+				// ],
 				2
 			)
 		);
 
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalArithmeticExpression1,
-		// 		// [
-		// 		// 	GrammarSymbol.nonterminalArithmeticExpression1,
-		// 		// 	GrammarSymbol.terminalMinus,
-		// 		// 	GrammarSymbol.nonterminalArithmeticExpression2
-		// 		// ],
-		// 		[
-		// 			GrammarSymbol.nonterminalArithmeticExpression2,
-		// 			GrammarSymbol.terminalMinus,
-		// 			GrammarSymbol.nonterminalArithmeticExpression1
-		// 		],
-		// 		3
-		// 	)
-		// );
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalArithmeticExpression1,
+				[
+					GrammarSymbol.nonterminalArithmeticExpression1,
+					GrammarSymbol.terminalMinus,
+					GrammarSymbol.nonterminalArithmeticExpression2
+				],
+				// [
+				// 	GrammarSymbol.nonterminalArithmeticExpression2,
+				// 	GrammarSymbol.terminalMinus,
+				// 	GrammarSymbol.nonterminalArithmeticExpression1
+				// ],
+				3
+			)
+		);
 
 		this.productions.push(
 			createProduction(
 				GrammarSymbol.nonterminalArithmeticExpression1,
 				[GrammarSymbol.nonterminalArithmeticExpression2],
-				3
+				4
 			)
 		);
 
@@ -108,7 +108,7 @@ export class ArithmeticGrammar extends GrammarBase {
 			createProduction(
 				GrammarSymbol.nonterminalArithmeticExpression2,
 				[GrammarSymbol.terminalIntegerLiteral],
-				4
+				5
 			)
 		);
 
@@ -120,7 +120,7 @@ export class ArithmeticGrammar extends GrammarBase {
 					GrammarSymbol.nonterminalArithmeticExpression1,
 					GrammarSymbol.terminalRightBracket
 				],
-				5
+				6
 			)
 		);
 

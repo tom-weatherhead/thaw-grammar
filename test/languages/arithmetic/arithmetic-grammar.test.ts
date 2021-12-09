@@ -25,7 +25,7 @@ test('ArithmeticGrammar recognize test', () => {
 
 	f('1');
 	f('1 + 1');
-	// f('3 - 2');
+	f('3 - 2');
 	f('1 + 2 + 3');
 
 	// expect(() => f('(* 7 13')).toThrow(SyntaxException);
