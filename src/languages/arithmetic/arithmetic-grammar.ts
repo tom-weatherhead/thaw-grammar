@@ -49,7 +49,9 @@ export class ArithmeticGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
 		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression1);
 		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression2);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator1);
+		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression3);
+		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator1);
+		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator2);
 
 		this.productions.push(
 			createProduction(
@@ -59,12 +61,14 @@ export class ArithmeticGrammar extends GrammarBase {
 			)
 		);
 
+		// **** Level 1 : Addition and Subtraction ****
+
 		this.productions.push(
 			createProduction(
 				GrammarSymbol.nonterminalArithmeticExpression1,
 				[
 					GrammarSymbol.nonterminalArithmeticExpression1,
-					GrammarSymbol.terminalPlus,
+					GrammarSymbol.nonterminalArithmeticOperator1,
 					GrammarSymbol.nonterminalArithmeticExpression2,
 					'#operatorUsage'
 				],
@@ -72,16 +76,32 @@ export class ArithmeticGrammar extends GrammarBase {
 			)
 		);
 
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalArithmeticExpression1,
+		// 		[
+		// 			GrammarSymbol.nonterminalArithmeticExpression1,
+		// 			GrammarSymbol.terminalMinus,
+		// 			GrammarSymbol.nonterminalArithmeticExpression2,
+		// 			'#operatorUsage'
+		// 		],
+		// 		3
+		// 	)
+		// );
+
 		this.productions.push(
 			createProduction(
-				GrammarSymbol.nonterminalArithmeticExpression1,
-				[
-					GrammarSymbol.nonterminalArithmeticExpression1,
-					GrammarSymbol.terminalMinus,
-					GrammarSymbol.nonterminalArithmeticExpression2,
-					'#operatorUsage'
-				],
+				GrammarSymbol.nonterminalArithmeticOperator1,
+				[GrammarSymbol.terminalPlus],
 				3
+			)
+		);
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalArithmeticOperator1,
+				[GrammarSymbol.terminalMinus],
+				4
 			)
 		);
 
@@ -89,27 +109,68 @@ export class ArithmeticGrammar extends GrammarBase {
 			createProduction(
 				GrammarSymbol.nonterminalArithmeticExpression1,
 				[GrammarSymbol.nonterminalArithmeticExpression2],
-				4
-			)
-		);
-
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticExpression2,
-				[GrammarSymbol.terminalIntegerLiteral],
 				5
 			)
 		);
+
+		// **** Level 2 : Multiplication and Division ****
 
 		this.productions.push(
 			createProduction(
 				GrammarSymbol.nonterminalArithmeticExpression2,
 				[
+					GrammarSymbol.nonterminalArithmeticExpression2,
+					GrammarSymbol.nonterminalArithmeticOperator2,
+					GrammarSymbol.nonterminalArithmeticExpression3,
+					'#operatorUsage'
+				],
+				6
+			)
+		);
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalArithmeticOperator2,
+				[GrammarSymbol.terminalMultiply],
+				7
+			)
+		);
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalArithmeticOperator2,
+				[GrammarSymbol.terminalDivide],
+				8
+			)
+		);
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalArithmeticExpression2,
+				[GrammarSymbol.nonterminalArithmeticExpression3],
+				9
+			)
+		);
+
+		// **** Level 3 : Brackets ****
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalArithmeticExpression3,
+				[GrammarSymbol.terminalIntegerLiteral],
+				10
+			)
+		);
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalArithmeticExpression3,
+				[
 					GrammarSymbol.terminalLeftBracket,
 					GrammarSymbol.nonterminalArithmeticExpression1,
 					GrammarSymbol.terminalRightBracket
 				],
-				6
+				11
 			)
 		);
 	}
@@ -122,16 +183,12 @@ export class ArithmeticGrammar extends GrammarBase {
 		return ParserSelector.SLR1;
 	}
 
-	/* eslint-disable @typescript-eslint/no-unused-vars */
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
-		// throw new Error('executeSemanticAction() : Not implemented');
-
 		// console.log(`Grammar.executeSemanticAction() : action is ${typeof action} ${action}`);
 
 		let operatorName: Name;
 		let expressionL: IExpression<number>;
 		let expressionR: IExpression<number>;
-		// let expressionList: IExpression<number>[];
 
 		switch (action) {
 			case '#operatorUsage':
@@ -140,17 +197,6 @@ export class ArithmeticGrammar extends GrammarBase {
 				expressionL = semanticStack.pop() as IExpression<number>;
 				semanticStack.push(new OperatorUsage(operatorName, [expressionL, expressionR]));
 				break;
-
-			// case '#expressionList':
-			// 	expressionList = semanticStack.pop() as IExpression<number>[];
-			// 	expression = semanticStack.pop() as IExpression<number>;
-			// 	expressionList.unshift(expression);
-			// 	semanticStack.push(expressionList);
-			// 	break;
-			//
-			// case '#emptyExpressionList':
-			// 	semanticStack.push([] as IExpression<number>[]);
-			// 	break;
 
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
@@ -195,8 +241,6 @@ export class ArithmeticGrammar extends GrammarBase {
 		tokenAsSymbol: number,
 		token: IToken
 	): void {
-		// throw new Error('pushTokenOntoSemanticStack() : Not implemented');
-
 		switch (tokenAsSymbol) {
 			case GrammarSymbol.terminalIntegerLiteral:
 				// console.log(`Pushing IntegerLiteral ${token.tokenValue as number} onto the semanticStack`);
@@ -226,5 +270,4 @@ export class ArithmeticGrammar extends GrammarBase {
 				);
 		}
 	}
-	/* eslint-enable @typescript-eslint/no-unused-vars */
 }

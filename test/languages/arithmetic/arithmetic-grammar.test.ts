@@ -83,3 +83,11 @@ test('Arithmetic subtraction test 2', () => {
 test('Arithmetic addition and subtraction test 1', () => {
 	arithmeticTest([['9 - (2 - 3)', 10]]);
 });
+
+test('Arithmetic multiplication test 1', () => {
+	arithmeticTest([['2 * 3', 6]]);
+});
+
+test('Arithmetic mixed precedence test 1', () => {
+	arithmeticTest([['1 + 3 * 4', 13]]);
+});
