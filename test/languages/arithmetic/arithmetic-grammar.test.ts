@@ -91,3 +91,7 @@ test('Arithmetic multiplication test 1', () => {
 test('Arithmetic mixed precedence test 1', () => {
 	arithmeticTest([['1 + 3 * 4', 13]]);
 });
+
+test('Arithmetic mixed precedence test 2', () => {
+	arithmeticTest([['1 * 2 + 3 * 4 + 5 * 6', 44]]);
+});
