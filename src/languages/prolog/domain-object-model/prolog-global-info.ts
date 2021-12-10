@@ -1932,6 +1932,44 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				variablesInQuery,
 				listOfCurrentModules
 			);
+		} else if (
+			goal.Name === 'mult' &&
+			numArgsInGoal === 3 &&
+			goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
+			isIVariable(goal.ExpressionList[1]) &&
+			goal.ExpressionList[2] instanceof PrologIntegerLiteral
+		) {
+			// If 7 * N === 91 then N === 91 / 7 === 13
+			const n0 = goal.ExpressionList[0] as PrologIntegerLiteral;
+			const v1 = goal.ExpressionList[1] as IVariable;
+			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
+
+			// Handle unsolvable cases like 1 * N === 0
+			let solution = 0;
+
+			if (n0.Value === 0) {
+				if (n2.Value !== 0) {
+					return undefined;
+				}
+			} else {
+				solution = n2.Value / n0.Value;
+			}
+
+			const addSubstitution = createSubstitution(
+				v1.Name,
+				// new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n0.Value, n2.Value))
+				new PrologIntegerLiteral(solution)
+			);
+
+			return this.ProveGoalList(
+				goalList,
+				cutDetectorList,
+				nextGoalNum,
+				oldSubstitution.compose(addSubstitution),
+				parentVariablesToAvoid,
+				variablesInQuery,
+				listOfCurrentModules
+			);
 		}
 
 		// **** END Special case: E.g. add(2, N, 5) ****

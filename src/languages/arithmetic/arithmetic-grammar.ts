@@ -76,19 +76,6 @@ export class ArithmeticGrammar extends GrammarBase {
 			)
 		);
 
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalArithmeticExpression1,
-		// 		[
-		// 			GrammarSymbol.nonterminalArithmeticExpression1,
-		// 			GrammarSymbol.terminalMinus,
-		// 			GrammarSymbol.nonterminalArithmeticExpression2,
-		// 			'#operatorUsage'
-		// 		],
-		// 		3
-		// 	)
-		// );
-
 		this.productions.push(
 			createProduction(
 				GrammarSymbol.nonterminalArithmeticOperator1,

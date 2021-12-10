@@ -517,8 +517,10 @@ export class PrologGrammar extends GrammarBase {
 		return 'Prolog';
 	}
 
-	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	return [ParserSelector.LL1];
+	// TODO? to support infix arithmetic expressions:
+
+	// public override get defaultParser(): ParserSelector {
+	// 	return ParserSelector.SLR1;
 	// }
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {

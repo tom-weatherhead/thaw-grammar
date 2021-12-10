@@ -138,6 +138,18 @@ test('LL(1) Prolog subtraction test', () => {
 	]);
 });
 
+test('LL(1) Prolog multiplication test', () => {
+	prologTest([
+		['?- mult(7, 13, 91).', success()],
+		['?- mult(7, 13, 19).', failure()],
+		// ['?- mult(N, 13, 91).', success('N -> 7')],
+		['?- mult(0, N, 0).', success('N -> 0')],
+		['?- mult(0, N, 91).', failure()],
+		['?- mult(7, N, 91).', success('N -> 13')],
+		['?- mult(7, 13, N).', success('N -> 91')]
+	]);
+});
+
 test('LL(1) Prolog list reverse test', () => {
 	prologTest([
 		['accRev(cons(H, T), A, R):-  accRev(T, cons(H, A), R).', PrologGlobalInfo.ClauseAdded],
