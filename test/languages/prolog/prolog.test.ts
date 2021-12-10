@@ -142,11 +142,23 @@ test('LL(1) Prolog multiplication test', () => {
 	prologTest([
 		['?- mult(7, 13, 91).', success()],
 		['?- mult(7, 13, 19).', failure()],
-		// ['?- mult(N, 13, 91).', success('N -> 7')],
+		['?- mult(N, 0, 0).', success('N -> 0')],
+		['?- mult(N, 0, 91).', failure()],
+		['?- mult(N, 13, 91).', success('N -> 7')],
 		['?- mult(0, N, 0).', success('N -> 0')],
 		['?- mult(0, N, 91).', failure()],
 		['?- mult(7, N, 91).', success('N -> 13')],
 		['?- mult(7, 13, N).', success('N -> 91')]
+	]);
+});
+
+test('LL(1) Prolog division test', () => {
+	prologTest([
+		['?- div(91, 13, 7).', success()],
+		['?- div(19, 13, 7).', failure()],
+		['?- div(N, 13, 7).', success('N -> 91')],
+		// ['?- div(91, N, 7).', success('N -> 13')],
+		['?- div(91, 13, N).', success('N -> 7')]
 	]);
 });
 

@@ -1945,6 +1945,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
 			// Handle unsolvable cases like 1 * N === 0
+			// Also handle solvable cases like 0 * N === 0
 			let solution = 0;
 
 			if (n0.Value === 0) {
@@ -1955,10 +1956,68 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				solution = n2.Value / n0.Value;
 			}
 
+			const addSubstitution = createSubstitution(v1.Name, new PrologIntegerLiteral(solution));
+
+			return this.ProveGoalList(
+				goalList,
+				cutDetectorList,
+				nextGoalNum,
+				oldSubstitution.compose(addSubstitution),
+				parentVariablesToAvoid,
+				variablesInQuery,
+				listOfCurrentModules
+			);
+		} else if (
+			goal.Name === 'mult' &&
+			numArgsInGoal === 3 &&
+			isIVariable(goal.ExpressionList[0]) &&
+			goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
+			goal.ExpressionList[2] instanceof PrologIntegerLiteral
+		) {
+			// If N * 13 === 91 then N === 91 / 13 === 7
+			const v0 = goal.ExpressionList[0] as IVariable;
+			const n1 = goal.ExpressionList[1] as PrologIntegerLiteral;
+			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
+
+			// Handle unsolvable cases like N * 1 === 0
+			// Also handle solvable cases like N * 0 === 0
+			let solution = 0;
+
+			if (n1.Value === 0) {
+				if (n2.Value !== 0) {
+					return undefined;
+				}
+			} else {
+				solution = n2.Value / n1.Value;
+			}
+
+			const addSubstitution = createSubstitution(v0.Name, new PrologIntegerLiteral(solution));
+
+			return this.ProveGoalList(
+				goalList,
+				cutDetectorList,
+				nextGoalNum,
+				oldSubstitution.compose(addSubstitution),
+				parentVariablesToAvoid,
+				variablesInQuery,
+				listOfCurrentModules
+			);
+			// TODO: Support this div case: 91 / N === 7
+		} else if (
+			goal.Name === 'div' &&
+			numArgsInGoal === 3 &&
+			isIVariable(goal.ExpressionList[0]) &&
+			goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
+			goal.ExpressionList[2] instanceof PrologIntegerLiteral
+		) {
+			// If N / 13 === 7 then N === 13 * 7 === 91
+			const v0 = goal.ExpressionList[0] as IVariable;
+			const n1 = goal.ExpressionList[1] as PrologIntegerLiteral;
+			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
+
 			const addSubstitution = createSubstitution(
-				v1.Name,
-				// new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n0.Value, n2.Value))
-				new PrologIntegerLiteral(solution)
+				v0.Name,
+				new PrologIntegerLiteral(this.doIntegerArithmetic('mult', n1.Value, n2.Value))
 			);
 
 			return this.ProveGoalList(
