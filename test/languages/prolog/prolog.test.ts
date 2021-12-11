@@ -76,13 +76,13 @@ function failure(): string {
 
 function prologTest(
 	data: Array<[input: string, expectedResult: string | string[]]>,
-	allMode = false
+	options: { findAllSolutions?: boolean } = {}
 ): void {
 	// Arrange
 	const { tokenizer, parser } = createInfrastructure(ls);
 	const prologGlobalInfo = new PrologGlobalInfo();
 
-	if (allMode) {
+	if (options.findAllSolutions) {
 		prologGlobalInfo.FindAllSolutions();
 	}
 
@@ -99,6 +99,14 @@ function prologTest(
 			expect(actualResult).toBe(expectedResult);
 		} else {
 			for (const str of expectedResult) {
+				if (!actualResult.includes(str)) {
+					console.error('prologTest() : Expected substring not found.');
+					console.error('prologTest() : input:', input);
+					console.error('prologTest() : actualResult:', actualResult);
+					console.error('prologTest() : str:', str);
+					console.error('prologTest() : expectedResult:', expectedResult);
+				}
+
 				expect(actualResult.includes(str)).toBe(true);
 			}
 		}
@@ -279,19 +287,6 @@ test('LL(1) Prolog list reverse test', () => {
 // 	// 	expect(clause5.Unify(clause2)).toBeTruthy();
 // });
 
-// test('LL(1) Prolog permutation test 1', () => {
-// 	prologTest([
-// 		['append([], L, L).', PrologGlobalInfo.ClauseAdded],
-// 		[
-// 			'append([X | Y], L, [X | Z]) :- append(Y, L, Z).',
-// 			PrologGlobalInfo.ClauseAdded
-// 		],
-// 		['permutation([], []).', PrologGlobalInfo.ClauseAdded],
-// 		['permutation(L, [H | T]) :- append(V, [H | U], L), append(V, U, W), permutation(W, T).', PrologGlobalInfo.ClauseAdded],
-// 		['?- .', ['Satisfied', 'A -> ']]
-// 	]);
-// });
-
 test('LL(1) Prolog list reversal test', () => {
 	prologTest([
 		['accRev([H | T], A, R):-  accRev(T, [H | A], R).', PrologGlobalInfo.ClauseAdded],
@@ -356,7 +351,7 @@ test('LL(1) Prolog permutation test 1', () => {
 					'\n'
 			]
 		],
-		true
+		{ findAllSolutions: true }
 	);
 });
 
@@ -438,7 +433,7 @@ test('LL(1) Prolog cut in query test', () => {
 				]
 			]
 		],
-		true
+		{ findAllSolutions: true }
 	);
 });
 
