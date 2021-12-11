@@ -131,13 +131,11 @@ test('LL(1) Prolog addition test', () => {
 		['?- add(1, 1, 3).', failure()],
 		['?- add(N, 3, 5).', success('N -> 2')],
 		['?- add(2, N, 5).', success('N -> 3')],
-		['?- add(2, 3, N).', success('N -> 5')] // ,
+		['?- add(2, 3, N).', success('N -> 5')],
 
 		// Use real Prolog syntax:
-		// ['?- 3 is 1 + 2.', success()]
-
-		// ['?- 3 is + 1 2.', success()]
-		// ['?- N is + 1 2.', success('N -> 3')]
+		['?- 3 is 1 + 2.', success()],
+		['?- N is 1 + 2.', success('N -> 3')]
 	]);
 });
 
@@ -149,7 +147,7 @@ test('LL(1) Prolog subtraction test', () => {
 		['?- sub(8, N, 3).', success('N -> 5')],
 		['?- sub(8, 5, N).', success('N -> 3')],
 
-		// ['?- 3 is - 8 5.', success()],
+		['?- 3 is 8 - 5.', success()],
 		['?- N is 8 - 5.', success('N -> 3')]
 	]);
 });
@@ -166,6 +164,7 @@ test('LL(1) Prolog multiplication test', () => {
 		['?- mult(7, N, 91).', success('N -> 13')],
 		['?- mult(7, 13, N).', success('N -> 91')],
 
+		['?- 91 is 7 * 13.', success()],
 		['?- N is 7 * 13.', success('N -> 91')]
 	]);
 });
@@ -178,9 +177,34 @@ test('LL(1) Prolog division test', () => {
 		// ['?- div(91, N, 7).', success('N -> 13')],
 		['?- div(91, 13, N).', success('N -> 7')] // ,
 
-		// ['?- N is / 91 13.', success('N -> 7')]
+		// ['?- 7 is 91 / 13.', success()],
+		// ['?- N is 91 / 13.', success('N -> 7')]
 	]);
 });
+
+// test('LL(1) Prolog less than test', () => {
+// 	prologTest([
+// 		['?- 1 < 2.', success()],
+// 		['?- 2 < 2.', failure()],
+// 		['?- 3 < 2.', failure()]
+// 	]);
+// });
+
+test('LL(1) Prolog greater than test', () => {
+	prologTest([
+		['?- 1 > 2.', failure()],
+		['?- 2 > 2.', failure()],
+		['?- 3 > 2.', success()]
+	]);
+});
+
+// test('LL(1) Prolog numeric equals test', () => {
+// 	prologTest([
+// 		['?- 1 == 2.', failure()],
+// 		['?- 2 == 2.', success()],
+// 		['?- 3 == 2.', failure()]
+// 	]);
+// });
 
 test('LL(1) Prolog list reverse test', () => {
 	prologTest([
@@ -341,13 +365,6 @@ test('LL(1) Prolog factorial test 1', () => {
 	prologTest([
 		['factorial(0, 1).', PrologGlobalInfo.ClauseAdded],
 		[
-			// 'factorial(N, F) :- gt(N, 0), sub(N, 1, N1), factorial(N1, F1), mult(N, F1, F).',
-			// 'factorial(N, F) :- N > 0, sub(N, 1, N1), factorial(N1, F1), mult(N, F1, F).',
-			// 'factorial(N, F) :- N > 0, N1 is N - 1, factorial(N1, F1), mult(N, F1, F).',
-
-			// Fake (prefix) operator syntax: - N 1
-			// 'factorial(N, F) :- N > 0, N1 is - N 1, factorial(N1, F1), F is * N F1.',
-
 			// Correct (infix) operator syntax: N - 1
 			'factorial(N, F) :- N > 0, N1 is N - 1, factorial(N1, F1), F is N * F1.',
 

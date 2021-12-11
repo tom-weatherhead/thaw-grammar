@@ -723,9 +723,9 @@ export class PrologGrammar extends GrammarBase {
 				expr2 = semanticStack.pop() as IPrologExpression;
 				str = semanticStack.pop() as string; // Infix comparison operator: < > ==
 				expr = semanticStack.pop() as IPrologExpression;
-				console.log('#arithmeticComparison: expr is', expr);
-				console.log('#arithmeticComparison: str is', str);
-				console.log('#arithmeticComparison: expr2 is', expr2);
+				// console.log('#arithmeticComparison: expr is', expr);
+				// console.log('#arithmeticComparison: str is', str);
+				// console.log('#arithmeticComparison: expr2 is', expr2);
 				semanticStack.push(new PrologGoal(gs, str, [expr, expr2]));
 				break;
 
@@ -734,10 +734,10 @@ export class PrologGrammar extends GrammarBase {
 				str = semanticStack.pop() as string; // Infix operator: +, -, *, etc.
 				expr2 = semanticStack.pop() as IPrologExpression;
 				expr = semanticStack.pop() as IPrologExpression;
-				console.log('#is: expr is', expr);
-				console.log('#is: expr2 is', expr2);
-				console.log('#is: str is', str);
-				console.log('#is: expr3 is', expr3);
+				// console.log('#is: expr is', expr);
+				// console.log('#is: expr2 is', expr2);
+				// console.log('#is: str is', str);
+				// console.log('#is: expr3 is', expr3);
 				// semanticStack.push(new PrologGoal(gs, str, [expr, expr2, expr3]));
 				semanticStack.push(new PrologGoal(gs, str, [expr2, expr3, expr]));
 				break;
