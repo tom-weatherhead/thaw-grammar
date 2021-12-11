@@ -1342,6 +1342,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	private doIntegerArithmetic(op: string, n1: number, n2: number): number {
 		switch (op) {
 			case 'add':
+			case '+':
 				return n1 + n2;
 			case 'sub':
 			case '-':
@@ -1350,12 +1351,14 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			case '*':
 				return n1 * n2;
 			case 'div':
+			case '/':
 				if (n2 === 0) {
 					throw new Error('doIntegerArithmetic() : Division by zero');
 				}
 
 				return Math.floor(n1 / n2);
 			case 'mod':
+			case '%':
 				if (n2 === 0) {
 					throw new Error('doIntegerArithmetic() : Modulus by zero');
 				}
@@ -1384,6 +1387,56 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			default:
 				throw new Error(`doIntegerComparison() : Unsupported operator '${op}'`);
 		}
+	}
+
+	// private createSubstitutionForArithmeticOperation(v: IVariable, n1: PrologIntegerLiteral, n2: PrologIntegerLiteral, op: (x: number, y: number) => number): ISubstitution {
+	// 	return createSubstitution(
+	// 		v.Name,
+	// 		new PrologIntegerLiteral(op(n1.Value, n2.Value))
+	// 	);
+	// }
+
+	// private createSubstitutionForArithmeticOperation(v: IVariable, n1: PrologIntegerLiteral, n2: PrologIntegerLiteral, op: string): ISubstitution | undefined {
+	// 	let result = 0;
+	//
+	// 	if ((op === '/' || op === 'div') && n2.Value === 0) {
+	//
+	// 		if (n1.Value !== 0) {
+	// 			return undefined;
+	// 		}
+	//
+	// 		// We will define 0 / 0 to be 0, so that 0 * N = 0 => N = 0.
+	// 	} else {
+	// 		result = this.doIntegerArithmetic(op, n1.Value, n2.Value);
+	// 	}
+	//
+	// 	return createSubstitution(v.Name, new PrologIntegerLiteral(result));
+	// }
+
+	private createSubstitutionForArithmeticOperation(
+		goal: PrologGoal,
+		vi: number,
+		n1i: number,
+		n2i: number,
+		op: string
+	): ISubstitution | undefined {
+		const v = goal.ExpressionList[vi] as IVariable;
+		const n1 = goal.ExpressionList[n1i] as PrologIntegerLiteral;
+		const n2 = goal.ExpressionList[n2i] as PrologIntegerLiteral;
+
+		let result = 0;
+
+		if ((op === '/' || op === 'div') && n2.Value === 0) {
+			if (n1.Value !== 0) {
+				return undefined;
+			}
+
+			// We will define 0 / 0 to be 0, so that 0 * N = 0 => N = 0.
+		} else {
+			result = this.doIntegerArithmetic(op, n1.Value, n2.Value);
+		}
+
+		return createSubstitution(v.Name, new PrologIntegerLiteral(result));
 	}
 
 	private ProveGoalList(
@@ -1535,12 +1588,15 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				break;
 
 			case 'add':
+			case '+':
 			case 'sub':
 			case '-':
 			case 'mult':
 			case '*':
 			case 'div':
+			// case '/':
 			case 'mod':
+				// case '%':
 				if (
 					numArgsInGoal === 3 &&
 					goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
@@ -1836,14 +1892,29 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			goal.ExpressionList[2] instanceof PrologIntegerLiteral
 		) {
 			// If 2 + N === 5 then N === 5 - 2
-			const n0 = goal.ExpressionList[0] as PrologIntegerLiteral;
-			const v1 = goal.ExpressionList[1] as IVariable;
-			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
-			const addSubstitution = createSubstitution(
-				v1.Name,
-				new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n2.Value, n0.Value))
+			// const n0 = goal.ExpressionList[0] as PrologIntegerLiteral;
+			// const v1 = goal.ExpressionList[1] as IVariable;
+			// const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
+			//
+			// const addSubstitution = createSubstitution(
+			// 	v1.Name,
+			// 	new PrologIntegerLiteral(this.doIntegerArithmetic('sub', n2.Value, n0.Value))
+			// );
+
+			// const addSubstitution = this.createSubstitutionForArithmeticOperation(goal.ExpressionList[1] as IVariable, goal.ExpressionList[2] as PrologIntegerLiteral, goal.ExpressionList[0] as PrologIntegerLiteral, '-');
+
+			const addSubstitution = this.createSubstitutionForArithmeticOperation(
+				goal,
+				1,
+				2,
+				0,
+				'-'
 			);
+
+			if (typeof addSubstitution === 'undefined') {
+				return undefined;
+			}
 
 			return this.ProveGoalList(
 				goalList,

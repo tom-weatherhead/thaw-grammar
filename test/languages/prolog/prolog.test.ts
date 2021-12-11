@@ -124,7 +124,13 @@ test('LL(1) Prolog addition test', () => {
 		['?- add(1, 1, 3).', failure()],
 		['?- add(N, 3, 5).', success('N -> 2')],
 		['?- add(2, N, 5).', success('N -> 3')],
-		['?- add(2, 3, N).', success('N -> 5')]
+		['?- add(2, 3, N).', success('N -> 5')] // ,
+
+		// Use real Prolog syntax:
+		// ['?- 3 is 1 + 2.', success()]
+
+		// ['?- 3 is + 1 2.', success()]
+		// ['?- N is + 1 2.', success('N -> 3')]
 	]);
 });
 
@@ -134,7 +140,10 @@ test('LL(1) Prolog subtraction test', () => {
 		['?- sub(8, 5, 77).', failure()],
 		['?- sub(N, 3, 5).', success('N -> 8')],
 		['?- sub(8, N, 3).', success('N -> 5')],
-		['?- sub(8, 5, N).', success('N -> 3')]
+		['?- sub(8, 5, N).', success('N -> 3')],
+
+		// ['?- 3 is - 8 5.', success()],
+		['?- N is - 8 5.', success('N -> 3')]
 	]);
 });
 
@@ -148,7 +157,9 @@ test('LL(1) Prolog multiplication test', () => {
 		['?- mult(0, N, 0).', success('N -> 0')],
 		['?- mult(0, N, 91).', failure()],
 		['?- mult(7, N, 91).', success('N -> 13')],
-		['?- mult(7, 13, N).', success('N -> 91')]
+		['?- mult(7, 13, N).', success('N -> 91')],
+
+		['?- N is * 7 13.', success('N -> 91')]
 	]);
 });
 
@@ -158,7 +169,9 @@ test('LL(1) Prolog division test', () => {
 		['?- div(19, 13, 7).', failure()],
 		['?- div(N, 13, 7).', success('N -> 91')],
 		// ['?- div(91, N, 7).', success('N -> 13')],
-		['?- div(91, 13, N).', success('N -> 7')]
+		['?- div(91, 13, N).', success('N -> 7')] // ,
+
+		// ['?- N is / 91 13.', success('N -> 7')]
 	]);
 });
 

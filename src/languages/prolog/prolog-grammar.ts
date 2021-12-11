@@ -63,6 +63,7 @@ export class PrologGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalNotSymbol);
 		this.terminals.push(GrammarSymbol.terminalIs);
 		this.terminals.push(GrammarSymbol.terminalGreaterThan);
+		this.terminals.push(GrammarSymbol.terminalPlus);
 		this.terminals.push(GrammarSymbol.terminalMinus);
 		this.terminals.push(GrammarSymbol.terminalMultiply);
 		// this.terminals.push(GrammarSymbol.terminal);
@@ -457,6 +458,19 @@ export class PrologGrammar extends GrammarBase {
 			createProduction(
 				GrammarSymbol.nonterminalExpression,
 				[
+					GrammarSymbol.terminalPlus,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.nonterminalExpression,
+					'#prefixBinaryArithmeticOperator'
+				],
+				34
+			)
+		);
+
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalExpression,
+				[
 					GrammarSymbol.terminalMinus,
 					GrammarSymbol.nonterminalExpression,
 					GrammarSymbol.nonterminalExpression,
@@ -721,9 +735,8 @@ export class PrologGrammar extends GrammarBase {
 						return GrammarSymbol.terminalFrom;
 					case 'is':
 						return GrammarSymbol.terminalIs;
-					// case "+": return Symbol.T_Plus;
-					// case "-": return Symbol.T_Minus;
-					// case "*": return Symbol.T_Multiply;
+					case '+':
+						return GrammarSymbol.terminalPlus;
 					case '-':
 						return GrammarSymbol.terminalMinus;
 					case '*':
@@ -823,13 +836,12 @@ export class PrologGrammar extends GrammarBase {
 			// case TokenType.T_EqualBackslashEqual: return Symbol.T_ArithmeticNotEquals;
 			// case TokenType.T_MinusMinusGreaterThan: return Symbol.T_DCGArrow;
 			// case TokenType.T_EqualDotDot: return Symbol.T_Univ;
-			// case TokenType.T_Plus: return Symbol.T_Plus;
+			case LexicalState.tokenPlus:
+				return GrammarSymbol.terminalPlus;
 			case LexicalState.tokenMinus:
 				return GrammarSymbol.terminalMinus;
 			case LexicalState.tokenMult:
 				return GrammarSymbol.terminalMultiply;
-			// case TokenType.T_Minus: return Symbol.T_Minus;
-			// case TokenType.T_Mult: return Symbol.T_Multiply;
 			// case TokenType.T_Div: return Symbol.T_Divide;
 			// case TokenType.T_Equal: return Symbol.T_Assign;   // Unifiable
 			// case TokenType.T_Arrow: return Symbol.T_IfThen;
@@ -868,6 +880,7 @@ export class PrologGrammar extends GrammarBase {
 			case GrammarSymbol.terminalNameBeginningWithCapital:
 			case GrammarSymbol.terminalNameNotBeginningWithCapital:
 			case GrammarSymbol.terminalIs:
+			case GrammarSymbol.terminalPlus:
 			case GrammarSymbol.terminalMinus:
 			case GrammarSymbol.terminalMultiply:
 			case GrammarSymbol.terminalGreaterThan:
