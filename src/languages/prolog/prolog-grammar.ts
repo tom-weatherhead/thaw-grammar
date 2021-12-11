@@ -10,10 +10,7 @@ import {
 
 import { ArgumentException, createProduction } from 'thaw-interpreter-core';
 
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
-
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
-// import { createProduction } from '../../common/production';
 
 import { createFunctorExpressionFromGoal } from './utilities';
 
@@ -23,7 +20,6 @@ import {
 	// isPrologFunctorExpression,
 	PrologFunctorExpression
 } from './domain-object-model/prolog-functor-expression';
-// import { PrologGlobalInfo } from './domain-object-model/prolog-global-info';
 import { PrologGoal } from './domain-object-model/prolog-goal';
 import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-literal';
 import { createVariable } from './domain-object-model/prolog-variable';
@@ -101,7 +97,7 @@ export class PrologGrammar extends GrammarBase {
 		// this.nonTerminals.push(
 		// 	GrammarSymbol.nonterminalGoalWithPossibleDisjunctiveTail
 		// );
-		this.nonTerminals.push(GrammarSymbol.nonterminalGoalList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalGoalList);
 		// this.nonTerminals.push(GrammarSymbol.nonterminalPossibleDisjunctiveTail);
 		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
 		this.nonTerminals.push(GrammarSymbol.nonterminalList);
@@ -111,7 +107,7 @@ export class PrologGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunctorExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionListTail);
-		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator);
 		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticComparisonOperator);
 		this.nonTerminals.push(GrammarSymbol.nonterminalGoalTail1);
