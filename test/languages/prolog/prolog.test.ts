@@ -182,13 +182,13 @@ test('LL(1) Prolog division test', () => {
 	]);
 });
 
-// test('LL(1) Prolog less than test', () => {
-// 	prologTest([
-// 		['?- 1 < 2.', success()],
-// 		['?- 2 < 2.', failure()],
-// 		['?- 3 < 2.', failure()]
-// 	]);
-// });
+test('LL(1) Prolog less than test', () => {
+	prologTest([
+		['?- 1 < 2.', success()],
+		['?- 2 < 2.', failure()],
+		['?- 3 < 2.', failure()]
+	]);
+});
 
 test('LL(1) Prolog greater than test', () => {
 	prologTest([

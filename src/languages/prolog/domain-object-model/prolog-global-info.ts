@@ -1372,17 +1372,22 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	private doIntegerComparison(op: string, n1: number, n2: number): boolean {
 		switch (op) {
 			case 'lt': // '<':
+			case '<':
 				return n1 < n2;
 			case 'le': // '<=':
+			case '=<':
 				return n1 <= n2;
 			case 'gt': // '>':
 			case '>':
 				return n1 > n2;
 			case 'ge': // '>=':
+			case '>=':
 				return n1 >= n2;
 			case 'eq': // '=':
+			case '=:=': // Prolog's arithmetic equals comparison operator
 				return n1 === n2;
 			case 'ne': // '!=':
+			case '=\\=': // Prolog's arithmetic not-equal comparison operator
 				return n1 !== n2;
 			default:
 				throw new Error(`doIntegerComparison() : Unsupported operator '${op}'`);
@@ -1625,12 +1630,17 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 				break;
 
 			case 'lt': // '<':
+			case '<':
 			case 'le': // '<=':
+			case '=<':
 			case 'gt': // '>':
 			case '>':
 			case 'ge': // '>=':
+			case '>=':
 			case 'eq': // '=':
+			case '=:=': // Prolog's arithmetic equals comparison operator
 			case 'ne': // '!=':
+			case '=\\=': // Prolog's arithmetic not-equal comparison operator
 				if (
 					numArgsInGoal === 2 &&
 					goal.ExpressionList[0] instanceof PrologIntegerLiteral &&

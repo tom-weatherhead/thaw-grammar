@@ -841,27 +841,29 @@ export class PrologGrammar extends GrammarBase {
 						return GrammarSymbol.terminalMinus;
 					case '*':
 						return GrammarSymbol.terminalMultiply;
-					// case "/": return Symbol.T_Divide;
-					// case "mod": return Symbol.T_Mod;
-					// case "<": return Symbol.T_LessThan;
+					case '/':
+						return GrammarSymbol.terminalDivide;
+					// case 'mod':
+					// 	return GrammarSymbol.terminalMod;
 					case '<':
 						return GrammarSymbol.terminalLessThan;
 					case '>':
 						return GrammarSymbol.terminalGreaterThan;
-					// case "=<": return Symbol.T_LessEqual; // Not <=.  See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
-					// case ">=": return Symbol.T_GreaterEqual;
+					// case "=<": return Symbol.terminalLessEqual; // Not <=.  See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
+					// case ">=": return Symbol.terminalGreaterEqual;
 					case '\\+':
 						return GrammarSymbol.terminalNotSymbol;
 					// case "->": return Symbol.T_IfThen;
 					// case ":": return Symbol.T_Colon;
 					// case "=": return Symbol.T_Assign;   // Unifiable
 					// case @"\=": return Symbol.T_NotUnifiable;
-					// case "==": return Symbol.T_Equals;
+
 					case '==':
 						return GrammarSymbol.terminalEquals;
-					// case @"\==": return Symbol.T_NotEqual;
-					// case "=:=": return Symbol.T_ArithmeticEquals; // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
-					// case @"=\=": return Symbol.T_ArithmeticNotEquals;
+					// case "\\==": return GrammarSymbol.terminalNotEqual;
+					// case "=:=": return GrammarSymbol.terminalArithmeticEquals; // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
+					// case "=\\=": return GrammarSymbol.terminalArithmeticNotEquals;
+
 					// case "-->": return Symbol.T_DCGArrow;
 					// case "=..": return Symbol.T_Univ;
 					// case "^": return Symbol.T_Caret;
@@ -937,11 +939,15 @@ export class PrologGrammar extends GrammarBase {
 			// case TokenType.T_GreaterEqual: return Symbol.T_GreaterEqual;
 			// case TokenType.T_BackslashEqual: return Symbol.T_NotUnifiable;
 			// case TokenType.T_EqualEqual: return Symbol.T_Equals;
-			case LexicalState.tokenEqualEqual:
-				return GrammarSymbol.terminalEquals;
+			// case LexicalState.tokenEqualEqual:
+			// 	return GrammarSymbol.terminalEquals;
 			// case TokenType.T_BackslashEqualEqual: return Symbol.T_NotEqual;
 			// case TokenType.T_EqualColonEqual: return Symbol.T_ArithmeticEquals;
+			case LexicalState.tokenEqualColonEqual:
+				return GrammarSymbol.terminalEquals;
 			// case TokenType.T_EqualBackslashEqual: return Symbol.T_ArithmeticNotEquals;
+			// case LexicalState.tokenEqualBackslashEqual:
+			// 	return GrammarSymbol.terminalNotEqual;
 			// case TokenType.T_MinusMinusGreaterThan: return Symbol.T_DCGArrow;
 			// case TokenType.T_EqualDotDot: return Symbol.T_Univ;
 			case LexicalState.tokenPlus:
