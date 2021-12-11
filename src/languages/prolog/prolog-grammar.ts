@@ -424,13 +424,6 @@ export class PrologGrammar extends GrammarBase {
 			)
 		);
 
-		// **** New Arithmetic ****
-
-		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticComparisonOperator);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalGoalTail1);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalVariableOrNumericLiteral);
-
 		this.addProduction(GrammarSymbol.nonterminalGoal, [
 			GrammarSymbol.nonterminalVariableOrNumericLiteral,
 			GrammarSymbol.nonterminalGoalTail1
@@ -491,83 +484,6 @@ export class PrologGrammar extends GrammarBase {
 		// this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [GrammarSymbol.terminalDivide]);
 		//
 		// this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [GrammarSymbol.terminalModulus]);
-
-		// **** Old Arithmetic ****
-
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalGoal,
-		// 		[
-		// 			GrammarSymbol.nonterminalVariable,
-		// 			GrammarSymbol.nonterminalOptr, // terminalIs,
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			'#createGoal_ArithmeticOperator'
-		// 		],
-		// 		30
-		// 	)
-		// );
-		//
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalGoal,
-		// 		[
-		// 			GrammarSymbol.terminalIntegerLiteral,
-		// 			GrammarSymbol.nonterminalOptr, // terminalIs,
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			'#createGoal_ArithmeticOperator'
-		// 		],
-		// 		31
-		// 	)
-		// );
-		//
-		// this.productions.push(
-		// 	createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalIs], 32)
-		// );
-		//
-		// this.productions.push(
-		// 	createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalGreaterThan], 33)
-		// );
-		//
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalExpression,
-		// 		[
-		// 			GrammarSymbol.terminalPlus,
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			'#prefixBinaryArithmeticOperator'
-		// 		],
-		// 		34
-		// 	)
-		// );
-		//
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalExpression,
-		// 		[
-		// 			GrammarSymbol.terminalMinus,
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			'#prefixBinaryArithmeticOperator'
-		// 		],
-		// 		34
-		// 	)
-		// );
-		//
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalExpression,
-		// 		[
-		// 			GrammarSymbol.terminalMultiply,
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			GrammarSymbol.nonterminalExpression,
-		// 			'#prefixBinaryArithmeticOperator'
-		// 		],
-		// 		35
-		// 	)
-		// );
-
-		// **** Old Arithmetic ****
 	}
 
 	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Is });
@@ -606,8 +522,6 @@ export class PrologGrammar extends GrammarBase {
 	public get languageName(): string {
 		return 'Prolog';
 	}
-
-	// TODO? to support infix arithmetic expressions:
 
 	// public override get defaultParser(): ParserSelector {
 	// 	return ParserSelector.SLR1;
@@ -700,28 +614,10 @@ export class PrologGrammar extends GrammarBase {
 				semanticStack.push(new PrologFunctorExpression(gs, 'not', [functorExpr]));
 				break;
 
-			// case '#createGoal_ArithmeticOperator': // I.e. goal with an arithmetic operator
-			// 	expr2 = semanticStack.pop() as IPrologExpression;
-			// 	str = semanticStack.pop() as string;
-			// 	expr = semanticStack.pop() as IPrologExpression;
-			// 	semanticStack.push(new PrologGoal(gs, str, [expr, expr2]));
-			// 	break;
-
-			// case '#prefixBinaryArithmeticOperator': // I.e. goal with an arithmetic operator
-			// 	expr2 = semanticStack.pop() as IPrologExpression;
-			// 	expr = semanticStack.pop() as IPrologExpression;
-			// 	str = semanticStack.pop() as string;
-			// 	// semanticStack.push(new Prolog?(gs, str, [expr, expr2]));
-			// 	semanticStack.push(new PrologFunctorExpression(gs, str, [expr, expr2]));
-			// 	break;
-
 			case '#arithmeticComparison':
 				expr2 = semanticStack.pop() as IPrologExpression;
 				str = semanticStack.pop() as string; // Infix comparison operator: < > ==
 				expr = semanticStack.pop() as IPrologExpression;
-				// console.log('#arithmeticComparison: expr is', expr);
-				// console.log('#arithmeticComparison: str is', str);
-				// console.log('#arithmeticComparison: expr2 is', expr2);
 				semanticStack.push(new PrologGoal(gs, str, [expr, expr2]));
 				break;
 
@@ -730,19 +626,9 @@ export class PrologGrammar extends GrammarBase {
 				str = semanticStack.pop() as string; // Infix operator: +, -, *, etc.
 				expr2 = semanticStack.pop() as IPrologExpression;
 				expr = semanticStack.pop() as IPrologExpression;
-				// console.log('#is: expr is', expr);
-				// console.log('#is: expr2 is', expr2);
-				// console.log('#is: str is', str);
-				// console.log('#is: expr3 is', expr3);
 				// semanticStack.push(new PrologGoal(gs, str, [expr, expr2, expr3]));
 				semanticStack.push(new PrologGoal(gs, str, [expr2, expr3, expr]));
 				break;
-
-			// case '#createGoal_GreaterThan':
-			// 	expr2 = semanticStack.pop() as IPrologExpression;
-			// 	expr = semanticStack.pop() as IPrologExpression;
-			// 	semanticStack.push(new PrologGoal(gs, 'gt', [expr, expr2]));
-			// 	break;
 
 			// // case "#arithExpr_Prefix":   // The same as #infix, except for the order of the items on the stack.
 			// // expr2 = (IPrologExpression)semanticStack.Pop();
