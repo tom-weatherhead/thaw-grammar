@@ -1389,30 +1389,6 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		}
 	}
 
-	// private createSubstitutionForArithmeticOperation(v: IVariable, n1: PrologIntegerLiteral, n2: PrologIntegerLiteral, op: (x: number, y: number) => number): ISubstitution {
-	// 	return createSubstitution(
-	// 		v.Name,
-	// 		new PrologIntegerLiteral(op(n1.Value, n2.Value))
-	// 	);
-	// }
-
-	// private createSubstitutionForArithmeticOperation(v: IVariable, n1: PrologIntegerLiteral, n2: PrologIntegerLiteral, op: string): ISubstitution | undefined {
-	// 	let result = 0;
-	//
-	// 	if ((op === '/' || op === 'div') && n2.Value === 0) {
-	//
-	// 		if (n1.Value !== 0) {
-	// 			return undefined;
-	// 		}
-	//
-	// 		// We will define 0 / 0 to be 0, so that 0 * N = 0 => N = 0.
-	// 	} else {
-	// 		result = this.doIntegerArithmetic(op, n1.Value, n2.Value);
-	// 	}
-	//
-	// 	return createSubstitution(v.Name, new PrologIntegerLiteral(result));
-	// }
-
 	private createSubstitutionForArithmeticOperation(
 		goal: PrologGoal,
 		vi: number,
@@ -1420,6 +1396,10 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		n2i: number,
 		op: string
 	): ISubstitution | undefined {
+		// TODO? : Return { match: boolean; substitution: ISubstitution | undefined; }
+		// Then create an array or iterator or generator:
+		// [() => this.createSubstitutionForArithmeticOperation(goal, a, b, c, op), ...]
+		// and use .find() to find the first one (if any) with match === true
 		const v = goal.ExpressionList[vi] as IVariable;
 		const n1 = goal.ExpressionList[n1i] as PrologIntegerLiteral;
 		const n2 = goal.ExpressionList[n2i] as PrologIntegerLiteral;

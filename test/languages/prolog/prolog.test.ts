@@ -45,7 +45,14 @@ test('LL(1) Prolog recognize test', () => {
 
 	f('unique_list([X|L]) :- \\+ member(X, L), unique_list(L).');
 
-	f('factorial(0,1).');
+	f('factorial(0, 1).');
+
+	// Fake (prefix) operator syntax: - N 1
+	// f('factorial(N, F) :- N > 0, N1 is - N 1, factorial(N1, F1), F is * N F1.');
+
+	// Correct (infix) operator syntax: N - 1
+	f('factorial(N, F) :- N > 0, N1 is N - 1, factorial(N1, F1), F is N * F1.');
+
 	f('factorial(N, F) :- gt(N, 0), sub(N, 1, N1), factorial(N1, F1), mult(N, F1, F).');
 
 	// f('G(X) :- H(X), !, I(X).');
@@ -143,7 +150,7 @@ test('LL(1) Prolog subtraction test', () => {
 		['?- sub(8, 5, N).', success('N -> 3')],
 
 		// ['?- 3 is - 8 5.', success()],
-		['?- N is - 8 5.', success('N -> 3')]
+		['?- N is 8 - 5.', success('N -> 3')]
 	]);
 });
 
@@ -159,7 +166,7 @@ test('LL(1) Prolog multiplication test', () => {
 		['?- mult(7, N, 91).', success('N -> 13')],
 		['?- mult(7, 13, N).', success('N -> 91')],
 
-		['?- N is * 7 13.', success('N -> 91')]
+		['?- N is 7 * 13.', success('N -> 91')]
 	]);
 });
 
@@ -334,11 +341,20 @@ test('LL(1) Prolog factorial test 1', () => {
 	prologTest([
 		['factorial(0, 1).', PrologGlobalInfo.ClauseAdded],
 		[
-			// 'factorial(N, F) :- gt(N, 0), N1 is sub(N, 1), factorial(N1, F1), F is mult(N, F1).',
-			'factorial(N, F) :- gt(N, 0), sub(N, 1, N1), factorial(N1, F1), mult(N, F1, F).',
+			// 'factorial(N, F) :- gt(N, 0), sub(N, 1, N1), factorial(N1, F1), mult(N, F1, F).',
+			// 'factorial(N, F) :- N > 0, sub(N, 1, N1), factorial(N1, F1), mult(N, F1, F).',
+			// 'factorial(N, F) :- N > 0, N1 is N - 1, factorial(N1, F1), mult(N, F1, F).',
+
+			// Fake (prefix) operator syntax: - N 1
+			// 'factorial(N, F) :- N > 0, N1 is - N 1, factorial(N1, F1), F is * N F1.',
+
+			// Correct (infix) operator syntax: N - 1
+			'factorial(N, F) :- N > 0, N1 is N - 1, factorial(N1, F1), F is N * F1.',
+
 			PrologGlobalInfo.ClauseAdded
 		],
 		['?- gt(1, 0).', [PrologGlobalInfo.Satisfied]],
+		['?- 1 > 0.', [PrologGlobalInfo.Satisfied]],
 		['?- sub(1, 1, 0).', [PrologGlobalInfo.Satisfied]],
 		['?- sub(8, 5, 3).', [PrologGlobalInfo.Satisfied]],
 		['?- factorial(1, 1).', [PrologGlobalInfo.Satisfied]],

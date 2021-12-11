@@ -62,10 +62,14 @@ export class PrologGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalOrBar);
 		this.terminals.push(GrammarSymbol.terminalNotSymbol);
 		this.terminals.push(GrammarSymbol.terminalIs);
+		this.terminals.push(GrammarSymbol.terminalLessThan);
 		this.terminals.push(GrammarSymbol.terminalGreaterThan);
+		this.terminals.push(GrammarSymbol.terminalEquals);
 		this.terminals.push(GrammarSymbol.terminalPlus);
 		this.terminals.push(GrammarSymbol.terminalMinus);
 		this.terminals.push(GrammarSymbol.terminalMultiply);
+		// this.terminals.push(GrammarSymbol.terminalDivide);
+		// this.terminals.push(GrammarSymbol.terminalModulus);
 		// this.terminals.push(GrammarSymbol.terminal);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
@@ -108,6 +112,10 @@ export class PrologGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionListTail);
 		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
+		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator);
+		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticComparisonOperator);
+		this.nonTerminals.push(GrammarSymbol.nonterminalGoalTail1);
+		this.nonTerminals.push(GrammarSymbol.nonterminalVariableOrNumericLiteral);
 		// this.nonTerminals.push(GrammarSymbol.nonterminal);
 
 		// Non-Terminals:
@@ -420,78 +428,150 @@ export class PrologGrammar extends GrammarBase {
 			)
 		);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalGoal,
-				[
-					GrammarSymbol.nonterminalVariable,
-					GrammarSymbol.nonterminalOptr, // terminalIs,
-					GrammarSymbol.nonterminalExpression,
-					'#createGoal_ArithmeticOperator'
-				],
-				30
-			)
-		);
+		// **** New Arithmetic ****
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalGoal,
-				[
-					GrammarSymbol.terminalIntegerLiteral,
-					GrammarSymbol.nonterminalOptr, // terminalIs,
-					GrammarSymbol.nonterminalExpression,
-					'#createGoal_ArithmeticOperator'
-				],
-				31
-			)
-		);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticComparisonOperator);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalGoalTail1);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalVariableOrNumericLiteral);
 
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalIs], 32)
-		);
+		this.addProduction(GrammarSymbol.nonterminalGoal, [
+			GrammarSymbol.nonterminalVariableOrNumericLiteral,
+			GrammarSymbol.nonterminalGoalTail1
+		]);
 
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalGreaterThan], 33)
-		);
+		this.addProduction(GrammarSymbol.nonterminalVariableOrNumericLiteral, [
+			GrammarSymbol.nonterminalVariable
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalExpression,
-				[
-					GrammarSymbol.terminalPlus,
-					GrammarSymbol.nonterminalExpression,
-					GrammarSymbol.nonterminalExpression,
-					'#prefixBinaryArithmeticOperator'
-				],
-				34
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalVariableOrNumericLiteral, [
+			GrammarSymbol.terminalIntegerLiteral
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalExpression,
-				[
-					GrammarSymbol.terminalMinus,
-					GrammarSymbol.nonterminalExpression,
-					GrammarSymbol.nonterminalExpression,
-					'#prefixBinaryArithmeticOperator'
-				],
-				34
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalGoalTail1, [
+			GrammarSymbol.nonterminalArithmeticComparisonOperator,
+			GrammarSymbol.nonterminalVariableOrNumericLiteral,
+			'#arithmeticComparison'
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalExpression,
-				[
-					GrammarSymbol.terminalMultiply,
-					GrammarSymbol.nonterminalExpression,
-					GrammarSymbol.nonterminalExpression,
-					'#prefixBinaryArithmeticOperator'
-				],
-				35
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [
+			GrammarSymbol.terminalLessThan
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [
+			GrammarSymbol.terminalGreaterThan
+		]);
+
+		// this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [GrammarSymbol.terminalLessThanOrEqualTo]);
+		//
+		// this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [GrammarSymbol.terminalGreaterThanOrEqualTo]);
+
+		this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [
+			GrammarSymbol.terminalEquals
+		]);
+
+		// this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [GrammarSymbol.terminalNotEqual]);
+
+		this.addProduction(GrammarSymbol.nonterminalGoalTail1, [
+			GrammarSymbol.terminalIs,
+			GrammarSymbol.nonterminalVariableOrNumericLiteral,
+			GrammarSymbol.nonterminalArithmeticOperator,
+			GrammarSymbol.nonterminalVariableOrNumericLiteral,
+			'#is'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [
+			GrammarSymbol.terminalPlus
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [
+			GrammarSymbol.terminalMinus
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [
+			GrammarSymbol.terminalMultiply
+		]);
+
+		// this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [GrammarSymbol.terminalDivide]);
+		//
+		// this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [GrammarSymbol.terminalModulus]);
+
+		// **** Old Arithmetic ****
+
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalGoal,
+		// 		[
+		// 			GrammarSymbol.nonterminalVariable,
+		// 			GrammarSymbol.nonterminalOptr, // terminalIs,
+		// 			GrammarSymbol.nonterminalExpression,
+		// 			'#createGoal_ArithmeticOperator'
+		// 		],
+		// 		30
+		// 	)
+		// );
+		//
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalGoal,
+		// 		[
+		// 			GrammarSymbol.terminalIntegerLiteral,
+		// 			GrammarSymbol.nonterminalOptr, // terminalIs,
+		// 			GrammarSymbol.nonterminalExpression,
+		// 			'#createGoal_ArithmeticOperator'
+		// 		],
+		// 		31
+		// 	)
+		// );
+		//
+		// this.productions.push(
+		// 	createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalIs], 32)
+		// );
+		//
+		// this.productions.push(
+		// 	createProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalGreaterThan], 33)
+		// );
+		//
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalExpression,
+		// 		[
+		// 			GrammarSymbol.terminalPlus,
+		// 			GrammarSymbol.nonterminalExpression,
+		// 			GrammarSymbol.nonterminalExpression,
+		// 			'#prefixBinaryArithmeticOperator'
+		// 		],
+		// 		34
+		// 	)
+		// );
+		//
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalExpression,
+		// 		[
+		// 			GrammarSymbol.terminalMinus,
+		// 			GrammarSymbol.nonterminalExpression,
+		// 			GrammarSymbol.nonterminalExpression,
+		// 			'#prefixBinaryArithmeticOperator'
+		// 		],
+		// 		34
+		// 	)
+		// );
+		//
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalExpression,
+		// 		[
+		// 			GrammarSymbol.terminalMultiply,
+		// 			GrammarSymbol.nonterminalExpression,
+		// 			GrammarSymbol.nonterminalExpression,
+		// 			'#prefixBinaryArithmeticOperator'
+		// 		],
+		// 		35
+		// 	)
+		// );
+
+		// **** Old Arithmetic ****
 	}
 
 	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Is });
@@ -545,6 +625,7 @@ export class PrologGrammar extends GrammarBase {
 		let goalList: PrologGoal[];
 		let expr: IPrologExpression;
 		let expr2: IPrologExpression;
+		let expr3: IPrologExpression;
 		let exprList: IPrologExpression[];
 		// let functor: PrologFunctor;
 		// let variable: PrologVariable;
@@ -623,19 +704,42 @@ export class PrologGrammar extends GrammarBase {
 				semanticStack.push(new PrologFunctorExpression(gs, 'not', [functorExpr]));
 				break;
 
-			case '#createGoal_ArithmeticOperator': // I.e. goal with an arithmetic operator
+			// case '#createGoal_ArithmeticOperator': // I.e. goal with an arithmetic operator
+			// 	expr2 = semanticStack.pop() as IPrologExpression;
+			// 	str = semanticStack.pop() as string;
+			// 	expr = semanticStack.pop() as IPrologExpression;
+			// 	semanticStack.push(new PrologGoal(gs, str, [expr, expr2]));
+			// 	break;
+
+			// case '#prefixBinaryArithmeticOperator': // I.e. goal with an arithmetic operator
+			// 	expr2 = semanticStack.pop() as IPrologExpression;
+			// 	expr = semanticStack.pop() as IPrologExpression;
+			// 	str = semanticStack.pop() as string;
+			// 	// semanticStack.push(new Prolog?(gs, str, [expr, expr2]));
+			// 	semanticStack.push(new PrologFunctorExpression(gs, str, [expr, expr2]));
+			// 	break;
+
+			case '#arithmeticComparison':
 				expr2 = semanticStack.pop() as IPrologExpression;
-				str = semanticStack.pop() as string;
+				str = semanticStack.pop() as string; // Infix comparison operator: < > ==
 				expr = semanticStack.pop() as IPrologExpression;
+				console.log('#arithmeticComparison: expr is', expr);
+				console.log('#arithmeticComparison: str is', str);
+				console.log('#arithmeticComparison: expr2 is', expr2);
 				semanticStack.push(new PrologGoal(gs, str, [expr, expr2]));
 				break;
 
-			case '#prefixBinaryArithmeticOperator': // I.e. goal with an arithmetic operator
+			case '#is':
+				expr3 = semanticStack.pop() as IPrologExpression;
+				str = semanticStack.pop() as string; // Infix operator: +, -, *, etc.
 				expr2 = semanticStack.pop() as IPrologExpression;
 				expr = semanticStack.pop() as IPrologExpression;
-				str = semanticStack.pop() as string;
-				// semanticStack.push(new Prolog?(gs, str, [expr, expr2]));
-				semanticStack.push(new PrologFunctorExpression(gs, str, [expr, expr2]));
+				console.log('#is: expr is', expr);
+				console.log('#is: expr2 is', expr2);
+				console.log('#is: str is', str);
+				console.log('#is: expr3 is', expr3);
+				// semanticStack.push(new PrologGoal(gs, str, [expr, expr2, expr3]));
+				semanticStack.push(new PrologGoal(gs, str, [expr2, expr3, expr]));
 				break;
 
 			// case '#createGoal_GreaterThan':
@@ -744,6 +848,8 @@ export class PrologGrammar extends GrammarBase {
 					// case "/": return Symbol.T_Divide;
 					// case "mod": return Symbol.T_Mod;
 					// case "<": return Symbol.T_LessThan;
+					case '<':
+						return GrammarSymbol.terminalLessThan;
 					case '>':
 						return GrammarSymbol.terminalGreaterThan;
 					// case "=<": return Symbol.T_LessEqual; // Not <=.  See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
@@ -755,6 +861,8 @@ export class PrologGrammar extends GrammarBase {
 					// case "=": return Symbol.T_Assign;   // Unifiable
 					// case @"\=": return Symbol.T_NotUnifiable;
 					// case "==": return Symbol.T_Equals;
+					case '==':
+						return GrammarSymbol.terminalEquals;
 					// case @"\==": return Symbol.T_NotEqual;
 					// case "=:=": return Symbol.T_ArithmeticEquals; // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
 					// case @"=\=": return Symbol.T_ArithmeticNotEquals;
@@ -825,12 +933,16 @@ export class PrologGrammar extends GrammarBase {
 			// case TokenType.T_RightCurlyBrace: return Symbol.T_RightCurlyBrace;
 			// case TokenType.T_Colon: return Symbol.T_Colon;
 			// case TokenType.T_Less: return Symbol.T_LessThan;
+			case LexicalState.tokenLess:
+				return GrammarSymbol.terminalLessThan;
 			// case TokenType.T_EqualLessThan: return Symbol.T_LessEqual;
 			case LexicalState.tokenGreater:
 				return GrammarSymbol.terminalGreaterThan;
 			// case TokenType.T_GreaterEqual: return Symbol.T_GreaterEqual;
 			// case TokenType.T_BackslashEqual: return Symbol.T_NotUnifiable;
 			// case TokenType.T_EqualEqual: return Symbol.T_Equals;
+			case LexicalState.tokenEqualEqual:
+				return GrammarSymbol.terminalEquals;
 			// case TokenType.T_BackslashEqualEqual: return Symbol.T_NotEqual;
 			// case TokenType.T_EqualColonEqual: return Symbol.T_ArithmeticEquals;
 			// case TokenType.T_EqualBackslashEqual: return Symbol.T_ArithmeticNotEquals;
@@ -879,11 +991,13 @@ export class PrologGrammar extends GrammarBase {
 
 			case GrammarSymbol.terminalNameBeginningWithCapital:
 			case GrammarSymbol.terminalNameNotBeginningWithCapital:
-			case GrammarSymbol.terminalIs:
+			// case GrammarSymbol.terminalIs:
 			case GrammarSymbol.terminalPlus:
 			case GrammarSymbol.terminalMinus:
 			case GrammarSymbol.terminalMultiply:
+			case GrammarSymbol.terminalLessThan:
 			case GrammarSymbol.terminalGreaterThan:
+			case GrammarSymbol.terminalEquals:
 				if (typeof value !== 'string') {
 					throw new Error('Oh bugger.');
 				}
