@@ -4,24 +4,15 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
-// import { PrologFunctor } from './prolog-functor';
 import { PrologNameExpression } from './prolog-name-expression';
-// import { PrologPredicate } from './prolog-predicate';
 import { createSubstitution } from './prolog-substitution';
 
 import { ISubstitution } from './interfaces/isubstitution';
-
-// ReferenceError: Cannot access 'PrologNameExpression' before initialization
-// -> Circular dependency? See e.g. https://github.com/webpack/webpack/issues/12724
 
 const typenamePrologGoal = 'PrologGoal';
 
 export function isPrologGoal(obj: unknown): obj is PrologGoal {
 	const goal = obj as PrologGoal;
-
-	// return typeof ic !== 'undefined' && typeof ic.compareTo === 'function';
-
-	// return goal instanceof PrologGoal; // && goal.Name instanceof PrologPredicate;
 
 	return typeof goal !== 'undefined' && goal.typename === typenamePrologGoal;
 }
@@ -45,9 +36,9 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 		super(gsParam, predicate, expressionList);
 	}
 
-	public override toString(): string {
-		return 'PrologGoal.toString()';
-	}
+	// public override toString(): string {
+	// 	return 'PrologGoal.toString()';
+	// }
 
 	public equals(other: unknown): boolean {
 		return (

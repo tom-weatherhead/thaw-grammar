@@ -11,6 +11,12 @@ import { IVariable, isIVariable } from './interfaces/ivariable';
 
 const typenamePrologIntegerLiteral = 'PrologIntegerLiteral';
 
+export function isPrologIntegerLiteral(obj: unknown): obj is PrologIntegerLiteral {
+	const intlit = obj as PrologIntegerLiteral;
+
+	return typeof intlit !== 'undefined' && intlit.typename === typenamePrologIntegerLiteral;
+}
+
 export class PrologIntegerLiteral implements IPrologNumber {
 	public readonly typename: string = typenamePrologIntegerLiteral;
 	public readonly Value: number;

@@ -108,37 +108,6 @@ export abstract class PrologNameExpression /* implements IPrologExpression */ {
 		).join(', ')})`;
 	}
 
-	//     public override bool Equals(object obj)
-	//     {
-
-	// #if NAME_EXPRESSION_EQUALITY
-	//         var otherName = obj as T;
-
-	//         if (otherName != null)
-	//         {
-	//             return ExpressionList.Count == 0 && Name.Equals(otherName);
-	//         }
-	// #endif
-
-	//         var otherNameExpr = obj as PrologNameExpression<T>;
-
-	//         if (otherNameExpr == null || !Name.Equals(otherNameExpr.Name) || ExpressionList.Count != otherNameExpr.ExpressionList.Count)
-	//         {
-	//             return false;
-	//         }
-
-	//         for (var i = 0; i < ExpressionList.Count; ++i)
-	//         {
-
-	//             if (!ExpressionList[i].Equals(otherNameExpr.ExpressionList[i]))
-	//             {
-	//                 return false;
-	//             }
-	//         }
-
-	//         return true;
-	//     }
-
 	public FindBindingVariables(): IImmutableSet<IVariable> {
 		const result = createSet<IVariable>();
 
