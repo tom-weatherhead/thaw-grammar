@@ -4,12 +4,10 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
-// import { PrologFunctor } from './prolog-functor';
 import { PrologFloatLiteral } from './prolog-float-literal';
-import { PrologIntegerLiteral } from './prolog-integer-literal';
+import { isPrologIntegerLiteral, PrologIntegerLiteral } from './prolog-integer-literal';
 import { PrologNameExpression } from './prolog-name-expression';
 import { createSubstitution } from './prolog-substitution';
-// import { PrologVariable } from './prolog-variable';
 
 import { ISubstitution } from './interfaces/isubstitution';
 import { isIVariable } from './interfaces/ivariable';
@@ -18,13 +16,6 @@ const typenamePrologFunctorExpression = 'PrologFunctorExpression';
 
 export function isPrologFunctorExpression(obj: unknown): obj is PrologFunctorExpression {
 	const fe = obj as PrologFunctorExpression;
-
-	// return (
-	// 	fe instanceof PrologFunctorExpression &&
-	// 	fe.Name instanceof PrologFunctor
-	// );
-
-	// return obj instanceof PrologFunctorExpression;
 
 	return typeof fe !== 'undefined' && fe.typename === typenamePrologFunctorExpression;
 }
@@ -114,7 +105,6 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 	}
 
 	public Unify(otherExpr: IPrologExpression): ISubstitution | undefined {
-		// if (otherExpr.constructor.name === PrologVariable.name) {
 		if (isIVariable(otherExpr)) {
 			return otherExpr.Unify(this);
 		}
@@ -130,7 +120,8 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 		const otherNameExpression = otherExpr as PrologFunctorExpression;
 
 		if (
-			this.constructor.name !== otherExpr.constructor.name ||
+			// this.constructor.name !== otherExpr.constructor.name ||
+			!isPrologFunctorExpression(otherExpr) ||
 			this.Name !== otherNameExpression.Name ||
 			this.ExpressionList.length !== otherNameExpression.ExpressionList.length
 		) {
@@ -163,7 +154,7 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 			return undefined;
 		}
 
-		if (arg1Evaluated.constructor.name === PrologIntegerLiteral.name) {
+		if (isPrologIntegerLiteral(arg1Evaluated)) {
 			const arg1Value = arg1Evaluated.ToInteger();
 			let result: number;
 
@@ -224,10 +215,7 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 			return undefined;
 		}
 
-		if (
-			arg1Evaluated.constructor.name === PrologIntegerLiteral.name &&
-			arg2Evaluated.constructor.name === PrologIntegerLiteral.name
-		) {
+		if (isPrologIntegerLiteral(arg1Evaluated) && isPrologIntegerLiteral(arg2Evaluated)) {
 			const arg1Value = arg1Evaluated.ToInteger();
 			const arg2Value = arg2Evaluated.ToInteger();
 			let result: number;
