@@ -1371,22 +1371,22 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	private doIntegerComparison(op: string, n1: number, n2: number): boolean {
 		switch (op) {
-			case 'lt': // '<':
+			case 'lt':
 			case '<':
 				return n1 < n2;
-			case 'le': // '<=':
+			case 'le':
 			case '=<':
 				return n1 <= n2;
-			case 'gt': // '>':
+			case 'gt':
 			case '>':
 				return n1 > n2;
-			case 'ge': // '>=':
+			case 'ge':
 			case '>=':
 				return n1 >= n2;
-			case 'eq': // '=':
+			case 'eq':
 			case '=:=': // Prolog's arithmetic equals comparison operator
 				return n1 === n2;
-			case 'ne': // '!=':
+			case 'ne':
 			case '=\\=': // Prolog's arithmetic not-equal comparison operator
 				return n1 !== n2;
 			default:

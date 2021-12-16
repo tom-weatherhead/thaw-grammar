@@ -1,5 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/prolog-grammar.ts
 
+// Prolog file extensions:  .pl, .pro, .P
+// See https://en.wikipedia.org/wiki/Prolog
+
 import {
 	GrammarSymbol,
 	IToken,
@@ -66,21 +69,25 @@ export class PrologGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalMultiply);
 		// this.terminals.push(GrammarSymbol.terminalDivide);
 		// this.terminals.push(GrammarSymbol.terminalModulus);
+		this.terminals.push(GrammarSymbol.terminalLessOrEqual);
+		this.terminals.push(GrammarSymbol.terminalGreaterOrEqual);
+		this.terminals.push(GrammarSymbol.terminalNotEqual);
+		this.terminals.push(GrammarSymbol.terminalArithmeticEqual);
+		this.terminals.push(GrammarSymbol.terminalArithmeticNotEqual);
+		this.terminals.push(GrammarSymbol.terminalUnifiable);
+		this.terminals.push(GrammarSymbol.terminalNotUnifiable);
+		this.terminals.push(GrammarSymbol.terminalIfThen);
+		this.terminals.push(GrammarSymbol.terminalColon);
+		this.terminals.push(GrammarSymbol.terminalDCGArrow);
+		this.terminals.push(GrammarSymbol.terminalUniv);
+		this.terminals.push(GrammarSymbol.terminalCaret);
 		// this.terminals.push(GrammarSymbol.terminal);
 
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
-		// Not yet added:
-		// // From PrologGrammar2
-		// Symbol.T_Plus,
-		// Symbol.T_Minus, Symbol.T_Multiply, Symbol.T_Divide, Symbol.T_LessThan,
-		// Symbol.T_GreaterThan, Symbol.T_LessEqual, Symbol.T_GreaterEqual, Symbol.T_StringLiteral,
-		// Symbol.T_NotSymbol, Symbol.T_IfThen, Symbol.T_Colon, Symbol.T_Assign,
-		// Symbol.T_Equals, Symbol.T_NotEqual, Symbol.T_NotUnifiable,
-		// Symbol.T_Semicolon, Symbol.T_Mod, Symbol.T_ArithmeticEquals, Symbol.T_ArithmeticNotEquals,
-		// Symbol.T_DCGArrow, Symbol.T_LeftCurlyBrace, Symbol.T_RightCurlyBrace, Symbol.T_Univ,
-		// Symbol.T_FloatLiteral, Symbol.T_Caret
-		// });
+		// Not yet added: From PrologGrammar2:
+		// Symbol.T_Divide, Symbol.T_StringLiteral, Symbol.T_Semicolon, Symbol.T_Mod,
+		// Symbol.T_LeftCurlyBrace, Symbol.T_RightCurlyBrace, Symbol.T_FloatLiteral
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
 		this.nonTerminals.push(GrammarSymbol.nonterminalInput);
@@ -451,15 +458,21 @@ export class PrologGrammar extends GrammarBase {
 			GrammarSymbol.terminalGreaterThan
 		]);
 
-		// this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [GrammarSymbol.terminalLessThanOrEqualTo]);
-		//
-		// this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [GrammarSymbol.terminalGreaterThanOrEqualTo]);
-
 		this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [
-			GrammarSymbol.terminalEquals
+			GrammarSymbol.terminalLessOrEqual
+		]);
+		//
+		this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [
+			GrammarSymbol.terminalGreaterOrEqual
 		]);
 
-		// this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [GrammarSymbol.terminalNotEqual]);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [
+			GrammarSymbol.terminalArithmeticEqual
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalArithmeticComparisonOperator, [
+			GrammarSymbol.terminalArithmeticNotEqual
+		]);
 
 		this.addProduction(GrammarSymbol.nonterminalGoalTail1, [
 			GrammarSymbol.terminalIs,
@@ -735,42 +748,45 @@ export class PrologGrammar extends GrammarBase {
 						return GrammarSymbol.terminalLessThan;
 					case '>':
 						return GrammarSymbol.terminalGreaterThan;
-					// case "=<": return Symbol.terminalLessEqual; // Not <=.  See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
-					// case ">=": return Symbol.terminalGreaterEqual;
+					case '=<':
+						return GrammarSymbol.terminalLessOrEqual; // Not <=.  See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
+					case '>=':
+						return GrammarSymbol.terminalGreaterOrEqual;
 					case '\\+':
 						return GrammarSymbol.terminalNotSymbol;
-					// case "->": return Symbol.T_IfThen;
-					// case ":": return Symbol.T_Colon;
-					// case "=": return Symbol.T_Assign;   // Unifiable
-					// case @"\=": return Symbol.T_NotUnifiable;
+					case '->':
+						return GrammarSymbol.terminalIfThen;
+					case ':':
+						return GrammarSymbol.terminalColon;
+					case '=':
+						return GrammarSymbol.terminalUnifiable;
+					case '\\=':
+						return GrammarSymbol.terminalNotUnifiable;
 
 					case '==':
 						return GrammarSymbol.terminalEquals;
-					// case "\\==": return GrammarSymbol.terminalNotEqual;
-					// case "=:=": return GrammarSymbol.terminalArithmeticEquals; // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
-					// case "=\\=": return GrammarSymbol.terminalArithmeticNotEquals;
+					case '\\==':
+						return GrammarSymbol.terminalNotEqual;
+					case '=:=':
+						return GrammarSymbol.terminalArithmeticEqual; // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse21
+					case '=\\=':
+						return GrammarSymbol.terminalArithmeticNotEqual;
 
-					// case "-->": return Symbol.T_DCGArrow;
-					// case "=..": return Symbol.T_Univ;
-					// case "^": return Symbol.T_Caret;
+					case '-->':
+						return GrammarSymbol.terminalDCGArrow;
+					case '=..':
+						return GrammarSymbol.terminalUniv;
+					case '^':
+						return GrammarSymbol.terminalCaret;
 					default:
 						break;
 				}
 
 				const firstChar = tokenValueAsString.substring(0, 1);
 
-				// if (
-				// 	firstChar.toUpperCase() === firstChar ||
-				// 	// The following supports non-binding variables such as _ and _Foo .
-				// 	// See http://www.csupomona.edu/~jrfisher/www/prolog_tutorial/2_3.html
-				// 	// TODO: Should we require the second character (if it exists) to be a capital letter if the first is an underscore?
-				// 	tokenValueAsString.startsWith('_')
-				// ) {
-				// 	return Symbol.terminalNameBeginningWithCapital;
-				// } else {
-				// 	// This case includes tokenExclamation (the cut).
-				// 	return Symbol.terminalNameNotBeginningWithCapital;
-				// }
+				// The following supports non-binding variables such as _ and _Foo .
+				// See http://www.csupomona.edu/~jrfisher/www/prolog_tutorial/2_3.html
+				// TODO: Should we require the second character (if it exists) to be a capital letter if the first is an underscore?
 
 				if (firstChar.toLowerCase() === firstChar && !tokenValueAsString.startsWith('_')) {
 					// This case includes non-binding variables (i.e. variable names that start with _)
@@ -812,40 +828,41 @@ export class PrologGrammar extends GrammarBase {
 			case LexicalState.tokenBackslashPlus:
 				return GrammarSymbol.terminalNotSymbol;
 
-			// case TokenType.T_StrLit2: return Symbol.T_NameNotBeginningWithCapital; // The contents of a single-quoted string.
-			// case TokenType.T_LeftCurlyBrace: return Symbol.T_LeftCurlyBrace;
-			// case TokenType.T_RightCurlyBrace: return Symbol.T_RightCurlyBrace;
-			// case TokenType.T_Colon: return Symbol.T_Colon;
-			// case TokenType.T_Less: return Symbol.T_LessThan;
+			// case LexicalState.tokenStrLit2: return Symbol.T_NameNotBeginningWithCapital; // The contents of a single-quoted string.
+			// case LexicalState.tokenLeftCurlyBrace: return Symbol.T_LeftCurlyBrace;
+			// case LexicalState.tokenRightCurlyBrace: return Symbol.T_RightCurlyBrace;
+			// case LexicalState.tokenColon: return Symbol.T_Colon;
+			// case LexicalState.tokenLess: return Symbol.T_LessThan;
 			case LexicalState.tokenLess:
 				return GrammarSymbol.terminalLessThan;
-			// case TokenType.T_EqualLessThan: return Symbol.T_LessEqual;
+			// case LexicalState.tokenEqualLessThan: return Symbol.T_LessEqual;
 			case LexicalState.tokenGreater:
 				return GrammarSymbol.terminalGreaterThan;
-			// case TokenType.T_GreaterEqual: return Symbol.T_GreaterEqual;
-			// case TokenType.T_BackslashEqual: return Symbol.T_NotUnifiable;
-			// case TokenType.T_EqualEqual: return Symbol.T_Equals;
+			case LexicalState.tokenGreaterEqual:
+				return GrammarSymbol.terminalGreaterOrEqual;
+			// case LexicalState.tokenBackslashEqual: return Symbol.T_NotUnifiable;
+			// case LexicalState.tokenEqualEqual: return Symbol.T_Equals;
 			// case LexicalState.tokenEqualEqual:
 			// 	return GrammarSymbol.terminalEquals;
-			// case TokenType.T_BackslashEqualEqual: return Symbol.T_NotEqual;
-			// case TokenType.T_EqualColonEqual: return Symbol.T_ArithmeticEquals;
+			// case LexicalState.tokenBackslashEqualEqual: return Symbol.T_NotEqual;
+			// case LexicalState.tokenEqualColonEqual: return Symbol.T_ArithmeticEquals;
 			case LexicalState.tokenEqualColonEqual:
 				return GrammarSymbol.terminalEquals;
-			// case TokenType.T_EqualBackslashEqual: return Symbol.T_ArithmeticNotEquals;
+			// case LexicalState.tokenEqualBackslashEqual: return Symbol.T_ArithmeticNotEquals;
 			// case LexicalState.tokenEqualBackslashEqual:
 			// 	return GrammarSymbol.terminalNotEqual;
-			// case TokenType.T_MinusMinusGreaterThan: return Symbol.T_DCGArrow;
-			// case TokenType.T_EqualDotDot: return Symbol.T_Univ;
+			// case LexicalState.tokenMinusMinusGreaterThan: return Symbol.T_DCGArrow;
+			// case LexicalState.tokenEqualDotDot: return Symbol.T_Univ;
 			case LexicalState.tokenPlus:
 				return GrammarSymbol.terminalPlus;
 			case LexicalState.tokenMinus:
 				return GrammarSymbol.terminalMinus;
 			case LexicalState.tokenMult:
 				return GrammarSymbol.terminalMultiply;
-			// case TokenType.T_Div: return Symbol.T_Divide;
-			// case TokenType.T_Equal: return Symbol.T_Assign;   // Unifiable
-			// case TokenType.T_Arrow: return Symbol.T_IfThen;
-			// case TokenType.T_Caret: return Symbol.T_Caret;
+			// case LexicalState.tokenDiv: return Symbol.T_Divide;
+			// case LexicalState.tokenEqual: return Symbol.T_Assign;   // Unifiable
+			// case LexicalState.tokenArrow: return Symbol.T_IfThen;
+			// case LexicalState.tokenCaret: return Symbol.T_Caret;
 			default:
 				break;
 		}
@@ -885,7 +902,10 @@ export class PrologGrammar extends GrammarBase {
 			case GrammarSymbol.terminalMultiply:
 			case GrammarSymbol.terminalLessThan:
 			case GrammarSymbol.terminalGreaterThan:
-			case GrammarSymbol.terminalEquals:
+			case GrammarSymbol.terminalLessOrEqual:
+			case GrammarSymbol.terminalGreaterOrEqual:
+			case GrammarSymbol.terminalArithmeticEqual:
+			case GrammarSymbol.terminalArithmeticNotEqual:
 				if (typeof value !== 'string') {
 					throw new Error('Oh bugger.');
 				}
