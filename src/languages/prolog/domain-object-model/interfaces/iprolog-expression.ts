@@ -1,13 +1,13 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/interfaces/iprolog-expression.ts
 
-import { IImmutableSet } from 'thaw-common-utilities.ts';
+import { IEqualityComparable, IImmutableSet, IStringifiable } from 'thaw-common-utilities.ts';
 
 import { IPrologNumber } from './iprolog-number';
 
 import { ISubstitution } from './isubstitution';
 import { IVariable } from './ivariable';
 
-export interface IPrologExpression {
+export interface IPrologExpression extends IEqualityComparable, IStringifiable {
 	// TODO:
 	// equals(otherExpr: IPrologExpression): boolean;
 

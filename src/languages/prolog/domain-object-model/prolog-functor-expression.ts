@@ -87,29 +87,15 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 		return super.toString(); // 'PrologFunctorExpression.toString()';
 	}
 
-	// TODO:
-
-	// public equals(otherExpr: IPrologExpression): boolean {
-	// 	const otherFunctorExpression = otherExpr as PrologFunctorExpression;
-
-	// 	if (
-	// 		typeof otherFunctorExpression === 'undefined' ||
-	// 		this.gs !== otherFunctorExpression.gs ||
-	// 		this.Name !== otherFunctorExpression.Name ||
-	// 		this.ExpressionList.length !== otherFunctorExpression.ExpressionList.length
-	// 	) {
-	// 		return false;
-	// 	}
-
-	// 	for (let i = 0; i < this.ExpressionList.length; i++) {
-
-	// 		if (!this.ExpressionList[i].equals(otherFunctorExpression.ExpressionList[i])) {
-	// 			return false;
-	// 		}
-	// 	}
-
-	// 	return true;
-	// }
+	public equals(other: unknown): boolean {
+		return (
+			isPrologFunctorExpression(other) &&
+			other.gs === this.gs &&
+			other.Name === this.Name &&
+			other.ExpressionList.length === this.ExpressionList.length &&
+			this.ExpressionList.every((expr, i) => other.ExpressionList[i].equals(expr))
+		);
+	}
 
 	public ApplySubstitution(substitution: ISubstitution): IPrologExpression {
 		return new PrologFunctorExpression(

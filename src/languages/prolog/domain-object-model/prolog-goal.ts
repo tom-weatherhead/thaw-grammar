@@ -39,33 +39,19 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 		super(gsParam, predicate, expressionList);
 	}
 
-	// public toString(): string {
-	// 	return 'PrologGoal.toString()';
-	// }
+	public override toString(): string {
+		return 'PrologGoal.toString()';
+	}
 
-	// TODO:
-
-	// public equals(otherExpr: IPrologExpression): boolean {
-	// 	const otherGoal = otherExpr as PrologGoal;
-
-	// 	if (
-	// 		typeof otherGoal === 'undefined' ||
-	// 		this.gs !== otherGoal.gs ||
-	// 		this.Name !== otherGoal.Name ||
-	// 		this.ExpressionList.length !== otherGoal.ExpressionList.length
-	// 	) {
-	// 		return false;
-	// 	}
-
-	// 	for (let i = 0; i < this.ExpressionList.length; i++) {
-
-	// 		if (!this.ExpressionList[i].equals(otherGoal.ExpressionList[i])) {
-	// 			return false;
-	// 		}
-	// 	}
-
-	// 	return true;
-	// }
+	public equals(other: unknown): boolean {
+		return (
+			isPrologGoal(other) &&
+			other.gs === this.gs &&
+			other.Name === this.Name &&
+			other.ExpressionList.length === this.ExpressionList.length &&
+			this.ExpressionList.every((expr, i) => other.ExpressionList[i].equals(expr))
+		);
+	}
 
 	public ApplySubstitution(substitution: ISubstitution): PrologGoal {
 		return new PrologGoal(

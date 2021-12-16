@@ -979,41 +979,35 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// 	return undefined;
 	// }
 
-	// private Unifiable2(goal: PrologGoal): PrologSubstitution | undefined {
-	// 	return goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
-	// }
+	private Unifiable2(goal: PrologGoal): ISubstitution | undefined {
+		return goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
+	}
 
-	// private NotUnifiable2(goal: PrologGoal): PrologSubstitution | undefined {
-	// 	const s = goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
+	private NotUnifiable2(goal: PrologGoal): ISubstitution | undefined {
+		const s = goal.ExpressionList[0].Unify(goal.ExpressionList[1]);
 
-	// 	if (typeof s !== 'undefined') {
-	// 		return undefined;
-	// 	}
+		if (typeof s !== 'undefined') {
+			return undefined;
+		}
 
-	// 	return new PrologSubstitution();
-	// }
+		return createSubstitution();
+	}
 
-	//     private PrologSubstitution Equals2(PrologGoal goal)
-	//     {
+	private Equals2(goal: PrologGoal): ISubstitution | undefined {
+		if (goal.ExpressionList[0].equals(goal.ExpressionList[1])) {
+			return createSubstitution();
+		}
 
-	//         if (goal.ExpressionList[0].Equals(goal.ExpressionList[1]))
-	//         {
-	//             return new PrologSubstitution();
-	//         }
+		return undefined;
+	}
 
-	//         return null;
-	//     }
+	private NotEquals2(goal: PrologGoal): ISubstitution | undefined {
+		if (goal.ExpressionList[0].equals(goal.ExpressionList[1])) {
+			return undefined;
+		}
 
-	//     private PrologSubstitution NotEquals2(PrologGoal goal)
-	//     {
-
-	//         if (goal.ExpressionList[0].Equals(goal.ExpressionList[1]))
-	//         {
-	//             return null;
-	//         }
-
-	//         return new PrologSubstitution();
-	//     }
+		return createSubstitution();
+	}
 
 	//     private PrologSubstitution Tab1(PrologGoal goal) // See http://www.swi-prolog.org/pldoc/man?predicate=tab/1
 	//     {
@@ -1564,6 +1558,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		// Built-in predicates:
 
+		// TODO: Replace the next line with:
+		// switch (`${goal.Name}/${numArgsInGoal}`) { ... }
 		switch (goal.Name) {
 			case 'fail':
 				if (numArgsInGoal === 0) {
@@ -1572,6 +1568,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 				break;
 
+			// TODO: Remove 'add', 'sub', ... 'lt', 'gt', etc. Use the symbolic names.
 			case 'add':
 			case '+':
 			case 'sub':
@@ -1780,6 +1777,34 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			// 	}
 
 			// 	break;
+
+			case '=':
+				if (numArgsInGoal === 2) {
+					return this.Unifiable2(goal);
+				}
+
+				break;
+
+			case '\\=':
+				if (numArgsInGoal === 2) {
+					return this.NotUnifiable2(goal);
+				}
+
+				break;
+
+			case '==':
+				if (numArgsInGoal === 2) {
+					return this.Equals2(goal);
+				}
+
+				break;
+
+			case '\\==':
+				if (numArgsInGoal === 2) {
+					return this.NotEquals2(goal);
+				}
+
+				break;
 
 			// case "findall": // See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse49
 

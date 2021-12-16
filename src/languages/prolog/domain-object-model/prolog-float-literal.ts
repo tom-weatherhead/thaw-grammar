@@ -1,6 +1,6 @@
 // prolog-float-literal.ts
 
-import { createSet, IEqualityComparable, IImmutableSet } from 'thaw-common-utilities.ts';
+import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
@@ -9,7 +9,7 @@ import { createSubstitution } from './prolog-substitution';
 import { ISubstitution } from './interfaces/isubstitution';
 import { IVariable, isIVariable } from './interfaces/ivariable';
 
-export class PrologFloatLiteral implements IEqualityComparable, IPrologNumber {
+export class PrologFloatLiteral implements IPrologNumber {
 	public readonly Value: number;
 
 	constructor(value: number) {

@@ -78,11 +78,16 @@ test('LL(1) Prolog recognize test', () => {
 	f('foo(X) :- \\+ bar(X).');
 	// f('foo(X, Y) :- bar(X, Y) ; bar(Y, X).');	// Goal disjunction
 	// f('foo(X) :- (bar(X) -> baz(X) : bat(X)).');
-	// f('foo(X) :- X \\== 13.');
+	f('foo(X) :- X == 13.');
+	f('foo(X) :- X \\== 13.');
 	// f('?- mia(t) = mia(X).');	// PrologGrammar2 (non-LL(1)) yields a reduce-reduce conflict for the SLR(1) and LALR(1) parsers.
-	// f('?- 1 = X.');
+	f('?- 1 = X.');
 	// f('?- X = mia.');
 	// f('?- X = mia(t).');
+	f('?- 1 \\= X.');
+	// f('?- X \\= mia.');
+	// f('?- X \\= mia(t).');
+
 	// f('?- 2 + 3 < 5 + 7.');
 	// f('?- X = 2, Y = 5, X + 3 < Y + 7.');
 	// f('?- X is (((1 + 1) + 1) + 1) + 1.');
@@ -94,7 +99,13 @@ test('LL(1) Prolog recognize test', () => {
 	// Definite Clause Grammar support.
 	// See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlch7
 	// See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlch8
-	// f('');
+	// f('vp --> v, np.');
+	// f('vp --> v.');
+	// f('v --> [loves].');
+	// f('v --> [a, b, c].');
+	// f('s --> ablock(Count), bblock(Count), cblock(Count).');
+	// f('ablock(0) --> [].');
+	// f('ablock(NewCount) --> [a], ablock(Count), {NewCount is Count + 1}.');
 
 	// bagof()
 	// f('?- bagof(Child, Mother ^ descend(Mother, Child), Results).');
@@ -104,33 +115,14 @@ test('LL(1) Prolog recognize test', () => {
 
 	// A clause with a RHS is enclosed in an extra set of brackets.
 	// See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse48
-	// f('');
+	// f('?- assert(happy(mia)).');
+	// f('?- assert((naive(X) :- happy(X))).');
+	// f('?- assert((X :- Y, Z(W))).');
+	// f('?- assert((X(W) :- Y, Z(W))).');
 
 	// findall()
 	// f('?- findall(X, retract((fact(Y) :- foo(X, Y))), Results).');
 });
-
-// [Test]
-// public void RecognizeTest()
-// {
-// 	// Definite Clause Grammar support.
-// 	// See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlch7
-// 	// See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlch8
-// 	parser.Recognize(tokenizer.Tokenize("vp --> v, np."));
-// 	parser.Recognize(tokenizer.Tokenize("vp --> v."));
-// 	parser.Recognize(tokenizer.Tokenize("v --> [loves]."));
-// 	parser.Recognize(tokenizer.Tokenize("v --> [a, b, c]."));
-// 	parser.Recognize(tokenizer.Tokenize("s --> ablock(Count), bblock(Count), cblock(Count)."));
-// 	parser.Recognize(tokenizer.Tokenize("ablock(0) --> []."));
-// 	parser.Recognize(tokenizer.Tokenize("ablock(NewCount) --> [a], ablock(Count), {NewCount is Count + 1}."));
-
-// 	// A clause with a RHS is enclosed in an extra set of brackets.
-// 	// See http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse48
-// 	parser.Recognize(tokenizer.Tokenize("?- assert(happy(mia))."));
-// 	parser.Recognize(tokenizer.Tokenize("?- assert((naive(X) :- happy(X)))."));
-// 	parser.Recognize(tokenizer.Tokenize("?- assert((X :- Y, Z(W)))."));
-// 	parser.Recognize(tokenizer.Tokenize("?- assert((X(W) :- Y, Z(W)))."));
-// }
 
 function success(substitutionAsString = ''): string {
 	const satisfying =
@@ -311,11 +303,35 @@ test('LL(1) Prolog arithmetic not equal to test', () => {
 
 // Equal: '=='
 
+// test('LL(1) Prolog equals test', () => {
+// 	prologTest([
+// 		[, ]
+// 	]);
+// });
+
 // Not equal: '\\=='
+
+// test('LL(1) Prolog not equal test', () => {
+// 	prologTest([
+// 		[, ]
+// 	]);
+// });
 
 // Unifiable: '='
 
+// test('LL(1) Prolog unifiable test', () => {
+// 	prologTest([
+// 		[, ]
+// 	]);
+// });
+
 // Not unifiable: '\\='
+
+// test('LL(1) Prolog not unifiable test', () => {
+// 	prologTest([
+// 		[, ]
+// 	]);
+// });
 
 test('LL(1) Prolog list reverse test', () => {
 	prologTest([

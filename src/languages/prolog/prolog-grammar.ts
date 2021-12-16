@@ -114,7 +114,7 @@ export class PrologGrammar extends GrammarBase {
 		this.nonTerminals.push(GrammarSymbol.nonterminalFunctorExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalTailOfGoalOrFunctorExpression);
 		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionListTail);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
+		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator);
 		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticComparisonOperator);
 		this.nonTerminals.push(GrammarSymbol.nonterminalGoalTail1);
@@ -497,6 +497,21 @@ export class PrologGrammar extends GrammarBase {
 		// this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [GrammarSymbol.terminalDivide]);
 		//
 		// this.addProduction(GrammarSymbol.nonterminalArithmeticOperator, [GrammarSymbol.terminalModulus]);
+
+		// Non-arithmetic operators: Unifiable, NotUnifiable, Equals, NotEqual
+		this.addProduction(GrammarSymbol.nonterminalGoalTail1, [
+			GrammarSymbol.nonterminalOptr,
+			GrammarSymbol.nonterminalVariableOrNumericLiteral,
+			'#nonArithmeticOperator'
+		]);
+
+		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalUnifiable]);
+
+		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalNotUnifiable]);
+
+		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalEquals]);
+
+		this.addProduction(GrammarSymbol.nonterminalOptr, [GrammarSymbol.terminalNotEqual]);
 	}
 
 	// // AddProduction(Symbol.N_Functor, new List<object>() { Symbol.T_Is });
@@ -641,6 +656,13 @@ export class PrologGrammar extends GrammarBase {
 				expr = semanticStack.pop() as IPrologExpression;
 				// semanticStack.push(new PrologGoal(gs, str, [expr, expr2, expr3]));
 				semanticStack.push(new PrologGoal(gs, str, [expr2, expr3, expr]));
+				break;
+
+			case '#nonArithmeticOperator': // Identical to '#arithmeticComparison'
+				expr2 = semanticStack.pop() as IPrologExpression;
+				str = semanticStack.pop() as string;
+				expr = semanticStack.pop() as IPrologExpression;
+				semanticStack.push(new PrologGoal(gs, str, [expr, expr2]));
 				break;
 
 			// // case "#arithExpr_Prefix":   // The same as #infix, except for the order of the items on the stack.
@@ -860,7 +882,8 @@ export class PrologGrammar extends GrammarBase {
 			case LexicalState.tokenMult:
 				return GrammarSymbol.terminalMultiply;
 			// case LexicalState.tokenDiv: return Symbol.T_Divide;
-			// case LexicalState.tokenEqual: return Symbol.T_Assign;   // Unifiable
+			case LexicalState.tokenEqual:
+				return GrammarSymbol.terminalUnifiable; // Unifiable
 			// case LexicalState.tokenArrow: return Symbol.T_IfThen;
 			// case LexicalState.tokenCaret: return Symbol.T_Caret;
 			default:

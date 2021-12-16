@@ -36,8 +36,8 @@ class PrologVariable implements /* IEqualityComparable, IPrologExpression, */ IV
 		return this.Name;
 	}
 
-	public equals(obj: unknown): boolean {
-		const otherVar = obj as IVariable;
+	public equals(other: unknown): boolean {
+		const otherVar = other as IVariable;
 
 		// We can compare the Name members with == because Name is a string.
 		return (

@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/domain-object-model/interfaces/ivariable.ts
 
-import { IEqualityComparable, IImmutableSet } from 'thaw-common-utilities.ts';
+import { IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { IPrologExpression } from './iprolog-expression';
 
@@ -10,15 +10,15 @@ import { ISubstitution } from './isubstitution';
 
 export const typenamePrologVariable = 'PrologVariable';
 
-export interface IVariable extends IEqualityComparable, IPrologExpression {
+export interface IVariable extends IPrologExpression {
 	readonly typename: string;
 	readonly Name: string;
 
 	IsNonBinding: boolean;
 	IsGround: boolean;
 
-	toString(): string;
-	equals(obj: unknown): boolean;
+	// toString(): string;
+	// equals(obj: unknown): boolean;
 
 	FindBindingVariables(): IImmutableSet<IVariable>; // or IImmutableSet<string>?
 	GetListOfBindingVariables(): IVariable[]; // or IImmutableArray<string>?
