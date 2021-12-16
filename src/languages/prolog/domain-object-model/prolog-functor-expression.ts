@@ -14,18 +14,24 @@ import { createSubstitution } from './prolog-substitution';
 import { ISubstitution } from './interfaces/isubstitution';
 import { isIVariable } from './interfaces/ivariable';
 
+const typenamePrologFunctorExpression = 'PrologFunctorExpression';
+
 export function isPrologFunctorExpression(obj: unknown): obj is PrologFunctorExpression {
-	// const fe = obj as PrologFunctorExpression;
+	const fe = obj as PrologFunctorExpression;
 
 	// return (
 	// 	fe instanceof PrologFunctorExpression &&
 	// 	fe.Name instanceof PrologFunctor
 	// );
 
-	return obj instanceof PrologFunctorExpression;
+	// return obj instanceof PrologFunctorExpression;
+
+	return typeof fe !== 'undefined' && fe.typename === typenamePrologFunctorExpression;
 }
 
 export class PrologFunctorExpression extends PrologNameExpression implements IPrologExpression {
+	public readonly typename: string = typenamePrologFunctorExpression;
+
 	constructor(gsParam: LanguageSelector, functor: string, expressionList: IPrologExpression[]) {
 		super(gsParam, functor, expressionList);
 	}

@@ -9,7 +9,10 @@ import { createSubstitution } from './prolog-substitution';
 import { ISubstitution } from './interfaces/isubstitution';
 import { IVariable, isIVariable } from './interfaces/ivariable';
 
+const typenamePrologIntegerLiteral = 'PrologIntegerLiteral';
+
 export class PrologIntegerLiteral implements IPrologNumber {
+	public readonly typename: string = typenamePrologIntegerLiteral;
 	public readonly Value: number;
 
 	constructor(value: number) {

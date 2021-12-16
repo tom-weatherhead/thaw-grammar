@@ -14,15 +14,21 @@ import { ISubstitution } from './interfaces/isubstitution';
 // ReferenceError: Cannot access 'PrologNameExpression' before initialization
 // -> Circular dependency? See e.g. https://github.com/webpack/webpack/issues/12724
 
+const typenamePrologGoal = 'PrologGoal';
+
 export function isPrologGoal(obj: unknown): obj is PrologGoal {
 	const goal = obj as PrologGoal;
 
 	// return typeof ic !== 'undefined' && typeof ic.compareTo === 'function';
 
-	return goal instanceof PrologGoal; // && goal.Name instanceof PrologPredicate;
+	// return goal instanceof PrologGoal; // && goal.Name instanceof PrologPredicate;
+
+	return typeof goal !== 'undefined' && goal.typename === typenamePrologGoal;
 }
 
 export class PrologGoal extends PrologNameExpression /* implements IPrologExpression */ {
+	public readonly typename: string = typenamePrologGoal;
+
 	// public static fromFunctorExpression(
 	// 	fe: PrologNameExpression<PrologFunctor>
 	// ): PrologGoal {

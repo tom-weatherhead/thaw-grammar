@@ -20,7 +20,7 @@ import { isIVariable, IVariable, typenamePrologVariable } from './interfaces/iva
 // 	);
 // }
 
-class PrologVariable implements /* IEqualityComparable, IPrologExpression, */ IVariable {
+class PrologVariable implements IVariable {
 	public readonly typename: string = typenamePrologVariable;
 	public readonly Name: string;
 

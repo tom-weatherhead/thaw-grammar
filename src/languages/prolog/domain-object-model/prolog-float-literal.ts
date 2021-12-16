@@ -9,7 +9,10 @@ import { createSubstitution } from './prolog-substitution';
 import { ISubstitution } from './interfaces/isubstitution';
 import { IVariable, isIVariable } from './interfaces/ivariable';
 
+const typenamePrologFloatLiteral = 'PrologFloatLiteral';
+
 export class PrologFloatLiteral implements IPrologNumber {
+	public readonly typename: string = typenamePrologFloatLiteral;
 	public readonly Value: number;
 
 	constructor(value: number) {
@@ -65,7 +68,6 @@ export class PrologFloatLiteral implements IPrologNumber {
 		if (this.equals(otherExpr)) {
 			// Do not use "if (this == otherExpr)", which just compares references.
 			return createSubstitution();
-			// } else if (otherExpr.constructor.name === PrologVariable.name) {
 		} else if (isIVariable(otherExpr)) {
 			return otherExpr.Unify(this);
 		}

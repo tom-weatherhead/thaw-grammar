@@ -8,8 +8,7 @@ import { ISubstitution } from './isubstitution';
 import { IVariable } from './ivariable';
 
 export interface IPrologExpression extends IEqualityComparable, IStringifiable {
-	// TODO:
-	// equals(otherExpr: IPrologExpression): boolean;
+	readonly typename: string;
 
 	IsGround: boolean;
 	// IsClauseOrGoal: boolean; // A hack to avoid a circular dependency

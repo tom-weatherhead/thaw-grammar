@@ -305,7 +305,7 @@ test('LL(1) Prolog arithmetic not equal to test', () => {
 
 // test('LL(1) Prolog equals test', () => {
 // 	prologTest([
-// 		[, ]
+// 		['?- .', ()]
 // 	]);
 // });
 
@@ -313,7 +313,7 @@ test('LL(1) Prolog arithmetic not equal to test', () => {
 
 // test('LL(1) Prolog not equal test', () => {
 // 	prologTest([
-// 		[, ]
+// 		['?- .', ()]
 // 	]);
 // });
 
@@ -321,7 +321,7 @@ test('LL(1) Prolog arithmetic not equal to test', () => {
 
 // test('LL(1) Prolog unifiable test', () => {
 // 	prologTest([
-// 		[, ]
+// 		['?- .', ()]
 // 	]);
 // });
 
@@ -329,7 +329,7 @@ test('LL(1) Prolog arithmetic not equal to test', () => {
 
 // test('LL(1) Prolog not unifiable test', () => {
 // 	prologTest([
-// 		[, ]
+// 		['?- .', ()]
 // 	]);
 // });
 

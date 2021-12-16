@@ -8,11 +8,6 @@ import { ISubstitution } from './interfaces/isubstitution';
 
 import { isIVariable, IVariable } from './interfaces/ivariable';
 
-// 2021-07-13: Warning: Circular dependency: caused by reference to prolog-variable.ts :
-// prolog-substitution.js -> prolog-variable.js -> prolog-substitution.js
-
-// import { isPrologVariable, PrologVariable } from './prolog-variable';
-
 class PrologSubstitution implements ISubstitution {
 	public readonly SubstitutionList = new Map<string, IPrologExpression>();
 
