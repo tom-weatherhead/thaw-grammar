@@ -109,18 +109,8 @@ class PrologVariable implements IVariable {
 			(typeof otherVariable !== 'undefined' && otherVariable.IsNonBinding)
 		) {
 			return createSubstitution();
-		} else if (
-			// [PrologClause.name, PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
-			// [PrologGoal.name].indexOf(otherExpr.constructor.name) >= 0 ||
-			otherExpr.ContainsVariable(this)
-		) {
+		} else if (otherExpr.ContainsVariable(this)) {
 			// console.log('PrologVariable.Unify(): Returning undefined');
-			// console.log(otherExpr as PrologGoal);
-			// console.log(otherExpr as PrologClause);
-			// console.log(typeof otherExpr);
-			// console.log(getTypeString(otherExpr));
-			// console.log(otherExpr.constructor.name);
-			// console.log(otherExpr.ContainsVariable(this));
 
 			// This is the "occurs" check.
 			return undefined; // This PrologVariable and the IPrologExpression are not unifiable.

@@ -81,7 +81,7 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 			}
 		}
 
-		return super.toString(); // 'PrologFunctorExpression.toString()';
+		return super.toString();
 	}
 
 	public equals(other: unknown): boolean {
@@ -109,18 +109,13 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 			return otherExpr.Unify(this);
 		}
 
-		// if (!GetType().Equals(otherExpr.GetType()))
-		// {
-		//     // A PrologFunctorExpression can unify with a PrologFunctorExpression;
-		//     // a PrologGoal can unify with a PrologGoal,
-		//     // but a PrologFunctorExpression cannot unify with a PrologGoal.
-		//     return null;
-		// }
+		// A PrologFunctorExpression can unify with a PrologFunctorExpression;
+		// a PrologGoal can unify with a PrologGoal,
+		// but a PrologFunctorExpression cannot unify with a PrologGoal.
 
 		const otherNameExpression = otherExpr as PrologFunctorExpression;
 
 		if (
-			// this.constructor.name !== otherExpr.constructor.name ||
 			!isPrologFunctorExpression(otherExpr) ||
 			this.Name !== otherNameExpression.Name ||
 			this.ExpressionList.length !== otherNameExpression.ExpressionList.length
@@ -194,16 +189,8 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 	}
 
 	public EvaluateToNumber(): IPrologNumber | undefined {
-		// const thisFunctorExpression =
-		// 	this as PrologNameExpression<PrologFunctor>;
-
-		// if (typeof thisFunctorExpression === 'undefined') {
-		// 	return undefined;
-		// } else
 		if (this.ExpressionList.length === 1) {
-			return PrologFunctorExpression.EvaluateUnaryOperatorToNumber(
-				this // thisFunctorExpression
-			);
+			return PrologFunctorExpression.EvaluateUnaryOperatorToNumber(this);
 		} else if (this.ExpressionList.length !== 2) {
 			return undefined;
 		}

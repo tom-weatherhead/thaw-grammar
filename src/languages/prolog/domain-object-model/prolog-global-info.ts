@@ -28,7 +28,7 @@ enum SolutionCollectionMode {
 	BagOfOrSetOf
 }
 
-export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* implements IGlobalInfoOps, IParser */ {
+export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 	public static readonly ClauseAdded = 'Clause added.';
 	public static readonly ClauseAlreadyExists =
 		'An identical clause is already in the clause list.';
@@ -46,8 +46,6 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	// public readonly IParser parser;
 	private variableRenameNum = 0;
 	private allMode = false; // Determines how many solutions we will search for.  false means "first" mode; true means "all" mode.
-	// private readonly StringBuilder sbOutput = new StringBuilder();
-	// private readonly Random random = new Random();
 	// private readonly HashSet<string> LoadedPresets = new HashSet<string>();
 	private solutionCollectionMode = SolutionCollectionMode.None;
 	private numSolutionsFound = 0;
@@ -65,14 +63,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	private readonly DefaultModule = new PrologModule();
 	// private readonly dictModules = new Map<string, PrologModule>(); // The keys are file paths.
 	private guidNumber = 0;
-
-	// constructor(gs: LanguageSelector, t: ITokenizer) {
-	// constructor() {
-	// 	super();
-	//
-	// 	// this.gs = gs;
-	// 	// this.tokenizer = t;
-	// }
+	private readonly falseVal = new PrologIntegerLiteral(0);
+	private readonly trueVal = new PrologIntegerLiteral(1);
 
 	constructor(
 		options: {
@@ -83,7 +75,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		super(options);
 	}
 
-	//     public PrologGlobalInfo(LanguageSelector gs, ITokenizer t, IParser p)
+	//     constructor(LanguageSelector gs, ITokenizer t, IParser p)
 	//     {
 	//         this.gs = gs;
 	//         tokenizer = t;
@@ -159,19 +151,23 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 	}
 
 	public get falseValue(): IPrologExpression {
-		return new PrologIntegerLiteral(0);
+		// return new PrologIntegerLiteral(0);
+		return this.falseVal;
 	}
 
 	public get trueValue(): IPrologExpression {
-		return new PrologIntegerLiteral(1);
+		// return new PrologIntegerLiteral(1);
+		return this.trueVal;
 	}
 
 	public valueIsFalse(value: IPrologExpression): boolean {
 		// return value === this.falseValue;
 
-		return this.valueIsInteger(value) && this.valueAsInteger(value) === 0;
+		// return this.valueIsInteger(value) && this.valueAsInteger(value) === 0;
 
 		// Or: return this.valueIsInteger(value) && this.valueAsInteger(value) === this.valueAsInteger(this.falseValue);
+
+		return value.equals(this.falseValue);
 	}
 
 	public valueIsInteger(value: IPrologExpression): boolean {
@@ -2208,8 +2204,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 		// console.log(
 		// 	'typeof clauseListCopy is:',
-		// 	typeof clauseListCopy,
-		// 	clauseListCopy.constructor.name
+		// 	typeof clauseListCopy
 		// );
 
 		// console.log('ProveGoalListUsingModule() : goal is:', goal.toString());
@@ -2220,8 +2215,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 		for (const clause of clauseListCopy) {
 			// console.log(
 			// 	'typeof clause is:',
-			// 	typeof clause,
-			// 	clause.constructor.name
+			// 	typeof clause
 			// );
 			// console.log(
 			// 	'ProveGoalListUsingModule() : clause is:',
@@ -2383,9 +2377,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 
 	public ProcessInput(parseResult: PrologClause | PrologGoal[], currentModuleName = ''): string {
 		// #if SUPPORT_USER_DEFINED_OPERATORS
-		const inputTypeName = parseResult.constructor.name;
-
-		// console.log('ProcessInput() : Type of parseResult is:', inputTypeName);
+		// console.log('ProcessInput() : Type of parseResult is:', typeof parseResult);
 
 		// const inputAsFunctorExpression =
 		// 	parseResult as PrologNameExpression<PrologFunctor>;
@@ -2573,7 +2565,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> /* imple
 			throw new Error('PrologGlobalInfo.ProcessInput() : parseResult is undefined');
 		} else {
 			throw new Error(
-				`PrologGlobalInfo.ProcessInput() : parseResult is of unrecognized type ${inputTypeName}`
+				`PrologGlobalInfo.ProcessInput() : parseResult is of unrecognized type ${typeof parseResult}`
 			);
 		}
 	}

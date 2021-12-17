@@ -35,30 +35,12 @@ class PrologSubstitution implements ISubstitution {
 	}
 
 	public toString(): string {
-		// Version 1
-		// const result: string[] = [];
-		// const keys = [...this.SubstitutionList.keys()];
-		//
-		// keys.sort();
-		//
-		// for (const v of keys) {
-		// 	const expr = this.SubstitutionList.get(v);
-		//
-		// 	if (typeof v !== 'undefined') {
-		// 		result.push(`${v} -> ${expr}`);
-		// 	}
-		// }
-		//
-		// return '[' + result.join('; ') + ']';
-
-		// Version 2
 		const entries = [...this.SubstitutionList.entries()];
 
 		// e1[0] is e1.key; e1[1] would be e1.value
 		// entries.sort((e1: [string, IPrologExpression], e2: [string, IPrologExpression]) => e1[0].localeCompare(e2[0]));
 		entries.sort((e1, e2) => e1[0].localeCompare(e2[0]));
 
-		// return `[${entries.map(([key, value]: [string, IPrologExpression]) => `${key} -> ${value}`).join('; ')}]`;
 		return `[${entries.map(([key, value]) => `${key} -> ${value}`).join('; ')}]`;
 	}
 
@@ -67,14 +49,7 @@ class PrologSubstitution implements ISubstitution {
 
 		// 1) Apply the Src substitution to this's terms.
 
-		// for (const key of this.SubstitutionList.keys()) {
 		for (const [key, sub] of this.SubstitutionList.entries()) {
-			// const sub = this.SubstitutionList.get(key);
-
-			// if (typeof sub === 'undefined') {
-			// 	throw new Error('PrologSubstitution.Compose() : sub is undefined.');
-			// }
-
 			const newUnifiable = sub.ApplySubstitution(otherSub) as IPrologExpression;
 
 			if (typeof newUnifiable === 'undefined') {
@@ -89,12 +64,7 @@ class PrologSubstitution implements ISubstitution {
 		// 2) Remove identities.
 		const varsToRemove: string[] = [];
 
-		// for (const key of newSub.SubstitutionList.keys()) {
 		for (const [key, value] of newSub.SubstitutionList.entries()) {
-			// const v = new PrologVariable(key);
-			// const value = newSub.SubstitutionList.get(key);
-
-			// Or:
 			if (isIVariable(value) && (value as IVariable).Name === key) {
 				throw new Error(
 					'PrologSubstitution: An identity should have been removed from the substitution, but was not.'
@@ -118,11 +88,7 @@ class PrologSubstitution implements ISubstitution {
 			//if (!newSub.SubstitutionList.ContainsKey(key))    // In error.
 			if (!this.SubstitutionList.has(key)) {
 				// Correct, according to the CS 486 course notes.
-				// const v = otherSub.SubstitutionList.get(key);
-
-				// if (typeof v !== 'undefined') {
 				newSub.SubstitutionList.set(key, v);
-				// }
 			}
 		}
 
@@ -162,8 +128,6 @@ class PrologSubstitution implements ISubstitution {
 
 	public containsOnlyVariables(): boolean {
 		return [...this.SubstitutionList.values()].every(isIVariable);
-		// (v: IPrologExpression) => v.constructor.name === PrologVariable.name
-		// );
 	}
 
 	// public FindBindingVariables(): Set<PrologVariable> {

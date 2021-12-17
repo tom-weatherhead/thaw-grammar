@@ -32,7 +32,7 @@ export function createFunctorExpressionFromGoal(goal: PrologGoal): PrologFunctor
 
 // public ContainsOnlyVariables(): boolean {
 // 	return Array.from(this.SubstitutionList.values()).every(
-// 		(v: IPrologExpression) => v.constructor.name === PrologVariable.name
+// 		(v: IPrologExpression) => isIVariable(v)
 // 	);
 // }
 

@@ -36,10 +36,6 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 		super(gsParam, predicate, expressionList);
 	}
 
-	// public override toString(): string {
-	// 	return 'PrologGoal.toString()';
-	// }
-
 	public equals(other: unknown): boolean {
 		return (
 			isPrologGoal(other) &&
@@ -64,7 +60,7 @@ export class PrologGoal extends PrologNameExpression /* implements IPrologExpres
 		const otherNameExpression = otherExpr as PrologGoal;
 
 		if (
-			this.constructor.name !== otherExpr.constructor.name ||
+			!isPrologGoal(otherExpr) ||
 			this.Name !== otherNameExpression.Name ||
 			this.ExpressionList.length !== otherNameExpression.ExpressionList.length
 		) {

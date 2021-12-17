@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/prolog/prolog-grammar.ts
 
-// Prolog file extensions:  .pl, .pro, .P
+// Prolog file extensions: .pl, .pro, .P
 // See https://en.wikipedia.org/wiki/Prolog
 
 import {
@@ -28,17 +28,6 @@ import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-liter
 import { createVariable } from './domain-object-model/prolog-variable';
 
 import { IPrologExpression } from './domain-object-model/interfaces/iprolog-expression';
-
-// function explodingCast<T>(value: unknown): T {
-// 	const castValue = value as T;
-
-// 	// if (castValue.constructor.name !== T.name) {
-// 	if (!(castValue instanceof T)) {
-// 		throw new Error(`explodingCast() : ${value} -> ${castValue}`);
-// 	}
-
-// 	return castValue;
-// }
 
 export class PrologGrammar extends GrammarBase {
 	constructor() {
