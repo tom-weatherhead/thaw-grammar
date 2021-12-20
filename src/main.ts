@@ -9,12 +9,15 @@ export { KeyNotFoundException } from './common/exceptions/key-not-found-exceptio
 // export { NotImplementedException } from './common/exceptions/not-implemented-exception';
 
 // Common DOM (Domain Object Model)
-export { EnvironmentFrame } from './common/domain-object-model/environment-frame';
+export {
+	EnvironmentFrame,
+	IEnvironmentFrame
+} from './common/domain-object-model/environment-frame';
 export { IExpression } from './common/domain-object-model/iexpression';
 export { GlobalInfoBase } from './common/domain-object-model/global-info-base';
 export { IGlobalInfo, IGlobalInfoForInterpreter } from './common/domain-object-model/iglobal-info';
 // export { IGlobalInfoOps } from './common/domain-object-model/iglobal-info-ops';
-export { Variable } from './common/domain-object-model/variable';
+export { IVariable, Variable } from './common/domain-object-model/variable';
 
 // Other common stuff
 export { createGlobalInfo } from './common/global-info-factory';
@@ -63,12 +66,12 @@ export {
 export { PrologGlobalInfo } from './languages/prolog/domain-object-model/prolog-global-info';
 export { isPrologGoal, PrologGoal } from './languages/prolog/domain-object-model/prolog-goal';
 export { PrologIntegerLiteral } from './languages/prolog/domain-object-model/prolog-integer-literal';
-export { createVariable } from './languages/prolog/domain-object-model/prolog-variable';
+export { createPrologVariable } from './languages/prolog/domain-object-model/prolog-variable';
 
 export { IPrologExpression } from './languages/prolog/domain-object-model/interfaces/iprolog-expression';
 export {
-	isIVariable,
-	IVariable
+	isIPrologVariable,
+	IPrologVariable
 } from './languages/prolog/domain-object-model/interfaces/ivariable';
 
 // The Lambda Calculus

@@ -10,23 +10,23 @@ import { ISubstitution } from './isubstitution';
 
 export const typenamePrologVariable = 'PrologVariable';
 
-export interface IVariable extends IPrologExpression {
+export interface IPrologVariable extends IPrologExpression {
 	// readonly typename: string;
 	readonly Name: string;
 
 	IsNonBinding: boolean;
 	IsGround: boolean;
 
-	FindBindingVariables(): IImmutableSet<IVariable>; // or IImmutableSet<string>?
-	GetListOfBindingVariables(): IVariable[]; // or IImmutableArray<string>?
-	ContainsVariable(v: IVariable): boolean;
+	FindBindingVariables(): IImmutableSet<IPrologVariable>; // or IImmutableSet<string>?
+	GetListOfBindingVariables(): IPrologVariable[]; // or IImmutableArray<string>?
+	ContainsVariable(v: IPrologVariable): boolean;
 	ApplySubstitution(sub: ISubstitution): IPrologExpression;
 	Unify(otherExpr: IPrologExpression): ISubstitution | undefined;
 	EvaluateToNumber(): IPrologNumber | undefined;
 }
 
-export function isIVariable(obj: unknown): obj is IVariable {
-	const otherIVariable = obj as IVariable;
+export function isIPrologVariable(obj: unknown): obj is IPrologVariable {
+	const otherIVariable = obj as IPrologVariable;
 
 	return (
 		typeof otherIVariable !== 'undefined' &&

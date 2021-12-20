@@ -7,7 +7,7 @@ import { IPrologNumber } from './interfaces/iprolog-number';
 import { createSubstitution } from './prolog-substitution';
 
 import { ISubstitution } from './interfaces/isubstitution';
-import { IVariable, isIVariable } from './interfaces/ivariable';
+import { IPrologVariable, isIPrologVariable } from './interfaces/ivariable';
 
 const typenamePrologFloatLiteral = 'PrologFloatLiteral';
 
@@ -44,16 +44,16 @@ export class PrologFloatLiteral implements IPrologNumber {
 		);
 	}
 
-	public FindBindingVariables(): IImmutableSet<IVariable> {
-		return createSet<IVariable>();
+	public FindBindingVariables(): IImmutableSet<IPrologVariable> {
+		return createSet<IPrologVariable>();
 	}
 
-	public GetListOfBindingVariables(): IVariable[] {
+	public GetListOfBindingVariables(): IPrologVariable[] {
 		return [];
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public ContainsVariable(v: IVariable): boolean {
+	public ContainsVariable(v: IPrologVariable): boolean {
 		return false;
 	}
 
@@ -68,7 +68,7 @@ export class PrologFloatLiteral implements IPrologNumber {
 		if (this.equals(otherExpr)) {
 			// Do not use "if (this == otherExpr)", which just compares references.
 			return createSubstitution();
-		} else if (isIVariable(otherExpr)) {
+		} else if (isIPrologVariable(otherExpr)) {
 			return otherExpr.Unify(this);
 		}
 

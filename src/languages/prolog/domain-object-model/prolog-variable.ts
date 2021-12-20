@@ -7,20 +7,9 @@ import { IPrologNumber } from './interfaces/iprolog-number';
 import { createSubstitution } from './prolog-substitution';
 
 import { ISubstitution } from './interfaces/isubstitution';
-import { isIVariable, IVariable, typenamePrologVariable } from './interfaces/ivariable';
+import { isIPrologVariable, IPrologVariable, typenamePrologVariable } from './interfaces/ivariable';
 
-// const typenamePrologVariable = 'PrologVariable';
-
-// export function isPrologVariable(obj: unknown): obj is PrologVariable {
-// 	const otherPrologVariable = obj as PrologVariable;
-//
-// 	return (
-// 		typeof otherPrologVariable !== 'undefined' &&
-// 		otherPrologVariable.typename === typenamePrologVariable
-// 	);
-// }
-
-class PrologVariable implements IVariable {
+class PrologVariable implements IPrologVariable {
 	public readonly typename: string = typenamePrologVariable;
 	public readonly Name: string;
 
@@ -37,13 +26,13 @@ class PrologVariable implements IVariable {
 	}
 
 	public equals(other: unknown): boolean {
-		const otherVar = other as IVariable;
+		// const otherVar = other as IPrologVariable;
 
 		// We can compare the Name members with == because Name is a string.
 		return (
 			// typeof otherVar !== 'undefined' &&
 			// otherVar instanceof PrologVariable &&
-			isIVariable(otherVar) && this.Name === otherVar.Name
+			isIPrologVariable(other) && this.Name === other.Name
 		);
 	}
 
@@ -57,7 +46,7 @@ class PrologVariable implements IVariable {
 	}
 
 	// public FindBindingVariables(): Set<PrologVariable> {
-	public FindBindingVariables(): IImmutableSet<IVariable> {
+	public FindBindingVariables(): IImmutableSet<IPrologVariable> {
 		// if (this.IsNonBinding) // This allows the test Prolog2Parser_Fixture.DoNotRenameNonBindingVariablesTest() to pass.
 		// {
 		//     return [];   // Ignore non-binding variables; we don't want to rename them to binding variables.
@@ -67,7 +56,7 @@ class PrologVariable implements IVariable {
 
 		// return Set.createFromArray(this.IsNonBinding ? [] : [this]);
 
-		const result = createSet<IVariable>();
+		const result = createSet<IPrologVariable>();
 
 		if (!this.IsNonBinding) {
 			result.add(this);
@@ -76,11 +65,11 @@ class PrologVariable implements IVariable {
 		return result;
 	}
 
-	public GetListOfBindingVariables(): IVariable[] {
+	public GetListOfBindingVariables(): IPrologVariable[] {
 		return this.FindBindingVariables().toArray();
 	}
 
-	public ContainsVariable(v: IVariable): boolean {
+	public ContainsVariable(v: IPrologVariable): boolean {
 		return this.equals(v);
 	}
 
@@ -128,6 +117,6 @@ class PrologVariable implements IVariable {
 	}
 }
 
-export function createVariable(name: string): IVariable {
+export function createPrologVariable(name: string): IPrologVariable {
 	return new PrologVariable(name);
 }

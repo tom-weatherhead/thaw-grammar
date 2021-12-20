@@ -10,7 +10,7 @@ import { createSubstitution } from './prolog-substitution';
 // import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
 import { ISubstitution } from './interfaces/isubstitution';
-import { IVariable } from './interfaces/ivariable';
+import { IPrologVariable } from './interfaces/ivariable';
 
 export class PrologClause /* implements IPrologExpression */ {
 	public readonly Lhs: PrologGoal;
@@ -53,7 +53,7 @@ export class PrologClause /* implements IPrologExpression */ {
 	//     return true;
 	// }
 
-	public FindBindingVariables(): IImmutableSet<IVariable> {
+	public FindBindingVariables(): IImmutableSet<IPrologVariable> {
 		let result = this.Lhs.FindBindingVariables();
 
 		for (const subgoal of this.Rhs) {
@@ -63,11 +63,11 @@ export class PrologClause /* implements IPrologExpression */ {
 		return result;
 	}
 
-	public GetListOfBindingVariables(): IVariable[] {
+	public GetListOfBindingVariables(): IPrologVariable[] {
 		return this.FindBindingVariables().toArray();
 	}
 
-	public ContainsVariable(v: IVariable): boolean {
+	public ContainsVariable(v: IPrologVariable): boolean {
 		return (
 			this.ContainsVariable(v) ||
 			this.Rhs.some((goal: PrologGoal) => goal.ContainsVariable(v))
@@ -83,12 +83,12 @@ export class PrologClause /* implements IPrologExpression */ {
 		);
 	}
 
-	private isVariableInArrayOfVariables(v: IVariable, a: IVariable[]): boolean {
-		return typeof a.find((vv: IVariable) => vv.Name === v.Name) !== 'undefined';
+	private isVariableInArrayOfVariables(v: IPrologVariable, a: IPrologVariable[]): boolean {
+		return typeof a.find((vv: IPrologVariable) => vv.Name === v.Name) !== 'undefined';
 	}
 
 	public RenameVariables(
-		variablesToAvoid: IImmutableSet<IVariable>,
+		variablesToAvoid: IImmutableSet<IPrologVariable>,
 		globalInfo: PrologGlobalInfo
 	): PrologClause {
 		const oldVariables = this.FindBindingVariables();
@@ -103,7 +103,7 @@ export class PrologClause /* implements IPrologExpression */ {
 				continue;
 			}
 
-			let newVariable: IVariable;
+			let newVariable: IPrologVariable;
 
 			do {
 				newVariable = globalInfo.GetNextUniqueVariable();

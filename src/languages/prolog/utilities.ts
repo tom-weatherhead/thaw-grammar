@@ -4,10 +4,10 @@ import { createSet, IImmutableSet } from 'thaw-common-utilities.ts';
 
 import { PrologFunctorExpression } from './domain-object-model/prolog-functor-expression';
 import { PrologGoal } from './domain-object-model/prolog-goal';
-import { createVariable } from './domain-object-model/prolog-variable';
+import { createPrologVariable } from './domain-object-model/prolog-variable';
 
 import { ISubstitution } from './domain-object-model/interfaces/isubstitution';
-import { IVariable } from './domain-object-model/interfaces/ivariable';
+import { IPrologVariable } from './domain-object-model/interfaces/ivariable';
 
 export function createGoalFromFunctorExpression(fe: PrologFunctorExpression): PrologGoal {
 	return new PrologGoal(fe.gs, fe.Name, fe.ExpressionList);
@@ -36,11 +36,13 @@ export function createFunctorExpressionFromGoal(goal: PrologGoal): PrologFunctor
 // 	);
 // }
 
-export function findBindingVariablesInSubstitution(s: ISubstitution): IImmutableSet<IVariable> {
-	const result = createSet<IVariable>();
+export function findBindingVariablesInSubstitution(
+	s: ISubstitution
+): IImmutableSet<IPrologVariable> {
+	const result = createSet<IPrologVariable>();
 
 	for (const key of s.SubstitutionList.keys()) {
-		result.add(createVariable(key));
+		result.add(createPrologVariable(key));
 
 		const v = s.SubstitutionList.get(key);
 

@@ -494,16 +494,6 @@ export class Chapter1Grammar extends GrammarBase {
 		const value = token.tokenValue;
 
 		switch (tokenAsSymbol) {
-			// case GrammarSymbol.terminalID:
-			// case GrammarSymbol.terminalPrint:
-			// case GrammarSymbol.terminalPlus:
-			// case GrammarSymbol.terminalMinus:
-			// case GrammarSymbol.terminalMultiply:
-			// case GrammarSymbol.terminalDivide:
-			// case GrammarSymbol.terminalEquals:
-			// case GrammarSymbol.terminalLessThan:
-			// case GrammarSymbol.terminalGreaterThan:
-			// case GrammarSymbol.terminalRandom:
 			case GrammarSymbol.terminalThrow: // TODO: Comment this out later.
 				semanticStack.push(new Name(value as string, token.line, token.column));
 				break;
@@ -512,22 +502,7 @@ export class Chapter1Grammar extends GrammarBase {
 				semanticStack.push(new IntegerLiteral(value, token.line, token.column));
 				break;
 
-			// case GrammarSymbol.terminalLeftBracket:
-			// case GrammarSymbol.terminalRightBracket:
-			// case GrammarSymbol.terminalDefine:
-			// case GrammarSymbol.terminalIf:
-			// case GrammarSymbol.terminalWhile:
-			// case GrammarSymbol.terminalSet:
-			// case GrammarSymbol.terminalBegin:
-			// case GrammarSymbol.terminalEOF:
-			// 	break;
-
 			default:
-				// throw new GrammarException(
-				// 	`pushTokenOntoSemanticStack() : Unexpected tokenAsSymbol ${GrammarSymbol[tokenAsSymbol]} ${tokenAsSymbol}`,
-				// 	token.line,
-				// 	token.column
-				// );
 				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
 				break;
 		}

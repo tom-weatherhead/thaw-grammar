@@ -25,7 +25,7 @@ import {
 } from './domain-object-model/prolog-functor-expression';
 import { PrologGoal } from './domain-object-model/prolog-goal';
 import { PrologIntegerLiteral } from './domain-object-model/prolog-integer-literal';
-import { createVariable } from './domain-object-model/prolog-variable';
+import { createPrologVariable } from './domain-object-model/prolog-variable';
 
 import { IPrologExpression } from './domain-object-model/interfaces/iprolog-expression';
 
@@ -602,7 +602,7 @@ export class PrologGrammar extends GrammarBase {
 
 			case '#createVariable':
 				str = semanticStack.pop() as string;
-				semanticStack.push(createVariable(str));
+				semanticStack.push(createPrologVariable(str));
 				break;
 
 			case '#createFunctorExpression':

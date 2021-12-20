@@ -14,13 +14,13 @@ import { PrologGoal } from './prolog-goal';
 import { PrologIntegerLiteral } from './prolog-integer-literal';
 import { PrologModule } from './prolog-module';
 import { createSubstitution } from './prolog-substitution';
-import { createVariable } from './prolog-variable';
+import { createPrologVariable } from './prolog-variable';
 import { StringIntKey } from './string-int-key';
 import { createGoalFromFunctorExpression, findBindingVariablesInSubstitution } from '../utilities';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { ISubstitution } from './interfaces/isubstitution';
-import { IVariable, isIVariable } from './interfaces/ivariable';
+import { IPrologVariable, isIPrologVariable } from './interfaces/ivariable';
 
 enum SolutionCollectionMode {
 	None,
@@ -425,14 +425,14 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 	//         return CreateAtom(new PrologFunctor(name));
 	//     }
 
-	public GetNextUniqueVariable(): IVariable {
+	public GetNextUniqueVariable(): IPrologVariable {
 		++this.variableRenameNum;
 
-		return createVariable(`Var${this.variableRenameNum}`);
+		return createPrologVariable(`Var${this.variableRenameNum}`);
 	}
 
-	private GetVariablesFromGoalList(goalListParam: PrologGoal[]): IImmutableSet<IVariable> {
-		const result = createSet<IVariable>();
+	private GetVariablesFromGoalList(goalListParam: PrologGoal[]): IImmutableSet<IPrologVariable> {
+		const result = createSet<IPrologVariable>();
 
 		// console.log('goalListParam is', typeof goalListParam, goalListParam);
 
@@ -443,8 +443,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 		return result;
 	}
 
-	public GetListOfBindingVariablesFromGoalList(goalListParam: PrologGoal[]): IVariable[] {
-		let result: IVariable[] = [];
+	public GetListOfBindingVariablesFromGoalList(goalListParam: PrologGoal[]): IPrologVariable[] {
+		let result: IPrologVariable[] = [];
 
 		for (const goal of goalListParam) {
 			result = result.concat(goal.GetListOfBindingVariables());
@@ -930,7 +930,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 	// #endif
 	//     }
 
-	private AutomaticPrint(variablesInQuery: IVariable[], substitution: ISubstitution): void {
+	private AutomaticPrint(variablesInQuery: IPrologVariable[], substitution: ISubstitution): void {
 		if (variablesInQuery.length === 0) {
 			return;
 		}
@@ -1395,7 +1395,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 		// Then create an array or iterator or generator:
 		// [() => this.createSubstitutionForArithmeticOperation(goal, a, b, c, op), ...]
 		// and use .find() to find the first one (if any) with match === true
-		const v = goal.ExpressionList[vi] as IVariable;
+		const v = goal.ExpressionList[vi] as IPrologVariable;
 		const n1 = goal.ExpressionList[n1i] as PrologIntegerLiteral;
 		const n2 = goal.ExpressionList[n2i] as PrologIntegerLiteral;
 
@@ -1419,8 +1419,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 		cutDetectorList: CutDetector[],
 		goalNum: number,
 		oldSubstitution: ISubstitution,
-		parentVariablesToAvoid: IImmutableSet<IVariable>,
-		variablesInQuery: IVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
+		parentVariablesToAvoid: IImmutableSet<IPrologVariable>,
+		variablesInQuery: IPrologVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
 		listOfCurrentModules: PrologModule[]
 	): ISubstitution | undefined {
 		if (goalNum >= goalList.length) {
@@ -1600,8 +1600,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 						} else {
 							return undefined;
 						}
-					} else if (isIVariable(goal.ExpressionList[2])) {
-						const v = goal.ExpressionList[2] as IVariable;
+					} else if (isIPrologVariable(goal.ExpressionList[2])) {
+						const v = goal.ExpressionList[2] as IPrologVariable;
 						const addSubstitution = createSubstitution(
 							v.Name,
 							new PrologIntegerLiteral(
@@ -1733,14 +1733,14 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 							variablesInQuery,
 							listOfCurrentModules
 						);
-					} else if (isIVariable(e0)) {
+					} else if (isIPrologVariable(e0)) {
 						// We can say e0.Name because we already know that
 						// e0 instanceof PrologVariable is true.
 						return this.ProveGoalList(
 							goalList,
 							cutDetectorList,
 							nextGoalNum,
-							oldSubstitution.compose(createSubstitution((e0 as IVariable).Name, n1)),
+							oldSubstitution.compose(createSubstitution(e0.Name, n1)),
 							parentVariablesToAvoid,
 							variablesInQuery,
 							listOfCurrentModules
@@ -1899,7 +1899,7 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 			goal.Name === 'add' &&
 			numArgsInGoal === 3 &&
 			goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
-			isIVariable(goal.ExpressionList[1]) &&
+			isIPrologVariable(goal.ExpressionList[1]) &&
 			goal.ExpressionList[2] instanceof PrologIntegerLiteral
 		) {
 			// If 2 + N === 5 then N === 5 - 2
@@ -1939,12 +1939,12 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 		} else if (
 			goal.Name === 'add' &&
 			numArgsInGoal === 3 &&
-			isIVariable(goal.ExpressionList[0]) &&
+			isIPrologVariable(goal.ExpressionList[0]) &&
 			goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
 			goal.ExpressionList[2] instanceof PrologIntegerLiteral
 		) {
 			// If N + 2 === 5 then N === 5 - 2
-			const v0 = goal.ExpressionList[0] as IVariable;
+			const v0 = goal.ExpressionList[0] as IPrologVariable;
 			const n1 = goal.ExpressionList[1] as PrologIntegerLiteral;
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
@@ -1966,12 +1966,12 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 			goal.Name === 'sub' &&
 			numArgsInGoal === 3 &&
 			goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
-			isIVariable(goal.ExpressionList[1]) &&
+			isIPrologVariable(goal.ExpressionList[1]) &&
 			goal.ExpressionList[2] instanceof PrologIntegerLiteral
 		) {
 			// If 5 - N === 2 then N === 5 - 2
 			const n0 = goal.ExpressionList[0] as PrologIntegerLiteral;
-			const v1 = goal.ExpressionList[1] as IVariable;
+			const v1 = goal.ExpressionList[1] as IPrologVariable;
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
 			const addSubstitution = createSubstitution(
@@ -1991,12 +1991,12 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 		} else if (
 			goal.Name === 'sub' &&
 			numArgsInGoal === 3 &&
-			isIVariable(goal.ExpressionList[0]) &&
+			isIPrologVariable(goal.ExpressionList[0]) &&
 			goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
 			goal.ExpressionList[2] instanceof PrologIntegerLiteral
 		) {
 			// If N - 2 === 3 then N === 2 + 3
-			const v0 = goal.ExpressionList[0] as IVariable;
+			const v0 = goal.ExpressionList[0] as IPrologVariable;
 			const n1 = goal.ExpressionList[1] as PrologIntegerLiteral;
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
@@ -2018,12 +2018,12 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 			goal.Name === 'mult' &&
 			numArgsInGoal === 3 &&
 			goal.ExpressionList[0] instanceof PrologIntegerLiteral &&
-			isIVariable(goal.ExpressionList[1]) &&
+			isIPrologVariable(goal.ExpressionList[1]) &&
 			goal.ExpressionList[2] instanceof PrologIntegerLiteral
 		) {
 			// If 7 * N === 91 then N === 91 / 7 === 13
 			const n0 = goal.ExpressionList[0] as PrologIntegerLiteral;
-			const v1 = goal.ExpressionList[1] as IVariable;
+			const v1 = goal.ExpressionList[1] as IPrologVariable;
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
 			// Handle unsolvable cases like 1 * N === 0
@@ -2052,12 +2052,12 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 		} else if (
 			goal.Name === 'mult' &&
 			numArgsInGoal === 3 &&
-			isIVariable(goal.ExpressionList[0]) &&
+			isIPrologVariable(goal.ExpressionList[0]) &&
 			goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
 			goal.ExpressionList[2] instanceof PrologIntegerLiteral
 		) {
 			// If N * 13 === 91 then N === 91 / 13 === 7
-			const v0 = goal.ExpressionList[0] as IVariable;
+			const v0 = goal.ExpressionList[0] as IPrologVariable;
 			const n1 = goal.ExpressionList[1] as PrologIntegerLiteral;
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
@@ -2088,12 +2088,12 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 		} else if (
 			goal.Name === 'div' &&
 			numArgsInGoal === 3 &&
-			isIVariable(goal.ExpressionList[0]) &&
+			isIPrologVariable(goal.ExpressionList[0]) &&
 			goal.ExpressionList[1] instanceof PrologIntegerLiteral &&
 			goal.ExpressionList[2] instanceof PrologIntegerLiteral
 		) {
 			// If N / 13 === 7 then N === 13 * 7 === 91
-			const v0 = goal.ExpressionList[0] as IVariable;
+			const v0 = goal.ExpressionList[0] as IPrologVariable;
 			const n1 = goal.ExpressionList[1] as PrologIntegerLiteral;
 			const n2 = goal.ExpressionList[2] as PrologIntegerLiteral;
 
@@ -2178,8 +2178,8 @@ export class PrologGlobalInfo extends GlobalInfoBase<IPrologExpression> {
 		cutDetectorList: CutDetector[],
 		nextGoalNum: number,
 		oldSubstitution: ISubstitution,
-		parentVariablesToAvoid: IImmutableSet<IVariable>,
-		variablesInQuery: IVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
+		parentVariablesToAvoid: IImmutableSet<IPrologVariable>,
+		variablesInQuery: IPrologVariable[], // Print these variables and their values automatically upon success if there is no print() goal at the end
 		currentModule: PrologModule,
 		listOfCurrentModules: PrologModule[]
 	): ISubstitution | undefined {

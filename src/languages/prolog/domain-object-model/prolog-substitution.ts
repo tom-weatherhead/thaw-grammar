@@ -6,7 +6,7 @@ import { IPrologExpression } from './interfaces/iprolog-expression';
 
 import { ISubstitution } from './interfaces/isubstitution';
 
-import { isIVariable, IVariable } from './interfaces/ivariable';
+import { isIPrologVariable } from './interfaces/ivariable';
 
 class PrologSubstitution implements ISubstitution {
 	public readonly SubstitutionList = new Map<string, IPrologExpression>();
@@ -65,7 +65,7 @@ class PrologSubstitution implements ISubstitution {
 		const varsToRemove: string[] = [];
 
 		for (const [key, value] of newSub.SubstitutionList.entries()) {
-			if (isIVariable(value) && (value as IVariable).Name === key) {
+			if (isIPrologVariable(value) && value.Name === key) {
 				throw new Error(
 					'PrologSubstitution: An identity should have been removed from the substitution, but was not.'
 				);
@@ -127,7 +127,7 @@ class PrologSubstitution implements ISubstitution {
 	}
 
 	public containsOnlyVariables(): boolean {
-		return [...this.SubstitutionList.values()].every(isIVariable);
+		return [...this.SubstitutionList.values()].every(isIPrologVariable);
 	}
 
 	// public FindBindingVariables(): Set<PrologVariable> {

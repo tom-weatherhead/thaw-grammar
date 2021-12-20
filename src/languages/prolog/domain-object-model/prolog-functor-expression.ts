@@ -10,7 +10,7 @@ import { PrologNameExpression } from './prolog-name-expression';
 import { createSubstitution } from './prolog-substitution';
 
 import { ISubstitution } from './interfaces/isubstitution';
-import { isIVariable } from './interfaces/ivariable';
+import { isIPrologVariable } from './interfaces/ivariable';
 
 const typenamePrologFunctorExpression = 'PrologFunctorExpression';
 
@@ -105,7 +105,7 @@ export class PrologFunctorExpression extends PrologNameExpression implements IPr
 	}
 
 	public Unify(otherExpr: IPrologExpression): ISubstitution | undefined {
-		if (isIVariable(otherExpr)) {
+		if (isIPrologVariable(otherExpr)) {
 			return otherExpr.Unify(this);
 		}
 

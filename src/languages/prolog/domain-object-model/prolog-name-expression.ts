@@ -6,7 +6,7 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { IPrologExpression } from './interfaces/iprolog-expression';
 import { IPrologNumber } from './interfaces/iprolog-number';
-import { IVariable } from './interfaces/ivariable';
+import { IPrologVariable } from './interfaces/ivariable';
 
 export abstract class PrologNameExpression /* implements IPrologExpression */ {
 	public readonly gs: LanguageSelector;
@@ -108,8 +108,8 @@ export abstract class PrologNameExpression /* implements IPrologExpression */ {
 		).join(', ')})`;
 	}
 
-	public FindBindingVariables(): IImmutableSet<IVariable> {
-		const result = createSet<IVariable>();
+	public FindBindingVariables(): IImmutableSet<IPrologVariable> {
+		const result = createSet<IPrologVariable>();
 
 		for (const expr of this.ExpressionList) {
 			result.unionInPlace(expr.FindBindingVariables());
@@ -118,11 +118,11 @@ export abstract class PrologNameExpression /* implements IPrologExpression */ {
 		return result;
 	}
 
-	public GetListOfBindingVariables(): IVariable[] {
+	public GetListOfBindingVariables(): IPrologVariable[] {
 		return this.FindBindingVariables().toArray();
 	}
 
-	public ContainsVariable(v: IVariable): boolean {
+	public ContainsVariable(v: IPrologVariable): boolean {
 		return this.ExpressionList.some((expr: IPrologExpression) => expr.ContainsVariable(v));
 	}
 

@@ -12,7 +12,7 @@ import {
 
 import {
 	createGrammar,
-	createVariable,
+	createPrologVariable,
 	PrologClause,
 	PrologGlobalInfo,
 	PrologGoal
@@ -379,7 +379,7 @@ test('LL(1) Prolog unification test 1', () => {
 
 	const parse = createFnParser<PrologClause>(ls);
 
-	const x = createVariable('X');
+	const x = createPrologVariable('X');
 	// const clause1 = parse('baz(Z) :- assert((foo(Z) :- bat(Z))).');
 	const clause2 = parse('foo(Y) :- not(bar(Y)).');
 	const clause3 = parse('foo([1,2,3]).');
