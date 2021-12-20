@@ -1,6 +1,6 @@
 {
 	"name": "thaw-grammar",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"description": "Implementations of the grammars of several programming languages, including LISP, Scheme, Prolog, and the Lambda Calculus.",
 	"keywords": [
 		"APL",

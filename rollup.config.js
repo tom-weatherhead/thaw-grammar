@@ -19,8 +19,8 @@ export default {
 			// Create a CommonJS version for Node.js
 			file: 'dist/thaw-grammar.cjs.js',
 			format: 'cjs',
-			exports: 'named',
-			globals: { uuid: 'uuid' }
+			exports: 'named' // ,
+			// globals: { uuid: 'uuid' }
 		},
 		{
 			// Create an ESModule version
@@ -28,7 +28,7 @@ export default {
 			format: 'es',
 			esModule: true,
 			compact: true,
-			globals: { uuid: 'uuid' },
+			// globals: { uuid: 'uuid' },
 			plugins: [terser()]
 		},
 		{
@@ -37,11 +37,11 @@ export default {
 			name: 'thaw-grammar',
 			format: 'umd',
 			compact: true,
-			globals: { uuid: 'uuid' },
+			// globals: { uuid: 'uuid' },
 			plugins: [terser()]
 		}
 	],
 	context: 'this',
-	external: ['uuid'],
+	// external: ['uuid'],
 	plugins: [nodeResolve()]
 };
