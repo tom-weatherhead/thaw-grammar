@@ -936,28 +936,28 @@ export class SmalltalkGrammar extends GrammarBase {
 
 		super.addProduction(lhs, rhs, n);
 
-		for (const rhssym of [lhs, ...rhs]) {
+		for (const sym of [lhs, ...rhs]) {
 			// const m = Number.parseInt(rhssym);
-			const m = rhssym;
+			// const m = rhssym;
 
 			// if (typeof rhssym !== 'number') {
 			// if (typeof m !== 'number') {
-			if (typeof m !== 'number' || Number.isNaN(m)) {
-				console.log('Not a number:', typeof rhssym, rhssym);
+			if (typeof sym !== 'number' /* || Number.isNaN(sym) */) {
+				// console.log('Not a number:', typeof sym, sym);
 				continue;
 			}
 
-			console.log(typeof rhssym, rhssym, '===', typeof m, m, GrammarSymbol[m]);
+			// console.log(typeof sym, sym, '===', typeof m, m, GrammarSymbol[m]);
 
-			console.log(`isTerminalSymbol(${GrammarSymbol[m]}) :`, isTerminalSymbol(m));
-			console.log(`isNonTerminalSymbol(${GrammarSymbol[m]}) :`, isNonTerminalSymbol(m));
+			// console.log(`isTerminalSymbol(${GrammarSymbol[sym]}) :`, isTerminalSymbol(sym));
+			// console.log(`isNonTerminalSymbol(${GrammarSymbol[sym]}) :`, isNonTerminalSymbol(sym));
 
-			if (isTerminalSymbol(m) && this.terminals.indexOf(m) < 0) {
-				this.terminals.push(m);
+			if (isTerminalSymbol(sym) && this.terminals.indexOf(sym) < 0) {
+				this.terminals.push(sym);
 			}
 
-			if (isNonTerminalSymbol(m) && this.nonTerminals.indexOf(m) < 0) {
-				this.nonTerminals.push(m);
+			if (isNonTerminalSymbol(sym) && this.nonTerminals.indexOf(sym) < 0) {
+				this.nonTerminals.push(sym);
 			}
 		}
 	}
