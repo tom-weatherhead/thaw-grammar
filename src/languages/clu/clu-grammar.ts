@@ -54,62 +54,6 @@ export class CluGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
 
-		this.terminals.push(GrammarSymbol.terminalLeftBracket);
-		this.terminals.push(GrammarSymbol.terminalRightBracket);
-		this.terminals.push(GrammarSymbol.terminalDefine);
-		this.terminals.push(GrammarSymbol.terminalIf);
-		this.terminals.push(GrammarSymbol.terminalWhile);
-		this.terminals.push(GrammarSymbol.terminalSet);
-		this.terminals.push(GrammarSymbol.terminalBegin);
-		this.terminals.push(GrammarSymbol.terminalPlus);
-		this.terminals.push(GrammarSymbol.terminalMinus);
-		this.terminals.push(GrammarSymbol.terminalMultiply);
-		this.terminals.push(GrammarSymbol.terminalDivide);
-		this.terminals.push(GrammarSymbol.terminalEquals);
-		this.terminals.push(GrammarSymbol.terminalLessThan);
-		this.terminals.push(GrammarSymbol.terminalGreaterThan);
-		this.terminals.push(GrammarSymbol.terminalPrint);
-		this.terminals.push(GrammarSymbol.terminalID);
-		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		this.terminals.push(GrammarSymbol.terminalCond);
-		this.terminals.push(GrammarSymbol.terminalLet);
-		this.terminals.push(GrammarSymbol.terminalLetStar);
-
-		this.terminals.push(GrammarSymbol.terminalCluster);
-		this.terminals.push(GrammarSymbol.terminalRep);
-		this.terminals.push(GrammarSymbol.terminalDollar);
-		this.terminals.push(GrammarSymbol.terminalExport);
-
-		this.terminals.push(GrammarSymbol.terminalEOF);
-
-		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
-		this.nonTerminals.push(GrammarSymbol.nonterminalInput);
-		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedInput);
-		this.nonTerminals.push(GrammarSymbol.nonterminalUnbracketedInput);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalValue);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVariableList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalFunDef);
-		this.nonTerminals.push(GrammarSymbol.nonterminalFunction);
-		this.nonTerminals.push(GrammarSymbol.nonterminalArgList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
-		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
-
-		this.nonTerminals.push(GrammarSymbol.nonterminalClusterDef);
-		this.nonTerminals.push(GrammarSymbol.nonterminalRep);
-		this.nonTerminals.push(GrammarSymbol.nonterminalFunDefList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalOnePartName);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalTwoPartName);
-		this.nonTerminals.push(GrammarSymbol.nonterminalOnePartNameTail);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExportList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalOnePartNameList);
-
 		// This initial production needed to be added: Start -> Input EOF
 		this.addProduction(GrammarSymbol.nonterminalStart, [
 			GrammarSymbol.nonterminalInput,

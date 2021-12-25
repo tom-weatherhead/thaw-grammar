@@ -35,18 +35,18 @@ export class LambdaCalculusGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
 
-		this.terminals.push(GrammarSymbol.terminalLeftBracket);
-		this.terminals.push(GrammarSymbol.terminalRightBracket);
-		this.terminals.push(GrammarSymbol.terminalID);
-		this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
-		this.terminals.push(GrammarSymbol.terminalDot);
-		this.terminals.push(GrammarSymbol.terminalEOF);
-
-		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
-		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
+		// this.terminals.push(GrammarSymbol.terminalLeftBracket);
+		// this.terminals.push(GrammarSymbol.terminalRightBracket);
+		// this.terminals.push(GrammarSymbol.terminalID);
+		// this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
+		// this.terminals.push(GrammarSymbol.terminalDot);
+		// this.terminals.push(GrammarSymbol.terminalEOF);
+		//
+		// this.nonTerminals.push(GrammarSymbol.nonterminalStart);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
 
 		this.addProduction(GrammarSymbol.nonterminalStart, [
 			GrammarSymbol.nonterminalExpression,
