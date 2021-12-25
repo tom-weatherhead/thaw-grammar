@@ -1,6 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/variable.ts
 
-import { ifDefinedThenElse, IStringifiable } from 'thaw-common-utilities.ts';
+import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 
 import { ArgumentException /*, EvaluationException */ } from 'thaw-interpreter-core';
 
@@ -19,7 +19,7 @@ export function isVariableT<T>(obj: unknown): obj is Variable<T> {
 	return typeof otherVariable !== 'undefined' && otherVariable.typename === typenameVariableT;
 }
 
-export interface IVariable<T> extends IExpression<T>, IStringifiable {
+export interface IVariable<T> extends IExpression<T> {
 	readonly name: string;
 	readonly line: number;
 	readonly column: number;

@@ -18,9 +18,22 @@
 
 // ****
 
-import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
+import {
+	GrammarSymbol,
+	IToken,
+	LexicalState,
+	ProductionRhsElementType,
+	SemanticStackType
+} from 'thaw-interpreter-types';
 
-import { ArgumentException, GrammarBase, GrammarException, Name } from 'thaw-interpreter-core';
+import {
+	ArgumentException,
+	GrammarBase,
+	GrammarException,
+	isNonTerminalSymbol,
+	isTerminalSymbol,
+	Name
+} from 'thaw-interpreter-core';
 
 import { BeginUsage } from '../../common/domain-object-model/begin-usage';
 
@@ -68,91 +81,91 @@ export class SmalltalkGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
 
-		this.terminals.push(GrammarSymbol.terminalLeftBracket);
-		this.terminals.push(GrammarSymbol.terminalRightBracket);
-		this.terminals.push(GrammarSymbol.terminalDefine);
-		this.terminals.push(GrammarSymbol.terminalIf);
-		this.terminals.push(GrammarSymbol.terminalWhile);
-		this.terminals.push(GrammarSymbol.terminalSet);
-		this.terminals.push(GrammarSymbol.terminalBegin);
-		this.terminals.push(GrammarSymbol.terminalPlus);
-		this.terminals.push(GrammarSymbol.terminalMinus);
-		this.terminals.push(GrammarSymbol.terminalMultiply);
-		this.terminals.push(GrammarSymbol.terminalDivide);
-		this.terminals.push(GrammarSymbol.terminalEquals);
-		this.terminals.push(GrammarSymbol.terminalLessThan);
-		this.terminals.push(GrammarSymbol.terminalGreaterThan);
-		this.terminals.push(GrammarSymbol.terminalPrint);
-		this.terminals.push(GrammarSymbol.terminalID);
-		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		this.terminals.push(GrammarSymbol.terminalFloatLiteral);
-		this.terminals.push(GrammarSymbol.terminalStringLiteral);
-		this.terminals.push(GrammarSymbol.terminalCond);
-		this.terminals.push(GrammarSymbol.terminalLet);
-		this.terminals.push(GrammarSymbol.terminalLetStar);
-
-		this.terminals.push(GrammarSymbol.terminalRandom);
-		this.terminals.push(GrammarSymbol.terminalToString);
-		this.terminals.push(GrammarSymbol.terminalStringToSymbol);
-		this.terminals.push(GrammarSymbol.terminalPow);
-		this.terminals.push(GrammarSymbol.terminalExp);
-		this.terminals.push(GrammarSymbol.terminalLn);
-		this.terminals.push(GrammarSymbol.terminalSin);
-		this.terminals.push(GrammarSymbol.terminalCos);
-		this.terminals.push(GrammarSymbol.terminalTan);
-		this.terminals.push(GrammarSymbol.terminalFloor);
-		this.terminals.push(GrammarSymbol.terminalAtan2);
-		this.terminals.push(GrammarSymbol.terminalThrow);
-		this.terminals.push(GrammarSymbol.terminalStringLessThan);
-		this.terminals.push(GrammarSymbol.terminalStrlen);
-		this.terminals.push(GrammarSymbol.terminalSubstr);
-		this.terminals.push(GrammarSymbol.terminalTypename);
-		// this.terminals.push(GrammarSymbol.terminalHash);
-		// this.terminals.push(GrammarSymbol.terminalReferenceEquals);
-		this.terminals.push(GrammarSymbol.terminalStrcat);
-		this.terminals.push(GrammarSymbol.terminalNewArray);
-		this.terminals.push(GrammarSymbol.terminalArrayLength);
-		this.terminals.push(GrammarSymbol.terminalArrayGet);
-		this.terminals.push(GrammarSymbol.terminalArraySet);
-		this.terminals.push(GrammarSymbol.terminalDollar);
-		this.terminals.push(GrammarSymbol.terminalCharPred);
-		this.terminals.push(GrammarSymbol.terminalStringIndex);
-		this.terminals.push(GrammarSymbol.terminalArrayPred);
-		this.terminals.push(GrammarSymbol.terminalClass);
-		this.terminals.push(GrammarSymbol.terminalOctothorpe);
-		this.terminals.push(GrammarSymbol.terminalNumberPred);
-		this.terminals.push(GrammarSymbol.terminalSymbolPred);
-		this.terminals.push(GrammarSymbol.terminalStringPred);
-		this.terminals.push(GrammarSymbol.terminalObjectPred);
-
-		this.terminals.push(GrammarSymbol.terminalEOF);
-
-		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
-		this.nonTerminals.push(GrammarSymbol.nonterminalInput);
-		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedInput);
-		this.nonTerminals.push(GrammarSymbol.nonterminalUnbracketedInput);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalValue);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVariableList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalFunDef);
-		this.nonTerminals.push(GrammarSymbol.nonterminalFunction);
-		this.nonTerminals.push(GrammarSymbol.nonterminalArgList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
-		this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
-
-		this.nonTerminals.push(GrammarSymbol.nonterminalClassDef);
-		this.nonTerminals.push(GrammarSymbol.nonterminalClass);
-		this.nonTerminals.push(GrammarSymbol.nonterminalInstVars);
-		this.nonTerminals.push(GrammarSymbol.nonterminalMethodDef);
-		this.nonTerminals.push(GrammarSymbol.nonterminalMethodDefList);
-		this.nonTerminals.push(GrammarSymbol.nonterminalSymbol);
-		this.nonTerminals.push(GrammarSymbol.nonterminalLiteralList);
+		// this.terminals.push(GrammarSymbol.terminalLeftBracket);
+		// this.terminals.push(GrammarSymbol.terminalRightBracket);
+		// this.terminals.push(GrammarSymbol.terminalDefine);
+		// this.terminals.push(GrammarSymbol.terminalIf);
+		// this.terminals.push(GrammarSymbol.terminalWhile);
+		// this.terminals.push(GrammarSymbol.terminalSet);
+		// this.terminals.push(GrammarSymbol.terminalBegin);
+		// this.terminals.push(GrammarSymbol.terminalPlus);
+		// this.terminals.push(GrammarSymbol.terminalMinus);
+		// this.terminals.push(GrammarSymbol.terminalMultiply);
+		// this.terminals.push(GrammarSymbol.terminalDivide);
+		// this.terminals.push(GrammarSymbol.terminalEquals);
+		// this.terminals.push(GrammarSymbol.terminalLessThan);
+		// this.terminals.push(GrammarSymbol.terminalGreaterThan);
+		// this.terminals.push(GrammarSymbol.terminalPrint);
+		// this.terminals.push(GrammarSymbol.terminalID);
+		// this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
+		// this.terminals.push(GrammarSymbol.terminalFloatLiteral);
+		// this.terminals.push(GrammarSymbol.terminalStringLiteral);
+		// this.terminals.push(GrammarSymbol.terminalCond);
+		// this.terminals.push(GrammarSymbol.terminalLet);
+		// this.terminals.push(GrammarSymbol.terminalLetStar);
+		//
+		// this.terminals.push(GrammarSymbol.terminalRandom);
+		// this.terminals.push(GrammarSymbol.terminalToString);
+		// this.terminals.push(GrammarSymbol.terminalStringToSymbol);
+		// this.terminals.push(GrammarSymbol.terminalPow);
+		// this.terminals.push(GrammarSymbol.terminalExp);
+		// this.terminals.push(GrammarSymbol.terminalLn);
+		// this.terminals.push(GrammarSymbol.terminalSin);
+		// this.terminals.push(GrammarSymbol.terminalCos);
+		// this.terminals.push(GrammarSymbol.terminalTan);
+		// this.terminals.push(GrammarSymbol.terminalFloor);
+		// this.terminals.push(GrammarSymbol.terminalAtan2);
+		// this.terminals.push(GrammarSymbol.terminalThrow);
+		// this.terminals.push(GrammarSymbol.terminalStringLessThan);
+		// this.terminals.push(GrammarSymbol.terminalStrlen);
+		// this.terminals.push(GrammarSymbol.terminalSubstr);
+		// this.terminals.push(GrammarSymbol.terminalTypename);
+		// // this.terminals.push(GrammarSymbol.terminalHash);
+		// // this.terminals.push(GrammarSymbol.terminalReferenceEquals);
+		// this.terminals.push(GrammarSymbol.terminalStrcat);
+		// this.terminals.push(GrammarSymbol.terminalNewArray);
+		// this.terminals.push(GrammarSymbol.terminalArrayLength);
+		// this.terminals.push(GrammarSymbol.terminalArrayGet);
+		// this.terminals.push(GrammarSymbol.terminalArraySet);
+		// this.terminals.push(GrammarSymbol.terminalDollar);
+		// this.terminals.push(GrammarSymbol.terminalCharPred);
+		// this.terminals.push(GrammarSymbol.terminalStringIndex);
+		// this.terminals.push(GrammarSymbol.terminalArrayPred);
+		// this.terminals.push(GrammarSymbol.terminalClass);
+		// this.terminals.push(GrammarSymbol.terminalOctothorpe);
+		// this.terminals.push(GrammarSymbol.terminalNumberPred);
+		// this.terminals.push(GrammarSymbol.terminalSymbolPred);
+		// this.terminals.push(GrammarSymbol.terminalStringPred);
+		// this.terminals.push(GrammarSymbol.terminalObjectPred);
+		//
+		// this.terminals.push(GrammarSymbol.terminalEOF);
+		//
+		// this.nonTerminals.push(GrammarSymbol.nonterminalStart);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalInput);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalBracketedInput);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalUnbracketedInput);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalValue);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalVariableList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalFunDef);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalFunction);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalArgList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalExpressionList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalValueOp);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalExprPairList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalLetKeyword);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalVarExprList);
+		//
+		// this.nonTerminals.push(GrammarSymbol.nonterminalClassDef);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalClass);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalInstVars);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalMethodDef);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalMethodDefList);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalSymbol);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalLiteralList);
 
 		// This initial production needed to be added: Start -> Input EOF
 		this.addProduction(GrammarSymbol.nonterminalStart, [
@@ -909,6 +922,43 @@ export class SmalltalkGrammar extends GrammarBase {
 
 			default:
 				super.pushTokenOntoSemanticStack(semanticStack, tokenAsSymbol, token);
+		}
+	}
+
+	protected override addProduction(
+		lhs: GrammarSymbol,
+		rhs: ProductionRhsElementType[],
+		n = NaN
+	): void {
+		// this.productions.push(
+		// 	createProduction(lhs, rhs, Number.isNaN(n) ? this.productions.length + 1 : n)
+		// );
+
+		super.addProduction(lhs, rhs, n);
+
+		for (const rhssym of [lhs, ...rhs]) {
+			// const m = Number.parseInt(rhssym);
+			const m = rhssym;
+
+			// if (typeof rhssym !== 'number') {
+			// if (typeof m !== 'number') {
+			if (typeof m !== 'number' || Number.isNaN(m)) {
+				console.log('Not a number:', typeof rhssym, rhssym);
+				continue;
+			}
+
+			console.log(typeof rhssym, rhssym, '===', typeof m, m, GrammarSymbol[m]);
+
+			console.log(`isTerminalSymbol(${GrammarSymbol[m]}) :`, isTerminalSymbol(m));
+			console.log(`isNonTerminalSymbol(${GrammarSymbol[m]}) :`, isNonTerminalSymbol(m));
+
+			if (isTerminalSymbol(m) && this.terminals.indexOf(m) < 0) {
+				this.terminals.push(m);
+			}
+
+			if (isNonTerminalSymbol(m) && this.nonTerminals.indexOf(m) < 0) {
+				this.nonTerminals.push(m);
+			}
 		}
 	}
 }
