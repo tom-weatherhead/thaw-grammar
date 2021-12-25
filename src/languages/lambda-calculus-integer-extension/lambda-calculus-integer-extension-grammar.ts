@@ -1,16 +1,8 @@
 // tom-weatherhead/thaw-grammar/src/languages/lambda-calculus-integer-extension/lambda-calculus-integer-extension-grammar.ts
 
-import {
-	GrammarSymbol,
-	IToken,
-	LexicalState,
-	// ParserSelector,
-	SemanticStackType
-} from 'thaw-interpreter-types';
+import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { Name } from 'thaw-interpreter-core';
-
-// import { Name } from '../../common/domain-object-model/name';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
@@ -44,29 +36,6 @@ import { LCPrimitiveOperator } from './domain-object-model/primitive-operator';
 export class LambdaCalculusIntegerExtensionGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
-
-		this.terminals.push(GrammarSymbol.terminalLeftBracket);
-		this.terminals.push(GrammarSymbol.terminalRightBracket);
-		this.terminals.push(GrammarSymbol.terminalID);
-		this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
-		this.terminals.push(GrammarSymbol.terminalDot);
-		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		// this.terminals.push(GrammarSymbol.terminalLeftSquareBracket);
-		// this.terminals.push(GrammarSymbol.terminalRightSquareBracket);
-		this.terminals.push(GrammarSymbol.terminalPlus);
-		this.terminals.push(GrammarSymbol.terminalMinus);
-		this.terminals.push(GrammarSymbol.terminalMultiply);
-		this.terminals.push(GrammarSymbol.terminalEquals);
-		this.terminals.push(GrammarSymbol.terminalIf);
-		this.terminals.push(GrammarSymbol.terminalEOF);
-
-		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
-		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
-		this.nonTerminals.push(GrammarSymbol.nonterminalOptr);
 
 		// This initial production needed to be added: Start -> Expression EOF
 		this.addProduction(GrammarSymbol.nonterminalStart, [

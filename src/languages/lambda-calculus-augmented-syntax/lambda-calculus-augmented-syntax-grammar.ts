@@ -82,52 +82,6 @@ export class LambdaCalculusWithAugmentedSyntaxGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
 
-		this.terminals.push(GrammarSymbol.terminalLeftBracket);
-		this.terminals.push(GrammarSymbol.terminalRightBracket);
-		this.terminals.push(GrammarSymbol.terminalID);
-		this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
-		this.terminals.push(GrammarSymbol.terminalDot);
-
-		this.terminals.push(GrammarSymbol.terminalIf);
-
-		this.terminals.push(GrammarSymbol.terminalLet);
-		this.terminals.push(GrammarSymbol.terminalEquals);
-		this.terminals.push(GrammarSymbol.terminalIn);
-
-		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		this.terminals.push(GrammarSymbol.terminalPlus);
-		this.terminals.push(GrammarSymbol.terminalMultiply);
-
-		this.terminals.push(GrammarSymbol.terminalTrue);
-		this.terminals.push(GrammarSymbol.terminalFalse);
-
-		this.terminals.push(GrammarSymbol.terminalComb);
-
-		this.terminals.push(GrammarSymbol.terminalInc);
-		this.terminals.push(GrammarSymbol.terminalDec);
-		this.terminals.push(GrammarSymbol.terminalIsZero);
-		this.terminals.push(GrammarSymbol.terminalAnd);
-		this.terminals.push(GrammarSymbol.terminalOr);
-
-		this.terminals.push(GrammarSymbol.terminalNil);
-		this.terminals.push(GrammarSymbol.terminalNullPred);
-		this.terminals.push(GrammarSymbol.terminalCons);
-		this.terminals.push(GrammarSymbol.terminalCar);
-		this.terminals.push(GrammarSymbol.terminalCdr);
-		this.terminals.push(GrammarSymbol.terminalListPred);
-
-		this.terminals.push(GrammarSymbol.terminalThickArrow);
-
-		this.terminals.push(GrammarSymbol.terminalEOF);
-
-		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
-		this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalBracketedExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
-		this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
-		this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
-		this.nonTerminals.push(GrammarSymbol.nonterminalAfterVariable);
-
 		this.addProduction(GrammarSymbol.nonterminalStart, [
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.terminalEOF

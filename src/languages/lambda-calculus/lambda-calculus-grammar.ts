@@ -11,17 +11,9 @@
 // Glossary:
 // A 'redex' is a reducible expression
 
-import {
-	GrammarSymbol,
-	IToken,
-	LexicalState,
-	// ParserSelector,
-	SemanticStackType
-} from 'thaw-interpreter-types';
+import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { Name } from 'thaw-interpreter-core';
-
-// import { Name } from '../../common/domain-object-model/name';
 
 import { GrammarBase, GrammarException } from 'thaw-interpreter-core';
 
@@ -34,19 +26,6 @@ import { LCVariable } from './domain-object-model/variable';
 export class LambdaCalculusGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
-
-		// this.terminals.push(GrammarSymbol.terminalLeftBracket);
-		// this.terminals.push(GrammarSymbol.terminalRightBracket);
-		// this.terminals.push(GrammarSymbol.terminalID);
-		// this.terminals.push(GrammarSymbol.terminalFn); // === 'λ'
-		// this.terminals.push(GrammarSymbol.terminalDot);
-		// this.terminals.push(GrammarSymbol.terminalEOF);
-		//
-		// this.nonTerminals.push(GrammarSymbol.nonterminalStart);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalExpression);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalVariable);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalLambdaExpression);
-		// this.nonTerminals.push(GrammarSymbol.nonterminalFunctionCall);
 
 		this.addProduction(GrammarSymbol.nonterminalStart, [
 			GrammarSymbol.nonterminalExpression,
