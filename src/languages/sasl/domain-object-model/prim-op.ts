@@ -3,16 +3,10 @@
 import { Name } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-// import { Name } from '../../../common/domain-object-model/name';
-
-// import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
-// import { LISPOperatorUsage } from '../../lisp/domain-object-model/lisp-operator-usage';
-// import { SExpressionBase } from '../../lisp/domain-object-model/sexpression-base';
 import { SExpressionList } from '../../lisp/domain-object-model/sexpression-list';
 import { NullSExpression } from '../../lisp/domain-object-model/null-sexpression';
 
@@ -137,7 +131,7 @@ export class SASLPrimOp extends PrimOp implements IConvertibleToGraph {
 		// 	expectedNumArgs, this.name.value, actualNumArgs));
 		// }
 
-		// ThAW 2012/12/07 : Do not create thunks out of arguments that are already S-expressions : See page 202, exercise 6.
+		// ThAW 2012/12/07 : Do not create thunks out of arguments that are already S-expressions (i.e. values) : See page 202, exercise 6.
 		const argumentsAsSExpressions = args.map((expr) =>
 			isISExpression(expr) ? (expr as ISExpression) : new Thunk(expr, localEnvironment)
 		);

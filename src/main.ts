@@ -17,7 +17,7 @@ export { IExpression } from './common/domain-object-model/iexpression';
 export { GlobalInfoBase } from './common/domain-object-model/global-info-base';
 export { IGlobalInfo, IGlobalInfoForInterpreter } from './common/domain-object-model/iglobal-info';
 // export { IGlobalInfoOps } from './common/domain-object-model/iglobal-info-ops';
-export { IVariable, Variable } from './common/domain-object-model/variable';
+export { isVariableT, IVariable, Variable } from './common/domain-object-model/variable';
 
 // Other common stuff
 export { createGlobalInfo } from './common/global-info-factory';

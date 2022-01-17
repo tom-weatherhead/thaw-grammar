@@ -3,13 +3,9 @@
 import { ifDefinedThenElse } from 'thaw-common-utilities.ts';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { IVariable } from '../../../common/domain-object-model/variable';
-// import { VariableList } from '../../../common/domain-object-model/variable-list';
-
-// import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 
@@ -30,11 +26,6 @@ export class SASLLambdaExpression extends LambdaExpression implements IConvertib
 		super(argList, body, line, column);
 	}
 
-	// public override evaluate(
-	// 	localEnvironment: EnvironmentFrame<ISExpression>,
-	// 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// 	globalInfo: IGlobalInfo<ISExpression>
-	// ): ISExpression {
 	public override evaluate(
 		globalInfo: IGlobalInfo<ISExpression>,
 		localEnvironment?: IEnvironmentFrame<ISExpression>,

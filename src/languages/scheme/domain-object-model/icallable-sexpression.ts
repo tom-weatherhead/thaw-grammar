@@ -1,7 +1,6 @@
 // tom-weatherhead/thaw-grammar/src/languages/scheme/domain-object-model/icallable-sexpression.ts
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 

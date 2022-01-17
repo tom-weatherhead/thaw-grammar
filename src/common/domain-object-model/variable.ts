@@ -55,6 +55,18 @@ export class Variable<T> implements IVariable<T> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): T {
+		if (this.name === 'stackdump') {
+			if (typeof localEnvironment === 'undefined') {
+				console.log(
+					'Variable<T>.evaluate() : On stackdump: localEnvironment is undefined.'
+				);
+			}
+
+			ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment).stackDump();
+
+			return globalInfo.trueValue;
+		}
+
 		// try {
 		return ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment).lookup(this);
 		// } catch (KeyNotFoundException) {
@@ -65,15 +77,4 @@ export class Variable<T> implements IVariable<T> {
 		// 	);
 		// }
 	}
-
-	// public ConvertToGraph(): IExpression<ISExpression> {
-	// 	const iex = this as IExpression<ISExpression>;
-
-	// 	if (iex !== undefined)
-	// 	{
-	// 		return iex;
-	// 	}
-
-	// 	throw new NotImplementedException('Variable<T>.ConvertToGraph() : T is not ISExpression.');
-	// }
 }

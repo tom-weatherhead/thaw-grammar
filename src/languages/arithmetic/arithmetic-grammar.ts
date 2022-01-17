@@ -24,7 +24,7 @@ import {
 	SemanticStackType
 } from 'thaw-interpreter-types';
 
-import { createProduction, Name } from 'thaw-interpreter-core';
+import { Name } from 'thaw-interpreter-core';
 
 import { IExpression } from '../../common/domain-object-model/iexpression';
 
@@ -37,129 +37,80 @@ export class ArithmeticGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
 
-		this.terminals.push(GrammarSymbol.terminalLeftBracket);
-		this.terminals.push(GrammarSymbol.terminalRightBracket);
-		this.terminals.push(GrammarSymbol.terminalPlus);
-		this.terminals.push(GrammarSymbol.terminalMinus);
-		this.terminals.push(GrammarSymbol.terminalMultiply);
-		this.terminals.push(GrammarSymbol.terminalDivide);
-		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
-		this.terminals.push(GrammarSymbol.terminalEOF);
+		// this.terminals.push(GrammarSymbol.terminalLeftBracket);
+		// this.terminals.push(GrammarSymbol.terminalRightBracket);
+		// this.terminals.push(GrammarSymbol.terminalPlus);
+		// this.terminals.push(GrammarSymbol.terminalMinus);
+		// this.terminals.push(GrammarSymbol.terminalMultiply);
+		// this.terminals.push(GrammarSymbol.terminalDivide);
+		// this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
+		// this.terminals.push(GrammarSymbol.terminalEOF);
+		//
+		// this.nonTerminals.push(GrammarSymbol.nonterminalStart);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression1);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression2);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression3);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator1);
+		// this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator2);
 
-		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
-		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression1);
-		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression2);
-		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticExpression3);
-		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator1);
-		this.nonTerminals.push(GrammarSymbol.nonterminalArithmeticOperator2);
-
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalStart,
-				[GrammarSymbol.nonterminalArithmeticExpression1, GrammarSymbol.terminalEOF],
-				1
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalStart, [
+			GrammarSymbol.nonterminalArithmeticExpression1,
+			GrammarSymbol.terminalEOF
+		]);
 
 		// **** Level 1 : Addition and Subtraction ****
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticExpression1,
-				[
-					GrammarSymbol.nonterminalArithmeticExpression1,
-					GrammarSymbol.nonterminalArithmeticOperator1,
-					GrammarSymbol.nonterminalArithmeticExpression2,
-					'#operatorUsage'
-				],
-				2
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticExpression1, [
+			GrammarSymbol.nonterminalArithmeticExpression1,
+			GrammarSymbol.nonterminalArithmeticOperator1,
+			GrammarSymbol.nonterminalArithmeticExpression2,
+			'#operatorUsage'
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticOperator1,
-				[GrammarSymbol.terminalPlus],
-				3
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticOperator1, [
+			GrammarSymbol.terminalPlus
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticOperator1,
-				[GrammarSymbol.terminalMinus],
-				4
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticOperator1, [
+			GrammarSymbol.terminalMinus
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticExpression1,
-				[GrammarSymbol.nonterminalArithmeticExpression2],
-				5
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticExpression1, [
+			GrammarSymbol.nonterminalArithmeticExpression2
+		]);
 
 		// **** Level 2 : Multiplication and Division ****
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticExpression2,
-				[
-					GrammarSymbol.nonterminalArithmeticExpression2,
-					GrammarSymbol.nonterminalArithmeticOperator2,
-					GrammarSymbol.nonterminalArithmeticExpression3,
-					'#operatorUsage'
-				],
-				6
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticExpression2, [
+			GrammarSymbol.nonterminalArithmeticExpression2,
+			GrammarSymbol.nonterminalArithmeticOperator2,
+			GrammarSymbol.nonterminalArithmeticExpression3,
+			'#operatorUsage'
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticOperator2,
-				[GrammarSymbol.terminalMultiply],
-				7
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticOperator2, [
+			GrammarSymbol.terminalMultiply
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticOperator2,
-				[GrammarSymbol.terminalDivide],
-				8
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticOperator2, [
+			GrammarSymbol.terminalDivide
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticExpression2,
-				[GrammarSymbol.nonterminalArithmeticExpression3],
-				9
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticExpression2, [
+			GrammarSymbol.nonterminalArithmeticExpression3
+		]);
 
 		// **** Level 3 : Brackets ****
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticExpression3,
-				[GrammarSymbol.terminalIntegerLiteral],
-				10
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticExpression3, [
+			GrammarSymbol.terminalIntegerLiteral
+		]);
 
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalArithmeticExpression3,
-				[
-					GrammarSymbol.terminalLeftBracket,
-					GrammarSymbol.nonterminalArithmeticExpression1,
-					GrammarSymbol.terminalRightBracket
-				],
-				11
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalArithmeticExpression3, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalArithmeticExpression1,
+			GrammarSymbol.terminalRightBracket
+		]);
 	}
 
 	public get languageName(): string {

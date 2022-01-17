@@ -1,13 +1,6 @@
 // evaluable-expression.ts
 
-// import { EnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
-// import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
-// import { VariableList } from '../../../common/domain-object-model/variable-list';
-
-// import { ArgumentException } from '../../../common/exceptions/argument-exception';
-// import { EvaluationException } from '../../../common/exceptions/evaluation-exception';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 
@@ -32,11 +25,6 @@ export function isSASLEvaluableExpression(obj: unknown): obj is SASLEvaluableExp
 
 export class SASLEvaluableExpression extends EvaluableExpression implements IConvertibleToGraph {
 	public readonly typename = typenameSASLEvaluableExpression;
-
-	// constructor(IExpression<ISExpression> firstExpression, ExpressionList<ISExpression> expressionList)
-	//     : base(firstExpression, expressionList)
-	// {
-	// }
 
 	protected deThunkSExpression(
 		sexpression: ISExpression,

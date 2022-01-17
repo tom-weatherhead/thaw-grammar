@@ -27,24 +27,18 @@ export class EvaluableExpression implements IExpression<ISExpression> {
 	): ISExpression {
 		const env = ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment);
 
-		// if (firstExprAsVariable === undefined || localEnvironment.isDefined(firstExprAsVariable)) {
-		// if ((this.firstExpression instanceof Variable<ISExpression>) || localEnvironment.isDefined(firstExprAsVariable)) {
 		if (
 			!isVariableT(this.firstExpression) ||
 			env.isDefined(this.firstExpression as IVariable<ISExpression>)
 		) {
 			const firstExprValue = this.firstExpression.evaluate(globalInfo, localEnvironment);
 
-			// firstExprValue = DeThunkSExpression(firstExprValue, globalInfo);
-
-			// console.log('firstExprValue as ICallableSExpression =', firstExprValue as ICallableSExpression);
-			// console.log('firstExprValue instanceof ICallableSExpression =', (firstExprValue instanceof ICallableSExpression));
-			// console.log('firstExprValue.isPrimOp() =', firstExprValue.isPrimOp());
-			// console.log('firstExprValue.isClosure() =', firstExprValue.isClosure());
-
 			const callableSExpr = firstExprValue as ICallableSExpression;
 
 			if (callableSExpr === undefined) {
+				// TODO: FIXME :
+				// if (typeof callableSExpr === 'undefined' || typeof callableSExpr.call === 'undefined' || callableSExpr.call.length !== 3) {
+				// Or create a type guard: isCallableSExpression()
 				throw new EvaluationException(
 					'EvaluableExpression.evaluate() : FirstExpression is not a callable S-Expression'
 				);
@@ -65,77 +59,3 @@ export class EvaluableExpression implements IExpression<ISExpression> {
 		);
 	}
 }
-
-// public class EvaluableExpression : IExpression<ISExpression>
-// {
-//     public readonly IExpression<ISExpression> FirstExpression;
-//     public readonly ExpressionList<ISExpression> ExpressionList;
-
-//     public EvaluableExpression(IExpression<ISExpression> firstExpression, ExpressionList<ISExpression> expressionList)
-//     {
-//         FirstExpression = firstExpression;
-//         ExpressionList = expressionList;
-//     }
-
-//     public override string ToString()
-//     {
-
-//         if (ExpressionList.Value.Count == 0)
-//         {
-//             return string.Format("({0})", FirstExpression);
-//         }
-
-//         return string.Format("({0} {1})", FirstExpression, ExpressionList);
-//     }
-
-//     protected virtual ISExpression DeThunkSExpression(ISExpression sexpression, IGlobalInfo<ISExpression> globalInfo)
-//     {
-//         return sexpression;
-//     }
-
-//     public ISExpression Evaluate(EnvironmentFrame<ISExpression> localEnvironment, IGlobalInfo<ISExpression> globalInfo)
-//     {
-//         var firstExprAsVariable = FirstExpression as Variable<ISExpression>;
-
-//         if (firstExprAsVariable == null || localEnvironment.IsDefined(firstExprAsVariable))
-//         {
-//             var firstExprValue = FirstExpression.Evaluate(localEnvironment, globalInfo);
-
-//             firstExprValue = DeThunkSExpression(firstExprValue, globalInfo);
-
-//             var callableSExpr = firstExprValue as ICallableSExpression;
-
-//             if (callableSExpr == null)
-//             {
-//                 throw new Exception(string.Format("EvaluableExpression.Evaluate : FirstExpression is not a callable S-Expression; it is a {0}: {1}",
-//                     firstExprValue.GetType().FullName, firstExprValue));
-//             }
-
-//             return callableSExpr.Call(ExpressionList, localEnvironment, globalInfo);
-//         }
-//         else
-//         {
-//             // Is FirstExpression the name of a macro?
-//             var name = new Name(firstExprAsVariable.Name, firstExprAsVariable.Line, firstExprAsVariable.Column);
-
-//             if (!globalInfo.MacroDefinitions.ContainsKey(name))
-//             {
-//                 throw new EvaluationException(
-//                     string.Format("Could not find '{0}' in the MacroDefinitions", name.Value),
-//                     name.Line, name.Column);
-//             }
-
-//             var macro = globalInfo.MacroDefinitions[name];
-
-//             if (ExpressionList.Value.Count != macro.ArgumentCount)
-//             {
-//                 throw new EvaluationException(
-//                     string.Format("The macro '{0}' expects {1} argument(s); {2} were passed in",
-//                         name.Value, macro.ArgumentCount, ExpressionList.Value.Count),
-//                     name.Line, name.Column);
-//             }
-
-//             return macro.InvokeMacro(ExpressionList.Value, localEnvironment, globalInfo);
-//         }
-//     }
-// }

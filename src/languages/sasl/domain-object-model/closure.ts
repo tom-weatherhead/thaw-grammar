@@ -1,9 +1,7 @@
 // closure.ts
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
-// import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { IVariable } from '../../../common/domain-object-model/variable';
 
 import { ISExpression } from '../../lisp/domain-object-model/isexpression';

@@ -1,29 +1,11 @@
 // tom-weatherhead/thaw-grammar/src/languages/sasl/sasl-grammar.ts
 
-// import { Stack } from 'thaw-common-utilities.ts';
-
-import {
-	GrammarSymbol,
-	IToken,
-	LexicalState,
-	// ParserSelector,
-	SemanticStackType
-} from 'thaw-interpreter-types';
+import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { createProduction, Name } from 'thaw-interpreter-core';
 
-// import { ExpressionList } from '../../common/domain-object-model/expression-list';
 import { IExpression } from '../../common/domain-object-model/iexpression';
-// import { Name } from '../../common/domain-object-model/name';
 import { IVariable } from '../../common/domain-object-model/variable';
-// import { VariableList } from '../../common/domain-object-model/variable-list';
-
-// import { ArgumentException } from '../../common/exceptions/argument-exception';
-// import { GrammarException } from '../../common/exceptions/grammar-exception';
-
-// import { ParserSelector } from '../../common/parser-selectors';
-// import { createProduction } from '../../common/production';
-// import { Symbol } from '../../common/symbol';
 
 import { ISExpression } from '../../languages/lisp/domain-object-model/isexpression';
 
@@ -34,29 +16,10 @@ import { SASLLambdaExpression } from './domain-object-model/lambda-expression';
 import { SASLPrimOp } from './domain-object-model/prim-op';
 
 export class SASLGrammar extends SchemeGrammar {
-	// extends SchemeGrammar
 	// The SASL grammar from Kamin (the book 'Programming Languages: An Interpreter-Based Approach')
 
 	constructor() {
-		// super(Symbol.nonterminalStart);
 		super(true);
-
-		// this.terminals.remove(Symbol.terminalWhile);
-		// Terminals.Remove(Symbol.T_Begin);
-		// Terminals.Remove(Symbol.T_Print);
-		// Terminals.Remove(Symbol.T_Rplaca);
-		// Terminals.Remove(Symbol.T_Rplacd);
-		// Terminals.Remove(Symbol.T_DefineMacro);
-		// this.nonTerminals.remove(Symbol.nonterminalMacroDef);
-		// this.removeProductionsContainingSymbol(Symbol.terminalWhile);
-		// RemoveProductionsContainingSymbol(Symbol.T_Begin);
-		// RemoveProductionsContainingSymbol(Symbol.T_Print);
-		// RemoveProductionsContainingSymbol(Symbol.T_Set);
-		// RemoveProductionsContainingSymbol(Symbol.T_Rplaca);
-		// RemoveProductionsContainingSymbol(Symbol.T_Rplacd);
-		// RemoveProductionsContainingSymbol(Symbol.T_If);
-		// RemoveProductionsContainingSymbol(Symbol.N_MacroDef);
-		// RemoveProductionsContainingSymbol(Symbol.N_ExprPairList);   // This removes the three productions related to cond.
 
 		// this.productions.push(
 		// 	new Production(
