@@ -13,7 +13,7 @@ export {
 	EnvironmentFrame,
 	IEnvironmentFrame
 } from './common/domain-object-model/environment-frame';
-export { IExpression } from './common/domain-object-model/iexpression';
+export { IExpression, ITypedByName } from './common/domain-object-model/iexpression';
 export { GlobalInfoBase } from './common/domain-object-model/global-info-base';
 export { IGlobalInfo, IGlobalInfoForInterpreter } from './common/domain-object-model/iglobal-info';
 // export { IGlobalInfoOps } from './common/domain-object-model/iglobal-info-ops';

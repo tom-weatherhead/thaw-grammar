@@ -69,6 +69,14 @@ export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
 	public abstract get falseValue(): T;
 	public abstract get trueValue(): T;
 
+	public booleanAsValue(value: boolean): T {
+		return value ? this.trueValue : this.falseValue;
+	}
+
+	// public valueAsBoolean(value: T): boolean {
+	// 	return value.isTruthy();
+	// }
+
 	// public valueIsFalse(value: T): boolean {
 	// 	return value === this.falseValue;
 	// }

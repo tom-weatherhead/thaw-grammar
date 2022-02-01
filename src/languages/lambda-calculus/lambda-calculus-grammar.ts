@@ -2,7 +2,7 @@
 
 // From https://opendsa.cs.vt.edu/ODSA/Books/PL/html/Syntax.html :
 //
-// 	A complete BNF grammar for the lambda calculus:
+// 	A complete BNF (Backus-Naur form) grammar for the lambda calculus:
 //
 //  < λexp > ::= < var >
 //           | λ < var > . < λexp >

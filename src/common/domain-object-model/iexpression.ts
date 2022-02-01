@@ -5,9 +5,11 @@ import { IStringifiable } from 'thaw-common-utilities.ts';
 import { IEnvironmentFrame } from './environment-frame';
 import { IGlobalInfo } from './iglobal-info';
 
-export interface IExpression<T> extends IStringifiable {
-	// readonly typename: string; // TODO
+export interface ITypedByName {
+	readonly typename: string;
+}
 
+export interface IExpression<T> extends IStringifiable /* , ITypedByName ? */ {
 	// By default, if localEnvironment is undefined, then use globalInfo.globalEnvironment
 	// options will be used by Clu and Smalltalk.
 	evaluate(

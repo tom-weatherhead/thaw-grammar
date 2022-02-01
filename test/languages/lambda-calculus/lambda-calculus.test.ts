@@ -48,27 +48,17 @@ import { LanguageSelector } from 'thaw-interpreter-types';
 
 import { createParser, SyntaxException } from 'thaw-parser';
 
-import {
-	createFnParser,
-	createFnRecognizer /*, createInfrastructure */
-} from '../../create-infrastructure';
+import { createFnParser, createFnRecognizer } from '../../create-infrastructure';
 
 import {
 	areIsomorphic,
 	BetaReductionStrategy,
 	churchNumeralToInteger,
 	createGrammar,
-	// createMapOfLCExprNamesToExprs,
 	createVariableNameGenerator,
-	// defaultMaxBetaReductionDepth,
-	// getfb1,
-	// getfb2,
-	// getParseFunction,
 	ILCExpression,
 	ILCVariable,
 	integerToChurchNumeral
-	// , mapCombinatorNamesToStrings
-	// , mapLCExprNamesToStrings
 } from '../../..';
 
 const ls = LanguageSelector.LambdaCalculus;
@@ -86,11 +76,6 @@ test('LambdaCalculus parser instance creation test', () => {
 
 test('LambdaCalculus recognize test', () => {
 	// Arrange
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	// const parser = createParser(ParserSelector.LL1, grammar);
-	//
-	// const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
 	const f = createFnRecognizer(ls);
 
 	// For a list of combinators, see https://github.com/loophp/combinator ,
@@ -104,18 +89,11 @@ test('LambdaCalculus recognize test', () => {
 	// 'a => b => c => a(c)(b(c))'
 	f('λa.λb.λc.((a c) (b c))'); // Combinator S
 	f('λa.(λb.(a (b b)) λb.(a (b b)))'); // Combinator Y (fixed-point; used to implement recursion)
-	// f('let y = λx.x in y');
 
 	expect(() => f('(x y')).toThrow(SyntaxException);
 });
 
 function getParseFunction(): (str: string) => ILCExpression {
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
-	// const parser = createParser(ParserSelector.LL1, grammar);
-	//
-	// return (str: string) => parser.parse(tokenizer.tokenize(str)) as ILCExpression;
-
 	return createFnParser<ILCExpression>(ls);
 }
 
@@ -129,18 +107,6 @@ test('LambdaCalculus parse test', () => {
 	expect(f('(λx.x y)')).toBeTruthy();
 });
 
-// function getfb(fparam?: (str: string) => ILCExpression): (s: string) => ILCExpression {
-// 	const generateNewVariableName = createVariableNameGenerator();
-// 	const f = typeof fparam !== 'undefined' ? fparam : getParseFunction();
-// 	const fb = (s: string): ILCExpression =>
-// 		f(s).betaReduce(
-// 			BetaReductionStrategy.NormalOrder,
-// 			generateNewVariableName,
-// 			defaultMaxBetaReductionDepth
-// 		);
-//
-// 	return fb;
-// }
 function getfb(
 	fparam?: (str: string) => ILCExpression,
 	options: {
@@ -149,9 +115,8 @@ function getfb(
 		maxDepth?: number;
 	} = {}
 ): (s: string) => ILCExpression {
-	// const generateNewVariableName = createVariableNameGenerator();
-	const f = typeof fparam !== 'undefined' ? fparam : getParseFunction();
-	// const fb = (s: string): ILCExpression => f(s).betaReduce(options);
+	// const f = typeof fparam !== 'undefined' ? fparam : getParseFunction();
+	const f = ifDefinedThenElse(fparam, getParseFunction());
 	const fb = (s: string): ILCExpression =>
 		f(s).betaReduce({
 			strategy: options.strategy,
@@ -213,8 +178,6 @@ test('LambdaCalculus expression unification test 1', () => {
 	const expr2 = f('y');
 	const unifyingSubstitution = expr1.unify(expr2);
 
-	// console.log(`unifyingSubstitution is: ${unifyingSubstitution}`);
-
 	// Assert
 	expect(unifyingSubstitution).toBeDefined();
 	expect(unifyingSubstitution.toString()).toBe('[x -> y]');
@@ -230,26 +193,21 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 	// A successor function SUCC = λn.λf.λx.(f((nf)x))
 	const strSucc = 'λn.λf.λx.(f ((n f) x))';
 
-	// ONE = (SUCC ZERO) = λf.λ x.(fx)
+	// ONE = (SUCC ZERO) = λf.λ x.(f x)
 	const strOneExpected = 'λf.λx.(f x)';
-	// const strOneExpected = 'λv1.λv2.(v1 v2)';
 	const strOneSrc = `(${strSucc} ${strZero})`;
 
-	// TWO = (SUCC ONE) = λf.λ x.(f(fx))
+	// TWO = (SUCC ONE) = λf.λ x.(f (f x))
 	const strTwoExpected = 'λf.λx.(f (f x))';
-	// const strTwoExpected = 'λv3.λv4.(v3 (v3 v4))';
 	const strTwoSrc = `(${strSucc} ${strOneExpected})`;
 
-	// THREE = (SUCC TWO) = λf.λ x.(f(f(fx)))
-	// const strThreeExpected = 'λv5.λv6.(v5 (v5 (v5 v6)))';
+	// THREE = (SUCC TWO) = λf.λ x.(f (f (f x)))
 	const strThreeExpected = 'λf.λx.(f (f (f x)))';
 	const strThreeSrc = `(${strSucc} ${strTwoExpected})`;
 
 	const f = getParseFunction();
 	const fb = getfb(f, {
-		// strategy: BetaReductionStrategy.CallByName,
 		strategy: BetaReductionStrategy.NormalOrder,
-		// strategy: BetaReductionStrategy.CallByValue,
 		generateNewVariableName: createVariableNameGenerator()
 	});
 
@@ -258,16 +216,8 @@ test('LambdaCalculus Church Numerals Successor Test 1', () => {
 	const twoActual = fb(strTwoSrc);
 	const threeActual = fb(strThreeSrc);
 
-	const oneExpected = f(strOneExpected);
-
-	// console.log(`LambdaCalculus Church Numerals Successor Test 1 : oneExpected is ${oneExpected}`);
-	// console.log(`LambdaCalculus Church Numerals Successor Test 1 : oneActual is ${oneActual}`);
-
-	// LambdaCalculus Church Numerals Successor Test 1 : oneExpected is λf.λx.(f x)
-	// LambdaCalculus Church Numerals Successor Test 1 : oneActual is λf.λx.(f ((λf.λx.x f) x))
-
 	// Assert
-	expect(areIsomorphic(oneActual, oneExpected)).toBe(true);
+	expect(areIsomorphic(oneActual, f(strOneExpected))).toBe(true);
 	expect(areIsomorphic(twoActual, f(strTwoExpected))).toBe(true);
 	expect(areIsomorphic(threeActual, f(strThreeExpected))).toBe(true);
 });
@@ -276,7 +226,6 @@ test('LambdaCalculus Church Numerals Successor Test 1a', () => {
 	const f = getParseFunction();
 	const fb = getfb(f, {
 		strategy: BetaReductionStrategy.CallByName,
-		// strategy: BetaReductionStrategy.CallByValue,
 		generateNewVariableName: createVariableNameGenerator()
 	});
 
@@ -286,11 +235,6 @@ test('LambdaCalculus Church Numerals Successor Test 1a', () => {
 
 	// Act
 	const actualResult = fb(input);
-
-	// console.log(
-	// 	`LambdaCalculus Church Numerals Successor Test 1a : actualResult = ${actualResult}; expected ${expectedResultStr}`
-	// );
-
 	const actualResultStr = `${actualResult}`;
 
 	// Assert
@@ -301,7 +245,6 @@ test('LambdaCalculus Church Numerals Successor Test 1b', () => {
 	const f = getParseFunction();
 	const fb = getfb(f, {
 		strategy: BetaReductionStrategy.CallByName,
-		// strategy: BetaReductionStrategy.CallByValue,
 		generateNewVariableName: createVariableNameGenerator()
 	});
 
@@ -311,10 +254,6 @@ test('LambdaCalculus Church Numerals Successor Test 1b', () => {
 
 	// Act
 	const actualResult = fb(input);
-
-	// console.log(
-	// 	`LambdaCalculus Church Numerals Successor Test 1b : actualResult = ${actualResult}; expected ${expectedResultStr}`
-	// );
 
 	const actualResultStr = `${actualResult}`;
 
@@ -326,7 +265,6 @@ test('LambdaCalculus Church Numerals Successor Test 1c', () => {
 	const f = getParseFunction();
 	const fb = getfb(f, {
 		strategy: BetaReductionStrategy.CallByName,
-		// strategy: BetaReductionStrategy.CallByValue,
 		generateNewVariableName: createVariableNameGenerator()
 	});
 
@@ -336,11 +274,6 @@ test('LambdaCalculus Church Numerals Successor Test 1c', () => {
 
 	// Act
 	const actualResult = fb(input);
-
-	// console.log(
-	// 	`LambdaCalculus Church Numerals Successor Test 1c : actualResult = ${actualResult}; expected ${expectedResultStr}`
-	// );
-
 	const actualResultStr = `${actualResult}`;
 
 	// Assert
@@ -350,9 +283,7 @@ test('LambdaCalculus Church Numerals Successor Test 1c', () => {
 test('LambdaCalculus Church Numerals Successor Test 1d', () => {
 	const f = getParseFunction();
 	const fb = getfb(f, {
-		// strategy: BetaReductionStrategy.CallByName,
 		strategy: BetaReductionStrategy.NormalOrder,
-		// strategy: BetaReductionStrategy.CallByValue,
 		generateNewVariableName: createVariableNameGenerator()
 	});
 
@@ -362,11 +293,6 @@ test('LambdaCalculus Church Numerals Successor Test 1d', () => {
 
 	// Act
 	const actualResult = fb(input);
-
-	// console.log(
-	// 	`LambdaCalculus Church Numerals Successor Test 1d : actualResult = ${actualResult}; expected ${expectedResultStr}`
-	// );
-
 	const actualResultStr = `${actualResult}`;
 
 	// Assert
@@ -385,11 +311,8 @@ test('LambdaCalculus Church Numerals Predecessor Test 1', () => {
 	const strThree = 'λf.λx.(f (f (f x)))';
 
 	const f = getParseFunction();
-	// const fb = getfb(f);
 	const fb = getfb(f, {
-		// strategy: BetaReductionStrategy.CallByName,
 		strategy: BetaReductionStrategy.NormalOrder,
-		// strategy: BetaReductionStrategy.CallByValue,
 		generateNewVariableName: createVariableNameGenerator()
 	});
 
@@ -493,7 +416,7 @@ test('LambdaCalculus Church Numerals Or Test 1', () => {
 
 test('LambdaCalculus Church Numerals Addition Test 1', () => {
 	// Addition and multiplication can be encoded as curried functions:
-	//
+
 	// PLUS = λm.λn.λf.λx.((n f) ((m f) x))
 
 	// Arrange
@@ -516,10 +439,6 @@ test('LambdaCalculus Church Numerals Addition Test 1', () => {
 });
 
 test('LambdaCalculus Church Numerals Addition Test 2', () => {
-	// Addition and multiplication can be encoded as curried functions:
-	//
-	// PLUS = λm.λn.λf.λx.((n f) ((m f) x))
-
 	// Arrange
 	// const strZero = 'λf.λx.x';
 	// const strOne = 'λf.λx.(f x)';
@@ -533,28 +452,9 @@ test('LambdaCalculus Church Numerals Addition Test 2', () => {
 	const fb = getfb(f);
 
 	const expectedResult = f(strFive);
-	// const expectedResult = f(strZero);
-
-	// const strategy = BetaReductionStrategy.CallByName;
-	// const strategy = BetaReductionStrategy.NormalOrder;
-	// const strategy = BetaReductionStrategy.CallByValue;
 
 	// Act
 	const actualResult = fb(`((${strPlus} ${strTwo}) ${strThree})`);
-	// const actualResultBeforeBetaReduction = f(`((${strPlus} ${strTwo}) ${strThree})`);
-	// const actualResultBeforeBetaReduction = f(`((${strPlus} ${strZero}) ${strZero})`);
-	// const actualResult = actualResultBeforeBetaReduction.betaReduce({
-	// 	strategy,
-	// 	generateNewVariableName: createVariableNameGenerator()
-	// });
-
-	// console.log(
-	// 	`LambdaCalculus Church Numerals Addition Test 2: expectedResult is ${expectedResult}`
-	// );
-	// console.log(
-	// 	`LambdaCalculus Church Numerals Addition Test 2: actualResultBeforeBetaReduction is ${actualResultBeforeBetaReduction}`
-	// );
-	// console.log(`LambdaCalculus Church Numerals Addition Test 2: actualResult is ${actualResult}`);
 
 	// Assert
 	expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
@@ -571,27 +471,12 @@ test('LambdaCalculus Church Numerals Multiplication Test 1', () => {
 	const strMult = 'λm.λn.λf.(m (n f))';
 
 	const f = getParseFunction();
-	// const generateNewVariableName = createVariableNameGenerator();
-	// const fb = getfb(f, {
-	// 	// strategy: BetaReductionStrategy.CallByName,
-	// 	strategy: BetaReductionStrategy.NormalOrder,
-	// 	generateNewVariableName,
-	// 	maxDepth: 100
-	// });
 	const fb = getfb(f);
 
 	const expectedResult = f(strSix);
 
 	// Act
 	const actualResult = fb(`((${strMult} ${strTwo}) ${strThree})`);
-	// const actualResult = f(`((${strMult} ${strTwo}) ${strThree})`).betaReduce();
-
-	// console.log(
-	// 	`LambdaCalculus Church Numerals Multiplication Test 1: expectedResult is ${expectedResult}`
-	// );
-	// console.log(
-	// 	`LambdaCalculus Church Numerals Multiplication Test 1: actualResult is ${actualResult}`
-	// );
 
 	// Assert
 	expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
@@ -803,6 +688,7 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 
 	// Assert
 	expect(successes.length > 0).toBe(true);
+	expect(successes.length).toBe(2);
 	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
 });
 

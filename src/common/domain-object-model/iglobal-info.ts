@@ -29,6 +29,10 @@ export interface IGlobalInfo<T> extends IGlobalInfoForInterpreter {
 	trueValue: T;
 
 	// **** Public instance methods ****
+
+	booleanAsValue(value: boolean): T;
+	// valueAsBoolean(value: T): boolean;
+
 	valueIsFalse(value: T): boolean;
 
 	valueIsInteger(value: T): boolean;

@@ -6,13 +6,7 @@ import { LanguageSelector, LexicalAnalyzerSelector, ParserSelector } from 'thaw-
 
 import { createTokenizer } from 'thaw-lexical-analyzer';
 
-import {
-	createGrammar,
-	IExpression,
-	ISExpression,
-	SASLGlobalInfo
-	// SchemeGlobalInfo
-} from '../../..';
+import { createGrammar, IExpression, ISExpression, SASLGlobalInfo } from '../../..';
 
 import { createParser, SyntaxException } from 'thaw-parser';
 
@@ -31,16 +25,11 @@ test('LL(1) SASL parser instance creation test', () => {
 test('LL(1) SASL recognize test', () => {
 	// Arrange
 	const ls = LanguageSelector.SASL;
-	// const prologGlobalInfo = new PrologGlobalInfo();
 	const grammar = createGrammar(ls);
 	const tokenizer = createTokenizer(LexicalAnalyzerSelector.MidnightHack, ls);
 	const parser = createParser(ParserSelector.LL1, grammar);
 
 	const f = (str: string): void => parser.recognize(tokenizer.tokenize(str));
-
-	// f('pred1.');
-
-	// expect(() => f('pred1(A.')).toThrow(ParserException);
 
 	f('(* 7 13)');
 
@@ -79,19 +68,6 @@ function saslTest(data: Array<[input: string, expectedResult: string | string[]]
 test('LL(1) SASL addition test 1', () => {
 	saslTest([['(+ 2 3)', '5']]);
 });
-
-//     Evaluate("(set force (lambda (x) (if (list? x) (if (force (car x)) (force (cdr x)) '()) 'T)))");    // Un-thunk x.
-//     Evaluate("(set ints-from (lambda (i) (cons i (ints-from (+1 i)))))");
-//     Evaluate("(set ints (ints-from 0))");
-
-// public void InfiniteListTest()      // From Kamin, pages 160-161
-// {
-// 	Assert.AreEqual("(<thunk> <thunk>)", Evaluate("ints"));
-// 	Assert.AreEqual("0", Evaluate("(car ints)"));
-// 	Assert.AreEqual("(0 <thunk>)", Evaluate("ints"));
-// 	Assert.AreEqual("1", Evaluate("(car (cdr ints))"));
-// 	Assert.AreEqual("(0 1 <thunk>)", Evaluate("ints"));
-// }
 
 test('SASL infinite list test', () => {
 	saslTest([
