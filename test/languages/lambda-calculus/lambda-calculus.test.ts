@@ -678,17 +678,14 @@ test('LambdaCalculusGrammar Y combinator test 1', () => {
 		generateNewVariableName
 	});
 
-	// console.log(`Y combinator test: ThAWHackForYCombinator yields ${actualResult8}`);
-
 	if (actualResult8.isIsomorphicTo(expectedResult)) {
 		successes.push(108);
 	}
 
-	// console.log('Y combinator test 1: successes:', successes);
-
 	// Assert
 	expect(successes.length > 0).toBe(true);
-	expect(successes.length).toBe(2);
+	expect(successes.length).toBe(1);
+	expect(successes[0]).toBe(108); // strategy: ThAWHackForYCombinator
 	// expect(actualResult.isIsomorphicTo(expectedResult)).toBe(true);
 });
 
