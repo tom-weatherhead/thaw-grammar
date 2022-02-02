@@ -295,36 +295,41 @@ test('LL(1) Scheme Streams test', () => {
 	]);
 });
 
-// [Test]
-// public void RplacaRplacdTest()  // See page 55
-// {
-//     Evaluate("(set x '(a b c))");
-//     Evaluate("(set y x)");
-//     Evaluate("(rplaca y 'd)");
-//     Assert.AreEqual("(d b c)", Evaluate("y"));
-//     Assert.AreEqual("(d b c)", Evaluate("x"));
+// test('Scheme Rplaca and Rplacd test', () => {
+// 	// See page 55
 //
-//     Evaluate("(rplacd y 'e)");
-//     Assert.AreEqual("(d . e)", Evaluate("y"));
-//     Assert.AreEqual("(d . e)", Evaluate("x"));
-// }
+// 	Evaluate("(set x '(a b c))");
+// 	Evaluate("(set y x)");
+// 	Evaluate("(rplaca y 'd)");
+// 	Assert.AreEqual("(d b c)", Evaluate("y"));
+// 	Assert.AreEqual("(d b c)", Evaluate("x"));
+//
+// 	Evaluate("(rplacd y 'e)");
+// 	Assert.AreEqual("(d . e)", Evaluate("y"));
+// 	Assert.AreEqual("(d . e)", Evaluate("x"));
+// });
 
-// [Test]
-// public void MacroTest()     // From pages 56-57, and Exercise 12, from pages 62-63 (in the LISP chapter)
-// {
-//     Evaluate("(set <= (lambda (x y) (or (< x y) (= x y))))");
-//     Evaluate(@"
-// (define-macro for (indexvar lower upper body)
-// (list 'begin
-// (list 'set indexvar lower)
-// (list 'while
-//     (list '<= indexvar upper)
-//     (list 'begin body
-//         (list 'set indexvar (list '+ indexvar 1))))))");
-//     Evaluate("(set sum 0)");
-//     Evaluate("(for x 1 10 (set sum (+ sum x)))");
-//     Assert.AreEqual("55", Evaluate("sum"));
-// }
+// test('Scheme Macro test', () => {
+// 	// From pages 56-57, and Exercise 12, from pages 62-63 (in the LISP chapter)
+//
+// 	Evaluate("(set <= (lambda (x y) (or (< x y) (= x y))))");
+//
+// 	Evaluate([
+// '(define-macro for (indexvar lower upper body)',
+// '(list \'begin',
+// '(list \'set indexvar lower)',
+// '(list \'while',
+// '	(list \'<= indexvar upper)',
+// '	(list \'begin body',
+// '		(list \'set indexvar (list \'+ indexvar 1))))))'
+// 	].join('\n'));
+//
+// 	Evaluate("(set sum 0)");
+//
+// 	Evaluate("(for x 1 10 (set sum (+ sum x)))");
+//
+// 	Assert.AreEqual("55", Evaluate("sum"));
+// });
 
 test('Scheme Random test', () => {
 	const maxValue = 100;
