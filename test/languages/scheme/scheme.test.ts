@@ -326,15 +326,18 @@ test('LL(1) Scheme Streams test', () => {
 //     Assert.AreEqual("55", Evaluate("sum"));
 // }
 
-// [Test]
-// public void RandomTest()
-// {
-//     const int maxValue = 100;
-//     var x = int.Parse(Evaluate(string.Format("(random {0})", maxValue)));
-//
-//     Assert.IsTrue(x >= 0);
-//     Assert.IsTrue(x < maxValue);
-// }
+test('Scheme Random test', () => {
+	const maxValue = 100;
+	const sexpr = evaluateToISExpression(`(random ${maxValue})`);
+
+	expect(sexpr.isNumber()).toBe(true);
+
+	const n = Number.parseInt(sexpr.toString());
+
+	expect(Number.isNaN(n)).toBe(false);
+	expect(n >= 0).toBe(true);
+	expect(n < maxValue).toBe(true);
+});
 
 test('Scheme Sets test', () => {
 	// // See pages 104-105
