@@ -496,18 +496,24 @@ test('LL(1) Scheme Term Rewriting Systems test', () => {
 	schemeTest([["(differentiate '(Dx (+ x c)))", '(+ 1 0)']], { termRewritingSystem: true });
 });
 
-// [Test]
-// public void Exercise1Test() // Exercise 1 on pages 148-149.
-// {
-//     // Exercise 1a) : cdr*
-//     Evaluate("(set cdr* (mapc cdr))");
-//     Assert.AreEqual("((b c) (e) ())", Evaluate("(cdr* '((a b c) (d e) (f)))"));
-//
-//     // Exercise 1b) : max*
-//     Evaluate("(set max (lambda (x y) (if (> x y) x y)))");
-//     Evaluate("(set max* (combine id max 0))");
-//     Assert.AreEqual("10", Evaluate("(max* '(1 5 10 3 7 2 8))"));
-//
+test('LL(1) Scheme Exercise 1', () => {
+	// Exercise 1 on pages 148-149.
+
+	schemeTest([
+		// Exercise 1a) : cdr*
+		['(set cdr* (mapc cdr))', '<closure>'],
+		['(cdr* \'((a b c) (d e) (f)))', '((b c) (e) ())'],
+
+		// Exercise 1b) : max*
+		// ['(set )', '<closure>'],
+		['(set max (lambda (x y) (if (> x y) x y)))', '<closure>'],
+		['(set max* (combine id max 0))', '<closure>'],
+		['(max* \'(1 5 10 3 7 2 8))', '10'],
+
+		// Evaluate("(set max (lambda (x y) (if (> x y) x y)))");
+		// Evaluate("(set max* (combine id max 0))");
+		// Assert.AreEqual("10", Evaluate("(max* '(1 5 10 3 7 2 8))"));
+
 //     // Exercise 1c) : append (although we will call it append2 here)
 //     Evaluate("(set append2 (lambda (l1 l2) ((combine id cons l2) l1)))");
 //     Assert.AreEqual("(a b c d e f g)", Evaluate("(append2 '(a b c) '(d e f g))"));
@@ -534,7 +540,8 @@ test('LL(1) Scheme Term Rewriting Systems test', () => {
 //     Evaluate("(set mkpairsfn (lambda (x) (mapc (lambda (l) (cons x l)))))");
 //     Assert.AreEqual("((a) (a b c) (a d) (a (e f)))",
 //         Evaluate("((mkpairsfn 'a) '(() (b c) (d) ((e f))))"));
-// }
+	]);
+});
 
 // [Test]
 // public void Exercise2Test() // Exercise 2 on page 149 : lex-order*

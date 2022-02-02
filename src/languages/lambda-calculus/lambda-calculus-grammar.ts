@@ -27,6 +27,8 @@ export class LambdaCalculusGrammar extends GrammarBase {
 	constructor() {
 		super(GrammarSymbol.nonterminalStart);
 
+		// We use only five productions:
+
 		this.addProduction(GrammarSymbol.nonterminalStart, [
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.terminalEOF
@@ -38,23 +40,13 @@ export class LambdaCalculusGrammar extends GrammarBase {
 		]);
 
 		// Expression -> Lambda Expression
-		this.addProduction(GrammarSymbol.nonterminalExpression, [
-			GrammarSymbol.nonterminalLambdaExpression
-		]);
-
-		// Expression -> Function Call
-		this.addProduction(GrammarSymbol.nonterminalExpression, [
-			GrammarSymbol.nonterminalFunctionCall
-		]);
-
-		// Variable -> Name
-		this.addProduction(GrammarSymbol.nonterminalVariable, [
-			GrammarSymbol.terminalID,
-			'#variable'
-		]);
+		// this.addProduction(GrammarSymbol.nonterminalExpression, [
+		// 	GrammarSymbol.nonterminalLambdaExpression
+		// ]);
 
 		// Lambda Expression -> λ Variable . Expression
-		this.addProduction(GrammarSymbol.nonterminalLambdaExpression, [
+		// this.addProduction(GrammarSymbol.nonterminalLambdaExpression, [
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
 			GrammarSymbol.terminalFn,
 			GrammarSymbol.nonterminalVariable,
 			GrammarSymbol.terminalDot,
@@ -62,13 +54,25 @@ export class LambdaCalculusGrammar extends GrammarBase {
 			'#lambdaExpression'
 		]);
 
+		// Expression -> Function Call
+		// this.addProduction(GrammarSymbol.nonterminalExpression, [
+		// 	GrammarSymbol.nonterminalFunctionCall
+		// ]);
+
 		// Function Call -> ( Expression Expression )
-		this.addProduction(GrammarSymbol.nonterminalFunctionCall, [
+		// this.addProduction(GrammarSymbol.nonterminalFunctionCall, [
+		this.addProduction(GrammarSymbol.nonterminalExpression, [
 			GrammarSymbol.terminalLeftBracket,
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.nonterminalExpression,
 			GrammarSymbol.terminalRightBracket,
 			'#functionCall'
+		]);
+
+		// Variable -> Name
+		this.addProduction(GrammarSymbol.nonterminalVariable, [
+			GrammarSymbol.terminalID,
+			'#variable'
 		]);
 	}
 
