@@ -502,44 +502,43 @@ test('LL(1) Scheme Exercise 1', () => {
 	schemeTest([
 		// Exercise 1a) : cdr*
 		['(set cdr* (mapc cdr))', '<closure>'],
-		['(cdr* \'((a b c) (d e) (f)))', '((b c) (e) ())'],
+		["(cdr* '((a b c) (d e) (f)))", '((b c) (e) ())'],
 
 		// Exercise 1b) : max*
-		// ['(set )', '<closure>'],
 		['(set max (lambda (x y) (if (> x y) x y)))', '<closure>'],
 		['(set max* (combine id max 0))', '<closure>'],
-		['(max* \'(1 5 10 3 7 2 8))', '10'],
+		["(max* '(1 5 10 3 7 2 8))", '10'],
 
-		// Evaluate("(set max (lambda (x y) (if (> x y) x y)))");
-		// Evaluate("(set max* (combine id max 0))");
-		// Assert.AreEqual("10", Evaluate("(max* '(1 5 10 3 7 2 8))"));
+		// Exercise 1c) : append (although we will call it append2 here)
+		['(set append2 (lambda (l1 l2) ((combine id cons l2) l1)))', '<closure>'],
+		["(append2 '(a b c) '(d e f g))", '(a b c d e f g)'],
 
-//     // Exercise 1c) : append (although we will call it append2 here)
-//     Evaluate("(set append2 (lambda (l1 l2) ((combine id cons l2) l1)))");
-//     Assert.AreEqual("(a b c d e f g)", Evaluate("(append2 '(a b c) '(d e f g))"));
-//
-//     // Exercise 1d) : addtoend
-//     Evaluate("(set addtoend (lambda (x l) ((combine id cons (list x)) l)))");
-//     Assert.AreEqual("(b c d a)", Evaluate("(addtoend 'a '(b c d))"));
-//
-//     // Exercise 1e) : reverse (although we will call it reverse2 here)
-//     Evaluate("(set reverse2 (combine id addtoend '()))");
-//     Assert.AreEqual("(g f e d c b a)", Evaluate("(reverse2 '(a b c d e f g))"));
-//
-//     // Exercise 1f) : insertion-sort
-//     Evaluate(@"
-// (set insert (lambda (x l)
-// (cond
-// ((null? l) (list x))
-// ((<= x (car l)) (cons x l))
-// ('T (cons (car l) (insert x (cdr l)))))))");
-//     Evaluate("(set insertion-sort (combine id insert '()))");
-//     Assert.AreEqual("(1 2 3 4 5 6 7)", Evaluate("(insertion-sort '(3 7 4 1 2 6 5))"));
-//
-//     // Exercise 1g) : mkpairsfn
-//     Evaluate("(set mkpairsfn (lambda (x) (mapc (lambda (l) (cons x l)))))");
-//     Assert.AreEqual("((a) (a b c) (a d) (a (e f)))",
-//         Evaluate("((mkpairsfn 'a) '(() (b c) (d) ((e f))))"));
+		// Exercise 1d) : addtoend
+		['(set addtoend (lambda (x l) ((combine id cons (list x)) l)))', '<closure>'],
+		["(addtoend 'a '(b c d))", '(b c d a)'],
+
+		// Exercise 1e) : reverse (although we will call it reverse2 here)
+		["(set reverse2 (combine id addtoend '()))", '<closure>'],
+		["(reverse2 '(a b c d e f g))", '(g f e d c b a)'],
+
+		// Exercise 1f) : insertion-sort
+		[
+			[
+				'(set insert (lambda (x l)',
+				'(cond',
+				'((null? l) (list x))',
+				'((<= x (car l)) (cons x l))',
+				"('T (cons (car l) (insert x (cdr l)))))))"
+			].join('\n'),
+			'<closure>'
+		],
+
+		["(set insertion-sort (combine id insert '()))", '<closure>'],
+		["(insertion-sort '(3 7 4 1 2 6 5))", '(1 2 3 4 5 6 7)'],
+
+		// Exercise 1g) : mkpairsfn
+		['(set mkpairsfn (lambda (x) (mapc (lambda (l) (cons x l)))))', '<closure>'],
+		["((mkpairsfn 'a) '(() (b c) (d) ((e f))))", '((a) (a b c) (a d) (a (e f)))']
 	]);
 });
 
