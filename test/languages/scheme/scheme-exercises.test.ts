@@ -2,17 +2,7 @@
 
 'use strict';
 
-// import { LanguageSelector } from 'thaw-interpreter-types';
-
-// import { createTokenizer } from 'thaw-lexical-analyzer';
-
-// import { IGlobalInfoForInterpreter } from '../../..';
-
-// import { createFnRecognizer, createInfrastructure } from '../../create-infrastructure';
-
 import { schemeTest } from './scheme.test';
-
-// const ls = LanguageSelector.Scheme;
 
 test('LL(1) Scheme Exercise 1', () => {
 	// Exercise 1 on pages 148-149.
@@ -163,26 +153,21 @@ test('LL(1) Scheme Exercise 2', () => {
 //     //Assert.AreEqual("1", Evaluate("(gcds '((NotANumber 3) 5))")); // gcds only accepts S-expressions of numbers and pairs (lists), not symbols.
 // }
 
-test('LL(1) Scheme Term Rewriting Systems test', () => {
-	// See section 4.4 on pages 116-122
+// Exercise 5:
 
-	schemeTest([["(differentiate '(Dx (+ x c)))", '(+ 1 0)']], { termRewritingSystem: true });
-});
+// test('LL(1) Scheme Term Rewriting Systems test', () => {
+// 	// See section 4.4 on pages 116-122
+//
+// 	schemeTest([["(differentiate '(Dx (+ x c)))", '(+ 1 0)']], { termRewritingSystem: true });
+// });
 
 test('LL(1) Scheme Exercise 5a', () => {
 	// Exercise 5a on pages 150-151; TermRewritingSystems
-
-	// defineTermRewritingSystem();
 
 	// Old code; from the text.
 	//Evaluate("(set mk-rw-fn* (combine mk-rw-fn compose-rewrites failure))");
 
 	// New code.
-	// Evaluate("(set mk-toplvl-rw-fn* (combine mk-toplvl-rw-fn compose-rewrites failure))"); // Apply any of the rules at the top level of an expression.
-	// Evaluate("(set mk-rw-fn* (compose mk-toplvl-rw-fn* apply-inside-exp))"); // Extend the above to operate inside expressions.
-	//
-	// Assert.AreEqual("(+ 1 0)", Evaluate("(differentiate '(Dx (+ x c)))"));
-
 	schemeTest(
 		[
 			// Apply any of the rules at the top level of an expression.
@@ -200,24 +185,37 @@ test('LL(1) Scheme Exercise 5a', () => {
 	);
 });
 
-// [Test]
-// public void Exercise5bTest()  // Exercise 5b on pages 150-151; TermRewritingSystems; modifications to apply-inside-exp
-// {
-//     DefineTermRewritingSystem();
-//
-//     // The next two functions are new or rewritten.
-//     Evaluate(@"
-// (set apply-func
-// (lambda (f)
-// (lambda (x)
-//     (let ((result ((apply-inside-exp f) x)))
-//         (if result result x)))))");
-//     Evaluate(@"
-// (set apply-inside-exp*
-// (lambda (f)
-// (lambda (l)
-//     (let ((result (mapcar (apply-func f) l)))
-//         (if (equal result l) '() result)))))");
-//
-//     Assert.AreEqual("(+ 1 0)", Evaluate("(differentiate '(Dx (+ x c)))"));
-// }
+test('LL(1) Scheme Exercise 5b', () => {
+	// Exercise 5b on pages 150-151; TermRewritingSystems; modifications to apply-inside-exp
+
+	schemeTest(
+		[
+			// The next two functions are new or rewritten.
+
+			[
+				[
+					'(set apply-func',
+					'	(lambda (f)',
+					'		(lambda (x)',
+					'			(let ((result ((apply-inside-exp f) x)))',
+					'				(if result result x)))))'
+				].join('\n'),
+				'<closure>'
+			],
+
+			[
+				[
+					'(set apply-inside-exp*',
+					'	(lambda (f)',
+					'		(lambda (l)',
+					'			(let ((result (mapcar (apply-func f) l)))',
+					"				(if (equal result l) '() result)))))"
+				].join('\n'),
+				'<closure>'
+			],
+
+			["(differentiate '(Dx (+ x c)))", '(+ 1 0)']
+		],
+		{ termRewritingSystem: true }
+	);
+});

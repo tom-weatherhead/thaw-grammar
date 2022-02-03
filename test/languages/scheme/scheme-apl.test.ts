@@ -6,15 +6,9 @@
 
 import { LanguageSelector } from 'thaw-interpreter-types';
 
-// import { createTokenizer } from 'thaw-lexical-analyzer';
-
-// import { createParser, SyntaxException } from 'thaw-parser';
-
 import { SchemeGlobalInfo } from '../../..';
 
 import { createInfrastructure } from '../../create-infrastructure';
-
-// const ls = LanguageSelector.Scheme;
 
 // ThAW 2021-12-04 : Temporarily commented out this test
 // because it was taking far too long (more than 10 minutes) on CircleCI.
@@ -25,11 +19,6 @@ test('Scheme APL-Evaluator test', () => {
 	// Arrange
 	const { tokenizer, parser } = createInfrastructure(LanguageSelector.Scheme);
 	const globalInfo = new SchemeGlobalInfo({ tokenizer, parser });
-
-	// const grammar = createGrammar(ls);
-	// const tokenizer = createTokenizer(grammar.defaultLexicalAnalyzer, ls);
-	// const parser = createParser(grammar.defaultParser, grammar);
-	// const globalInfo = new SchemeGlobalInfo({ tokenizer, parser });
 
 	globalInfo.loadPresets();
 
