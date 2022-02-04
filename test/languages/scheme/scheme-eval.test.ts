@@ -284,24 +284,30 @@ test('LL(1) Scheme Eval test', () => {
 	// (cons (eval e valueops) ; print value of expression
 	// (r-e-p-loop* inputs))))");
 
-	// Assert.AreEqual("5", Evaluate("(eval '(+ 2 3) valueops)"));
 	expect(globalInfo.evaluateToString("(eval '(+ 2 3) valueops)")).toBe('5');
 
 	// Test from page 123
-	//     Evaluate("(set E (mkassoc 'double (eval '(lambda (a) (+ a a)) valueops) valueops))");
-	//     Assert.AreEqual("8", Evaluate("(eval '(double 4) E)"));
+	globalInfo.evaluate("(set E (mkassoc 'double (eval '(lambda (a) (+ a a)) valueops) valueops))");
+	expect(globalInfo.evaluateToString("(eval '(double 4) E)")).toBe('8');
 
 	// select test
-	//     Assert.AreEqual("(12 16 18)", Evaluate("(select '(1 3 4) '(10 12 14 16 18 20))"));
+	expect(globalInfo.evaluateToString("(select '(1 3 4) '(10 12 14 16 18 20))")).toBe(
+		'(12 16 18)'
+	);
 
-	//     // Test of "set" to ensure that we have completed the exercise.
-	//     Assert.AreEqual("(8 () T)", Evaluate(@"
-	// (select '(1 2 3) (r-e-p-loop '( ; We use 'select' because we don't want to test the value of the closure 'double'.
-	// (set double (lambda (a) (+ a a)))
-	// (double 4)
-	// (primop? double)
-	// (closure? double)
-	// )))"));
+	// Test of "set" to ensure that we have completed the exercise.
+	// expect(
+	// 	globalInfo.evaluateToString(
+	// 		[
+	// 			"(select '(1 2 3) (r-e-p-loop '( ; We use 'select' because we don't want to test the value of the closure 'double'.",
+	// 			'(set double (lambda (a) (+ a a)))',
+	// 			'(double 4)',
+	// 			'(primop? double)',
+	// 			'(closure? double)',
+	// 			')))'
+	// 		].join('\n')
+	// 	)
+	// ).toBe('(8 () T)');
 
 	// letrec test: from Kamin page 126.
 	//     /*
