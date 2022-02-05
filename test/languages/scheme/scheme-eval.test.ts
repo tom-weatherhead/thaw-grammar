@@ -396,11 +396,16 @@ test('LL(1) Scheme Eval test', () => {
 	// (e.g. a function like id or mapc).
 
 	// "list" tests.
-	//     Assert.AreEqual("((2 3 5 7) (1 2 3 5))", Evaluate(@"
-	// (r-e-p-loop '(
-	// (list 2 3 5 7)
-	// (list (+ 0 1) (+ 1 1) (+ 1 2) (+ 2 3))
-	// ))"));
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(r-e-p-loop '(",
+				'	(list 2 3 5 7)',
+				'	(list (+ 0 1) (+ 1 1) (+ 1 2) (+ 2 3))',
+				'))'
+			].join('\n')
+		)
+	).toBe('((2 3 5 7) (1 2 3 5))');
 
 	// Test of the 'set' implementation that uses rplac-assoc.
 	expect(
