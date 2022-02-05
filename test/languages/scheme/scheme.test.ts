@@ -437,21 +437,9 @@ test('LL(1) Scheme Rplaca and Rplacd test', () => {
 		['y', '(d b c)'],
 		['x', '(d b c)'],
 		["(rplacd y 'e)", 'e'],
-		// ['y', '(d . e)'],
-		['y', '(d e)'],
-		// ['x', '(d . e)']
-		['x', '(d e)']
+		['y', '(d . e)'],
+		['x', '(d . e)']
 	]);
-
-	// Evaluate("(set x '(a b c))");
-	// Evaluate("(set y x)");
-	// Evaluate("(rplaca y 'd)");
-	// Assert.AreEqual("(d b c)", Evaluate("y"));
-	// Assert.AreEqual("(d b c)", Evaluate("x"));
-	//
-	// Evaluate("(rplacd y 'e)");
-	// Assert.AreEqual("(d . e)", Evaluate("y"));
-	// Assert.AreEqual("(d . e)", Evaluate("x"));
 });
 
 // test('Scheme Macro test', () => {

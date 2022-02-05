@@ -4,6 +4,14 @@ import { ISExpression } from './isexpression';
 import { NullSExpression } from './null-sexpression';
 import { SExpressionBase } from './sexpression-base';
 
+const typenameSExpressionList = 'SExpressionList';
+
+export function isSExpressionList(obj: unknown): obj is SExpressionList {
+	const intlit = obj as SExpressionList;
+
+	return typeof intlit !== 'undefined' && intlit.typename === typenameSExpressionList;
+}
+
 export class SExpressionList extends SExpressionBase {
 	public static makeFromList(l: ISExpression[]): ISExpression {
 		return this.makeFromListHelper(l, 0);
@@ -16,6 +24,8 @@ export class SExpressionList extends SExpressionBase {
 
 		return new SExpressionList(l[i], this.makeFromListHelper(l, i + 1));
 	}
+
+	public readonly typename: string = typenameSExpressionList;
 
 	// These two data members cannot be readonly, because of thunk evaluation.
 	public head: ISExpression;
@@ -52,29 +62,13 @@ export class SExpressionList extends SExpressionBase {
 	}
 
 	private toStringWithoutBrackets(): string {
-		const headAsString = this.head.toString();
-		// const tailAsNullSExpression = this.tail as NullSExpression;
-		// const tailAsSExpressionList = this.tail as SExpressionList;
-
-		// console.log();
-		// console.log('toStringWithoutBrackets() : tailAsNullSExpression is', typeof tailAsNullSExpression, tailAsNullSExpression);
-		// console.log('toStringWithoutBrackets() : tailAsNullSExpression instanceof NullSExpression is', tailAsNullSExpression instanceof NullSExpression);
-		// console.log('toStringWithoutBrackets() : tailAsSExpressionList is', typeof tailAsSExpressionList, tailAsSExpressionList);
-		// console.log('toStringWithoutBrackets() : tailAsNullSExpression instanceof SExpressionList is', tailAsNullSExpression instanceof SExpressionList);
-
-		// if ((this.tail as NullSExpression) !== undefined) {
-		if (this.tail instanceof NullSExpression) {
-			return headAsString;
-			// } else if (tail is Thunk) {
-			// 	return string.Format("{0} {1}", headAsString, tail);
-			// } else if ((this.tail as SExpressionList) !== undefined) {
-		} else if (this.tail instanceof SExpressionList) {
-			const tail = this.tail as SExpressionList;
-
-			return `${headAsString} ${tail.toStringWithoutBrackets()}`;
+		if (this.tail.isNull()) {
+			return this.head.toString();
+		} else if (isSExpressionList(this.tail)) {
+			return `${this.head} ${this.tail.toStringWithoutBrackets()}`;
 		} else {
 			// tail is a symbol, an integer literal, a string, a closure, etc.
-			return `${headAsString} ${this.tail.toString()}`;
+			return `${this.head} . ${this.tail.toString()}`;
 		}
 	}
 }
