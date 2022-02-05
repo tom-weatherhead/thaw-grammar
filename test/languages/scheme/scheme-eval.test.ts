@@ -121,27 +121,43 @@ test('LL(1) Scheme Eval test', () => {
 
 	// letrec
 	//     Evaluate(@"
-	// (set construct-letrec-let-body (lambda (var-expr-list)
-	// (if (null? var-expr-list) '()
-	// (cons
-	//     (list (caar var-expr-list) 0)
-	//     (construct-letrec-let-body (cdr var-expr-list))))))");
+	globalInfo.evaluate(
+		[
+			'(set construct-letrec-let-body (lambda (var-expr-list)',
+			"	(if (null? var-expr-list) '()",
+			'		(cons',
+			'			(list (caar var-expr-list) 0)',
+			'			(construct-letrec-let-body (cdr var-expr-list))))))'
+		].join('\n')
+	);
 
 	//     Evaluate(@"
-	// (set construct-letrec-begin-body (lambda (var-expr-list expr)
-	// (if (null? var-expr-list) (list expr)
-	// (cons
-	//     (cons 'set (car var-expr-list))
-	//     (construct-letrec-begin-body (cdr var-expr-list) expr)))))");
+	globalInfo.evaluate(
+		[
+			'(set construct-letrec-begin-body (lambda (var-expr-list expr)',
+			'	(if (null? var-expr-list) (list expr)',
+			'		(cons',
+			"			(cons 'set (car var-expr-list))",
+			'			(construct-letrec-begin-body (cdr var-expr-list) expr)))))'
+		].join('\n')
+	);
 
 	//     Evaluate(@"
-	// (set construct-letrec (lambda (var-expr-list expr)
-	// (list 'let (construct-letrec-let-body var-expr-list)
-	// (cons 'begin (construct-letrec-begin-body var-expr-list expr)))))");
+	globalInfo.evaluate(
+		[
+			'(set construct-letrec (lambda (var-expr-list expr)',
+			"	(list 'let (construct-letrec-let-body var-expr-list)",
+			"		(cons 'begin (construct-letrec-begin-body var-expr-list expr)))))"
+		].join('\n')
+	);
 
 	//     Evaluate(@"
-	// (set do-letrec (lambda (var-expr-list expr rho)
-	// (eval (construct-letrec var-expr-list expr) rho)))");
+	globalInfo.evaluate(
+		[
+			'(set do-letrec (lambda (var-expr-list expr rho)',
+			'	(eval (construct-letrec var-expr-list expr) rho)))'
+		].join('\n')
+	);
 
 	// cond
 	globalInfo.evaluate(
