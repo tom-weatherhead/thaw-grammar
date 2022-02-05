@@ -402,22 +402,26 @@ test('LL(1) Scheme Eval test', () => {
 	// (list (+ 0 1) (+ 1 1) (+ 1 2) (+ 2 3))
 	// ))"));
 
-	// Test of the "set" implementation that uses rplac-assoc.
-	//     Assert.AreEqual("(14)", Evaluate(@"
-	// (select '(1) (r-e-p-loop '(
-	// (set f (lambda (n)
-	// (let ((g (lambda ()
-	//         (begin
-	//             (set n (+ n 1))
-	//             0))))
-	//     (begin
-	//         (g)
-	//         n))))
-	// (f 13)
-	// )))"));
+	// Test of the 'set' implementation that uses rplac-assoc.
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(1) (r-e-p-loop '(",
+				'	(set f (lambda (n)',
+				'		(let ((g (lambda ()',
+				'			(begin',
+				'				(set n (+ n 1))',
+				'				0))))',
+				'			(begin',
+				'				(g)',
+				'				n))))',
+				'	(f 13)',
+				')))'
+			].join('\n')
+		)
+	).toBe('(14)');
 
-	// Test of the "let" implementation that uses lambda.
-	//     Assert.AreEqual("(60)", Evaluate(@"
+	// Test of the 'let' implementation that uses lambda.
 	expect(
 		globalInfo.evaluateToString(
 			[
