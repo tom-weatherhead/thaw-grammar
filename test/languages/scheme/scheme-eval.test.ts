@@ -367,30 +367,35 @@ test('LL(1) Scheme Eval test', () => {
 	).toBe('(4)');
 
 	// Test of letrec (see exercise 6 on page 150)
-	//     Assert.AreEqual("(15 120 54)", Evaluate(@"
-	// (select '(1 2 3) (r-e-p-loop (list
-	// (list 'set 'eval-ex6 (list 'lambda '(e)
-	// (list 'letrec
-	//     (list
-	//      '(combine (lambda (f sum zero) (lambda (l) (if (null? l) zero (sum (f (car l)) ((combine f sum zero) (cdr l)))))))
-	//      '(id (lambda (x) x))
-	//      '(+/ (combine id + 0))
-	//      '(*/ (combine id * 1))
-	//      (list 'ev (list 'lambda '(expr)
-	//         (list 'if '(number? expr) 'expr
-	//             (list 'if (list '= '(car expr) (list 'quote '+))
-	//                 '(+/ (evlis (cdr expr)))
-	//                 '(*/ (evlis (cdr expr)))))))
-	//      '(mapcar (lambda (f l) (if (null? l) l (cons (f (car l)) (mapcar f (cdr l))))))
-	//      '(curry (lambda (f) (lambda (x) (lambda (y) (f x y)))))
-	//      '(mapc (curry mapcar))
-	//      '(evlis (mapc ev))
-	//     )
-	//     '(ev e))))
-	// (list 'eval-ex6 (list 'quote '(+ 1 2 3 4 5)))
-	// (list 'eval-ex6 (list 'quote '(* 1 2 3 4 5)))
-	// (list 'eval-ex6 (list 'quote '(* (+ 1 2 3) (+ 4 5))))
-	// )))"));
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(1 2 3) (r-e-p-loop (list",
+				"	(list 'set 'eval-ex6 (list 'lambda '(e)",
+				"		(list 'letrec",
+				'			(list',
+				"				'(combine (lambda (f sum zero) (lambda (l) (if (null? l) zero (sum (f (car l)) ((combine f sum zero) (cdr l)))))))",
+				"				'(id (lambda (x) x))",
+				"				'(+/ (combine id + 0))",
+				"				'(*/ (combine id * 1))",
+				"				(list 'ev (list 'lambda '(expr)",
+				"					(list 'if '(number? expr) 'expr",
+				"						(list 'if (list '= '(car expr) (list 'quote '+))",
+				"							'(+/ (evlis (cdr expr)))",
+				"							'(*/ (evlis (cdr expr)))))))",
+				"	'(mapcar (lambda (f l) (if (null? l) l (cons (f (car l)) (mapcar f (cdr l))))))",
+				"	'(curry (lambda (f) (lambda (x) (lambda (y) (f x y)))))",
+				"	'(mapc (curry mapcar))",
+				"	'(evlis (mapc ev))",
+				'	)',
+				"	'(ev e))))",
+				"	(list 'eval-ex6 (list 'quote '(+ 1 2 3 4 5)))",
+				"	(list 'eval-ex6 (list 'quote '(* 1 2 3 4 5)))",
+				"	(list 'eval-ex6 (list 'quote '(* (+ 1 2 3) (+ 4 5))))",
+				')))'
+			].join('\n')
+		)
+	).toBe('(15 120 54)');
 
 	// Note: If you get an error saying that car's argument is null, it is probably because you forgot to declare something
 	// (e.g. a function like id or mapc).
