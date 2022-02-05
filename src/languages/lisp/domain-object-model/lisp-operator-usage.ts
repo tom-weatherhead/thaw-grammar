@@ -5,7 +5,6 @@ import { createSet } from 'thaw-common-utilities.ts';
 import { EvaluationException, Name } from 'thaw-interpreter-core';
 
 import { IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
-// import { ExpressionList } from '../../../common/domain-object-model/expression-list';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { OperatorUsage } from '../../../common/domain-object-model/operator-usage';

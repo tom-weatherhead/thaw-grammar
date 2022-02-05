@@ -79,7 +79,9 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 				'list',
 				'print',
 				'floor',
-				'random'
+				'random',
+				'rplaca',
+				'rplacd'
 			].indexOf(this.name.value) >= 0
 		) {
 			const operatorUsage = new LISPOperatorUsage(this.name, expressionList);

@@ -120,7 +120,6 @@ test('LL(1) Scheme Eval test', () => {
 	);
 
 	// letrec
-	//     Evaluate(@"
 	globalInfo.evaluate(
 		[
 			'(set construct-letrec-let-body (lambda (var-expr-list)',
@@ -131,7 +130,6 @@ test('LL(1) Scheme Eval test', () => {
 		].join('\n')
 	);
 
-	//     Evaluate(@"
 	globalInfo.evaluate(
 		[
 			'(set construct-letrec-begin-body (lambda (var-expr-list expr)',
@@ -142,7 +140,6 @@ test('LL(1) Scheme Eval test', () => {
 		].join('\n')
 	);
 
-	//     Evaluate(@"
 	globalInfo.evaluate(
 		[
 			'(set construct-letrec (lambda (var-expr-list expr)',
@@ -151,7 +148,6 @@ test('LL(1) Scheme Eval test', () => {
 		].join('\n')
 	);
 
-	//     Evaluate(@"
 	globalInfo.evaluate(
 		[
 			'(set do-letrec (lambda (var-expr-list expr rho)',
@@ -208,7 +204,6 @@ test('LL(1) Scheme Eval test', () => {
 		].join('\n')
 	);
 
-	//     Evaluate(@"
 	globalInfo.evaluate(
 		[
 			'(set evallist (lambda (el rho)',
@@ -219,7 +214,6 @@ test('LL(1) Scheme Eval test', () => {
 		].join('\n')
 	);
 
-	//     Evaluate(@"
 	globalInfo.evaluate(
 		[
 			'(set mkassoc* (lambda (keys values al)',
@@ -238,7 +232,6 @@ test('LL(1) Scheme Eval test', () => {
 		].join('\n')
 	);
 
-	//     Evaluate(@"
 	globalInfo.evaluate(
 		[
 			'(set apply-closure (lambda (clo args)',
@@ -247,7 +240,6 @@ test('LL(1) Scheme Eval test', () => {
 		].join('\n')
 	);
 
-	//     Evaluate(@"
 	globalInfo.evaluate(
 		[
 			'(set apply-value-op (lambda (primop args)',
@@ -335,39 +327,44 @@ test('LL(1) Scheme Eval test', () => {
 	).toBe('(8 () T)');
 
 	// letrec test: from Kamin page 126.
-	//     /*
-	//     Assert.AreEqual("(4)", Evaluate(@"
-	// (r-e-p-loop '(
-	// (letrec ; Try a letrec wth two bindings
-	// (
-	//  (countzeroes (lambda (l)
-	//     (if (null? l) 0
-	//         (if (= (car l) 0) (+ 1 (countzeroes (cdr l)))
-	//             (countzeroes (cdr l))))))
-	//  (countones (lambda (l)
-	//     (if (null? l) 0
-	//         (if (= (car l) 1) (+ 1 (countones (cdr l)))
-	//             (countones (cdr l))))))
-	// )
-	// (countones (quote (1 2 3 1 0 1 1 5))))
-	// ))"));
-	//      */
+	/*
+	Assert.AreEqual("(4)", Evaluate(@"
+(r-e-p-loop '(
+(letrec ; Try a letrec wth two bindings
+(
+	(countzeroes (lambda (l)
+		(if (null? l) 0
+			(if (= (car l) 0) (+ 1 (countzeroes (cdr l)))
+				(countzeroes (cdr l))))))
+	(countones (lambda (l)
+		(if (null? l) 0
+			(if (= (car l) 1) (+ 1 (countones (cdr l)))
+				(countones (cdr l))))))
+)
+(countones (quote (1 2 3 1 0 1 1 5))))
+))"));
+	*/
 
-	//     Assert.AreEqual("(4)", Evaluate(@"
-	// (r-e-p-loop (list
-	// (list 'letrec ; Try a letrec wth two bindings
-	// '(
-	//  (countzeroes (lambda (l)
-	//     (if (null? l) 0
-	//         (if (= (car l) 0) (+ 1 (countzeroes (cdr l)))
-	//             (countzeroes (cdr l))))))
-	//  (countones (lambda (l)
-	//     (if (null? l) 0
-	//         (if (= (car l) 1) (+ 1 (countones (cdr l)))
-	//             (countones (cdr l))))))
-	// )
-	// (list 'countones (list 'quote '(1 2 3 1 0 1 1 5))))
-	// ))"));
+	expect(
+		globalInfo.evaluateToString(
+			[
+				'(r-e-p-loop (list',
+				"	(list 'letrec ; Try a letrec wth two bindings",
+				"		'(",
+				'			(countzeroes (lambda (l)',
+				'				(if (null? l) 0',
+				'					(if (= (car l) 0) (+ 1 (countzeroes (cdr l)))',
+				'					(countzeroes (cdr l))))))',
+				'		(countones (lambda (l)',
+				'			(if (null? l) 0',
+				'				(if (= (car l) 1) (+ 1 (countones (cdr l)))',
+				'					(countones (cdr l))))))',
+				'		)',
+				"		(list 'countones (list 'quote '(1 2 3 1 0 1 1 5))))",
+				'))'
+			].join('\n')
+		)
+	).toBe('(4)');
 
 	// Test of letrec (see exercise 6 on page 150)
 	//     Assert.AreEqual("(15 120 54)", Evaluate(@"
@@ -426,12 +423,17 @@ test('LL(1) Scheme Eval test', () => {
 	// (* (+ a b) (+ c d)))
 	// ))"));
 
-	// Test of the "let*" implementation that uses nested lambda expressions.
-	//     Assert.AreEqual("(24)", Evaluate(@"
-	// (r-e-p-loop '(
-	// (let* ((a 1) (b (* a 2)) (c (* b 3)) (d (* c 4)))
-	// d)
-	// ))"));
+	// Test of the 'let*' implementation that uses nested lambda expressions.
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(r-e-p-loop '(",
+				'	(let* ((a 1) (b (* a 2)) (c (* b 3)) (d (* c 4)))',
+				'	d)',
+				'))'
+			].join('\n')
+		)
+	).toBe('(24)');
 });
 
 // globalInfo.evaluate(
