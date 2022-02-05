@@ -25,8 +25,6 @@ test('LL(1) Scheme Eval test', () => {
 	globalInfo.evaluate('(set caddr (lambda (l) (cadr (cdr l))))');
 	globalInfo.evaluate('(set cadddr (lambda (l) (caddr (cdr l))))');
 
-	expect(0).toBe(0); // A placeholder test
-
 	// Functions adapted from page 48
 
 	globalInfo.evaluate(
@@ -397,10 +395,10 @@ test('LL(1) Scheme Eval test', () => {
 		)
 	).toBe('(15 120 54)');
 
-	// Note: If you get an error saying that car's argument is null, it is probably because you forgot to declare something
-	// (e.g. a function like id or mapc).
+	// Note: If you get an error saying that car's argument is null, it is probably because
+	// you forgot to declare something (e.g. a function like id or mapc).
 
-	// "list" tests.
+	// 'list' tests
 	expect(
 		globalInfo.evaluateToString(
 			[
@@ -455,14 +453,3 @@ test('LL(1) Scheme Eval test', () => {
 		)
 	).toBe('(24)');
 });
-
-// globalInfo.evaluate(
-// 	[
-// 		'',
-// 		'',
-// 		'',
-// 		'',
-// 		'',
-// 		''
-// 	].join('\n')
-// );

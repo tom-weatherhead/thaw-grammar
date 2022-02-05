@@ -427,19 +427,32 @@ test('LL(1) Scheme Streams test', () => {
 	]);
 });
 
-// test('Scheme Rplaca and Rplacd test', () => {
-// 	// See page 55
-//
-// 	Evaluate("(set x '(a b c))");
-// 	Evaluate("(set y x)");
-// 	Evaluate("(rplaca y 'd)");
-// 	Assert.AreEqual("(d b c)", Evaluate("y"));
-// 	Assert.AreEqual("(d b c)", Evaluate("x"));
-//
-// 	Evaluate("(rplacd y 'e)");
-// 	Assert.AreEqual("(d . e)", Evaluate("y"));
-// 	Assert.AreEqual("(d . e)", Evaluate("x"));
-// });
+test('LL(1) Scheme Rplaca and Rplacd test', () => {
+	// See page 55
+
+	schemeTest([
+		["(set x '(a b c))", '(a b c)'],
+		['(set y x)', '(a b c)'],
+		["(rplaca y 'd)", 'd'],
+		['y', '(d b c)'],
+		['x', '(d b c)'],
+		["(rplacd y 'e)", 'e'],
+		// ['y', '(d . e)'],
+		['y', '(d e)'],
+		// ['x', '(d . e)']
+		['x', '(d e)']
+	]);
+
+	// Evaluate("(set x '(a b c))");
+	// Evaluate("(set y x)");
+	// Evaluate("(rplaca y 'd)");
+	// Assert.AreEqual("(d b c)", Evaluate("y"));
+	// Assert.AreEqual("(d b c)", Evaluate("x"));
+	//
+	// Evaluate("(rplacd y 'e)");
+	// Assert.AreEqual("(d . e)", Evaluate("y"));
+	// Assert.AreEqual("(d . e)", Evaluate("x"));
+});
 
 // test('Scheme Macro test', () => {
 // 	// From pages 56-57, and Exercise 12, from pages 62-63 (in the LISP chapter)
