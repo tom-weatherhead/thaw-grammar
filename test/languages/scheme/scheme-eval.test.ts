@@ -418,10 +418,16 @@ test('LL(1) Scheme Eval test', () => {
 
 	// Test of the "let" implementation that uses lambda.
 	//     Assert.AreEqual("(60)", Evaluate(@"
-	// (r-e-p-loop '(
-	// (let ((a 2) (b 3) (c 5) (d (+ 3 4)))
-	// (* (+ a b) (+ c d)))
-	// ))"));
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(r-e-p-loop '(",
+				'	(let ((a 2) (b 3) (c 5) (d (+ 3 4)))',
+				'	(* (+ a b) (+ c d)))',
+				'))'
+			].join('\n')
+		)
+	).toBe('(60)');
 
 	// Test of the 'let*' implementation that uses nested lambda expressions.
 	expect(
