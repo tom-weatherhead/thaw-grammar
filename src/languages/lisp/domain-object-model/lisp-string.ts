@@ -32,8 +32,8 @@ export class LISPString extends SExpressionBase {
 	}
 
 	public toString(): string {
-		// return '"' + this.value + '"';
 		return `"${this.value}"`;
+		// return this.value;
 	}
 
 	// public override bool Equals(object obj)

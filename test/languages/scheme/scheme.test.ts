@@ -241,6 +241,14 @@ test('LL(1) Scheme addition test 1', () => {
 	schemeTest([['(+ 2 3)', '5']]);
 });
 
+test('LL(1) Scheme string test', () => {
+	const stringValue1 = evaluateToISExpression('"ABC"');
+
+	expect(stringValue1.isString()).toBe(true);
+	// expect(stringValue1.toString()).toBe('ABC');
+	expect(stringValue1.toString()).toBe('"ABC"');
+});
+
 test('LL(1) Scheme PrimOpTest2', () => {
 	schemeTest([
 		['(set add +)', '+'],
