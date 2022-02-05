@@ -243,7 +243,7 @@ test('LL(1) Scheme Eval test', () => {
 
 	globalInfo.evaluate("(set is-closure? (lambda (f) (= (car f) 'closure)))");
 
-	//     Evaluate("(set is-primop? (lambda (f) (= (car f) 'primop)))");
+	globalInfo.evaluate("(set is-primop? (lambda (f) (= (car f) 'primop)))");
 
 	globalInfo.evaluate(
 		[
@@ -268,21 +268,30 @@ test('LL(1) Scheme Eval test', () => {
 	);
 
 	// Functions adapted from Figure 2.8
-	//     Evaluate(@"
-	// (set r-e-p-loop (lambda (inputs)
-	// (begin
-	// (set global-environment '())
-	// (r-e-p-loop* inputs))))");
+	globalInfo.evaluate(
+		[
+			'(set r-e-p-loop (lambda (inputs)',
+			'	(begin',
+			"		(set global-environment '())",
+			'		(r-e-p-loop* inputs))))'
+		].join('\n')
+	);
 
-	//     Evaluate(@"
-	// (set r-e-p-loop* (lambda (inputs)
-	// (if (null? inputs) '()
-	// (process-expr (car inputs) (cdr inputs)))))");
+	globalInfo.evaluate(
+		[
+			'(set r-e-p-loop* (lambda (inputs)',
+			"	(if (null? inputs) '()",
+			'	(process-expr (car inputs) (cdr inputs)))))'
+		].join('\n')
+	);
 
-	//     Evaluate(@"
-	// (set process-expr (lambda (e inputs)
-	// (cons (eval e valueops) ; print value of expression
-	// (r-e-p-loop* inputs))))");
+	globalInfo.evaluate(
+		[
+			'(set process-expr (lambda (e inputs)',
+			'	(cons (eval e valueops) ; print value of expression',
+			'	(r-e-p-loop* inputs))))'
+		].join('\n')
+	);
 
 	expect(globalInfo.evaluateToString("(eval '(+ 2 3) valueops)")).toBe('5');
 
@@ -296,18 +305,18 @@ test('LL(1) Scheme Eval test', () => {
 	);
 
 	// Test of "set" to ensure that we have completed the exercise.
-	// expect(
-	// 	globalInfo.evaluateToString(
-	// 		[
-	// 			"(select '(1 2 3) (r-e-p-loop '( ; We use 'select' because we don't want to test the value of the closure 'double'.",
-	// 			'(set double (lambda (a) (+ a a)))',
-	// 			'(double 4)',
-	// 			'(primop? double)',
-	// 			'(closure? double)',
-	// 			')))'
-	// 		].join('\n')
-	// 	)
-	// ).toBe('(8 () T)');
+	expect(
+		globalInfo.evaluateToString(
+			[
+				"(select '(1 2 3) (r-e-p-loop '( ; We use 'select' because we don't want to test the value of the closure 'double'.",
+				'(set double (lambda (a) (+ a a)))',
+				'(double 4)',
+				'(primop? double)',
+				'(closure? double)',
+				')))'
+			].join('\n')
+		)
+	).toBe('(8 () T)');
 
 	// letrec test: from Kamin page 126.
 	//     /*
