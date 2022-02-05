@@ -243,10 +243,19 @@ test('LL(1) Scheme addition test 1', () => {
 
 test('LL(1) Scheme string test', () => {
 	const stringValue1 = evaluateToISExpression('"ABC"');
+	const stringValue2 = evaluateToISExpression('"AB\\"CD"');
+	const stringValue3 = evaluateToISExpression('"AB\\\\CD"');
 
 	expect(stringValue1.isString()).toBe(true);
 	// expect(stringValue1.toString()).toBe('ABC');
 	expect(stringValue1.toString()).toBe('"ABC"');
+
+	expect(stringValue2.isString()).toBe(true);
+	expect(stringValue2.toString()).toBe('"AB"CD"');
+
+	expect(stringValue3.isString()).toBe(true);
+	expect(stringValue3.toString()).toBe('"AB\\CD"');
+	expect(stringValue3.toString().length).toBe(7);
 });
 
 test('LL(1) Scheme PrimOpTest2', () => {
