@@ -13,7 +13,7 @@ import { LISPException } from '../exceptions/lisp-exception';
 
 import { IntegerLiteral } from './integer-literal';
 import { ISExpression } from './isexpression';
-import { LISPString } from './lisp-string';
+import { isLISPString, LISPString } from './lisp-string';
 import { SExpressionList } from './sexpression-list';
 
 export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
@@ -429,9 +429,12 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 
 			// 	return new LISPSymbol(str2sym.Value);
 
-			// case 'string<': // See page 54.
-			// 	return ((LISPString)evaluatedArguments[0]).Value.CompareTo(((LISPString)evaluatedArguments[1]).Value) < 0
-			// 		? globalInfo.TrueValue : globalInfo.FalseValue;
+			case 'string<': // See page 54.
+				return isLISPString(evaluatedArguments[0]) &&
+					isLISPString(evaluatedArguments[1]) &&
+					evaluatedArguments[0].value < evaluatedArguments[1].value
+					? globalInfo.trueValue
+					: globalInfo.falseValue;
 
 			default:
 				// if (operatorsThatTakeEitherIntOrFloatArgs.Contains(OperatorName.Value))

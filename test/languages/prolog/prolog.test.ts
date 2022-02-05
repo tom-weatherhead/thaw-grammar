@@ -1,4 +1,4 @@
-// tom-weatherhead/thaw-parser/test/prolog.test.ts
+// tom-weatherhead/thaw-grammar/test/prolog.test.ts
 
 'use strict';
 

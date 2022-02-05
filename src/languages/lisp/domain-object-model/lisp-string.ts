@@ -4,7 +4,16 @@ import { ArgumentException } from 'thaw-interpreter-core';
 
 import { SExpressionBase } from './sexpression-base';
 
+const typenameLISPString = 'LISPString';
+
+export function isLISPString(obj: unknown): obj is LISPString {
+	const intlit = obj as LISPString;
+
+	return typeof intlit !== 'undefined' && intlit.typename === typenameLISPString;
+}
+
 export class LISPString extends SExpressionBase {
+	public readonly typename: string = typenameLISPString;
 	public readonly value: string;
 
 	constructor(value: string) {
@@ -23,7 +32,8 @@ export class LISPString extends SExpressionBase {
 	}
 
 	public toString(): string {
-		return '"' + this.value + '"';
+		// return '"' + this.value + '"';
+		return `"${this.value}"`;
 	}
 
 	// public override bool Equals(object obj)

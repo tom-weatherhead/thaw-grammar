@@ -116,7 +116,7 @@ export class SchemeGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalLetStar);
 		this.terminals.push(GrammarSymbol.terminalLetRec);
 		this.terminals.push(GrammarSymbol.terminalQuoteKeyword);
-		// this.terminals.push(Symbol.terminalStringLiteral);
+		this.terminals.push(GrammarSymbol.terminalStringLiteral);
 		// this.terminals.push(Symbol.terminalToString);
 		// this.terminals.push(Symbol.terminalListToString);
 		// this.terminals.push(Symbol.terminalStringToList);
@@ -393,13 +393,17 @@ export class SchemeGrammar extends GrammarBase {
 		// 	], 23));
 
 		// Value -> Integer
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalValue,
-				[GrammarSymbol.terminalIntegerLiteral],
-				24
-			)
-		);
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalValue,
+		// 		[GrammarSymbol.terminalIntegerLiteral],
+		// 		24
+		// 	)
+		// );
+
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalIntegerLiteral]);
+
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalStringLiteral]);
 
 		// Value-Op -> +
 		this.productions.push(
@@ -439,6 +443,10 @@ export class SchemeGrammar extends GrammarBase {
 		// 		31
 		// 	)
 		// );
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [
+			GrammarSymbol.terminalStringLessThan
+		]);
 
 		// Function -> Name
 		this.productions.push(

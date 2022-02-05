@@ -40,15 +40,11 @@ import { ICallableSExpression } from './icallable-sexpression';
 
 export class PrimOp extends SExpressionBase implements ICallableSExpression {
 	// Old (C#) comment: We cannot inherit from SExpressionBase here because we already inherit from LISPOperatorUsage.
-	// public readonly name: Name;
 	public readonly line: number;
 	public readonly column: number;
 
 	constructor(public readonly name: Name) {
 		super();
-		// super(name, new ExpressionList<ISExpression>());
-
-		// this.name = name;
 		// this.expectedNumArgs = 2; // Hard-coded for the operator +
 		this.line = this.name.line;
 		this.column = this.name.column;
@@ -81,7 +77,8 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 				'floor',
 				'random',
 				'rplaca',
-				'rplacd'
+				'rplacd',
+				'string<'
 			].indexOf(this.name.value) >= 0
 		) {
 			const operatorUsage = new LISPOperatorUsage(this.name, expressionList);
@@ -134,107 +131,3 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 }
-
-// public class PrimOp : LISPOperatorUsage, ICallableSExpression // We cannot inherit from SExpressionBase here bacause we already inherit from LISPOperatorUsage.
-// {
-//     public PrimOp(Name operatorName)
-//         : base(operatorName, new ExpressionList<ISExpression>())
-//     {
-//         int expectedNumArgs = 0;
-//         bool gotExpectedNumArgs = false;
-
-//         try
-//         {
-//             // We can pass in null for the globalInfo because no PrimOp is a global function or a macro; the grammar protects us from crashes.
-//             // TODO: Or we could check for a null globalInfo in OperatorUsage<T>.
-//             gotExpectedNumArgs = TryGetExpectedNumArgs(null, out expectedNumArgs);
-//         }
-//         catch
-//         {
-//         }
-
-//         if (!gotExpectedNumArgs)
-//         {
-//             throw new Exception(string.Format("PrimOp constructor: Failed to get ExpectedNumArgs for operator '{0}'.", operatorName.Value));
-//         }
-
-//         ExpectedNumArgs = expectedNumArgs;
-//     }
-
-//     protected override bool TryGetExpectedNumArgs(IGlobalInfo<ISExpression> globalInfo, out int result)
-//     {
-
-//         switch (OperatorName.Value)
-//         {
-//             case "primop?":
-//             case "closure?":
-//                 result = 1;
-//                 return true;
-
-//             default:
-//                 return base.TryGetExpectedNumArgs(globalInfo, out result);
-//         }
-//     }
-
-//     protected override ISExpression EvaluateAux(List<ISExpression> evaluatedArguments, EnvironmentFrame<ISExpression> localEnvironment, IGlobalInfo<ISExpression> globalInfo)
-//     {
-
-//         switch (OperatorName.Value)
-//         {
-//             case "primop?":
-//                 return evaluatedArguments[0].IsPrimOp() ? globalInfo.TrueValue : globalInfo.FalseValue;
-
-//             case "closure?":
-//                 return evaluatedArguments[0].IsClosure() ? globalInfo.TrueValue : globalInfo.FalseValue;
-
-//             default:
-//                 return base.EvaluateAux(evaluatedArguments, localEnvironment, globalInfo);
-//         }
-//     }
-
-//     public virtual ISExpression Call(ExpressionList<ISExpression> arguments, EnvironmentFrame<ISExpression> localEnvironment, IGlobalInfo<ISExpression> globalInfo)
-//     {
-//         // TODO: This function looks a lot like OperatorUsage<T>.Evaluate(), except for the macro handling.  See if we can unify them.
-//         // (First, we would need to set the PrimOp's arguments list.)
-//         var actualNumArgs = arguments.Value.Count;
-// #if DEAD_CODE
-//         int expectedNumArgs;
-
-//         if (!TryGetExpectedNumArgs(globalInfo, out expectedNumArgs))
-//         {
-//             throw new EvaluationException(
-//                 string.Format("PrimOp : Unknown operator name '{0}'", OperatorName.Value),
-//                 OperatorName.Line, OperatorName.Column);
-//         }
-//         else if (expectedNumArgs >= 0 && actualNumArgs != expectedNumArgs)
-//         {
-//             throw new EvaluationException(
-//                 string.Format("PrimOp : Expected {0} argument(s) for operator '{1}', instead of the actual {2} argument(s)",
-//                     expectedNumArgs, OperatorName.Value, actualNumArgs),
-//                 OperatorName.Line, OperatorName.Column);
-//         }
-// #else
-//         if (ExpectedNumArgs >= 0 && actualNumArgs != ExpectedNumArgs)
-//         {
-//             throw new EvaluationException(
-//                 string.Format("PrimOp : Expected {0} argument(s) for operator '{1}', instead of the actual {2} argument(s)",
-//                     ExpectedNumArgs, OperatorName.Value, actualNumArgs),
-//                 OperatorName.Line, OperatorName.Column);
-//         }
-// #endif
-
-//         var evaluatedArguments = arguments.Value.Select(expr => expr.Evaluate(localEnvironment, globalInfo)).ToList();
-//         var argTypesErrorMessage = CheckArgTypes(evaluatedArguments);
-
-//         if (!string.IsNullOrEmpty(argTypesErrorMessage))
-//         {
-//             throw new EvaluationException(
-//                 string.Format("Operator '{0}': {1}", OperatorName.Value, argTypesErrorMessage),
-//                 OperatorName.Line, OperatorName.Column);
-//         }
-
-//         // It is safe to pass a null localEnvironment to EvaluateAux(), since it only uses localEnvironment to evaluate user-defined LISP functions.
-//         // TODO: Could we pass in a null globalInfo too?  See the PrimOp constructor.
-//         return EvaluateAux(evaluatedArguments, null, globalInfo);
-//     }
-// }

@@ -1,4 +1,4 @@
-// tom-weatherhead/thaw-parser/test/sasl.test.ts
+// tom-weatherhead/thaw-grammar/test/sasl.test.ts
 
 'use strict';
 

@@ -1,4 +1,4 @@
-// tom-weatherhead/thaw-parser/test/lisp.test.ts
+// tom-weatherhead/thaw-grammar/test/lisp.test.ts
 
 'use strict';
 
@@ -168,6 +168,8 @@ test('LL(1) LISP recognize test', () => {
 	f("'T");
 	f("'()");
 	f("'(1 2 3)");
+
+	f('"ABC"');
 });
 
 // [Test]

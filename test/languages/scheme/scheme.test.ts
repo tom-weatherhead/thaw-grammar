@@ -1,4 +1,4 @@
-// tom-weatherhead/thaw-parser/test/scheme.test.ts
+// tom-weatherhead/thaw-grammar/test/scheme.test.ts
 
 'use strict';
 
@@ -650,17 +650,18 @@ test('Scheme Sets test', () => {
 //     InferenceAssert.ThrowsWithLineAndColumnNumbers<EvaluationException>(() => Evaluate("(car 7)"), 1, 2);
 // }
 
-// [Test]
-// public void StringLessThanTest()    // 2013/12/14
-// {
-//     Assert.AreEqual("T", Evaluate("(primop? string<)"));
-//
-//     Assert.AreEqual("()", Evaluate("(string< \"a\" \"a\")"));
-//     Assert.AreEqual("T", Evaluate("(string< \"a\" \"b\")"));
-//     Assert.AreEqual("()", Evaluate("(string< \"b\" \"a\")"));
-//     Assert.AreEqual("T", Evaluate("(string< \"abac\" \"abacus\")"));
-//     Assert.AreEqual("T", Evaluate("(string< \"abacab\" \"abacus\")"));
-// }
+test('Scheme string< test', () => {
+	// 2013/12/14
+
+	schemeTest([
+		['(primop? string<)', 'T'],
+		['(string< "a" "a")', '()'],
+		['(string< "a" "b")', 'T'],
+		['(string< "b" "a")', '()'],
+		['(string< "abac" "abacus")', 'T'],
+		['(string< "abacab" "abacus")', 'T']
+	]);
+});
 
 // [Test]
 // public void StringSortTest()    // 2013/12/14

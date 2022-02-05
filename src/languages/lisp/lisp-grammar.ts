@@ -215,7 +215,7 @@ export class LISPGrammar extends GrammarBase {
 		// this.terminals.push(GrammarSymbol.terminalRplacd);
 		// this.terminals.push(GrammarSymbol.terminalDefineMacro);
 		// this.terminals.push(GrammarSymbol.terminalQuoteKeyword);
-		// this.terminals.push(GrammarSymbol.terminalStringLiteral);
+		this.terminals.push(GrammarSymbol.terminalStringLiteral);
 		// this.terminals.push(GrammarSymbol.terminalStringPred);
 		// this.terminals.push(GrammarSymbol.terminalToString);
 		// this.terminals.push(GrammarSymbol.terminalListToString);
@@ -545,13 +545,9 @@ export class LISPGrammar extends GrammarBase {
 		);
 
 		// Value -> Integer
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalValue,
-				[GrammarSymbol.terminalIntegerLiteral],
-				24
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalIntegerLiteral]);
+
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalStringLiteral]);
 
 		// Value-Op -> +
 		this.productions.push(
@@ -1117,6 +1113,8 @@ export class LISPGrammar extends GrammarBase {
 		switch (token.tokenType) {
 			case LexicalState.tokenQuoteKeyword:
 				return GrammarSymbol.terminalQuoteKeyword;
+			case LexicalState.tokenStrLit:
+				return GrammarSymbol.terminalStringLiteral;
 
 			case LexicalState.tokenIdent:
 				switch (tokenValueAsString) {
