@@ -232,7 +232,7 @@ export class LISPGrammar extends GrammarBase {
 		// this.terminals.push(GrammarSymbol.terminalFloor);
 		this.terminals.push(GrammarSymbol.terminalStringLessThan);
 		// this.terminals.push(GrammarSymbol.terminalRandom);
-		// this.terminals.push(GrammarSymbol.terminalThrow);
+		this.terminals.push(GrammarSymbol.terminalThrow);
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
@@ -577,6 +577,8 @@ export class LISPGrammar extends GrammarBase {
 			GrammarSymbol.terminalStringLessThan
 		]);
 
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalThrow]);
+
 		// Function -> Name
 		this.productions.push(
 			createProduction(GrammarSymbol.nonterminalFunction, [GrammarSymbol.terminalID], 33)
@@ -627,47 +629,25 @@ export class LISPGrammar extends GrammarBase {
 		);
 
 		// Value-Op -> cons
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCons], 36)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCons]);
 
 		// Value-Op -> car
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCar], 37)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCar]);
 
 		// Value-Op -> cdr
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCdr], 38)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalCdr]);
 
 		// Value-Op -> number?
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalValueOp,
-				[GrammarSymbol.terminalNumberPred],
-				39
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalNumberPred]);
 
 		// Value-Op -> symbol?
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalValueOp,
-				[GrammarSymbol.terminalSymbolPred],
-				40
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalSymbolPred]);
 
 		// Value-Op -> list?
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalListPred], 41)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalListPred]);
 
 		// Value-Op -> null?
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalNullPred], 42)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalNullPred]);
 
 		// Quoted-Const -> ' S-Expression
 		this.productions.push(

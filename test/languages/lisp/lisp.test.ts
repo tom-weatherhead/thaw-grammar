@@ -23,15 +23,17 @@ test('LL(1) LISP parser instance creation test', () => {
 	expect(parser).toBeTruthy();
 });
 
-// function evaluateToISExpression(input: string): ISExpression {
-// 	const { tokenizer, parser } = createInfrastructure(ls);
-// 	const globalInfo = new LISPGlobalInfo({ tokenizer, parser });
-//
-// 	const parseResult = parser.parse(tokenizer.tokenize(input));
-// 	const expr = parseResult as IExpression<ISExpression>;
-//
-// 	return expr.evaluate(globalInfo, globalInfo.globalEnvironment);
-// }
+function evaluateToISExpression(input: string): ISExpression {
+	const { tokenizer, parser } = createInfrastructure(ls);
+	const globalInfo = new LISPGlobalInfo({ tokenizer, parser });
+
+	// const parseResult = parser.parse(tokenizer.tokenize(input));
+	// const expr = parseResult as IExpression<ISExpression>;
+
+	// return expr.evaluate(globalInfo, globalInfo.globalEnvironment);
+
+	return globalInfo.evaluate(input);
+}
 
 function lispTest(
 	data: Array<[input: string, expectedResult: string | string[]]>,
@@ -1576,23 +1578,14 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("()", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'()")));
 // 	//Assert.AreEqual("", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("")));
 // }
-//
-// [Test]
-// public void ThrowTest()
-// {
-// 	Assert.Throws<LISPException>(() => Evaluate("(throw \"Hello World!\")"));
-// }
-//
-// [Test]
-// public void StringLessThanTest()    // 2013/12/14
-// {
-// 	Assert.AreEqual("()", Evaluate("(string< \"a\" \"a\")"));
-// 	Assert.AreEqual("T", Evaluate("(string< \"a\" \"b\")"));
-// 	Assert.AreEqual("()", Evaluate("(string< \"b\" \"a\")"));
-// 	Assert.AreEqual("T", Evaluate("(string< \"abac\" \"abacus\")"));
-// 	Assert.AreEqual("T", Evaluate("(string< \"abacab\" \"abacus\")"));
-// }
+
+test('LL(1) LISP throw test', () => {
+	expect(() => evaluateToISExpression('(throw "Hello World!")')).toThrow('LISPException');
+});
+
 test('LL(1) LISP string< test', () => {
+	// 2013/12/14
+
 	lispTest([
 		['(string< "a" "a")', '()'],
 		['(string< "a" "b")', 'T'],
