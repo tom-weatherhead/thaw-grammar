@@ -23,32 +23,6 @@ test('LL(1) LISP parser instance creation test', () => {
 	expect(parser).toBeTruthy();
 });
 
-// function lispTest(data: Array<[input: string, expectedResult: string | string[]]>): void {
-// 	// Arrange
-// 	const { tokenizer, parser } = createInfrastructure(ls);
-// 	const lispGlobalInfo = new LISPGlobalInfo({ tokenizer, parser });
-//
-// 	for (const [input, expectedResult] of data) {
-// 		// Act
-// 		const parseResult = parser.parse(tokenizer.tokenize(input));
-// 		const expr = parseResult as IExpression<ISExpression>;
-// 		const actualResult = expr
-// 			.evaluate(lispGlobalInfo, lispGlobalInfo.globalEnvironment)
-// 			.toString();
-//
-// 		// console.log(`input: ${input}\nactualResult:\n${actualResult}\n\n`);
-//
-// 		// Assert
-// 		if (typeof expectedResult === 'string') {
-// 			expect(actualResult).toBe(expectedResult);
-// 		} else {
-// 			for (const str of expectedResult) {
-// 				expect(actualResult.includes(str)).toBe(true);
-// 			}
-// 		}
-// 	}
-// }
-
 // function evaluateToISExpression(input: string): ISExpression {
 // 	const { tokenizer, parser } = createInfrastructure(ls);
 // 	const globalInfo = new LISPGlobalInfo({ tokenizer, parser });
@@ -101,13 +75,6 @@ test('LL(1) LISP addition test 1', () => {
 	lispTest([['(+ 2 3)', '5']]);
 });
 
-// public Parser_Fixture()
-// {
-// 	tokenizer = TokenizerFactory.Create(GrammarSelector.LISP);
-// 	parser = ParserFactory.Create(ParserSelector.SLR1, GrammarSelector.LISP);
-// 	globalInfo = new LISPGlobalInfo(tokenizer, parser);
-// }
-//
 // [SetUp]
 // public void SetUp()
 // {
@@ -1625,3 +1592,12 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("T", Evaluate("(string< \"abac\" \"abacus\")"));
 // 	Assert.AreEqual("T", Evaluate("(string< \"abacab\" \"abacus\")"));
 // }
+test('LL(1) LISP string< test', () => {
+	lispTest([
+		['(string< "a" "a")', '()'],
+		['(string< "a" "b")', 'T'],
+		['(string< "b" "a")', '()'],
+		['(string< "abac" "abacus")', 'T'],
+		['(string< "abacab" "abacus")', 'T']
+	]);
+});

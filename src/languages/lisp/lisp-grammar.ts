@@ -230,7 +230,7 @@ export class LISPGrammar extends GrammarBase {
 		// this.terminals.push(GrammarSymbol.terminalTan);
 		// this.terminals.push(GrammarSymbol.terminalAtan2);
 		// this.terminals.push(GrammarSymbol.terminalFloor);
-		// this.terminals.push(GrammarSymbol.terminalStringLessThan);
+		this.terminals.push(GrammarSymbol.terminalStringLessThan);
 		// this.terminals.push(GrammarSymbol.terminalRandom);
 		// this.terminals.push(GrammarSymbol.terminalThrow);
 		this.terminals.push(GrammarSymbol.terminalEOF);
@@ -550,48 +550,32 @@ export class LISPGrammar extends GrammarBase {
 		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalStringLiteral]);
 
 		// Value-Op -> +
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPlus], 25)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPlus]);
 
 		// Value-Op -> -
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMinus], 26)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMinus]);
 
 		// Value-Op -> *
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMultiply], 27)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalMultiply]);
 
 		// Value-Op -> /
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalDivide], 28)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalDivide]);
 
 		// Value-Op -> =
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalEquals], 29)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalEquals]);
 
 		// Value-Op -> <
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLessThan], 30)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalLessThan]);
 
 		// Value-Op -> >
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalValueOp,
-				[GrammarSymbol.terminalGreaterThan],
-				31
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalGreaterThan]);
 
 		// Value-Op -> print
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPrint], 32)
-		);
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalPrint]);
+
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [
+			GrammarSymbol.terminalStringLessThan
+		]);
 
 		// Function -> Name
 		this.productions.push(
