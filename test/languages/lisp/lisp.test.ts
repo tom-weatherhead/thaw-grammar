@@ -27,11 +27,6 @@ function evaluateToISExpression(input: string): ISExpression {
 	const { tokenizer, parser } = createInfrastructure(ls);
 	const globalInfo = new LISPGlobalInfo({ tokenizer, parser });
 
-	// const parseResult = parser.parse(tokenizer.tokenize(input));
-	// const expr = parseResult as IExpression<ISExpression>;
-
-	// return expr.evaluate(globalInfo, globalInfo.globalEnvironment);
-
 	return globalInfo.evaluate(input);
 }
 
@@ -73,43 +68,12 @@ function lispTest(
 	}
 }
 
-test('LL(1) LISP addition test 1', () => {
-	lispTest([['(+ 2 3)', '5']]);
-});
-
 // [SetUp]
 // public void SetUp()
 // {
 // 	globalInfo.DynamicScoping = false;
 // 	globalInfo.Clear();
 // 	globalInfo.LoadPresets();
-// }
-//
-// private object GetParseResult(string input)
-// {
-// 	var parseResult = parser.Parse(tokenizer.Tokenize(input));
-//
-// 	Assert.IsNotNull(parseResult);
-// 	//Assert.AreEqual(input, parseResult.ToString());   // This fails on multi-line or whitespace-formatted input.
-// 	return parseResult;
-// }
-//
-// private ISExpression EvaluateToSExpression(string input)
-// {
-// 	var expr = GetParseResult(input) as IExpression<ISExpression>;
-//
-// 	Assert.IsNotNull(expr);
-//
-// 	var sexpr = expr.Evaluate(globalInfo.GlobalEnvironment, globalInfo);
-//
-// 	Assert.IsNotNull(sexpr);
-//
-// 	return sexpr;
-// }
-//
-// private string Evaluate(string input)
-// {
-// 	return EvaluateToSExpression(input).ToString();
 // }
 
 test('LL(1) LISP recognize test', () => {
@@ -150,7 +114,7 @@ test('LL(1) LISP recognize test', () => {
 // 	Assert.IsNotNull(expr);
 // 	Assert.AreEqual(value, expr.Value);
 // }
-//
+
 // [Test]
 // public void ParseStringLiteralTest()
 // {
@@ -161,7 +125,7 @@ test('LL(1) LISP recognize test', () => {
 // 	Assert.IsNotNull(expr);
 // 	Assert.AreEqual(expectedValue, expr.Value);
 // }
-//
+
 // [Test]
 // public void ParseQuotedIntegerLiteralTest()
 // {
@@ -185,7 +149,7 @@ test('LL(1) LISP recognize test', () => {
 //
 // 	Assert.AreEqual(value, intlit.Value);
 // }
-//
+
 // [Test]
 // public void ParseQuotedSymbolTest()
 // {
@@ -209,7 +173,7 @@ test('LL(1) LISP recognize test', () => {
 //
 // 	Assert.AreEqual(value, symbol.Value);
 // }
-//
+
 // [Test]
 // public void ParseQuotedEmptyListTest()
 // {
@@ -228,7 +192,7 @@ test('LL(1) LISP recognize test', () => {
 // 	Assert.IsNotNull(sexpr);
 // 	Assert.IsTrue(sexpr.IsNull());
 // }
-//
+
 // [Test]
 // public void ParseQuotedNonEmptyListTest1()
 // {
@@ -248,7 +212,7 @@ test('LL(1) LISP recognize test', () => {
 // 	Assert.IsTrue(sexpr.IsList());
 // 	Assert.IsFalse(sexpr.IsNull());
 // }
-//
+
 // [Test]
 // public void ParseQuotedNonEmptyListTest2()
 // {
@@ -268,7 +232,7 @@ test('LL(1) LISP recognize test', () => {
 // 	Assert.IsTrue(sexpr.IsList());
 // 	Assert.IsFalse(sexpr.IsNull());
 // }
-//
+
 // [Test]
 // public void AdditionTest()
 // {
@@ -318,6 +282,10 @@ test('LL(1) LISP recognize test', () => {
 // 	Assert.AreEqual("5", sexpr.ToString());
 // }
 
+test('LL(1) LISP addition test 2', () => {
+	lispTest([['(+ 2 3)', '5']]);
+});
+
 test('LISP multi-operator test', () => {
 	lispTest([['(- (* 8 (+ 12 1)) (/ (+ 16 4) 5))', '100']]);
 });
@@ -346,7 +314,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual(input, variable.Name);
 // }
-//
+
 // [Test]
 // public void VariableTest2()
 // {
@@ -372,14 +340,14 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("n", variable.Name);
 // 	Assert.AreEqual(1, intLit.Value);
 // }
-//
-// [Test]
-// public void IfTest()
-// {
-// 	Assert.AreEqual("First", Evaluate("(if (> 2 1) 'First 'Second)"));
-// 	Assert.AreEqual("Second", Evaluate("(if (< 2 1) 'First 'Second)"));
-// }
-//
+
+test('LL(1) LISP if test', () => {
+	lispTest([
+		["(if (> 2 1) 'First 'Second)", 'First'],
+		["(if (< 2 1) 'First 'Second)", 'Second']
+	]);
+});
+
 // [Test]
 // public void EqualsTest()
 // {
@@ -412,7 +380,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("()", Evaluate("(= '() '(1 2 3))"));
 // 	Assert.AreEqual("T", Evaluate("(= '() '())"));
 // }
-//
+
 // [Test]
 // public void WhileTest()
 // {
@@ -429,7 +397,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("10", Evaluate(whileTest));
 // }
-//
+
 // [Test]
 // public void SetTest()
 // {
@@ -437,20 +405,20 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("2", Evaluate("globalN"));
 // 	Assert.AreEqual("3", Evaluate("(+ globalN 1)"));
 // }
-//
+
 // [Test]
 // public void BeginTest()
 // {
 // 	Assert.AreEqual("13", Evaluate("(begin 1 1 2 3 5 8 13)"));
 // }
-//
+
 // [Test]
 // public void FuncDefTest()
 // {
 // 	Assert.AreEqual("T", Evaluate("(define increment (n) (+ n 1))"));
 // 	Assert.AreEqual("14", Evaluate("(increment 13)"));
 // }
-//
+
 // [Test]
 // public void GCDFunctionTest()
 // {
@@ -459,7 +427,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("7", Evaluate("(gcd 343 91)"));
 // 	Assert.AreEqual("1", Evaluate("(gcd 31 29)"));
 // }
-//
+
 // [Test]
 // public void NumberPredicateTest()
 // {
@@ -472,7 +440,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("()", Evaluate("(number? \"ABC\")"));   // String
 // 	Assert.AreEqual("()", Evaluate("(number? '\"ABC\")"));  // Quoted string
 // }
-//
+
 // [Test]
 // public void SymbolPredicateTest()
 // {
@@ -485,7 +453,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("()", Evaluate("(symbol? \"ABC\")"));   // String
 // 	Assert.AreEqual("()", Evaluate("(symbol? '\"ABC\")"));  // Quoted string
 // }
-//
+
 // [Test]
 // public void ListPredicateTest()
 // {
@@ -498,7 +466,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("()", Evaluate("(list? \"ABC\")"));     // String
 // 	Assert.AreEqual("()", Evaluate("(list? '\"ABC\")"));    // Quoted string
 // }
-//
+
 // [Test]
 // public void NullPredicateTest()
 // {
@@ -511,7 +479,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("()", Evaluate("(null? \"ABC\")"));     // String
 // 	Assert.AreEqual("()", Evaluate("(null? '\"ABC\")"));    // Quoted string
 // }
-//
+
 // [Test]
 // public void StringPredicateTest()
 // {
@@ -524,14 +492,14 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("T", Evaluate("(string? \"ABC\")"));    // String
 // 	Assert.AreEqual("T", Evaluate("(string? '\"ABC\")"));   // Quoted string
 // }
-//
+
 // [Test]
 // public void ConsTest()
 // {
 // 	Assert.AreEqual("(1)", Evaluate("(cons 1 '())"));
 // 	Assert.AreEqual("(1 2 3)", Evaluate("(cons 1 '(2 3))"));
 // }
-//
+
 // [Test]
 // public void CarTest()
 // {
@@ -539,7 +507,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("1", Evaluate("(car '(1 2 3))"));
 // 	Assert.AreEqual("(1 2)", Evaluate("(car '((1 2) (3 4)))"));
 // }
-//
+
 // [Test]
 // public void CdrTest()
 // {
@@ -547,14 +515,14 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("(2 3)", Evaluate("(cdr '(1 2 3))"));
 // 	Assert.AreEqual("((3 4))", Evaluate("(cdr '((1 2) (3 4)))"));
 // }
-//
+
 // [Test]
 // public void LengthFunctionTest()
 // {
 // 	Assert.AreEqual("0", Evaluate("(length '())"));
 // 	Assert.AreEqual("6", Evaluate("(length '(1 1 2 3 5 8))"));
 // }
-//
+
 // [Test]
 // public void DotTest()
 // {
@@ -562,7 +530,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("(1 2 . 3)", Evaluate("(set x '(1 2 . 3))"));
 // 	Assert.AreEqual("(1 2 3 4)", Evaluate("(set x '(1 2 . (3 4)))"));
 // }
-//
+
 // [Test]
 // public void GlobalVsLocalVariableTest()
 // {
@@ -572,31 +540,33 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("1", Evaluate("(func2 0)"));
 // }
-//
-// [Test]
-// public void CondTest()
-// {
-// 	Evaluate("(define condtest (n) (cond ((= n 1) 'First) ((= n 2) 'Second) ((= n 3) 'Third) ('T 'Other)))");
-//
-// 	Assert.AreEqual("Other", Evaluate("(condtest 0)"));
-// 	Assert.AreEqual("First", Evaluate("(condtest 1)"));
-// 	Assert.AreEqual("Second", Evaluate("(condtest 2)"));
-// 	Assert.AreEqual("Third", Evaluate("(condtest 3)"));
-// 	Assert.AreEqual("Other", Evaluate("(condtest 4)"));
-// }
-//
+
+test('LL(1) LISP cond test', () => {
+	lispTest([
+		[
+			"(define condtest (n) (cond ((= n 1) 'First) ((= n 2) 'Second) ((= n 3) 'Third) ('T 'Other)))",
+			'T'
+		],
+		['(condtest 0)', 'Other'],
+		['(condtest 1)', 'First'],
+		['(condtest 2)', 'Second'],
+		['(condtest 3)', 'Third'],
+		['(condtest 4)', 'Other']
+	]);
+});
+
 // [Test]
 // public void LetTest()
 // {
 // 	Assert.AreEqual("5", Evaluate("(let ((n (+ 2 3))) n)"));
 // }
-//
+
 // [Test]
 // public void LetStarTest()
 // {
 // 	Assert.AreEqual("25", Evaluate("(let* ((x (+ 2 3)) (y (* x x))) y)"));
 // }
-//
+
 // [Test]
 // public void ListTest()
 // {
@@ -604,7 +574,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("(1)", Evaluate("(list 1)"));
 // 	Assert.AreEqual("(1 2 3)", Evaluate("(list 1 2 3)"));
 // }
-//
+
 // [Test]
 // public void SieveOfEratosthenesTest()   // See page 31
 // {
@@ -632,7 +602,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("(2 3 5 7)", Evaluate("(primes<= 10)"));
 // 	Assert.AreEqual("(2 3 5 7 11 13 17 19 23 29)", Evaluate("(primes<= 30)"));
 // }
-//
+
 // [Test]
 // public void PropertyListTest()   // See page 33
 // {
@@ -671,7 +641,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("(banana lemon)", Evaluate("(gatherprop 'colour 'yellow fruits)"));
 // }
-//
+
 // [Test]
 // public void RplacaRplacdTest()  // See page 55
 // {
@@ -731,7 +701,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("(7 6 5 4 3 2 1)", Evaluate("(nreverse '(1 2 3 4 5 6 7))"));
 // }
-//
+
 // [Test]
 // public void CountTest()     // Exercise 1a), from page 59
 // {
@@ -753,7 +723,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("1", Evaluate("(count 'a '(1 b a (c a)))"));
 // 	Assert.AreEqual("2", Evaluate("(countall 'a '(1 b a (c a)))"));
 // }
-//
+
 // [Test]
 // public void ReverseTest()     // Exercise 1b), from page 60
 // {
@@ -764,7 +734,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("(e (c d) b a)", Evaluate("(reverse '(a b (c d) e))"));
 // }
-//
+
 // [Test]
 // public void TwistTest()     // Exercise 1c), from page 60
 // {
@@ -776,7 +746,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("(e (d c) ((5 b) a))", Evaluate("(twist '((a (b 5)) (c d) e))"));
 // }
-//
+
 // [Test]
 // public void FlattenTest()     // Exercise 1d), from page 60
 // {
@@ -794,7 +764,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("(a b c d e)", Evaluate("(flatten '((a b) ((c d) e)))"));
 // }
-//
+
 // [Test]
 // public void SublistTest()     // Exercise 1e), from page 60
 // {
@@ -830,7 +800,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("()", Evaluate("(contig-sublist '(a b c) '(x a y b z c))"));
 // 	Assert.AreEqual("T", Evaluate("(contig-sublist '(a y) '(x a y b z c))"));
 // }
-//
+
 // [Test]
 // public void SetsTest()     // Exercise 2, from page 60
 // {
@@ -883,7 +853,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("T", Evaluate("(=set (addelt 3 (addelt 1 (addelt 2 nullset))) s)"));
 // 	Assert.AreEqual("()", Evaluate("(=set (addelt 3 (addelt 1 (addelt 2 (addelt 4 nullset)))) s)"));
 // }
-//
+
 // [Test]
 // public void TreeTraversalTest()     // From pages 35-37, and Exercise 4, from pages 60-61
 // {
@@ -932,7 +902,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("(C D B G H F I E A)", Evaluate("(post-ord sample-tree)"));
 // }
-//
+
 // [Test]
 // public void MacroTest()     // From pages 56-57, and Exercise 12, from pages 62-63
 // {
@@ -949,7 +919,7 @@ test('LISP inequality test', () => {
 // 	Evaluate("(for x 1 10 (set sum (+ sum x)))");
 // 	Assert.AreEqual("55", Evaluate("sum"));
 // }
-//
+
 // [Test]
 // public void RandomTest()
 // {
@@ -959,7 +929,7 @@ test('LISP inequality test', () => {
 // 	Assert.IsTrue(x >= 0);
 // 	Assert.IsTrue(x < maxValue);
 // }
-//
+
 // [Test]
 // public void RelationalDatabaseTest()    // From Section 2.3 (pages 39-45) in Kamin
 // {
@@ -1146,7 +1116,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("((Weapon) (poison))",
 // 		Evaluate("(REMOVE '(Criminal Victim Motive) LONDON-MURDERS)"));
 // }
-//
+
 // [Test]
 // public void EvalInLISPTest()    // From Section 2.4 (pages 46-51) in Kamin
 // {
@@ -1419,7 +1389,7 @@ test('LISP inequality test', () => {
 // d)
 // ))"));
 // }
-//
+
 // [Test]
 // public void QuoteKeywordTest()
 // {
@@ -1437,7 +1407,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("(quote ())", Evaluate("'(quote ())"));
 // 	//Assert.AreEqual("(quote T)", Evaluate("(quote (quote T))"));
 // }
-//
+
 // [Test]
 // public void Cond4AsMacroTest()  // See the end of exercise 12 on page 63
 // {
@@ -1456,7 +1426,7 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("Third", Evaluate("(cond4test 3)"));
 // 	Assert.AreEqual("Other", Evaluate("(cond4test 4)"));
 // }
-//
+
 // [Test]
 // public void DynamicScopingTest()
 // {
@@ -1472,7 +1442,7 @@ test('LISP inequality test', () => {
 //
 // 	Assert.AreEqual("13", Evaluate("(outerFunc)"));
 // }
-//
+
 // [Test]
 // public void PrintTest()
 // {
@@ -1517,23 +1487,24 @@ test('LISP inequality test', () => {
 // 	Assert.AreEqual("ABC", Evaluate("(stringtosymbol \"ABC\")"));
 // 	Assert.AreEqual("T", Evaluate("(symbol? (stringtosymbol \"ABC\"))"));
 // }
-//
-// [Test]
-// public void FloatTest()
-// {
-// 	Assert.AreEqual("3.25", Evaluate("(+ 1.25 2)"));
-// 	Assert.AreEqual("3.5", Evaluate("(+ 1 2.5)"));
-// 	Assert.AreEqual("3.75", Evaluate("(+ 1.25 2.5)"));
-//
-// 	Assert.AreEqual("()", Evaluate("(> 1.25 2)"));
-// 	Assert.AreEqual("()", Evaluate("(> 1 2.5)"));
-// 	Assert.AreEqual("()", Evaluate("(> 1.25 2.5)"));
-//
-// 	Assert.AreEqual("T", Evaluate("(> 3.25 2)"));
-// 	Assert.AreEqual("T", Evaluate("(> 3 2.5)"));
-// 	Assert.AreEqual("T", Evaluate("(> 3.25 2.5)"));
-// }
-//
+
+// TODO: Add floating-point numbers to the LISP grammar
+test('LL(1) LISP floating-point numbers test', () => {
+	lispTest([
+		['(+ 1.25 2)', '3.25'],
+		['(+ 1 2.5)', '3.5'],
+		['(+ 1.25 2.5)', '3.75'],
+
+		['(> 1.25 2)', '()'],
+		['(> 1 2.5)', '()'],
+		['(> 1.25 2.5)', '()'],
+
+		['(> 3.25 2)', 'T'],
+		['(> 3 2.5)', 'T'],
+		['(> 3.25 2.5)', 'T']
+	]);
+});
+
 // [Test]
 // public void MacroApostrophesToQuoteKeywordsTest()
 // {

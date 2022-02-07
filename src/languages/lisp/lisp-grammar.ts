@@ -200,6 +200,7 @@ export class LISPGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalPrint);
 		this.terminals.push(GrammarSymbol.terminalID);
 		this.terminals.push(GrammarSymbol.terminalIntegerLiteral);
+		this.terminals.push(GrammarSymbol.terminalFloatLiteral);
 		this.terminals.push(GrammarSymbol.terminalCons);
 		this.terminals.push(GrammarSymbol.terminalCar);
 		this.terminals.push(GrammarSymbol.terminalCdr);
@@ -547,6 +548,8 @@ export class LISPGrammar extends GrammarBase {
 		// Value -> Integer
 		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalIntegerLiteral]);
 
+		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalFloatLiteral]);
+
 		this.addProduction(GrammarSymbol.nonterminalValue, [GrammarSymbol.terminalStringLiteral]);
 
 		// Value-Op -> +
@@ -779,7 +782,8 @@ export class LISPGrammar extends GrammarBase {
 					GrammarSymbol.nonterminalExpression,
 					GrammarSymbol.nonterminalExpression,
 					GrammarSymbol.terminalRightBracket,
-					GrammarSymbol.nonterminalExprPairList
+					GrammarSymbol.nonterminalExprPairList,
+					'#exprPairList'
 				],
 				53
 			)
