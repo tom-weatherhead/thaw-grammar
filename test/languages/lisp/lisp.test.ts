@@ -560,6 +560,9 @@ test('LL(1) LISP cond test', () => {
 // {
 // 	Assert.AreEqual("5", Evaluate("(let ((n (+ 2 3))) n)"));
 // }
+test('LL(1) LISP let test', () => {
+	lispTest([['(let ((n (+ 2 3))) n)', '5']]);
+});
 
 // [Test]
 // public void LetStarTest()

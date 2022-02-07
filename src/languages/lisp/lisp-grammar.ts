@@ -234,6 +234,8 @@ export class LISPGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalStringLessThan);
 		// this.terminals.push(GrammarSymbol.terminalRandom);
 		this.terminals.push(GrammarSymbol.terminalThrow);
+		this.terminals.push(GrammarSymbol.terminalLet);
+		this.terminals.push(GrammarSymbol.terminalLetStar);
 		this.terminals.push(GrammarSymbol.terminalEOF);
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
@@ -802,6 +804,29 @@ export class LISPGrammar extends GrammarBase {
 		this.productions.push(
 			createProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalList], 55)
 		);
+
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.nonterminalLetKeyword,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVarExprList,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExpression,
+			'#letUsage'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLet]);
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLetStar]);
+		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalVarExprList,
+			'#varExprList'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
+			GrammarSymbol.Lambda,
+			'#emptyVarExprList'
+		]);
 
 		// **** BEGIN : Ignore for now ****
 		// Productions.Add(createProduction(Symbol.N_ValueOp, new List<object>() { Symbol.T_StringPred }, 73)); // Note: Number is out of order

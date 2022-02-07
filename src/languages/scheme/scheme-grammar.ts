@@ -647,73 +647,29 @@ export class SchemeGrammar extends GrammarBase {
 		);
 		// this.productions.push(createProduction(Symbol.nonterminalValue, [Symbol.terminalFloatLiteral], 60)); // Note: Number is out of order
 
-		// Productions.Add(createProduction(Symbol.N_BracketedExpression, new List<object>() {
-		//     Symbol.N_LetKeyword,
-		//     Symbol.T_LeftBracket,
-		//     Symbol.N_VarExprList,
-		//     Symbol.T_RightBracket,
-		//     Symbol.N_Expression, "#letUsage" }, 34));
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalBracketedExpression,
-				[
-					GrammarSymbol.nonterminalLetKeyword,
-					GrammarSymbol.terminalLeftBracket,
-					GrammarSymbol.nonterminalVarExprList,
-					GrammarSymbol.terminalRightBracket,
-					GrammarSymbol.nonterminalExpression,
-					'#letUsage'
-				],
-				59
-			)
-		);
-		// Productions.Add(createProduction(Symbol.N_LetKeyword, new List<object>() { Symbol.T_Let }, 35));
-		// Productions.Add(createProduction(Symbol.N_LetKeyword, new List<object>() { Symbol.T_LetStar }, 36));
-		this.productions.push(
-			createProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLet], 60)
-		);
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalLetKeyword,
-				[GrammarSymbol.terminalLetStar],
-				61
-			)
-		);
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalLetKeyword,
-				[GrammarSymbol.terminalLetRec],
-				62
-			)
-		);
-		// Productions.Add(createProduction(Symbol.N_VarExprList, new List<object>() {
-		//     Symbol.T_LeftBracket,
-		//     Symbol.N_Variable,
-		//     Symbol.N_Expression,
-		//     Symbol.T_RightBracket,
-		//     Symbol.N_VarExprList, "#varExprList" }, 37));
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalVarExprList,
-				[
-					GrammarSymbol.terminalLeftBracket,
-					GrammarSymbol.nonterminalVariable,
-					GrammarSymbol.nonterminalExpression,
-					GrammarSymbol.terminalRightBracket,
-					GrammarSymbol.nonterminalVarExprList,
-					'#varExprList'
-				],
-				63
-			)
-		);
-		// Productions.Add(createProduction(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, "#emptyVarExprList" }, 38));
-		this.productions.push(
-			createProduction(
-				GrammarSymbol.nonterminalVarExprList,
-				[GrammarSymbol.Lambda, '#emptyVarExprList'],
-				64
-			)
-		);
+		this.addProduction(GrammarSymbol.nonterminalBracketedExpression, [
+			GrammarSymbol.nonterminalLetKeyword,
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVarExprList,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalExpression,
+			'#letUsage'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLet]);
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLetStar]);
+		this.addProduction(GrammarSymbol.nonterminalLetKeyword, [GrammarSymbol.terminalLetRec]);
+		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
+			GrammarSymbol.terminalLeftBracket,
+			GrammarSymbol.nonterminalVariable,
+			GrammarSymbol.nonterminalExpression,
+			GrammarSymbol.terminalRightBracket,
+			GrammarSymbol.nonterminalVarExprList,
+			'#varExprList'
+		]);
+		this.addProduction(GrammarSymbol.nonterminalVarExprList, [
+			GrammarSymbol.Lambda,
+			'#emptyVarExprList'
+		]);
 
 		// this.productions.push(createProduction(
 		// 	Symbol.nonterminalSExpression, // TODO? : Create Symbol.nonterminalBracketedSExpression ?
