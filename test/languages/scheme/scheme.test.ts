@@ -683,32 +683,38 @@ test('Scheme string< test', () => {
 test('LL(1) Scheme string-sort test', () => {
 	// 2013/12/14
 	const strings = ['abbreviate', 'abacab', 'abbot', 'a', 'baa', 'abcess', 'ab', 'abacus'];
-	const stringList = strings.map(s => '"' + s + '"').join(' ');
-	const expectedResult = "(\"a\" \"ab\" \"abacab\" \"abacus\" \"abbot\" \"abbreviate\" \"abcess\" \"baa\")";
+	const stringList = strings.map((s) => '"' + s + '"').join(' ');
+	const expectedResult = '("a" "ab" "abacab" "abacus" "abbot" "abbreviate" "abcess" "baa")';
 
-	schemeTest([
-		[`((insertion-sort string<) (list ${stringList}))`, expectedResult],
-		[`((quicksort string<) (list ${stringList}))`, expectedResult],
-		[`((merge-sort string<) (list ${stringList}))`, expectedResult]
-	], { presets: ['sort'] });
+	schemeTest(
+		[
+			[`((insertion-sort string<) (list ${stringList}))`, expectedResult],
+			[`((quicksort string<) (list ${stringList}))`, expectedResult],
+			[`((merge-sort string<) (list ${stringList}))`, expectedResult]
+		],
+		{ presets: ['sort'] }
+	);
 });
 
 test('LL(1) Scheme repeat-list test', () => {
 	// 2014/02/15.  This might be useful in "restruct" in our Scheme APL interpreter.
 	schemeTest([
-		[[
-			'(set repeat-list (lambda (n master)',
-			'(letrec',
-			'((loop (lambda (n lm)',
-			'    (if (<= n lm)',
-			"        (take n master) ; Verify the order of take's args",
-			'        (append master (loop (- n lm) lm))',
-			'    )',
-			')))',
-			'(loop n (length master))',
-			')',
-			'))'
-		].join('\n'), '<closure>'],
+		[
+			[
+				'(set repeat-list (lambda (n master)',
+				'(letrec',
+				'((loop (lambda (n lm)',
+				'    (if (<= n lm)',
+				"        (take n master) ; Verify the order of take's args",
+				'        (append master (loop (- n lm) lm))',
+				'    )',
+				')))',
+				'(loop n (length master))',
+				')',
+				'))'
+			].join('\n'),
+			'<closure>'
+		],
 		["(repeat-list 11 '(2 3 5 7))", '(2 3 5 7 2 3 5 7 2 3 5)']
 	]);
 });
