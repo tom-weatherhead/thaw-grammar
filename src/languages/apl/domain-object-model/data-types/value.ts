@@ -259,8 +259,8 @@ export class APLValue implements IAPLValue {
 
 				break;
 
-			default:
-				const newOffsetVector = offsetVector.slice(0); // Clone offsetVector
+			default: // Clone offsetVector
+				const newOffsetVector = offsetVector.slice(0);
 
 				newOffsetVector.push(0);
 

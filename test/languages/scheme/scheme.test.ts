@@ -680,39 +680,35 @@ test('Scheme string< test', () => {
 	]);
 });
 
-// [Test]
-// public void StringSortTest()    // 2013/12/14
-// {
-//     globalInfo.LoadPreset("sort");
-//
-//     // 1) Insertion sort.
-//     Assert.AreEqual("(a ab abacab abacus abbot abbreviate abcess baa)",
-//         Evaluate("((insertion-sort string<) '(\"abbreviate\" \"abacab\" \"abbot\" \"a\" \"baa\" \"abcess\" \"ab\" \"abacus\"))"));
-//
-//     // 2) Quicksort.
-//     Assert.AreEqual("(a ab abacab abacus abbot abbreviate abcess baa)",
-//         Evaluate("((quicksort string<) '(\"abbreviate\" \"abacab\" \"abbot\" \"a\" \"baa\" \"abcess\" \"ab\" \"abacus\"))"));
-//
-//     // 3) Merge sort.
-//     Assert.AreEqual("(a ab abacab abacus abbot abbreviate abcess baa)",
-//         Evaluate("((merge-sort string<) '(\"abbreviate\" \"abacab\" \"abbot\" \"a\" \"baa\" \"abcess\" \"ab\" \"abacus\"))"));
-// }
+test('LL(1) Scheme string-sort test', () => {
+	// 2013/12/14
+	const strings = ['abbreviate', 'abacab', 'abbot', 'a', 'baa', 'abcess', 'ab', 'abacus'];
+	const stringList = strings.map(s => '"' + s + '"').join(' ');
+	const expectedResult = "(\"a\" \"ab\" \"abacab\" \"abacus\" \"abbot\" \"abbreviate\" \"abcess\" \"baa\")";
 
-// [Test]
-// public void RepeatListTest()    // 2014/02/15.  This might be useful in "restruct" in our Scheme APL interpreter.
-// {
-//     Evaluate(@"
-// (set repeat-list (lambda (n master)
-// (letrec
-// ((loop (lambda (n lm)
-//     (if (<= n lm)
-//         (take n master) ; Verify the order of take's args
-//         (append master (loop (- n lm) lm))
-//     )
-// )))
-// (loop n (length master))
-// )
-// ))");
-//
-//     Assert.AreEqual("(2 3 5 7 2 3 5 7 2 3 5)", Evaluate("(repeat-list 11 '(2 3 5 7))"));
-// }
+	schemeTest([
+		[`((insertion-sort string<) (list ${stringList}))`, expectedResult],
+		[`((quicksort string<) (list ${stringList}))`, expectedResult],
+		[`((merge-sort string<) (list ${stringList}))`, expectedResult]
+	], { presets: ['sort'] });
+});
+
+test('LL(1) Scheme repeat-list test', () => {
+	// 2014/02/15.  This might be useful in "restruct" in our Scheme APL interpreter.
+	schemeTest([
+		[[
+			'(set repeat-list (lambda (n master)',
+			'(letrec',
+			'((loop (lambda (n lm)',
+			'    (if (<= n lm)',
+			"        (take n master) ; Verify the order of take's args",
+			'        (append master (loop (- n lm) lm))',
+			'    )',
+			')))',
+			'(loop n (length master))',
+			')',
+			'))'
+		].join('\n'), '<closure>'],
+		["(repeat-list 11 '(2 3 5 7))", '(2 3 5 7 2 3 5 7 2 3 5)']
+	]);
+});
