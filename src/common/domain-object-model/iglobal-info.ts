@@ -1,7 +1,10 @@
 // tom-weatherhead/thaw-grammar/src/common/domain-object-model/iglobal-info.ts
 
+import { IParser, ITokenizer } from 'thaw-interpreter-types';
+
 import { IEnvironmentFrame } from './environment-frame';
 import { IFunctionDefinition } from './function-definition';
+import { IMacroDefinition } from './imacro-definition';
 
 // T is the language's value type.
 
@@ -20,8 +23,11 @@ export interface IGlobalInfoForInterpreter {
 
 export interface IGlobalInfo<T> extends IGlobalInfoForInterpreter {
 	// **** Public instance fields ****
+	tokenizer: ITokenizer | undefined;
+	parser: IParser | undefined;
 	globalEnvironment: IEnvironmentFrame<T>;
 	functionDefinitions: Map<string, IFunctionDefinition<T>>;
+	macroDefinitions: Map<string, IMacroDefinition<T>>;
 	dynamicScoping: boolean;
 	debug: boolean;
 

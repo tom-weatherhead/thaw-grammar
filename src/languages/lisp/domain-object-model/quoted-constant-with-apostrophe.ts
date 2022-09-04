@@ -6,7 +6,16 @@ import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 import { ISExpression } from './isexpression';
 
+const typenameQuotedConstantWithApostrophe = 'QuotedConstantWithApostrophe';
+
+export function isQuotedConstantWithApostrophe(obj: unknown): obj is QuotedConstantWithApostrophe {
+	const qca = obj as QuotedConstantWithApostrophe;
+
+	return typeof qca !== 'undefined' && qca.typename === typenameQuotedConstantWithApostrophe;
+}
+
 export class QuotedConstantWithApostrophe implements IExpression<ISExpression> {
+	public readonly typename: string = typenameQuotedConstantWithApostrophe;
 	public readonly sexpression: ISExpression;
 
 	constructor(sexpression: ISExpression) {

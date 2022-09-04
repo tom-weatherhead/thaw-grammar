@@ -7,7 +7,17 @@ import { FunctionDefinition } from './function-definition';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
+const typenameOperatorUsage = 'OperatorUsage';
+
+export function isOperatorUsage<T>(obj: unknown): obj is OperatorUsage<T> {
+	const operatorUsage = obj as OperatorUsage<T>;
+
+	return typeof operatorUsage !== 'undefined' && operatorUsage.typename === typenameOperatorUsage;
+}
+
 export class OperatorUsage<T> implements IExpression<T> {
+	public readonly typename: string = typenameOperatorUsage;
+
 	private readonly twoArgumentIntegerPredicates = new Map<
 		string,
 		(operand1: number, operand2: number) => boolean
@@ -81,12 +91,11 @@ export class OperatorUsage<T> implements IExpression<T> {
 			);
 		}
 
-		// T macroResult;
+		const macroResult = this.tryInvokeMacro(this.expressionList, localEnvironment, globalInfo);
 
-		// if (TryInvokeMacro(expressionList.value, localEnvironment, globalInfo, out macroResult))
-		// {
-		// 	return macroResult;
-		// }
+		if (typeof macroResult !== 'undefined') {
+			return macroResult;
+		}
 
 		const evaluatedArguments = this.expressionList.map((expr: IExpression<T>) =>
 			expr.evaluate(globalInfo, localEnvironment, options)
@@ -126,6 +135,12 @@ export class OperatorUsage<T> implements IExpression<T> {
 					// } else if (globalInfo.MacroDefinitions != null && globalInfo.MacroDefinitions.ContainsKey(this.operatorName)) {
 					// 	return globalInfo.MacroDefinitions[operatorName].ArgumentCount;
 				} else {
+					const macroDef = globalInfo.macroDefinitions.get(this.operatorName.value);
+
+					if (typeof macroDef !== 'undefined') {
+						return macroDef.argumentCount;
+					}
+
 					return undefined;
 				}
 		}
@@ -136,15 +151,16 @@ export class OperatorUsage<T> implements IExpression<T> {
 		return undefined;
 	}
 
-	// protected virtual bool TryInvokeMacro(
-	// 	List<IExpression<T>> unevaluatedArguments,
-	// 	EnvironmentFrame<T> localEnvironment,
-	// 	IGlobalInfo<T> globalInfo,
-	// 	out T macroResult)
-	// {
-	// 	macroResult = default(T);
-	// 	return false;
-	// }
+	/* eslint-disable @typescript-eslint/no-unused-vars */
+	protected tryInvokeMacro(
+		unevaluatedArguments: IExpression<T>[],
+		localEnvironment: IEnvironmentFrame<T> | undefined,
+		globalInfo: IGlobalInfo<T>
+		// , out ISExpression macroResult
+	): T | undefined {
+		return undefined;
+	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 
 	// protected virtual void UpdateStackTrace(EnvironmentFrame<T> oldEnvFrame, EnvironmentFrame<T> newEnvFrame,
 	// 	int line, int column)

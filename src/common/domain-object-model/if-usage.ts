@@ -4,7 +4,17 @@ import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
+const typenameIfUsage = 'IfUsage';
+
+export function isIfUsage<T>(obj: unknown): obj is IfUsage<T> {
+	const ifUsage = obj as IfUsage<T>;
+
+	return typeof ifUsage !== 'undefined' && ifUsage.typename === typenameIfUsage;
+}
+
 export class IfUsage<T> implements IExpression<T> {
+	public readonly typename: string = typenameIfUsage;
+
 	constructor(
 		public readonly condition: IExpression<T>,
 		public readonly ifBody: IExpression<T>,

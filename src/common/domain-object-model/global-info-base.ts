@@ -13,8 +13,8 @@ import { IMacroDefinition } from './imacro-definition';
 
 // export abstract class GlobalInfoBase<T> implements IGlobalInfo<T>, IGlobalInfoOps {
 export abstract class GlobalInfoBase<T> implements IGlobalInfo<T> {
-	protected readonly tokenizer: ITokenizer | undefined;
-	protected readonly parser: IParser | undefined;
+	public readonly tokenizer: ITokenizer | undefined;
+	public readonly parser: IParser | undefined;
 	public readonly globalEnvironment: IEnvironmentFrame<T> = new EnvironmentFrame<T>();
 	public readonly functionDefinitions = new Map<string, IFunctionDefinition<T>>();
 	public readonly macroDefinitions = new Map<string, IMacroDefinition<T>>();

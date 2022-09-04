@@ -4,7 +4,17 @@ import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
+const typenameWhileUsage = 'WhileUsage';
+
+export function isWhileUsage<T>(obj: unknown): obj is WhileUsage<T> {
+	const whileUsage = obj as WhileUsage<T>;
+
+	return typeof whileUsage !== 'undefined' && whileUsage.typename === typenameWhileUsage;
+}
+
 export class WhileUsage<T> implements IExpression<T> {
+	public readonly typename: string = typenameWhileUsage;
+
 	constructor(public readonly condition: IExpression<T>, public readonly body: IExpression<T>) {}
 
 	public toString(): string {

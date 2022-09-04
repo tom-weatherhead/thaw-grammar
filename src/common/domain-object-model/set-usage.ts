@@ -7,7 +7,17 @@ import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 import { IVariable } from './variable';
 
+const typenameSetUsage = 'SetUsage';
+
+export function isSetUsage<T>(obj: unknown): obj is SetUsage<T> {
+	const setUsage = obj as SetUsage<T>;
+
+	return typeof setUsage !== 'undefined' && setUsage.typename === typenameSetUsage;
+}
+
 export class SetUsage<T> implements IExpression<T> {
+	public readonly typename: string = typenameSetUsage;
+
 	constructor(
 		public readonly variableName: IVariable<T>,
 		public readonly expression: IExpression<T>

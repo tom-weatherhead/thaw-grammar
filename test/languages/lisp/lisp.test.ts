@@ -923,6 +923,34 @@ test('LL(1) LISP let test', () => {
 // 	Assert.AreEqual("55", Evaluate("sum"));
 // }
 
+test('LL(1) LISP macro test', () => {
+	// 2013/12/14
+
+	lispTest([
+		["(define le (x y) (cond ((< x y) 'T) ((= x y) 'T) ('T '())))", 'T'],
+		['(define add (x y) (+ x y))', 'T'],
+		[
+			[
+				'(define-macro for (indexvar lower upper body)',
+				"(list 'begin",
+				"(list 'set indexvar lower)",
+				"(list 'while",
+				// "	(list '<= indexvar upper)",
+				"	(list 'le indexvar upper)",
+				"	(list 'begin body",
+				// TODO: Recognize '+ as a quoted S-expression
+				// "		(list 'set indexvar (list '+ indexvar 1))))))"
+				"		(list 'set indexvar (list 'add indexvar 1))))))"
+			].join('\n'),
+			'T'
+		],
+		['(set sum 0)', '0'],
+		// ['(for x 1 10 (set sum (+ sum x)))', '()'],
+		['(for x 1 10 (set sum (add sum x)))', '()'],
+		['sum', '55']
+	]);
+});
+
 // [Test]
 // public void RandomTest()
 // {

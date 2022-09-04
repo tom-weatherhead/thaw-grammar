@@ -6,7 +6,18 @@ import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 
 import { ISExpression } from './isexpression';
 
+const typenameQuotedConstantWithQuoteKeyword = 'QuotedConstantWithQuoteKeyword';
+
+export function isQuotedConstantWithQuoteKeyword(
+	obj: unknown
+): obj is QuotedConstantWithQuoteKeyword {
+	const qcqk = obj as QuotedConstantWithQuoteKeyword;
+
+	return typeof qcqk !== 'undefined' && qcqk.typename === typenameQuotedConstantWithQuoteKeyword;
+}
+
 export class QuotedConstantWithQuoteKeyword implements IExpression<ISExpression> {
+	public readonly typename: string = typenameQuotedConstantWithQuoteKeyword;
 	public readonly sexpression: ISExpression;
 
 	constructor(sexpression: ISExpression) {
