@@ -1009,6 +1009,8 @@ export class LISPGrammar extends GrammarBase {
 				name = semanticStack.pop() as Name;
 
 				if (name.value.length > 0 && name.value[0] === "'") {
+					// TODO: Instead of handling the apostrophe like this here,
+					// we should be using token.isQuoted in tokenToSymbol() below.
 					name = new Name(name.value.substring(1));
 				}
 

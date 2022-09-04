@@ -938,13 +938,14 @@ test('LL(1) LISP macro test', () => {
 				// "	(list '<= indexvar upper)",
 				"	(list 'le indexvar upper)",
 				"	(list 'begin body",
+				// TODO: Recognize '+ as a quoted S-expression
 				// "		(list 'set indexvar (list '+ indexvar 1))))))"
 				"		(list 'set indexvar (list 'add indexvar 1))))))"
 			].join('\n'),
 			'T'
 		],
 		['(set sum 0)', '0'],
-		// ['(for x 1 10 (set sum (+ sum x)))', '137'],
+		// ['(for x 1 10 (set sum (+ sum x)))', '()'],
 		['(for x 1 10 (set sum (add sum x)))', '()'],
 		['sum', '55']
 	]);
