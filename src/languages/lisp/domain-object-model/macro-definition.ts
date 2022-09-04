@@ -2,6 +2,7 @@
 
 import { Name } from 'thaw-interpreter-core';
 
+import { isBeginUsage } from '../../../common/domain-object-model/begin-usage';
 import {
 	EnvironmentFrame,
 	IEnvironmentFrame
@@ -11,6 +12,7 @@ import { isIfUsage } from '../../../common/domain-object-model/if-usage';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { IMacroDefinition } from '../../../common/domain-object-model/imacro-definition';
+import { isSetUsage } from '../../../common/domain-object-model/set-usage';
 import { IVariable } from '../../../common/domain-object-model/variable';
 import { isWhileUsage } from '../../../common/domain-object-model/while-usage';
 import { ISExpression } from './isexpression';
@@ -20,9 +22,6 @@ import { isQuotedConstantWithQuoteKeyword } from './quoted-constant-with-quote-k
 import { isSExpressionList, SExpressionList } from './sexpression-list';
 
 export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinition<ISExpression> {
-	// public readonly macroName: string; // Name
-	// public readonly argList: IVariable<ISExpression>[];
-	// public readonly IExpression<ISExpression> Body;
 	public readonly argumentCount: number; // This is a 'get' accessor.
 
 	constructor(
@@ -30,9 +29,6 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		public readonly argList: IVariable<ISExpression>[],
 		public readonly body: IExpression<ISExpression>
 	) {
-		// MacroName = macroName;
-		// ArgList = argList;
-		// Body = body;
 		this.argumentCount = this.argList.length;
 	}
 
@@ -45,12 +41,6 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 	// 	{
 	// 		return ArgList.Value.Count;
 	// 	}
-	// }
-
-	// public ISExpression Evaluate(EnvironmentFrame<ISExpression> localEnvironment, IGlobalInfo<ISExpression> globalInfo)
-	// {
-	// 	globalInfo.MacroDefinitions[MacroName] = this;
-	// 	return globalInfo.TrueValue;
 	// }
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
@@ -102,20 +92,22 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 			return `(while ${this.objectToString_ApostrophesToQuoteKeywords(
 				expr.condition
 			)} ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
-		}
+		} else if (isSetUsage(expr)) {
+			// var su = (SetUsage<ISExpression>)expr;
 
-		// else if (expr is SetUsage<ISExpression>) {
-		// 	var su = (SetUsage<ISExpression>)expr;
-		//
-		// 	return string.Format("(set {0} {1})", su.VariableName,
-		// 		ObjectToString_ApostrophesToQuoteKeywords(su.Expression));
-		// } else if (expr is BeginUsage<ISExpression>) {
-		// 	var bu = (BeginUsage<ISExpression>)expr;
-		//
-		// 	return string.Format("(begin {0} {1})",
-		// 		ObjectToString_ApostrophesToQuoteKeywords(bu.FirstExpression),
-		// 		string.Join(" ", bu.ExpressionList.Value.Select(x => ObjectToString_ApostrophesToQuoteKeywords(x))));
-		// } else if (expr is CondUsage<ISExpression>) {
+			return `(set ${expr.variableName} ${this.objectToString_ApostrophesToQuoteKeywords(
+				expr.expression
+			)})`;
+		} else if (isBeginUsage(expr)) {
+			// var bu = (BeginUsage<ISExpression>)expr;
+
+			return `(begin ${this.objectToString_ApostrophesToQuoteKeywords(
+				expr.firstExpression
+			)} ${expr.expressionList
+				.map((e) => this.objectToString_ApostrophesToQuoteKeywords(e))
+				.join(' ')})`;
+		}
+		// else if (expr is CondUsage<ISExpression>) {
 		// 	var cu = (CondUsage<ISExpression>)expr;
 		//
 		// 	return string.Format("(cond {0})", string.Join(" ", cu.ExprPairList.Select(ep => string.Format("({0} {1})",

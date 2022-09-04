@@ -4,7 +4,17 @@ import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
+const typenameBeginUsage = 'BeginUsage';
+
+export function isBeginUsage<T>(obj: unknown): obj is BeginUsage<T> {
+	const beginUsage = obj as BeginUsage<T>;
+
+	return typeof beginUsage !== 'undefined' && beginUsage.typename === typenameBeginUsage;
+}
+
 export class BeginUsage<T> implements IExpression<T> {
+	public readonly typename: string = typenameBeginUsage;
+
 	constructor(
 		public readonly firstExpression: IExpression<T>,
 		public readonly expressionList: IExpression<T>[]
