@@ -7,7 +7,13 @@ import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 import { IVariable } from './variable';
 
-// export function isFunctionDefinition<T>(obj: unknown): obj is FunctionDefinition<T> { ... }
+const typenameFunctionDefinition = 'FunctionDefinition';
+
+export function isFunctionDefinition<T>(obj: unknown): obj is FunctionDefinition<T> {
+	const str = obj as FunctionDefinition<T>;
+
+	return typeof str !== 'undefined' && str.typename === typenameFunctionDefinition;
+}
 
 export interface IFunctionDefinition<T> extends IExpression<T> {
 	readonly functionName: Name;
@@ -16,6 +22,8 @@ export interface IFunctionDefinition<T> extends IExpression<T> {
 }
 
 export class FunctionDefinition<T> implements IFunctionDefinition<T> {
+	public readonly typename: string = typenameFunctionDefinition;
+
 	constructor(
 		public readonly functionName: Name,
 		public readonly argList: IVariable<T>[],

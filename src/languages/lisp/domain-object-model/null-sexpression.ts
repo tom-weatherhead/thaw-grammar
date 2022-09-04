@@ -2,7 +2,17 @@
 
 import { SExpressionBase } from './sexpression-base';
 
+const typenameLISPNull = 'NullSExpression';
+
+export function isNullSExpression(obj: unknown): obj is NullSExpression {
+	const value = obj as NullSExpression;
+
+	return typeof value !== 'undefined' && value.typename === typenameLISPNull;
+}
+
 export class NullSExpression extends SExpressionBase {
+	public readonly typename: string = typenameLISPNull;
+
 	public toString(): string {
 		return '()';
 	}

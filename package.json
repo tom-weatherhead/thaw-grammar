@@ -1,6 +1,6 @@
 {
 	"name": "thaw-grammar",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"description": "Implementations of the grammars of several programming languages, including LISP, Scheme, Prolog, and the Lambda Calculus.",
 	"keywords": [
 		"APL",
@@ -44,7 +44,7 @@
 	"scripts": {
 		"all": "npm run rebuild-online && npm pack && npm run deploy",
 		"// allw": "rmdir /Q /S coverage & rmdir /Q /S dist & npm run lint & npm run prettiercheck & npm run build & npm test & npm pack & move /Y thaw-grammar-*.tgz C:\\git\\npm-packages\\",
-		"rebuild-offline": "npm run clean-offline && npm run build-and-test",
+		"rebuild-offline": "npm run clean-build-products && npm run build-and-test",
 		"clean-build-products": "rm -rf coverage && rm -rf dist",
 		"rebuild-online": "npm run clean && npm i && npm run build-and-test",
 		"clean-packages": "rm -rf node_modules && rm -f package-lock.json",

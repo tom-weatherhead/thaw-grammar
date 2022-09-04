@@ -134,7 +134,7 @@ export class SchemeGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalPrimOpPred); // Added for Scheme.
 		this.terminals.push(GrammarSymbol.terminalClosurePred); // Added for Scheme.
 		this.terminals.push(GrammarSymbol.terminalLambdaKeyword); // Added for Scheme.
-		this.terminals.push(GrammarSymbol.terminalLetRec); // Added for Scheme.
+		// this.terminals.push(GrammarSymbol.terminalLetRec); // Added for Scheme.
 		this.terminals.push(GrammarSymbol.terminalCallCC); // Added for Scheme.
 
 		this.terminals.push(GrammarSymbol.terminalEOF);

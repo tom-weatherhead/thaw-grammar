@@ -2,6 +2,7 @@
 
 import { IEnvironmentFrame } from './environment-frame';
 import { IFunctionDefinition } from './function-definition';
+import { IMacroDefinition } from './imacro-definition';
 
 // T is the language's value type.
 
@@ -22,6 +23,7 @@ export interface IGlobalInfo<T> extends IGlobalInfoForInterpreter {
 	// **** Public instance fields ****
 	globalEnvironment: IEnvironmentFrame<T>;
 	functionDefinitions: Map<string, IFunctionDefinition<T>>;
+	macroDefinitions: Map<string, IMacroDefinition<T>>;
 	dynamicScoping: boolean;
 	debug: boolean;
 

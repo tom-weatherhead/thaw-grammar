@@ -7,9 +7,9 @@ import { SExpressionBase } from './sexpression-base';
 const typenameSExpressionList = 'SExpressionList';
 
 export function isSExpressionList(obj: unknown): obj is SExpressionList {
-	const intlit = obj as SExpressionList;
+	const sexlist = obj as SExpressionList;
 
-	return typeof intlit !== 'undefined' && intlit.typename === typenameSExpressionList;
+	return typeof sexlist !== 'undefined' && sexlist.typename === typenameSExpressionList;
 }
 
 export class SExpressionList extends SExpressionBase {

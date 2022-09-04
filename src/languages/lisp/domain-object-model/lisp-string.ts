@@ -7,9 +7,9 @@ import { SExpressionBase } from './sexpression-base';
 const typenameLISPString = 'LISPString';
 
 export function isLISPString(obj: unknown): obj is LISPString {
-	const intlit = obj as LISPString;
+	const str = obj as LISPString;
 
-	return typeof intlit !== 'undefined' && intlit.typename === typenameLISPString;
+	return typeof str !== 'undefined' && str.typename === typenameLISPString;
 }
 
 export class LISPString extends SExpressionBase {
