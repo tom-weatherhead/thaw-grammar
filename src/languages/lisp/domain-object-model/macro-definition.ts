@@ -1,6 +1,9 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/macro-definition.ts
 
-import { EnvironmentFrame, IEnvironmentFrame } from '../../../common/domain-object-model/environment-frame';
+import {
+	EnvironmentFrame,
+	IEnvironmentFrame
+} from '../../../common/domain-object-model/environment-frame';
 import { isFunctionDefinition } from '../../../common/domain-object-model/function-definition';
 import { isIfUsage } from '../../../common/domain-object-model/if-usage';
 import { IExpression } from '../../../common/domain-object-model/iexpression';
@@ -10,6 +13,8 @@ import { IVariable } from '../../../common/domain-object-model/variable';
 import { isWhileUsage } from '../../../common/domain-object-model/while-usage';
 import { ISExpression } from './isexpression';
 import { isNullSExpression } from './null-sexpression';
+import { isQuotedConstantWithApostrophe } from './quoted-constant-with-apostrophe';
+import { isQuotedConstantWithQuoteKeyword } from './quoted-constant-with-quote-keyword';
 import { isSExpressionList, SExpressionList } from './sexpression-list';
 
 export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinition<ISExpression> {
@@ -18,7 +23,11 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 	// public readonly IExpression<ISExpression> Body;
 	public readonly argumentCount: number; // This is a 'get' accessor.
 
-	constructor(public readonly macroName: string, public readonly argList: IVariable<ISExpression>[], public readonly body: IExpression<ISExpression>) {
+	constructor(
+		public readonly macroName: string,
+		public readonly argList: IVariable<ISExpression>[],
+		public readonly body: IExpression<ISExpression>
+	) {
 		// MacroName = macroName;
 		// ArgList = argList;
 		// Body = body;
@@ -54,34 +63,43 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 
 	private sExpressionListToString_ApostrophesToQuoteKeywords(l: SExpressionList): string {
-		let headAsString = this.objectToString_ApostrophesToQuoteKeywords(l.head);
+		const headAsString = this.objectToString_ApostrophesToQuoteKeywords(l.head);
 
 		if (isNullSExpression(l.tail)) {
 			return headAsString;
-		// } else if (isThunk(l.tail)) {
-		// 	return `${headAsString} ${l.tail}`;
-		}
-		else if (isSExpressionList(l.tail)) {
-			return `${headAsString} ${this.sExpressionListToString_ApostrophesToQuoteKeywords(l.tail)}`;
-		} else { // Tail is a symbol, an integer literal, a string, a closure, etc.
+			// } else if (isThunk(l.tail)) {
+			// 	return `${headAsString} ${l.tail}`;
+		} else if (isSExpressionList(l.tail)) {
+			return `${headAsString} ${this.sExpressionListToString_ApostrophesToQuoteKeywords(
+				l.tail
+			)}`;
+		} else {
+			// Tail is a symbol, an integer literal, a string, a closure, etc.
 			return `${headAsString} . ${this.objectToString_ApostrophesToQuoteKeywords(l.tail)}`;
 		}
 	}
 
 	public objectToString_ApostrophesToQuoteKeywords(expr: unknown): string {
-
 		if (isFunctionDefinition<ISExpression>(expr)) {
 			// var fd = (FunctionDefinition<ISExpression>)expr;
 
-			return `(define ${expr.functionName} (${expr.argList.map(a => a.name).join(' ')}) ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
+			return `(define ${expr.functionName} (${expr.argList
+				.map((a) => a.name)
+				.join(' ')}) ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
 		} else if (isIfUsage(expr)) {
 			// var iu = (IfUsage<ISExpression>)expr;
 
-			return `(if ${this.objectToString_ApostrophesToQuoteKeywords(expr.condition)} ${this.objectToString_ApostrophesToQuoteKeywords(expr.ifBody)} ${this.objectToString_ApostrophesToQuoteKeywords(expr.elseBody)})`;
+			return `(if ${this.objectToString_ApostrophesToQuoteKeywords(
+				expr.condition
+			)} ${this.objectToString_ApostrophesToQuoteKeywords(
+				expr.ifBody
+			)} ${this.objectToString_ApostrophesToQuoteKeywords(expr.elseBody)})`;
 		} else if (isWhileUsage(expr)) {
 			// var wu = (WhileUsage<ISExpression>)expr;
 
-			return `(while ${this.objectToString_ApostrophesToQuoteKeywords(expr.condition)} ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
+			return `(while ${this.objectToString_ApostrophesToQuoteKeywords(
+				expr.condition
+			)} ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
 		}
 
 		// else if (expr is SetUsage<ISExpression>) {
@@ -177,62 +195,54 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		}
 	}
 
-	private expressionToSExpression(expr: IExpression<ISExpression>, globalInfo: IGlobalInfo<ISExpression>): ISExpression {
+	private expressionToSExpression(
+		expr: IExpression<ISExpression>,
+		globalInfo: IGlobalInfo<ISExpression>
+	): ISExpression {
 		let quotedConstStr: string;
 
-		if (expr is QuotedConstantWithApostrophe)
-		{
-			quotedConstStr = expr.ToString();
-		}
-		else
-		{
-			quotedConstStr = "'" + ObjectToString_ApostrophesToQuoteKeywords(expr);
+		if (isQuotedConstantWithApostrophe(expr)) {
+			quotedConstStr = expr.toString();
+		} else {
+			quotedConstStr = "'" + this.objectToString_ApostrophesToQuoteKeywords(expr);
 		}
 
-		object parserResult;
+		let parserResult: unknown;
 
-		try
-		{
-			parserResult = globalInfo.Parser.Parse(globalInfo.Tokenizer.Tokenize(quotedConstStr));
-		}
-		catch (Exception ex)
-		{
-			throw new Exception(string.Format("Error while parsing {0} : {1}", quotedConstStr, ex.Message));
+		try {
+			parserResult = globalInfo.parser.parse(globalInfo.tokenizer.tokenize(quotedConstStr));
+		} catch (ex) {
+			throw new Error(`Error while parsing ${quotedConstStr} : ${ex}`);
 		}
 
-		if (!(parserResult is QuotedConstantWithApostrophe))
-		{
-			throw new Exception(string.Format(
-				"MacroDefinition.ExpressionToSExpression() : The following did not parse to a quoted constant with apostrophe: {0}",
-				quotedConstStr));
+		if (!isQuotedConstantWithApostrophe(parserResult)) {
+			throw new Error(
+				`MacroDefinition.ExpressionToSExpression() : The following did not parse to a quoted constant with apostrophe: ${quotedConstStr}`
+			);
 		}
 
-		var quotedConst = (QuotedConstantWithApostrophe)parserResult;
+		// var quotedConst = (QuotedConstantWithApostrophe)parserResult;
 
-		return quotedConst.evaluate(null, globalInfo);
+		return parserResult.evaluate(globalInfo);
 	}
 
-	private sExpressionListToStringWithoutBracketsForReparse(l: SExpressionList): string
-	{
-		var headAsString = this.sExpressionToStringForReparse(l.Head);
+	private sExpressionListToStringWithoutBracketsForReparse(l: SExpressionList): string {
+		const headAsString = this.sExpressionToStringForReparse(l.head);
 
-		if (l.Tail is NullSExpression)
-		{
+		if (isNullSExpression(l.tail)) {
 			return headAsString;
 		}
-		else if (l.Tail is Thunk)
-		{
-			return string.Format("{0} {1}", headAsString, this.sExpressionToStringForReparse(l.Tail));
-		}
-		else if (l.Tail is SExpressionList)
-		{
-			var tail = (SExpressionList)l.Tail;
-
-			return string.Format("{0} {1}", headAsString, this.sExpressionListToStringWithoutBracketsForReparse(tail));
-		}
-		else // Tail is a symbol, an integer literal, a string, a closure, etc.
-		{
-			return string.Format("{0} . {1}", headAsString, this.sExpressionToStringForReparse(l.Tail));
+		// else if (l.Tail is Thunk)
+		// {
+		// 	return string.Format("{0} {1}", headAsString, this.sExpressionToStringForReparse(l.Tail));
+		// }
+		else if (isSExpressionList(l.tail)) {
+			return `${headAsString} ${this.sExpressionListToStringWithoutBracketsForReparse(
+				l.tail
+			)}`;
+		} else {
+			// Tail is a symbol, an integer literal, a string, a closure, etc.
+			return `${headAsString} . ${this.sExpressionToStringForReparse(l.tail)}`;
 		}
 	}
 
@@ -242,19 +252,18 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		// (quote (quote foo)) -> "'(quote foo)"
 		// ((quote foo) (quote bar)) -> "('foo 'bar)"
 
-		var qc = sexpression as QuotedConstantWithQuoteKeyword;
+		// var qc = sexpression as QuotedConstantWithQuoteKeyword;
 
-		if (qc != null)
-		{
-			return "'" + qc.sexpression.ToString();
+		// if (qc != null)
+		if (isQuotedConstantWithQuoteKeyword(sexpression)) {
+			return "'" + sexpression.sexpression.toString();
 		}
 
-		var l = sexpression as SExpressionList;
+		// var l = sexpression as SExpressionList;
 
-		if (l == null)
-		{
-			return sexpression.ToString();
-		}
+		if (!isSExpressionList(sexpression)) {
+			return sexpression.toString();
+		} else {
 			/*
 		else if (l.Head.ToString() == "quote")
 		{
@@ -270,9 +279,7 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 			}
 		}
 			 */
-		else
-		{
-			return `(${this.sExpressionListToStringWithoutBracketsForReparse(l)})`;
+			return `(${this.sExpressionListToStringWithoutBracketsForReparse(sexpression)})`;
 		}
 	}
 
@@ -281,27 +288,38 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		localEnvironment: IEnvironmentFrame<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
-		let rhoPrime = new EnvironmentFrame<ISExpression>(localEnvironment);
+		if (typeof globalInfo.tokenizer === 'undefined') {
+			throw new Error('invokeMacro() : this.tokenizer is undefined.');
+		} else if (typeof globalInfo.parser === 'undefined') {
+			throw new Error('invokeMacro() : this.parser is undefined.');
+		}
 
-		rhoPrime.compose(this.argList.value, unevaluatedArguments.map(expr => this.expressionToSExpression(expr, globalInfo)));
+		const rhoPrime = new EnvironmentFrame<ISExpression>(localEnvironment);
 
-		let substitutedBody = this.body.evaluate(rhoPrime, globalInfo);
-		let substitutedBodyAsString = this.sExpressionToStringForReparse(substitutedBody);
+		rhoPrime.compose(
+			this.argList,
+			unevaluatedArguments.map((expr) => this.expressionToSExpression(expr, globalInfo))
+		);
+
+		const substitutedBody = this.body.evaluate(globalInfo, rhoPrime);
+		const substitutedBodyAsString = this.sExpressionToStringForReparse(substitutedBody);
 		let parserResult: unknown;
 
 		try {
-			parserResult = globalInfo.Parser.Parse(globalInfo.tokenizer.tokenize(substitutedBodyAsString));
-		} catch (ex: Error) {
+			parserResult = globalInfo.parser.parse(
+				globalInfo.tokenizer.tokenize(substitutedBodyAsString)
+			);
+		} catch (ex) {
 			throw new Error(`Error while parsing ${substitutedBodyAsString} : ${ex.Message}`);
 		}
 
-		if (!(parserResult is IExpression<ISExpression>)) {
-			throw new Error(
-				`MacroDefinition.InvokeMacro() : The following did not parse to an IExpression<ISExpression>: ${substitutedBodyAsString}`;
-		}
+		// if (!(parserResult is IExpression<ISExpression>)) {
+		// 	throw new Error(
+		// 		`MacroDefinition.InvokeMacro() : The following did not parse to an IExpression<ISExpression>: ${substitutedBodyAsString}`;
+		// }
 
-		let exprParsed = (IExpression<ISExpression>)parserResult;
+		const exprParsed = parserResult as IExpression<ISExpression>;
 
-		return exprParsed.evaluate(localEnvironment, globalInfo);
+		return exprParsed.evaluate(globalInfo, localEnvironment);
 	}
 }
