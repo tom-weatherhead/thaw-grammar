@@ -1,5 +1,7 @@
 // tom-weatherhead/thaw-grammar/src/languages/lisp/domain-object-model/macro-definition.ts
 
+import { Name } from 'thaw-interpreter-core';
+
 import {
 	EnvironmentFrame,
 	IEnvironmentFrame
@@ -24,7 +26,7 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 	public readonly argumentCount: number; // This is a 'get' accessor.
 
 	constructor(
-		public readonly macroName: string,
+		public readonly macroName: Name,
 		public readonly argList: IVariable<ISExpression>[],
 		public readonly body: IExpression<ISExpression>
 	) {
@@ -57,27 +59,27 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		localEnvironment?: IEnvironmentFrame<ISExpression>,
 		options?: unknown
 	): ISExpression {
-		globalInfo.macroDefinitions[this.macroName] = this;
+		globalInfo.macroDefinitions.set(this.macroName.value, this);
 		return globalInfo.trueValue;
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
 
-	private sExpressionListToString_ApostrophesToQuoteKeywords(l: SExpressionList): string {
-		const headAsString = this.objectToString_ApostrophesToQuoteKeywords(l.head);
-
-		if (isNullSExpression(l.tail)) {
-			return headAsString;
-			// } else if (isThunk(l.tail)) {
-			// 	return `${headAsString} ${l.tail}`;
-		} else if (isSExpressionList(l.tail)) {
-			return `${headAsString} ${this.sExpressionListToString_ApostrophesToQuoteKeywords(
-				l.tail
-			)}`;
-		} else {
-			// Tail is a symbol, an integer literal, a string, a closure, etc.
-			return `${headAsString} . ${this.objectToString_ApostrophesToQuoteKeywords(l.tail)}`;
-		}
-	}
+	// private sExpressionListToString_ApostrophesToQuoteKeywords(l: SExpressionList): string {
+	// 	const headAsString = this.objectToString_ApostrophesToQuoteKeywords(l.head);
+	//
+	// 	if (isNullSExpression(l.tail)) {
+	// 		return headAsString;
+	// 		// } else if (isThunk(l.tail)) {
+	// 		// 	return `${headAsString} ${l.tail}`;
+	// 	} else if (isSExpressionList(l.tail)) {
+	// 		return `${headAsString} ${this.sExpressionListToString_ApostrophesToQuoteKeywords(
+	// 			l.tail
+	// 		)}`;
+	// 	} else {
+	// 		// Tail is a symbol, an integer literal, a string, a closure, etc.
+	// 		return `${headAsString} . ${this.objectToString_ApostrophesToQuoteKeywords(l.tail)}`;
+	// 	}
+	// }
 
 	public objectToString_ApostrophesToQuoteKeywords(expr: unknown): string {
 		if (isFunctionDefinition<ISExpression>(expr)) {
@@ -191,7 +193,7 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		// 	return string.Format("(call/cc {0})", ObjectToString_ApostrophesToQuoteKeywords(cccu.Body));
 		// }
 		else {
-			return expr.toString();
+			return `${expr}`;
 		}
 	}
 
@@ -199,6 +201,12 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		expr: IExpression<ISExpression>,
 		globalInfo: IGlobalInfo<ISExpression>
 	): ISExpression {
+		if (typeof globalInfo.tokenizer === 'undefined') {
+			throw new Error('expressionToSExpression() : this.tokenizer is undefined.');
+		} else if (typeof globalInfo.parser === 'undefined') {
+			throw new Error('expressionToSExpression() : this.parser is undefined.');
+		}
+
 		let quotedConstStr: string;
 
 		if (isQuotedConstantWithApostrophe(expr)) {
@@ -310,7 +318,7 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 				globalInfo.tokenizer.tokenize(substitutedBodyAsString)
 			);
 		} catch (ex) {
-			throw new Error(`Error while parsing ${substitutedBodyAsString} : ${ex.Message}`);
+			throw new Error(`Error while parsing ${substitutedBodyAsString} : ${ex}`);
 		}
 
 		// if (!(parserResult is IExpression<ISExpression>)) {

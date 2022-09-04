@@ -172,6 +172,7 @@ import { ISExpression } from './domain-object-model/isexpression';
 import { LISPOperatorUsage } from './domain-object-model/lisp-operator-usage';
 import { LISPString } from './domain-object-model/lisp-string';
 import { LISPSymbol } from './domain-object-model/lisp-symbol';
+import { MacroDefinition } from './domain-object-model/macro-definition';
 import { NullSExpression } from './domain-object-model/null-sexpression';
 import { QuotedConstantWithApostrophe } from './domain-object-model/quoted-constant-with-apostrophe';
 import { QuotedConstantWithQuoteKeyword } from './domain-object-model/quoted-constant-with-quote-keyword';
@@ -214,8 +215,8 @@ export class LISPGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalCond);
 		// this.terminals.push(GrammarSymbol.terminalRplaca);
 		// this.terminals.push(GrammarSymbol.terminalRplacd);
-		// this.terminals.push(GrammarSymbol.terminalDefineMacro);
-		// this.terminals.push(GrammarSymbol.terminalQuoteKeyword);
+		this.terminals.push(GrammarSymbol.terminalDefineMacro);
+		this.terminals.push(GrammarSymbol.terminalQuoteKeyword);
 		this.terminals.push(GrammarSymbol.terminalStringLiteral);
 		// this.terminals.push(GrammarSymbol.terminalStringPred);
 		// this.terminals.push(GrammarSymbol.terminalToString);
@@ -873,18 +874,21 @@ export class LISPGrammar extends GrammarBase {
 
 		// Old
 		// this.productions.push(createProduction(Symbol.nonterminalInput, [Symbol.nonterminalMacroDef], 58));
-		// this.productions.push(createProduction(
-		// 	Symbol.nonterminalMacroDef,
-		// 	[
-		// 		Symbol.terminalLeftBracket,
-		// 		Symbol.terminalDefineMacro,
-		// 		Symbol.nonterminalFunction,
-		// 		Symbol.nonterminalArgList,
-		// 		Symbol.nonterminalExpression,
-		// 		Symbol.terminalRightBracket,
-		// 		'#macroDefinition'
-		// 	],
-		// 	59));
+		this.productions.push(
+			createProduction(
+				GrammarSymbol.nonterminalBracketedInput,
+				[
+					GrammarSymbol.terminalLeftBracket,
+					GrammarSymbol.terminalDefineMacro,
+					GrammarSymbol.nonterminalFunction,
+					GrammarSymbol.nonterminalArgList,
+					GrammarSymbol.nonterminalExpression,
+					GrammarSymbol.terminalRightBracket,
+					'#macroDefinition'
+				],
+				59
+			)
+		);
 
 		// New
 		// BracketedInput -> MacroDef
@@ -1088,12 +1092,12 @@ export class LISPGrammar extends GrammarBase {
 				);
 				break;
 
-			// case '#macroDefinition':
-			// 	expression = semanticStack.pop() as IExpression<ISExpression>; // macroBody
-			// 	variableList = semanticStack.pop() as VariableList<ISExpression>; // macroArgList
-			// 	name = semanticStack.pop() as Name; // macroName
-			// 	semanticStack.push(new MacroDefinition(name, variableList, expression));
-			// 	break;
+			case '#macroDefinition':
+				expression = semanticStack.pop() as IExpression<ISExpression>; // macroBody
+				variableList = semanticStack.pop() as IVariable<ISExpression>[]; // macroArgList
+				name = semanticStack.pop() as Name; // macroName
+				semanticStack.push(new MacroDefinition(name, variableList, expression));
+				break;
 
 			default:
 				throw new GrammarException(`Unrecognized semantic action: ${action}`);
