@@ -135,6 +135,12 @@ export class OperatorUsage<T> implements IExpression<T> {
 					// } else if (globalInfo.MacroDefinitions != null && globalInfo.MacroDefinitions.ContainsKey(this.operatorName)) {
 					// 	return globalInfo.MacroDefinitions[operatorName].ArgumentCount;
 				} else {
+					const macroDef = globalInfo.macroDefinitions.get(this.operatorName.value);
+
+					if (typeof macroDef !== 'undefined') {
+						return macroDef.argumentCount;
+					}
+
 					return undefined;
 				}
 		}

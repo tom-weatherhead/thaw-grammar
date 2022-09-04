@@ -668,6 +668,20 @@ export class LISPGrammar extends GrammarBase {
 			)
 		);
 
+		// BEGIN Temp - For macro testing
+		// this.productions.push(
+		// 	createProduction(
+		// 		GrammarSymbol.nonterminalQuotedConst,
+		// 		[
+		// 			GrammarSymbol.terminalApostrophe,
+		// 			GrammarSymbol.terminalLessThan,
+		// 			'#quotedConstantWithApostrophe'
+		// 		],
+		// 		43
+		// 	)
+		// );
+		// END Temp - For macro testing
+
 		// S-Expression -> Integer
 		this.productions.push(
 			createProduction(
@@ -878,12 +892,12 @@ export class LISPGrammar extends GrammarBase {
 			createProduction(
 				GrammarSymbol.nonterminalBracketedInput,
 				[
-					GrammarSymbol.terminalLeftBracket,
+					// GrammarSymbol.terminalLeftBracket,
 					GrammarSymbol.terminalDefineMacro,
 					GrammarSymbol.nonterminalFunction,
 					GrammarSymbol.nonterminalArgList,
 					GrammarSymbol.nonterminalExpression,
-					GrammarSymbol.terminalRightBracket,
+					// GrammarSymbol.terminalRightBracket,
 					'#macroDefinition'
 				],
 				59
@@ -993,6 +1007,11 @@ export class LISPGrammar extends GrammarBase {
 			case '#operatorUsage':
 				expressionList = semanticStack.pop() as IExpression<ISExpression>[];
 				name = semanticStack.pop() as Name;
+
+				if (name.value.length > 0 && name.value[0] === "'") {
+					name = new Name(name.value.substring(1));
+				}
+
 				semanticStack.push(new LISPOperatorUsage(name, expressionList));
 				break;
 
@@ -1225,6 +1244,7 @@ export class LISPGrammar extends GrammarBase {
 				break;
 
 			case GrammarSymbol.terminalApostrophe:
+			case GrammarSymbol.terminalDefineMacro:
 			case GrammarSymbol.terminalQuoteKeyword:
 				break;
 
