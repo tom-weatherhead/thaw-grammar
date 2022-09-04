@@ -187,21 +187,20 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 		return undefined;
 	}
 
-	// protected TryInvokeMacro(
-	// 	List<IExpression<ISExpression>> unevaluatedArguments,
-	// 	EnvironmentFrame<ISExpression> localEnvironment,
-	// 	IGlobalInfo<ISExpression> globalInfo,
-	// 	out ISExpression macroResult): boolean {
+	protected override tryInvokeMacro(
+		unevaluatedArguments: IExpression<ISExpression>[],
+		localEnvironment: IEnvironmentFrame<ISExpression> | undefined,
+		globalInfo: IGlobalInfo<ISExpression>
+		// , out ISExpression macroResult
+	): ISExpression | undefined {
+		const macroDef = globalInfo.macroDefinitions.get(this.operatorName.value);
 
-	// 	if (!globalInfo.MacroDefinitions.ContainsKey(OperatorName))
-	// 	{
-	// 		macroResult = null;
-	// 		return false;
-	// 	}
+		if (typeof macroDef === 'undefined') {
+			return undefined;
+		}
 
-	// 	macroResult = globalInfo.MacroDefinitions[OperatorName].InvokeMacro(unevaluatedArguments, localEnvironment, globalInfo);
-	// 	return true;
-	// }
+		return macroDef.invokeMacro(unevaluatedArguments, localEnvironment, globalInfo);
+	}
 
 	// private static ListToStringHelper(arg: ISExpression, sb: string): void {
 
@@ -255,11 +254,6 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 	// 	throw new Exception(string.Format("LISPOperatorUsage.EvaluateAuxFloat() : Invalid operator {0}", OperatorName.Value));
 	// }
 
-	// protected override evaluateAux(
-	// 	evaluatedArguments: ISExpression[],
-	// 	localEnvironment: EnvironmentFrame<ISExpression>,
-	// 	globalInfo: IGlobalInfo<ISExpression>
-	// ): ISExpression {
 	protected override evaluateAux(
 		evaluatedArguments: ISExpression[],
 		globalInfo: IGlobalInfo<ISExpression>,
@@ -269,11 +263,6 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 		let sExprList: SExpressionList;
 
 		switch (this.operatorName.value) {
-			// 2019-12-22: Hack:
-			// case '+':
-			// 	return new IntegerLiteral((evaluatedArguments[0] as IntegerLiteral).value + (evaluatedArguments[1] as IntegerLiteral).value);
-
-			// 2019-12-22: Hack:
 			case '+':
 				return new IntegerLiteral(
 					evaluatedArguments.reduce(

@@ -81,12 +81,11 @@ export class OperatorUsage<T> implements IExpression<T> {
 			);
 		}
 
-		// T macroResult;
+		const macroResult = this.tryInvokeMacro(this.expressionList, localEnvironment, globalInfo);
 
-		// if (TryInvokeMacro(expressionList.value, localEnvironment, globalInfo, out macroResult))
-		// {
-		// 	return macroResult;
-		// }
+		if (typeof macroResult !== 'undefined') {
+			return macroResult;
+		}
 
 		const evaluatedArguments = this.expressionList.map((expr: IExpression<T>) =>
 			expr.evaluate(globalInfo, localEnvironment, options)
@@ -136,15 +135,16 @@ export class OperatorUsage<T> implements IExpression<T> {
 		return undefined;
 	}
 
-	// protected virtual bool TryInvokeMacro(
-	// 	List<IExpression<T>> unevaluatedArguments,
-	// 	EnvironmentFrame<T> localEnvironment,
-	// 	IGlobalInfo<T> globalInfo,
-	// 	out T macroResult)
-	// {
-	// 	macroResult = default(T);
-	// 	return false;
-	// }
+	/* eslint-disable @typescript-eslint/no-unused-vars */
+	protected tryInvokeMacro(
+		unevaluatedArguments: IExpression<T>[],
+		localEnvironment: IEnvironmentFrame<T> | undefined,
+		globalInfo: IGlobalInfo<T>
+		// , out ISExpression macroResult
+	): T | undefined {
+		return undefined;
+	}
+	/* eslint-enable @typescript-eslint/no-unused-vars */
 
 	// protected virtual void UpdateStackTrace(EnvironmentFrame<T> oldEnvFrame, EnvironmentFrame<T> newEnvFrame,
 	// 	int line, int column)
