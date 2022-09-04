@@ -7,7 +7,17 @@ import { FunctionDefinition } from './function-definition';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
+const typenameOperatorUsage = 'OperatorUsage';
+
+export function isOperatorUsage<T>(obj: unknown): obj is OperatorUsage<T> {
+	const operatorUsage = obj as OperatorUsage<T>;
+
+	return typeof operatorUsage !== 'undefined' && operatorUsage.typename === typenameOperatorUsage;
+}
+
 export class OperatorUsage<T> implements IExpression<T> {
+	public readonly typename: string = typenameOperatorUsage;
+
 	private readonly twoArgumentIntegerPredicates = new Map<
 		string,
 		(operand1: number, operand2: number) => boolean

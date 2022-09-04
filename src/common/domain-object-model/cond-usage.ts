@@ -4,7 +4,17 @@ import { IEnvironmentFrame } from './environment-frame';
 import { IExpression } from './iexpression';
 import { IGlobalInfo } from './iglobal-info';
 
+const typenameCondUsage = 'CondUsage';
+
+export function isCondUsage<T>(obj: unknown): obj is CondUsage<T> {
+	const condUsage = obj as CondUsage<T>;
+
+	return typeof condUsage !== 'undefined' && condUsage.typename === typenameCondUsage;
+}
+
 export class CondUsage<T> implements IExpression<T> {
+	public readonly typename: string = typenameCondUsage;
+
 	constructor(public readonly exprPairList: [IExpression<T>, IExpression<T>][]) {}
 
 	public toString(): string {
