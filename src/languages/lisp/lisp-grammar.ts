@@ -8,146 +8,6 @@
 // list:   ( seq )
 // seq:    lambda | expr seq
 
-// **** BEGIN : From the C# version in the Inference project ****
-
-// Terminals.UnionWith(new HashSet<Symbol>() {
-//     Symbol.T_LeftBracket, Symbol.T_RightBracket, Symbol.T_Define,
-//     Symbol.T_If, Symbol.T_While, Symbol.T_Set, Symbol.T_Begin,
-//     Symbol.T_Plus, Symbol.T_Minus, Symbol.T_Multiply, Symbol.T_Divide,
-//     Symbol.T_Equals, Symbol.T_LessThan, //Symbol.T_GreaterThan,
-//     Symbol.T_Print, Symbol.T_ID, Symbol.T_IntegerLiteral, Symbol.T_Cond,
-//     Symbol.T_Let, Symbol.T_LetStar, Symbol.T_EOF });
-
-// NonTerminals.UnionWith(new HashSet<Symbol>() { Symbol.N_Start,
-//     Symbol.N_Input, Symbol.N_Expression, Symbol.N_FunDef, Symbol.N_Function,
-//     Symbol.N_ArgList, Symbol.N_VariableList, Symbol.N_Variable, Symbol.N_Value,
-//     Symbol.N_BracketedExpression, Symbol.N_ExpressionList, Symbol.N_Optr, Symbol.N_ValueOp,
-//     Symbol.N_ExprPairList, Symbol.N_LetKeyword, Symbol.N_VarExprList });
-
-// Productions.Add(createProduction(Symbol.N_Start, new List<object>() { Symbol.N_Input, Symbol.T_EOF }, 1));
-// Productions.Add(new Production(Symbol.N_Input, new List<object>() { Symbol.N_Expression }, 2));
-// Productions.Add(new Production(Symbol.N_Input, new List<object>() { Symbol.N_FunDef }, 3));
-// Productions.Add(new Production(Symbol.N_FunDef, new List<object>() { Symbol.T_LeftBracket, Symbol.T_Define, Symbol.N_Function, Symbol.N_ArgList, Symbol.N_Expression, Symbol.T_RightBracket, "#functionDefinition" }, 4));
-// Productions.Add(new Production(Symbol.N_ArgList, new List<object>() { Symbol.T_LeftBracket, Symbol.N_VariableList, Symbol.T_RightBracket }, 5));
-// Productions.Add(new Production(Symbol.N_VariableList, new List<object>() { Symbol.N_Variable, Symbol.N_VariableList, "#variableList" }, 6));
-// Productions.Add(new Production(Symbol.N_VariableList, new List<object>() { Symbol.Lambda, "#emptyVariableList" }, 7));
-// Productions.Add(new Production(Symbol.N_Expression, new List<object>() { Symbol.N_Value }, 8));
-// Productions.Add(new Production(Symbol.N_Expression, new List<object>() { Symbol.N_Variable }, 9));
-// Productions.Add(new Production(Symbol.N_Expression, new List<object>() { Symbol.T_LeftBracket, Symbol.N_BracketedExpression, Symbol.T_RightBracket }, 10));
-// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_If, Symbol.N_Expression, Symbol.N_Expression, Symbol.N_Expression, "#if" }, 11));
-// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_While, Symbol.N_Expression, Symbol.N_Expression, "#while" }, 12));
-// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Set, Symbol.N_Variable, Symbol.N_Expression, "#set" }, 13));
-// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.T_Begin, Symbol.N_Expression, Symbol.N_ExpressionList, "#begin" }, 14));
-// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() { Symbol.N_Optr, Symbol.N_ExpressionList, "#operatorUsage" }, 15));
-// Productions.Add(new Production(Symbol.N_ExpressionList, new List<object>() { Symbol.N_Expression, Symbol.N_ExpressionList, "#expressionList" }, 16));
-// Productions.Add(new Production(Symbol.N_ExpressionList, new List<object>() { Symbol.Lambda, "#emptyExpressionList" }, 17));
-// Productions.Add(new Production(Symbol.N_Optr, new List<object>() { Symbol.N_Function }, 18));
-// Productions.Add(new Production(Symbol.N_Optr, new List<object>() { Symbol.N_ValueOp }, 19));
-// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.T_IntegerLiteral }, 20));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Plus }, 21));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Minus }, 22));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Multiply }, 23));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Divide }, 24));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Equals }, 25));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_LessThan }, 26));
-// //Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_GreaterThan }, 27));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Print }, 28));
-// Productions.Add(new Production(Symbol.N_Function, new List<object>() { Symbol.T_ID }, 29));
-// Productions.Add(new Production(Symbol.N_Variable, new List<object>() { Symbol.T_ID, "#variable" }, 30));
-// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
-//     Symbol.T_Cond,
-//     Symbol.T_LeftBracket,
-//     Symbol.N_Expression,
-//     Symbol.N_Expression,
-//     Symbol.T_RightBracket,
-//     Symbol.N_ExprPairList, "#condUsage" }, 31));
-// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() {
-//     Symbol.T_LeftBracket,
-//     Symbol.N_Expression,
-//     Symbol.N_Expression,
-//     Symbol.T_RightBracket,
-//     Symbol.N_ExprPairList, "#exprPairList" }, 32));
-// Productions.Add(new Production(Symbol.N_ExprPairList, new List<object>() { Symbol.Lambda, "#emptyExprPairList" }, 33));
-// Productions.Add(new Production(Symbol.N_BracketedExpression, new List<object>() {
-//     Symbol.N_LetKeyword,
-//     Symbol.T_LeftBracket,
-//     Symbol.N_VarExprList,
-//     Symbol.T_RightBracket,
-//     Symbol.N_Expression, "#letUsage" }, 34));
-// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { Symbol.T_Let }, 35));
-// Productions.Add(new Production(Symbol.N_LetKeyword, new List<object>() { Symbol.T_LetStar }, 36));
-// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() {
-//     Symbol.T_LeftBracket,
-//     Symbol.N_Variable,
-//     Symbol.N_Expression,
-//     Symbol.T_RightBracket,
-//     Symbol.N_VarExprList, "#varExprList" }, 37));
-// Productions.Add(new Production(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, "#emptyVarExprList" }, 38));
-
-// From Chapter 2 of Kamin:
-
-// Terminals.UnionWith(new HashSet<Symbol>() {
-//     Symbol.T_Cons, Symbol.T_Car, Symbol.T_Cdr,
-//     Symbol.T_NumberPred, Symbol.T_SymbolPred, Symbol.T_ListPred, Symbol.T_NullPred,
-//     Symbol.T_Apostrophe, Symbol.T_Dot, Symbol.T_List,
-//     Symbol.T_Rplaca, Symbol.T_Rplacd, Symbol.T_DefineMacro, Symbol.T_QuoteKeyword,
-//     Symbol.T_Random, Symbol.T_StringLiteral, Symbol.T_StringPred,
-//     Symbol.T_ToString, Symbol.T_ListToString, Symbol.T_StringToList, Symbol.T_StringToSymbol,
-//     Symbol.T_FloatLiteral, Symbol.T_Pow, Symbol.T_Exp, Symbol.T_Ln, Symbol.T_Sin, Symbol.T_Cos, Symbol.T_Tan, Symbol.T_Atan2, Symbol.T_Floor,
-//     Symbol.T_Throw, Symbol.T_StringLessThan });
-
-// NonTerminals.UnionWith(new HashSet<Symbol>() {
-//     Symbol.N_QuotedConst, Symbol.N_SExpression, Symbol.N_SExpressionList, Symbol.N_Symbol,
-//     Symbol.N_MacroDef });
-
-// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.N_QuotedConst }, 39));
-// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.T_StringLiteral }, 75)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_Value, new List<object>() { Symbol.T_FloatLiteral }, 79)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cons }, 40));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Car }, 41));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cdr }, 42));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_NumberPred }, 43));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_SymbolPred }, 44));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_ListPred }, 45));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_NullPred }, 46));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_StringPred }, 73)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_QuotedConst, new List<object>() { Symbol.T_Apostrophe, Symbol.N_SExpression, "#quotedConstantWithApostrophe" }, 47));
-// Productions.Add(new Production(Symbol.N_SExpression, new List<object>() { Symbol.T_IntegerLiteral }, 48));
-// Productions.Add(new Production(Symbol.N_SExpression, new List<object>() { Symbol.N_Symbol }, 49));
-// Productions.Add(new Production(Symbol.N_SExpression, new List<object>() { Symbol.T_StringLiteral }, 74)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_SExpression, new List<object>() { Symbol.T_FloatLiteral }, 80)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_SExpression, new List<object>() { Symbol.T_LeftBracket, Symbol.N_SExpressionList, Symbol.T_RightBracket }, 50));
-// Productions.Add(new Production(Symbol.N_SExpressionList, new List<object>() { Symbol.N_SExpression, Symbol.N_SExpressionList, "#sExpressionList" }, 51));
-// Productions.Add(new Production(Symbol.N_SExpressionList, new List<object>() { Symbol.N_SExpression, Symbol.T_Dot, Symbol.N_SExpression, "#sExpressionList" }, 52));
-// Productions.Add(new Production(Symbol.N_SExpressionList, new List<object>() { Symbol.Lambda, "#emptySExpressionList" }, 53));
-// Productions.Add(new Production(Symbol.N_Symbol, new List<object>() { Symbol.T_ID, "#symbol" }, 54));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_List }, 55));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Rplaca }, 56));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Rplacd }, 57));
-// Productions.Add(new Production(Symbol.N_Input, new List<object>() { Symbol.N_MacroDef }, 58));
-// Productions.Add(new Production(Symbol.N_MacroDef, new List<object>() { Symbol.T_LeftBracket, Symbol.T_DefineMacro, Symbol.N_Function, Symbol.N_ArgList, Symbol.N_Expression, Symbol.T_RightBracket, "#macroDefinition" }, 59));
-// Productions.Add(new Production(Symbol.N_SExpression, new List<object>() { Symbol.T_LeftBracket, Symbol.T_QuoteKeyword, Symbol.N_SExpression, Symbol.T_RightBracket, "#quotedConstantWithQuoteKeyword" }, 60));
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Random }, 61));
-// //Productions.Add(new Production(Symbol.N_QuotedConst, new List<object>() { Symbol.T_LeftBracket, Symbol.T_QuoteKeyword, Symbol.N_SExpression, Symbol.T_RightBracket, "#quotedConstantWithQuoteKeyword" }, 62)); // Needed for macros.
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_ToString }, 76)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_ListToString }, 77)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_StringToList }, 78)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_StringToSymbol }, 81)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Pow }, 88)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Exp }, 82)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Ln }, 83)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Sin }, 84)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Cos }, 85)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Tan }, 86)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Floor }, 87)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Atan2 }, 89)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_Throw }, 90)); // Note: Number is out of order
-// Productions.Add(new Production(Symbol.N_ValueOp, new List<object>() { Symbol.T_StringLessThan }, 91)); // Note: Number is out of order
-
-// **** END : From the C# version in the Inference project ****
-
-// import { Stack } from 'thaw-common-utilities.ts';
-
 import { GrammarSymbol, IToken, LexicalState, SemanticStackType } from 'thaw-interpreter-types';
 
 import { ArgumentException, createProduction, Name } from 'thaw-interpreter-core';
@@ -668,20 +528,6 @@ export class LISPGrammar extends GrammarBase {
 			)
 		);
 
-		// BEGIN Temp - For macro testing
-		// this.productions.push(
-		// 	createProduction(
-		// 		GrammarSymbol.nonterminalQuotedConst,
-		// 		[
-		// 			GrammarSymbol.terminalApostrophe,
-		// 			GrammarSymbol.terminalLessThan,
-		// 			'#quotedConstantWithApostrophe'
-		// 		],
-		// 		43
-		// 	)
-		// );
-		// END Temp - For macro testing
-
 		// S-Expression -> Integer
 		this.productions.push(
 			createProduction(
@@ -843,82 +689,20 @@ export class LISPGrammar extends GrammarBase {
 			'#emptyVarExprList'
 		]);
 
-		// **** BEGIN : Ignore for now ****
-		// Productions.Add(createProduction(Symbol.N_ValueOp, new List<object>() { Symbol.T_StringPred }, 73)); // Note: Number is out of order
-		// Productions.Add(createProduction(Symbol.N_Value, new List<object>() { Symbol.T_StringLiteral }, 75)); // Note: Number is out of order
-		// Productions.Add(createProduction(Symbol.N_Value, new List<object>() { Symbol.T_FloatLiteral }, 79)); // Note: Number is out of order
-
-		// Productions.Add(createProduction(Symbol.N_BracketedExpression, new List<object>() {
-		//     Symbol.N_LetKeyword,
-		//     Symbol.T_LeftBracket,
-		//     Symbol.N_VarExprList,
-		//     Symbol.T_RightBracket,
-		//     Symbol.N_Expression, "#letUsage" }, 34));
-		// Productions.Add(createProduction(Symbol.N_LetKeyword, new List<object>() { Symbol.T_Let }, 35));
-		// Productions.Add(createProduction(Symbol.N_LetKeyword, new List<object>() { Symbol.T_LetStar }, 36));
-		// Productions.Add(createProduction(Symbol.N_VarExprList, new List<object>() {
-		//     Symbol.T_LeftBracket,
-		//     Symbol.N_Variable,
-		//     Symbol.N_Expression,
-		//     Symbol.T_RightBracket,
-		//     Symbol.N_VarExprList, "#varExprList" }, 37));
-		// Productions.Add(createProduction(Symbol.N_VarExprList, new List<object>() { Symbol.Lambda, "#emptyVarExprList" }, 38));
-
-		// this.productions.push(createProduction(Symbol.nonterminalValue, [Symbol.terminalStringLiteral], 75)); // Note: Number is out of order
-		// this.productions.push(createProduction(Symbol.nonterminalValue, [Symbol.terminalFloatLiteral], 79)); // Note: Number is out of order
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalStringPred], 73)); // Note: Number is out of order
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalRandom], 33));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalThrow], 34));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalRplaca], 56));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalRplacd], 57));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalToString], 76));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalListToString], 77));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalStringToList], 78));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalStringToSymbol], 81));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalPow], 88));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalExp], 82));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalLn], 83));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalSin], 84));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalCos], 85));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalTan], 86));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalFloor], 87));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalAtan2], 89));
-		// this.productions.push(createProduction(Symbol.nonterminalValueOp, [Symbol.terminalStringLessThan], 91));
-		// **** END : Ignore for now ****
-
 		// Old
-		// this.productions.push(createProduction(Symbol.nonterminalInput, [Symbol.nonterminalMacroDef], 58));
 		this.productions.push(
 			createProduction(
 				GrammarSymbol.nonterminalBracketedInput,
 				[
-					// GrammarSymbol.terminalLeftBracket,
 					GrammarSymbol.terminalDefineMacro,
 					GrammarSymbol.nonterminalFunction,
 					GrammarSymbol.nonterminalArgList,
 					GrammarSymbol.nonterminalExpression,
-					// GrammarSymbol.terminalRightBracket,
 					'#macroDefinition'
 				],
 				59
 			)
 		);
-
-		// New
-		// BracketedInput -> MacroDef
-		// this.productions.push(createProduction(Symbol.nonterminalBracketedInput,
-		// 	[
-		// 		Symbol.nonterminalMacroDef
-		// 	], n));
-		// this.productions.push(createProduction(
-		// 	Symbol.nonterminalMacroDef,
-		// 	[
-		// 		Symbol.terminalDefineMacro,
-		// 		Symbol.nonterminalFunction,
-		// 		Symbol.nonterminalArgList,
-		// 		Symbol.nonterminalExpression,
-		// 		'#macroDefinition'
-		// 	], n));
 
 		// this.productions.push(createProduction(
 		// 	Symbol.nonterminalSExpression, // TODO? : Create Symbol.nonterminalBracketedSExpression ?
@@ -936,10 +720,6 @@ export class LISPGrammar extends GrammarBase {
 	public get languageName(): string {
 		return 'LISP';
 	}
-
-	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	return [ParserSelector.LL1];
-	// }
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
@@ -1128,6 +908,15 @@ export class LISPGrammar extends GrammarBase {
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
+		if (
+			token.isQuoted ||
+			[LexicalState.tokenLessEqual, LexicalState.tokenGreaterEqual].indexOf(
+				token.tokenType
+			) >= 0
+		) {
+			token.tokenType = LexicalState.tokenIdent;
+		}
+
 		switch (token.tokenType) {
 			case LexicalState.tokenQuoteKeyword:
 				return GrammarSymbol.terminalQuoteKeyword;
@@ -1190,6 +979,7 @@ export class LISPGrammar extends GrammarBase {
 						return GrammarSymbol.terminalThrow;
 					case 'string<':
 						return GrammarSymbol.terminalStringLessThan;
+					// random, pow, exp, ln, sin, cos, tan
 					default:
 						break;
 				}

@@ -906,47 +906,28 @@ test('LL(1) LISP let test', () => {
 // 	Assert.AreEqual("(C D B G H F I E A)", Evaluate("(post-ord sample-tree)"));
 // }
 
-// [Test]
-// public void MacroTest()     // From pages 56-57, and Exercise 12, from pages 62-63
-// {
-// 	Evaluate("(define <= (x y) (or (< x y) (= x y)))");
-// 	Evaluate(@"
-// (define-macro for (indexvar lower upper body)
-// (list 'begin
-// (list 'set indexvar lower)
-// (list 'while
-// 	(list '<= indexvar upper)
-// 	(list 'begin body
-// 		(list 'set indexvar (list '+ indexvar 1))))))");
-// 	Evaluate("(set sum 0)");
-// 	Evaluate("(for x 1 10 (set sum (+ sum x)))");
-// 	Assert.AreEqual("55", Evaluate("sum"));
-// }
-
 test('LL(1) LISP macro test', () => {
-	// 2013/12/14
+	// 2From pages 56-57, and Exercise 12, from pages 62-63
 
 	lispTest([
-		["(define le (x y) (cond ((< x y) 'T) ((= x y) 'T) ('T '())))", 'T'],
-		['(define add (x y) (+ x y))', 'T'],
+		// ["(define and (x y) (if x y x))", 'T'],
+		['(define or (x y) (if x x y))', 'T'],
+		['(define <= (x y) (or (< x y) (= x y)))', 'T'],
+		// ["(define <= (x y) (cond ((< x y) 'T) ((= x y) 'T) ('T '())))", 'T'],
 		[
 			[
 				'(define-macro for (indexvar lower upper body)',
 				"(list 'begin",
 				"(list 'set indexvar lower)",
 				"(list 'while",
-				// "	(list '<= indexvar upper)",
-				"	(list 'le indexvar upper)",
+				"	(list '<= indexvar upper)",
 				"	(list 'begin body",
-				// TODO: Recognize '+ as a quoted S-expression
-				// "		(list 'set indexvar (list '+ indexvar 1))))))"
-				"		(list 'set indexvar (list 'add indexvar 1))))))"
+				"		(list 'set indexvar (list '+ indexvar 1))))))"
 			].join('\n'),
 			'T'
 		],
 		['(set sum 0)', '0'],
-		// ['(for x 1 10 (set sum (+ sum x)))', '()'],
-		['(for x 1 10 (set sum (add sum x)))', '()'],
+		['(for x 1 10 (set sum (+ sum x)))', '()'],
 		['sum', '55']
 	]);
 });
