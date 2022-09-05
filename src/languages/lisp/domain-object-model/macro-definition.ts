@@ -29,6 +29,7 @@ import { isSExpressionList, SExpressionList } from './sexpression-list';
 import { isCallCCUsage } from '../../scheme/domain-object-model/call-cc-usage';
 import { isEvaluableExpression } from '../../scheme/domain-object-model/evaluable-expression';
 import { isLambdaExpression } from '../../scheme/domain-object-model/lambda-expression';
+import { isLetRecUsage } from '../../scheme/domain-object-model/let-rec-usage';
 
 const typenameMacroDefinition = 'MacroDefinition';
 
@@ -209,23 +210,23 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 			return `(${feAsString} ${expr.expressionList
 				.map((x) => this.objectToString_ApostrophesToQuoteKeywords(x))
 				.join(' ')})`;
-		}
+		} else if (isLetRecUsage<ISExpression>(expr)) {
+			// var lru = (Scheme.LetRecUsage)expr;
+			// const bindings = expr.bindings.map(b => `(${b} ${})`).join(' ');
+			const fnBindingAsString = ([v, expr2]: [
+				IVariable<ISExpression>,
+				IExpression<ISExpression>
+			]) => `(${v} ${this.objectToString_ApostrophesToQuoteKeywords(expr2)})`;
+			const bindingsAsString = expr.bindings.map(fnBindingAsString).join(' ');
 
-		// else if (expr is Scheme.LetRecUsage)
-		// {
-		// 	var lru = (Scheme.LetRecUsage)expr;
-		//
-		// 	return string.Format("(letrec ({0}) {1})",
-		// 		string.Join(" ", lru.Bindings.Select(b => string.Format("({0} {1})", b.Key, ObjectToString_ApostrophesToQuoteKeywords(b.Value)))),
-		// 		ObjectToString_ApostrophesToQuoteKeywords(lru.Expression));
-		// }
-
-		else if (isCallCCUsage(expr)) {
+			return `(letrec (${bindingsAsString}) ${this.objectToString_ApostrophesToQuoteKeywords(
+				expr.expression
+			)})`;
+		} else if (isCallCCUsage(expr)) {
 			// var cccu = (Scheme.CallCCUsage)expr;
 
 			return `(call/cc ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
-		}
-		else {
+		} else {
 			return `${expr}`;
 		}
 	}

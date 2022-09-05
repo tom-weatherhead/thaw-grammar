@@ -8,7 +8,17 @@ import { IExpression } from '../../../common/domain-object-model/iexpression';
 import { IGlobalInfo } from '../../../common/domain-object-model/iglobal-info';
 import { IVariable } from '../../../common/domain-object-model/variable';
 
+const typenameLetRecUsage = 'LetRecUsage';
+
+export function isLetRecUsage<T>(obj: unknown): obj is LetRecUsage<T> {
+	const lru = obj as LetRecUsage<T>;
+
+	return typeof lru !== 'undefined' && lru.typename === typenameLetRecUsage;
+}
+
 export class LetRecUsage<T> implements IExpression<T> {
+	public readonly typename: string = typenameLetRecUsage;
+
 	constructor(
 		public readonly bindings: [IVariable<T>, IExpression<T>][],
 		public readonly expression: IExpression<T>
