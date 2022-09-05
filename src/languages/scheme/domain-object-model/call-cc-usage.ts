@@ -15,7 +15,17 @@ import { ContinuationException } from '../exceptions/continuation-exception';
 import { Closure } from './closure';
 import { Continuation } from './continuation';
 
+const typenameCallCCUsage = 'CallCCUsage';
+
+export function isCallCCUsage(obj: unknown): obj is CallCCUsage {
+	const cccu = obj as CallCCUsage;
+
+	return typeof cccu !== 'undefined' && cccu.typename === typenameCallCCUsage;
+}
+
 export class CallCCUsage implements IExpression<ISExpression> {
+	public readonly typename: string = typenameCallCCUsage;
+
 	constructor(public readonly body: IExpression<ISExpression>) {}
 
 	public evaluate(

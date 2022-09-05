@@ -26,6 +26,7 @@ import { isQuotedConstantWithApostrophe } from './quoted-constant-with-apostroph
 import { isQuotedConstantWithQuoteKeyword } from './quoted-constant-with-quote-keyword';
 import { isSExpressionList, SExpressionList } from './sexpression-list';
 
+import { isCallCCUsage } from '../../scheme/domain-object-model/call-cc-usage';
 import { isEvaluableExpression } from '../../scheme/domain-object-model/evaluable-expression';
 import { isLambdaExpression } from '../../scheme/domain-object-model/lambda-expression';
 
@@ -219,12 +220,11 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		// 		ObjectToString_ApostrophesToQuoteKeywords(lru.Expression));
 		// }
 
-		// else if (expr is Scheme.CallCCUsage)
-		// {
-		// 	var cccu = (Scheme.CallCCUsage)expr;
-		//
-		// 	return string.Format("(call/cc {0})", ObjectToString_ApostrophesToQuoteKeywords(cccu.Body));
-		// }
+		else if (isCallCCUsage(expr)) {
+			// var cccu = (Scheme.CallCCUsage)expr;
+
+			return `(call/cc ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
+		}
 		else {
 			return `${expr}`;
 		}
