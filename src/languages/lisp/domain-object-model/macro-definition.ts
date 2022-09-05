@@ -27,8 +27,18 @@ import { isQuotedConstantWithQuoteKeyword } from './quoted-constant-with-quote-k
 import { isSExpressionList, SExpressionList } from './sexpression-list';
 
 import { isEvaluableExpression } from '../../scheme/domain-object-model/evaluable-expression';
+import { isLambdaExpression } from '../../scheme/domain-object-model/lambda-expression';
+
+const typenameMacroDefinition = 'MacroDefinition';
+
+export function isMacroDefinition(obj: unknown): obj is MacroDefinition {
+	const md = obj as MacroDefinition;
+
+	return typeof md !== 'undefined' && md.typename === typenameMacroDefinition;
+}
 
 export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinition<ISExpression> {
+	public readonly typename: string = typenameMacroDefinition;
 	public readonly argumentCount: number; // This is a 'get' accessor.
 
 	constructor(
@@ -164,33 +174,30 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 				.join(' ');
 
 			return `(${expr.operatorName} ${exprListString})`;
-		}
+		} else if (isQuotedConstantWithApostrophe(expr)) {
+			// var qc = (QuotedConstantWithApostrophe)expr;
 
-		// else if (expr is QuotedConstantWithApostrophe) {
-		// 	var qc = (QuotedConstantWithApostrophe)expr;
-		//
-		// 	return string.Format("(quote {0})", qc.sexpression);
-		// }
+			return `(quote ${expr.sexpression})`;
+		}
 		// 	/*
 		// else if (expr is SExpressionList) // Not an IExpression<ISExpression>
 		// {
 		// 	return string.Format("({0})", SExpressionListToString_ApostrophesToQuoteKeywords((SExpressionList)expr));
 		// }
 		// 	 */
+		else if (isMacroDefinition(expr)) {
+			// var md = (MacroDefinition)expr;
 
-		// else if (expr is MacroDefinition) {
-		// 	var md = (MacroDefinition)expr;
-		//
-		// 	return string.Format("(define-macro {0} {1} {2})", md.MacroName, md.ArgList, ObjectToString_ApostrophesToQuoteKeywords(md.Body));
-		// }
+			return `(define-macro ${expr.macroName} ${
+				expr.argList
+			} ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
+		} else if (isLambdaExpression(expr)) {
+			// var le = (Scheme.LambdaExpression)expr;
 
-		// else if (expr is Scheme.LambdaExpression)
-		// {
-		// 	var le = (Scheme.LambdaExpression)expr;
-		//
-		// 	return string.Format("(lambda {0} {1})", le.ArgList, ObjectToString_ApostrophesToQuoteKeywords(le.Body));
-		// }
-		else if (isEvaluableExpression(expr)) {
+			return `(lambda ${expr.argList} ${this.objectToString_ApostrophesToQuoteKeywords(
+				expr.body
+			)})`;
+		} else if (isEvaluableExpression(expr)) {
 			// var ee = (Scheme.EvaluableExpression)expr;
 			const feAsString = this.objectToString_ApostrophesToQuoteKeywords(expr.firstExpression);
 

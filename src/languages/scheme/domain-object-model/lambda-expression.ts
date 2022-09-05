@@ -10,7 +10,17 @@ import { ISExpression } from '../../lisp/domain-object-model/isexpression';
 
 import { Closure } from './closure';
 
+const typenameLambdaExpression = 'LambdaExpression';
+
+export function isLambdaExpression(obj: unknown): obj is LambdaExpression {
+	const le = obj as LambdaExpression;
+
+	return typeof le !== 'undefined' && le.typename === typenameLambdaExpression;
+}
+
 export class LambdaExpression implements IExpression<ISExpression> {
+	public readonly typename: string = typenameLambdaExpression;
+
 	constructor(
 		public readonly argList: IVariable<ISExpression>[],
 		public readonly body: IExpression<ISExpression>,
