@@ -459,27 +459,30 @@ test('LL(1) Scheme Rplaca and Rplacd test', () => {
 	]);
 });
 
-// test('Scheme Macro test', () => {
-// 	// From pages 56-57, and Exercise 12, from pages 62-63 (in the LISP chapter)
-//
-// 	Evaluate("(set <= (lambda (x y) (or (< x y) (= x y))))");
-//
-// 	Evaluate([
-// '(define-macro for (indexvar lower upper body)',
-// '(list \'begin',
-// '(list \'set indexvar lower)',
-// '(list \'while',
-// '	(list \'<= indexvar upper)',
-// '	(list \'begin body',
-// '		(list \'set indexvar (list \'+ indexvar 1))))))'
-// 	].join('\n'));
-//
-// 	Evaluate("(set sum 0)");
-//
-// 	Evaluate("(for x 1 10 (set sum (+ sum x)))");
-//
-// 	Assert.AreEqual("55", Evaluate("sum"));
-// });
+test('Scheme macro test', () => {
+	// 2From pages 56-57, and Exercise 12, from pages 62-63 (in the LISP chapter)
+
+	schemeTest([
+		// ["(define and (x y) (if x y x))", 'T'],
+		// ['(define or (x y) (if x x y))', 'T'],
+		// ['(define <= (x y) (or (< x y) (= x y)))', 'T'],
+		[
+			[
+				'(define-macro for (indexvar lower upper body)',
+				"(list 'begin",
+				"(list 'set indexvar lower)",
+				"(list 'while",
+				"	(list '<= indexvar upper)",
+				"	(list 'begin body",
+				"		(list 'set indexvar (list '+ indexvar 1))))))"
+			].join('\n'),
+			'T'
+		],
+		['(set sum 0)', '0'],
+		['(for x 1 10 (set sum (+ sum x)))', '()'],
+		['sum', '55']
+	]);
+});
 
 test('Scheme Random test', () => {
 	const maxValue = 100;

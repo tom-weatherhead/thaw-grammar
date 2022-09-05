@@ -24,7 +24,7 @@ export function isSASLEvaluableExpression(obj: unknown): obj is SASLEvaluableExp
 }
 
 export class SASLEvaluableExpression extends EvaluableExpression implements IConvertibleToGraph {
-	public readonly typename = typenameSASLEvaluableExpression;
+	public override readonly typename = typenameSASLEvaluableExpression;
 
 	protected deThunkSExpression(
 		sexpression: ISExpression,

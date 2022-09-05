@@ -19,11 +19,14 @@ import { isOperatorUsage } from '../../../common/domain-object-model/operator-us
 import { isSetUsage } from '../../../common/domain-object-model/set-usage';
 import { IVariable } from '../../../common/domain-object-model/variable';
 import { isWhileUsage } from '../../../common/domain-object-model/while-usage';
+
 import { ISExpression } from './isexpression';
 import { isNullSExpression } from './null-sexpression';
 import { isQuotedConstantWithApostrophe } from './quoted-constant-with-apostrophe';
 import { isQuotedConstantWithQuoteKeyword } from './quoted-constant-with-quote-keyword';
 import { isSExpressionList, SExpressionList } from './sexpression-list';
+
+import { isEvaluableExpression } from '../../scheme/domain-object-model/evaluable-expression';
 
 export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinition<ISExpression> {
 	public readonly argumentCount: number; // This is a 'get' accessor.
@@ -173,8 +176,8 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		// {
 		// 	return string.Format("({0})", SExpressionListToString_ApostrophesToQuoteKeywords((SExpressionList)expr));
 		// }
-
 		// 	 */
+
 		// else if (expr is MacroDefinition) {
 		// 	var md = (MacroDefinition)expr;
 		//
@@ -187,20 +190,18 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		//
 		// 	return string.Format("(lambda {0} {1})", le.ArgList, ObjectToString_ApostrophesToQuoteKeywords(le.Body));
 		// }
+		else if (isEvaluableExpression(expr)) {
+			// var ee = (Scheme.EvaluableExpression)expr;
+			const feAsString = this.objectToString_ApostrophesToQuoteKeywords(expr.firstExpression);
 
-		// else if (expr is Scheme.EvaluableExpression)
-		// {
-		// 	var ee = (Scheme.EvaluableExpression)expr;
-		// 	var feAsString = ObjectToString_ApostrophesToQuoteKeywords(ee.FirstExpression);
-		//
-		// 	if (ee.ExpressionList.Value.Count == 0)
-		// 	{
-		// 		return string.Format("({0})", feAsString);
-		// 	}
-		//
-		// 	return string.Format("({0} {1})", feAsString,
-		// 		string.Join(" ", ee.ExpressionList.Value.Select(x => ObjectToString_ApostrophesToQuoteKeywords(x))));
-		// }
+			if (expr.expressionList.length == 0) {
+				return `(${feAsString})`;
+			}
+
+			return `(${feAsString} ${expr.expressionList
+				.map((x) => this.objectToString_ApostrophesToQuoteKeywords(x))
+				.join(' ')})`;
+		}
 
 		// else if (expr is Scheme.LetRecUsage)
 		// {

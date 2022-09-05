@@ -689,7 +689,6 @@ export class LISPGrammar extends GrammarBase {
 			'#emptyVarExprList'
 		]);
 
-		// Old
 		this.productions.push(
 			createProduction(
 				GrammarSymbol.nonterminalBracketedInput,

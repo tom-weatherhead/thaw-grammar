@@ -39,6 +39,7 @@ import { IntegerLiteral } from '../lisp/domain-object-model/integer-literal';
 import { ISExpression } from '../lisp/domain-object-model/isexpression';
 import { LISPString } from '../lisp/domain-object-model/lisp-string';
 import { LISPSymbol } from '../lisp/domain-object-model/lisp-symbol';
+import { MacroDefinition } from '../lisp/domain-object-model/macro-definition';
 import { NullSExpression } from '../lisp/domain-object-model/null-sexpression';
 import { QuotedConstantWithApostrophe } from '../lisp/domain-object-model/quoted-constant-with-apostrophe';
 import { QuotedConstantWithQuoteKeyword } from '../lisp/domain-object-model/quoted-constant-with-quote-keyword';
@@ -145,7 +146,7 @@ export class SchemeGrammar extends GrammarBase {
 			this.terminals.push(GrammarSymbol.terminalPrint);
 			this.terminals.push(GrammarSymbol.terminalRplaca);
 			this.terminals.push(GrammarSymbol.terminalRplacd);
-			// this.terminals.push(GrammarSymbol.terminalDefineMacro);
+			this.terminals.push(GrammarSymbol.terminalDefineMacro);
 		}
 
 		this.nonTerminals.push(GrammarSymbol.nonterminalStart);
@@ -958,16 +959,25 @@ export class SchemeGrammar extends GrammarBase {
 			// 		Symbol.nonterminalExpression,
 			// 		'#macroDefinition'
 			// 	], n));
+			this.productions.push(
+				createProduction(
+					GrammarSymbol.nonterminalBracketedExpression,
+					[
+						GrammarSymbol.terminalDefineMacro,
+						GrammarSymbol.nonterminalFunction,
+						GrammarSymbol.nonterminalArgList,
+						GrammarSymbol.nonterminalExpression,
+						'#macroDefinition'
+					],
+					59
+				)
+			);
 		}
 	}
 
 	public get languageName(): string {
 		return 'Scheme';
 	}
-
-	// public get selectorsOfCompatibleParsers(): ParserSelector[] {
-	// 	return [ParserSelector.LL1];
-	// }
 
 	public executeSemanticAction(semanticStack: SemanticStackType, action: string): void {
 		// console.log(`SchemeGrammar.executeSemanticAction() : action is ${typeof action} ${action}`);
@@ -1131,12 +1141,12 @@ export class SchemeGrammar extends GrammarBase {
 				);
 				break;
 
-			// case '#macroDefinition':
-			// 	expression = semanticStack.pop() as IExpression<ISExpression>; // macroBody
-			// 	variableList = semanticStack.pop() as VariableList<ISExpression>; // macroArgList
-			// 	name = semanticStack.pop() as Name; // macroName
-			// 	semanticStack.push(new MacroDefinition(name, variableList, expression));
-			// 	break;
+			case '#macroDefinition':
+				expression = semanticStack.pop() as IExpression<ISExpression>; // macroBody
+				variableList = semanticStack.pop() as IVariable<ISExpression>[]; // macroArgList
+				name = semanticStack.pop() as Name; // macroName
+				semanticStack.push(new MacroDefinition(name, variableList, expression));
+				break;
 
 			case '#lambdaExpression':
 				const body = semanticStack.pop() as IExpression<ISExpression>;
@@ -1169,10 +1179,16 @@ export class SchemeGrammar extends GrammarBase {
 	public override tokenToSymbol(token: IToken): GrammarSymbol {
 		const tokenValueAsString: string = token.tokenValue as string;
 
-		if (token.isQuoted && tokenValueAsString !== '.') {
-			// 2021-11-29 : This allows e.g. '+ to be an S-expression
+		// if (token.isQuoted && tokenValueAsString !== '.') {
+		// 	// 2021-11-29 : This allows e.g. '+ to be an S-expression
+		//
+		// 	return GrammarSymbol.terminalID;
+		// }
 
-			return GrammarSymbol.terminalID;
+		if (token.isQuoted) {
+			// 2021-11-29, 2022-09-05 : This allows e.g. '+ to be an S-expression
+
+			token.tokenType = LexicalState.tokenIdent;
 		}
 
 		switch (token.tokenType) {
@@ -1381,6 +1397,7 @@ export class SchemeGrammar extends GrammarBase {
 				break;
 
 			case GrammarSymbol.terminalApostrophe:
+			case GrammarSymbol.terminalDefineMacro:
 			case GrammarSymbol.terminalQuoteKeyword:
 			case GrammarSymbol.terminalLambdaKeyword: // Added for Scheme
 			case GrammarSymbol.terminalCallCC: // Added for Scheme
