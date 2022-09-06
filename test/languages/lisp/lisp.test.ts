@@ -399,66 +399,46 @@ test('LL(1) LISP while test', () => {
 		]
 	]);
 });
-// [Test]
-// public void WhileTest()
-// {
-// 	const string whileTest = @"
-// (begin
-// (set x 1)
-// (set acc 0)
-// (while (< x 5) (begin
-// (set acc (+ acc x))
-// (set x (+ x 1))
-// ))
-// acc
-// )
-// ";
-//
-// 	Assert.AreEqual("10", Evaluate(whileTest));
-// }
 
-// [Test]
-// public void SetTest()
-// {
-// 	Assert.AreEqual("2", Evaluate("(set globalN 2)"));
-// 	Assert.AreEqual("2", Evaluate("globalN"));
-// 	Assert.AreEqual("3", Evaluate("(+ globalN 1)"));
-// }
+test('LL(1) LISP set test', () => {
+	lispTest([
+		['(set globalN 2)', '2'],
+		['globalN', '2'],
+		['(+ globalN 1)', '3']
+	]);
+});
 
-// [Test]
-// public void BeginTest()
-// {
-// 	Assert.AreEqual("13", Evaluate("(begin 1 1 2 3 5 8 13)"));
-// }
+test('LL(1) LISP begin test', () => {
+	lispTest([['(begin 1 1 2 3 5 8 13)', '13']]);
+});
 
-// [Test]
-// public void FuncDefTest()
-// {
-// 	Assert.AreEqual("T", Evaluate("(define increment (n) (+ n 1))"));
-// 	Assert.AreEqual("14", Evaluate("(increment 13)"));
-// }
+test('LL(1) LISP if test', () => {
+	lispTest([
+		['(define increment (n) (+ n 1))', 'T'],
+		['(increment 13)', '14']
+	]);
+});
 
-// [Test]
-// public void GCDFunctionTest()
-// {
-// 	Assert.AreEqual("3", Evaluate("(mod 101 7)"));
-//
-// 	Assert.AreEqual("7", Evaluate("(gcd 343 91)"));
-// 	Assert.AreEqual("1", Evaluate("(gcd 31 29)"));
-// }
+test('LL(1) LISP GCD function test', () => {
+	lispTest([
+		['(mod 101 7)', '3'],
+		['(gcd 343 91)', '7'],
+		['(gcd 31 29)', '1']
+	]);
+});
 
-// [Test]
-// public void NumberPredicateTest()
-// {
-// 	Assert.AreEqual("T", Evaluate("(number? 7)"));          // Number
-// 	Assert.AreEqual("T", Evaluate("(number? '7)"));         // Quoted number
-// 	Assert.AreEqual("()", Evaluate("(number? 'T)"));        // Symbol
-// 	Assert.AreEqual("()", Evaluate("(number? '(1 2 3))"));  // List 1
-// 	Assert.AreEqual("()", Evaluate("(number? '(()))"));     // List 2
-// 	Assert.AreEqual("()", Evaluate("(number? '())"));       // Null
-// 	Assert.AreEqual("()", Evaluate("(number? \"ABC\")"));   // String
-// 	Assert.AreEqual("()", Evaluate("(number? '\"ABC\")"));  // Quoted string
-// }
+test('LL(1) LISP number predicate test', () => {
+	lispTest([
+		['(number? 7)', 'T'],
+		["(number? '7)", 'T'],
+		["(number? 'T)", '()'],
+		["(number? '(1 2 3))", '()'],
+		["(number? '(()))", '()'],
+		["(number? '())", '()'],
+		['(number? "ABC")', '()'] // ,
+		// ['(number? \'"ABC")', '()']
+	]);
+});
 
 // [Test]
 // public void SymbolPredicateTest()
