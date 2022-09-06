@@ -305,11 +305,6 @@ export class LISPOperatorUsage extends OperatorUsage<ISExpression> {
 				);
 
 			case '=':
-				// 2022-09-05 : BUG : This fails for e.g. (= '(1 2 3) '(5 8 13))
-				// return (evaluatedArguments[0] as IntegerLiteral).value ===
-				// 	(evaluatedArguments[1] as IntegerLiteral).value
-				// 	? globalInfo.trueValue
-				// 	: globalInfo.falseValue;
 				return evaluatedArguments[0].isEqualTo(evaluatedArguments[1])
 					? globalInfo.trueValue
 					: globalInfo.falseValue;
