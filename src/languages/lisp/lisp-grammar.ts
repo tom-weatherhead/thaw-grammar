@@ -78,7 +78,7 @@ export class LISPGrammar extends GrammarBase {
 		this.terminals.push(GrammarSymbol.terminalDefineMacro);
 		this.terminals.push(GrammarSymbol.terminalQuoteKeyword);
 		this.terminals.push(GrammarSymbol.terminalStringLiteral);
-		// this.terminals.push(GrammarSymbol.terminalStringPred);
+		this.terminals.push(GrammarSymbol.terminalStringPred);
 		// this.terminals.push(GrammarSymbol.terminalToString);
 		// this.terminals.push(GrammarSymbol.terminalListToString);
 		// this.terminals.push(GrammarSymbol.terminalStringToList);
@@ -514,6 +514,9 @@ export class LISPGrammar extends GrammarBase {
 
 		// Value-Op -> null?
 		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalNullPred]);
+
+		// Value-Op -> string?
+		this.addProduction(GrammarSymbol.nonterminalValueOp, [GrammarSymbol.terminalStringPred]);
 
 		// Quoted-Const -> ' S-Expression
 		this.productions.push(

@@ -440,80 +440,80 @@ test('LL(1) LISP number predicate test', () => {
 	]);
 });
 
-// [Test]
-// public void SymbolPredicateTest()
-// {
-// 	Assert.AreEqual("()", Evaluate("(symbol? 7)"));         // Number
-// 	Assert.AreEqual("()", Evaluate("(symbol? '7)"));        // Quoted number
-// 	Assert.AreEqual("T", Evaluate("(symbol? 'T)"));         // Symbol
-// 	Assert.AreEqual("()", Evaluate("(symbol? '(1 2 3))"));  // List 1
-// 	Assert.AreEqual("()", Evaluate("(symbol? '(()))"));     // List 2
-// 	Assert.AreEqual("()", Evaluate("(symbol? '())"));       // Null
-// 	Assert.AreEqual("()", Evaluate("(symbol? \"ABC\")"));   // String
-// 	Assert.AreEqual("()", Evaluate("(symbol? '\"ABC\")"));  // Quoted string
-// }
+test('LL(1) LISP symbol predicate test', () => {
+	lispTest([
+		['(symbol? 7)', '()'],
+		["(symbol? '7)", '()'],
+		["(symbol? 'T)", 'T'],
+		["(symbol? '(1 2 3))", '()'],
+		["(symbol? '(()))", '()'],
+		["(symbol? '())", '()'],
+		['(symbol? "ABC")', '()'] // ,
+		// ['(symbol? \'"ABC")', '()']
+	]);
+});
 
-// [Test]
-// public void ListPredicateTest()
-// {
-// 	Assert.AreEqual("()", Evaluate("(list? 7)"));           // Number
-// 	Assert.AreEqual("()", Evaluate("(list? '7)"));          // Quoted number
-// 	Assert.AreEqual("()", Evaluate("(list? 'T)"));          // Symbol
-// 	Assert.AreEqual("T", Evaluate("(list? '(1 2 3))"));     // List 1
-// 	Assert.AreEqual("T", Evaluate("(list? '(()))"));        // List 2
-// 	Assert.AreEqual("()", Evaluate("(list? '())"));         // Null
-// 	Assert.AreEqual("()", Evaluate("(list? \"ABC\")"));     // String
-// 	Assert.AreEqual("()", Evaluate("(list? '\"ABC\")"));    // Quoted string
-// }
+test('LL(1) LISP list predicate test', () => {
+	lispTest([
+		['(list? 7)', '()'],
+		["(list? '7)", '()'],
+		["(list? 'T)", '()'],
+		["(list? '(1 2 3))", 'T'],
+		["(list? '(()))", 'T'],
+		["(list? '())", '()'],
+		['(list? "ABC")', '()'] // ,
+		// ['(list? \'"ABC")', '()']
+	]);
+});
 
-// [Test]
-// public void NullPredicateTest()
-// {
-// 	Assert.AreEqual("()", Evaluate("(null? 7)"));           // Number
-// 	Assert.AreEqual("()", Evaluate("(null? '7)"));          // Quoted number
-// 	Assert.AreEqual("()", Evaluate("(null? 'T)"));          // Symbol
-// 	Assert.AreEqual("()", Evaluate("(null? '(1 2 3))"));    // List 1
-// 	Assert.AreEqual("()", Evaluate("(null? '(()))"));       // List 2
-// 	Assert.AreEqual("T", Evaluate("(null? '())"));          // Null
-// 	Assert.AreEqual("()", Evaluate("(null? \"ABC\")"));     // String
-// 	Assert.AreEqual("()", Evaluate("(null? '\"ABC\")"));    // Quoted string
-// }
+test('LL(1) LISP null predicate test', () => {
+	lispTest([
+		['(null? 7)', '()'],
+		["(null? '7)", '()'],
+		["(null? 'T)", '()'],
+		["(null? '(1 2 3))", '()'],
+		["(null? '(()))", '()'],
+		["(null? '())", 'T'],
+		['(null? "ABC")', '()'] // ,
+		// ['(null? \'"ABC")', '()']
+	]);
+});
 
-// [Test]
-// public void StringPredicateTest()
-// {
-// 	Assert.AreEqual("()", Evaluate("(string? 7)"));         // Number
-// 	Assert.AreEqual("()", Evaluate("(string? '7)"));        // Quoted number
-// 	Assert.AreEqual("()", Evaluate("(string? 'T)"));        // Symbol
-// 	Assert.AreEqual("()", Evaluate("(string? '(1 2 3))"));  // List 1
-// 	Assert.AreEqual("()", Evaluate("(string? '(()))"));     // List 2
-// 	Assert.AreEqual("()", Evaluate("(string? '())"));       // Null
-// 	Assert.AreEqual("T", Evaluate("(string? \"ABC\")"));    // String
-// 	Assert.AreEqual("T", Evaluate("(string? '\"ABC\")"));   // Quoted string
-// }
+test('LL(1) LISP string predicate test', () => {
+	lispTest([
+		['(string? 7)', '()'],
+		["(string? '7)", '()'],
+		["(string? 'T)", '()'],
+		["(string? '(1 2 3))", '()'],
+		["(string? '(()))", '()'],
+		["(string? '())", '()'],
+		['(string? "ABC")', 'T'] // ,
+		// ['(string? \'"ABC")', 'T']
+	]);
+});
 
-// [Test]
-// public void ConsTest()
-// {
-// 	Assert.AreEqual("(1)", Evaluate("(cons 1 '())"));
-// 	Assert.AreEqual("(1 2 3)", Evaluate("(cons 1 '(2 3))"));
-// }
+test('LL(1) LISP cons test', () => {
+	lispTest([
+		["(cons 1 '())", '(1)'],
+		["(cons 1 '(2 3))", '(1 2 3)']
+	]);
+});
 
-// [Test]
-// public void CarTest()
-// {
-// 	Assert.AreEqual("1", Evaluate("(car '(1))"));
-// 	Assert.AreEqual("1", Evaluate("(car '(1 2 3))"));
-// 	Assert.AreEqual("(1 2)", Evaluate("(car '((1 2) (3 4)))"));
-// }
+test('LL(1) LISP car test', () => {
+	lispTest([
+		["(car '(1))", '1'],
+		["(car '(1 2 3))", '1'],
+		["(car '((1 2) (3 4)))", '(1 2)']
+	]);
+});
 
-// [Test]
-// public void CdrTest()
-// {
-// 	Assert.AreEqual("()", Evaluate("(cdr '(1))"));
-// 	Assert.AreEqual("(2 3)", Evaluate("(cdr '(1 2 3))"));
-// 	Assert.AreEqual("((3 4))", Evaluate("(cdr '((1 2) (3 4)))"));
-// }
+test('LL(1) LISP cdr test', () => {
+	lispTest([
+		["(cdr '(1))", '()'],
+		["(cdr '(1 2 3))", '(2 3)'],
+		["(cdr '((1 2) (3 4)))", '((3 4))']
+	]);
+});
 
 // [Test]
 // public void LengthFunctionTest()
@@ -554,28 +554,21 @@ test('LL(1) LISP cond test', () => {
 	]);
 });
 
-// [Test]
-// public void LetTest()
-// {
-// 	Assert.AreEqual("5", Evaluate("(let ((n (+ 2 3))) n)"));
-// }
 test('LL(1) LISP let test', () => {
 	lispTest([['(let ((n (+ 2 3))) n)', '5']]);
 });
 
-// [Test]
-// public void LetStarTest()
-// {
-// 	Assert.AreEqual("25", Evaluate("(let* ((x (+ 2 3)) (y (* x x))) y)"));
-// }
+test('LL(1) LISP let* test', () => {
+	lispTest([['(let* ((x (+ 2 3)) (y (* x x))) y)', '25']]);
+});
 
-// [Test]
-// public void ListTest()
-// {
-// 	Assert.AreEqual("()", Evaluate("(list)"));
-// 	Assert.AreEqual("(1)", Evaluate("(list 1)"));
-// 	Assert.AreEqual("(1 2 3)", Evaluate("(list 1 2 3)"));
-// }
+test('LL(1) LISP list test', () => {
+	lispTest([
+		['(list)', '()'],
+		['(list 1)', '(1)'],
+		['(list 1 2 3)', '(1 2 3)']
+	]);
+});
 
 // [Test]
 // public void SieveOfEratosthenesTest()   // See page 31
