@@ -38,6 +38,8 @@ export class LambdaExpression implements IExpression<ISExpression> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): ISExpression {
+		options;
+
 		return new Closure(
 			this.argList,
 			this.body,

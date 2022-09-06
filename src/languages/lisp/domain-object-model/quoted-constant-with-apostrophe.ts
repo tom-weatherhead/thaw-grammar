@@ -38,6 +38,10 @@ export class QuotedConstantWithApostrophe implements IExpression<ISExpression> {
 		localEnvironment?: IEnvironmentFrame<ISExpression>,
 		options?: unknown
 	): ISExpression {
+		globalInfo;
+		localEnvironment;
+		options;
+
 		return this.sexpression;
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */

@@ -381,6 +381,24 @@ test('LL(1) LISP equals test', () => {
 	]);
 });
 
+test('LL(1) LISP while test', () => {
+	lispTest([
+		[
+			[
+				'(begin',
+				'    (set x 1)',
+				'    (set acc 0)',
+				'    (while (< x 5) (begin',
+				'        (set acc (+ acc x))',
+				'        (set x (+ x 1))',
+				'    ))',
+				'    acc',
+				')'
+			].join('\n'),
+			'10'
+		]
+	]);
+});
 // [Test]
 // public void WhileTest()
 // {
@@ -393,7 +411,8 @@ test('LL(1) LISP equals test', () => {
 // (set x (+ x 1))
 // ))
 // acc
-// )";
+// )
+// ";
 //
 // 	Assert.AreEqual("10", Evaluate(whileTest));
 // }
@@ -1130,6 +1149,182 @@ test('LL(1) LISP macro test', () => {
 // }
 
 // [Test]
+// public void QuoteKeywordTest()
+// {
+// 	const string expectedResult = "T";
+// 	var sexpr = EvaluateToSExpression(string.Format("'(quote {0})", expectedResult));
+//
+// 	Assert.IsTrue(sexpr is QuotedConstantWithQuoteKeyword);
+//
+// 	var qc = (QuotedConstantWithQuoteKeyword)sexpr;
+// 	Assert.AreEqual(expectedResult, qc.sexpression.ToString());
+//
+// 	//Assert.AreEqual("T", Evaluate("(quote T)"));
+// 	//Assert.AreEqual("()", Evaluate("(quote ())"));
+// 	Assert.AreEqual("(quote T)", Evaluate("'(quote T)"));
+// 	Assert.AreEqual("(quote ())", Evaluate("'(quote ())"));
+// 	//Assert.AreEqual("(quote T)", Evaluate("(quote (quote T))"));
+// }
+
+// [Test]
+// public void Cond4AsMacroTest()  // See the end of exercise 12 on page 63
+// {
+// 	Evaluate("(define cadr (l) (car (cdr l)))");
+// 	Evaluate(@"
+// (define-macro cond4 (x1 x2 x3 x4)
+// (list 'if (car x1) (cadr x1)
+// (list 'if (car x2) (cadr x2)
+// 	(list 'if (car x3) (cadr x3)
+// 		(list 'if (car x4) (cadr x4) '(quote ()))))))");
+// 	Evaluate("(define cond4test (n) (cond4 '((= n 1) (quote First)) '((= n 2) (quote Second)) '((= n 3) (quote Third)) '((quote T) (quote Other))))");
+//
+// 	Assert.AreEqual("Other", Evaluate("(cond4test 0)"));
+// 	Assert.AreEqual("First", Evaluate("(cond4test 1)"));
+// 	Assert.AreEqual("Second", Evaluate("(cond4test 2)"));
+// 	Assert.AreEqual("Third", Evaluate("(cond4test 3)"));
+// 	Assert.AreEqual("Other", Evaluate("(cond4test 4)"));
+// }
+
+// [Test]
+// public void DynamicScopingTest()
+// {
+// 	globalInfo.DynamicScoping = true;
+//
+// 	Evaluate("(define innerFunc () (set x 13))");
+// 	Evaluate(@"
+// (define outerFunc ()
+// (let ((x 7))
+// (begin
+// 	(innerFunc)
+// 	x)))");
+//
+// 	Assert.AreEqual("13", Evaluate("(outerFunc)"));
+// }
+
+// [Test]
+// public void PrintTest()
+// {
+// 	Assert.AreEqual("7", Evaluate("(print 7)"));                // Number
+// 	Assert.AreEqual("7", Evaluate("(print '7)"));               // Quoted number
+// 	Assert.AreEqual("T", Evaluate("(print 'T)"));               // Symbol
+// 	Assert.AreEqual("(1 2 3)", Evaluate("(print '(1 2 3))"));   // List 1
+// 	Assert.AreEqual("(())", Evaluate("(print '(()))"));         // List 2
+// 	Assert.AreEqual("()", Evaluate("(print '())"));             // Null
+// 	Assert.AreEqual("ABC", Evaluate("(print \"ABC\")"));        // String
+// 	Assert.AreEqual("ABC", Evaluate("(print '\"ABC\")"));       // Quoted string
+// }
+//
+// [Test]
+// public void ToStringTest()
+// {
+// 	Assert.AreEqual("7", Evaluate("(tostring 7)"));                 // Number
+// 	Assert.AreEqual("7", Evaluate("(tostring '7)"));                // Quoted number
+// 	Assert.AreEqual("T", Evaluate("(tostring 'T)"));                // Symbol
+// 	Assert.AreEqual("(1 2 3)", Evaluate("(tostring '(1 2 3))"));    // List 1
+// 	Assert.AreEqual("(())", Evaluate("(tostring '(()))"));          // List 2
+// 	Assert.AreEqual("()", Evaluate("(tostring '())"));              // Null
+// 	Assert.AreEqual("ABC", Evaluate("(tostring \"ABC\")"));         // String
+// 	Assert.AreEqual("ABC", Evaluate("(tostring '\"ABC\")"));        // Quoted string
+// }
+//
+// [Test]
+// public void ListToStringTest()
+// {
+// 	Assert.AreEqual("ABC", Evaluate("(listtostring '(\"A\" \"B\" \"C\"))"));
+// }
+//
+// [Test]
+// public void StringToListTest()
+// {
+// 	Assert.AreEqual("(A B C)", Evaluate("(stringtolist \"ABC\")"));
+// }
+//
+// [Test]
+// public void StringToSymbolTest()
+// {
+// 	Assert.AreEqual("ABC", Evaluate("(stringtosymbol \"ABC\")"));
+// 	Assert.AreEqual("T", Evaluate("(symbol? (stringtosymbol \"ABC\"))"));
+// }
+
+// TODO: Add floating-point numbers to the LISP grammar
+test('LL(1) LISP floating-point numbers test', () => {
+	lispTest([
+		['(+ 1.25 2)', '3.25'],
+		['(+ 1 2.5)', '3.5'],
+		['(+ 1.25 2.5)', '3.75'],
+
+		['(> 1.25 2)', '()'],
+		['(> 1 2.5)', '()'],
+		['(> 1.25 2.5)', '()'],
+
+		['(> 3.25 2)', 'T'],
+		['(> 3 2.5)', 'T'],
+		['(> 3.25 2.5)', 'T']
+	]);
+});
+
+// [Test]
+// public void MacroApostrophesToQuoteKeywordsTest()
+// {
+// 	// Note that these expressions are parsed, but not evaluated.
+// 	Assert.AreEqual("(quote foo)", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("'foo")));
+// 	Assert.AreEqual("(list (quote foo) (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(list 'foo 'bar)")));
+// 	Assert.AreEqual("(func1 (func2 (func3 (quote foo))))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(func1 (func2 (func3 'foo)))")));
+//
+// 	Assert.AreEqual("(define foo () (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(define foo () 'bar)")));
+// 	Assert.AreEqual("(if foo (quote bar) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(if foo 'bar 'baz)")));
+// 	Assert.AreEqual("(while foo (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(while foo 'bar)")));
+// 	Assert.AreEqual("(set foo (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(set foo 'bar)")));
+// 	Assert.AreEqual("(begin (quote foo) (quote bar) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(begin 'foo 'bar 'baz)")));
+// 	Assert.AreEqual("(cond ((= foo (quote bar)) (quote baz)) ((quote T) (quote bat)))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(cond ((= foo 'bar) 'baz) ('T 'bat))")));
+// 	Assert.AreEqual("(let ((foo (quote bar))) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(let ((foo 'bar)) 'baz)")));
+// 	Assert.AreEqual("(let* ((foo (quote bar))) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(let* ((foo 'bar)) 'baz)")));
+// 	Assert.AreEqual("(list (quote foo) (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(list 'foo 'bar)")));
+// 	Assert.AreEqual("(foo (quote bar) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(foo 'bar 'baz)")));
+// 	Assert.AreEqual("(quote (quote foo))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("'(quote foo)")));
+// 	Assert.AreEqual("(define-macro for (indexvar lower upper body) (list (quote begin) (list (quote set) indexvar lower) (list (quote while) (list (quote <=) indexvar upper) (list (quote begin) body (list (quote set) indexvar (list (quote +) indexvar 1))))))",
+// 		MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult(@"
+// (define-macro for (indexvar lower upper body)
+// (list 'begin
+// (list 'set indexvar lower)
+// (list 'while
+// 	(list '<= indexvar upper)
+// 	(list 'begin body
+// 		(list 'set indexvar (list '+ indexvar 1))))))")));
+// }
+//
+// [Test]
+// public void MacroSExpressionToStringTest()
+// {
+// 	Assert.AreEqual("'foo", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'(quote foo)")));
+// 	Assert.AreEqual("'(quote foo)", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'(quote (quote foo))")));
+// 	Assert.AreEqual("('foo 'bar)", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'((quote foo) (quote bar))")));
+//
+// 	Assert.AreEqual("7", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("7")));
+// 	Assert.AreEqual("sym", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'sym")));
+// 	Assert.AreEqual("str", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("\"str\"")));
+// 	Assert.AreEqual("(1 2 3)", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'(1 2 3)")));
+// 	Assert.AreEqual("()", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'()")));
+// 	//Assert.AreEqual("", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("")));
+// }
+
+test('LL(1) LISP throw test', () => {
+	expect(() => evaluateToISExpression('(throw "Hello World!")')).toThrow('LISPException');
+});
+
+test('LL(1) LISP string< test', () => {
+	// 2013/12/14
+
+	lispTest([
+		['(string< "a" "a")', '()'],
+		['(string< "a" "b")', 'T'],
+		['(string< "b" "a")', '()'],
+		['(string< "abac" "abacus")', 'T'],
+		['(string< "abacab" "abacus")', 'T']
+	]);
+});
+
+// [Test]
 // public void EvalInLISPTest()    // From Section 2.4 (pages 46-51) in Kamin
 // {
 // 	globalInfo.LoadPreset("assoc");
@@ -1401,179 +1596,3 @@ test('LL(1) LISP macro test', () => {
 // d)
 // ))"));
 // }
-
-// [Test]
-// public void QuoteKeywordTest()
-// {
-// 	const string expectedResult = "T";
-// 	var sexpr = EvaluateToSExpression(string.Format("'(quote {0})", expectedResult));
-//
-// 	Assert.IsTrue(sexpr is QuotedConstantWithQuoteKeyword);
-//
-// 	var qc = (QuotedConstantWithQuoteKeyword)sexpr;
-// 	Assert.AreEqual(expectedResult, qc.sexpression.ToString());
-//
-// 	//Assert.AreEqual("T", Evaluate("(quote T)"));
-// 	//Assert.AreEqual("()", Evaluate("(quote ())"));
-// 	Assert.AreEqual("(quote T)", Evaluate("'(quote T)"));
-// 	Assert.AreEqual("(quote ())", Evaluate("'(quote ())"));
-// 	//Assert.AreEqual("(quote T)", Evaluate("(quote (quote T))"));
-// }
-
-// [Test]
-// public void Cond4AsMacroTest()  // See the end of exercise 12 on page 63
-// {
-// 	Evaluate("(define cadr (l) (car (cdr l)))");
-// 	Evaluate(@"
-// (define-macro cond4 (x1 x2 x3 x4)
-// (list 'if (car x1) (cadr x1)
-// (list 'if (car x2) (cadr x2)
-// 	(list 'if (car x3) (cadr x3)
-// 		(list 'if (car x4) (cadr x4) '(quote ()))))))");
-// 	Evaluate("(define cond4test (n) (cond4 '((= n 1) (quote First)) '((= n 2) (quote Second)) '((= n 3) (quote Third)) '((quote T) (quote Other))))");
-//
-// 	Assert.AreEqual("Other", Evaluate("(cond4test 0)"));
-// 	Assert.AreEqual("First", Evaluate("(cond4test 1)"));
-// 	Assert.AreEqual("Second", Evaluate("(cond4test 2)"));
-// 	Assert.AreEqual("Third", Evaluate("(cond4test 3)"));
-// 	Assert.AreEqual("Other", Evaluate("(cond4test 4)"));
-// }
-
-// [Test]
-// public void DynamicScopingTest()
-// {
-// 	globalInfo.DynamicScoping = true;
-//
-// 	Evaluate("(define innerFunc () (set x 13))");
-// 	Evaluate(@"
-// (define outerFunc ()
-// (let ((x 7))
-// (begin
-// 	(innerFunc)
-// 	x)))");
-//
-// 	Assert.AreEqual("13", Evaluate("(outerFunc)"));
-// }
-
-// [Test]
-// public void PrintTest()
-// {
-// 	Assert.AreEqual("7", Evaluate("(print 7)"));                // Number
-// 	Assert.AreEqual("7", Evaluate("(print '7)"));               // Quoted number
-// 	Assert.AreEqual("T", Evaluate("(print 'T)"));               // Symbol
-// 	Assert.AreEqual("(1 2 3)", Evaluate("(print '(1 2 3))"));   // List 1
-// 	Assert.AreEqual("(())", Evaluate("(print '(()))"));         // List 2
-// 	Assert.AreEqual("()", Evaluate("(print '())"));             // Null
-// 	Assert.AreEqual("ABC", Evaluate("(print \"ABC\")"));        // String
-// 	Assert.AreEqual("ABC", Evaluate("(print '\"ABC\")"));       // Quoted string
-// }
-//
-// [Test]
-// public void ToStringTest()
-// {
-// 	Assert.AreEqual("7", Evaluate("(tostring 7)"));                 // Number
-// 	Assert.AreEqual("7", Evaluate("(tostring '7)"));                // Quoted number
-// 	Assert.AreEqual("T", Evaluate("(tostring 'T)"));                // Symbol
-// 	Assert.AreEqual("(1 2 3)", Evaluate("(tostring '(1 2 3))"));    // List 1
-// 	Assert.AreEqual("(())", Evaluate("(tostring '(()))"));          // List 2
-// 	Assert.AreEqual("()", Evaluate("(tostring '())"));              // Null
-// 	Assert.AreEqual("ABC", Evaluate("(tostring \"ABC\")"));         // String
-// 	Assert.AreEqual("ABC", Evaluate("(tostring '\"ABC\")"));        // Quoted string
-// }
-//
-// [Test]
-// public void ListToStringTest()
-// {
-// 	Assert.AreEqual("ABC", Evaluate("(listtostring '(\"A\" \"B\" \"C\"))"));
-// }
-//
-// [Test]
-// public void StringToListTest()
-// {
-// 	Assert.AreEqual("(A B C)", Evaluate("(stringtolist \"ABC\")"));
-// }
-//
-// [Test]
-// public void StringToSymbolTest()
-// {
-// 	Assert.AreEqual("ABC", Evaluate("(stringtosymbol \"ABC\")"));
-// 	Assert.AreEqual("T", Evaluate("(symbol? (stringtosymbol \"ABC\"))"));
-// }
-
-// TODO: Add floating-point numbers to the LISP grammar
-test('LL(1) LISP floating-point numbers test', () => {
-	lispTest([
-		['(+ 1.25 2)', '3.25'],
-		['(+ 1 2.5)', '3.5'],
-		['(+ 1.25 2.5)', '3.75'],
-
-		['(> 1.25 2)', '()'],
-		['(> 1 2.5)', '()'],
-		['(> 1.25 2.5)', '()'],
-
-		['(> 3.25 2)', 'T'],
-		['(> 3 2.5)', 'T'],
-		['(> 3.25 2.5)', 'T']
-	]);
-});
-
-// [Test]
-// public void MacroApostrophesToQuoteKeywordsTest()
-// {
-// 	// Note that these expressions are parsed, but not evaluated.
-// 	Assert.AreEqual("(quote foo)", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("'foo")));
-// 	Assert.AreEqual("(list (quote foo) (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(list 'foo 'bar)")));
-// 	Assert.AreEqual("(func1 (func2 (func3 (quote foo))))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(func1 (func2 (func3 'foo)))")));
-//
-// 	Assert.AreEqual("(define foo () (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(define foo () 'bar)")));
-// 	Assert.AreEqual("(if foo (quote bar) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(if foo 'bar 'baz)")));
-// 	Assert.AreEqual("(while foo (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(while foo 'bar)")));
-// 	Assert.AreEqual("(set foo (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(set foo 'bar)")));
-// 	Assert.AreEqual("(begin (quote foo) (quote bar) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(begin 'foo 'bar 'baz)")));
-// 	Assert.AreEqual("(cond ((= foo (quote bar)) (quote baz)) ((quote T) (quote bat)))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(cond ((= foo 'bar) 'baz) ('T 'bat))")));
-// 	Assert.AreEqual("(let ((foo (quote bar))) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(let ((foo 'bar)) 'baz)")));
-// 	Assert.AreEqual("(let* ((foo (quote bar))) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(let* ((foo 'bar)) 'baz)")));
-// 	Assert.AreEqual("(list (quote foo) (quote bar))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(list 'foo 'bar)")));
-// 	Assert.AreEqual("(foo (quote bar) (quote baz))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(foo 'bar 'baz)")));
-// 	Assert.AreEqual("(quote (quote foo))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("'(quote foo)")));
-// 	Assert.AreEqual("(define-macro for (indexvar lower upper body) (list (quote begin) (list (quote set) indexvar lower) (list (quote while) (list (quote <=) indexvar upper) (list (quote begin) body (list (quote set) indexvar (list (quote +) indexvar 1))))))",
-// 		MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult(@"
-// (define-macro for (indexvar lower upper body)
-// (list 'begin
-// (list 'set indexvar lower)
-// (list 'while
-// 	(list '<= indexvar upper)
-// 	(list 'begin body
-// 		(list 'set indexvar (list '+ indexvar 1))))))")));
-// }
-//
-// [Test]
-// public void MacroSExpressionToStringTest()
-// {
-// 	Assert.AreEqual("'foo", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'(quote foo)")));
-// 	Assert.AreEqual("'(quote foo)", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'(quote (quote foo))")));
-// 	Assert.AreEqual("('foo 'bar)", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'((quote foo) (quote bar))")));
-//
-// 	Assert.AreEqual("7", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("7")));
-// 	Assert.AreEqual("sym", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'sym")));
-// 	Assert.AreEqual("str", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("\"str\"")));
-// 	Assert.AreEqual("(1 2 3)", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'(1 2 3)")));
-// 	Assert.AreEqual("()", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("'()")));
-// 	//Assert.AreEqual("", MacroDefinition.SExpressionToStringForReparse(EvaluateToSExpression("")));
-// }
-
-test('LL(1) LISP throw test', () => {
-	expect(() => evaluateToISExpression('(throw "Hello World!")')).toThrow('LISPException');
-});
-
-test('LL(1) LISP string< test', () => {
-	// 2013/12/14
-
-	lispTest([
-		['(string< "a" "a")', '()'],
-		['(string< "a" "b")', 'T'],
-		['(string< "b" "a")', '()'],
-		['(string< "abac" "abacus")', 'T'],
-		['(string< "abacab" "abacus")', 'T']
-	]);
-});

@@ -36,6 +36,8 @@ export class CallCCUsage implements IExpression<ISExpression> {
 	): ISExpression {
 		const evaluatedBody = this.body.evaluate(globalInfo, localEnvironment);
 
+		options;
+
 		if (!(evaluatedBody instanceof Closure)) {
 			throw new EvaluationException(
 				'CallCCUsage.evaluate() : Body does not evaluate to a Closure.'

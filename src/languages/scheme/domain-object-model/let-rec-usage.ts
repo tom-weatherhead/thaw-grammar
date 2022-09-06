@@ -39,6 +39,8 @@ export class LetRecUsage<T> implements IExpression<T> {
 	): T {
 		const newEnvFrame = new EnvironmentFrame<T>(localEnvironment);
 
+		options;
+
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		// for (const [v, expr] of this.bindings) {
 		for (const binding of this.bindings) {

@@ -68,7 +68,11 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		localEnvironment?: IEnvironmentFrame<ISExpression>,
 		options?: unknown
 	): ISExpression {
+		localEnvironment;
+		options;
+
 		globalInfo.macroDefinitions.set(this.macroName.value, this);
+
 		return globalInfo.trueValue;
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
@@ -92,41 +96,30 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 
 	public objectToString_ApostrophesToQuoteKeywords(expr: unknown): string {
 		if (isFunctionDefinition<ISExpression>(expr)) {
-			// var fd = (FunctionDefinition<ISExpression>)expr;
-
 			return `(define ${expr.functionName} (${expr.argList
 				.map((a) => a.name)
 				.join(' ')}) ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
 		} else if (isIfUsage<ISExpression>(expr)) {
-			// var iu = (IfUsage<ISExpression>)expr;
-
 			return `(if ${this.objectToString_ApostrophesToQuoteKeywords(
 				expr.condition
 			)} ${this.objectToString_ApostrophesToQuoteKeywords(
 				expr.ifBody
 			)} ${this.objectToString_ApostrophesToQuoteKeywords(expr.elseBody)})`;
 		} else if (isWhileUsage<ISExpression>(expr)) {
-			// var wu = (WhileUsage<ISExpression>)expr;
-
 			return `(while ${this.objectToString_ApostrophesToQuoteKeywords(
 				expr.condition
 			)} ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
 		} else if (isSetUsage<ISExpression>(expr)) {
-			// var su = (SetUsage<ISExpression>)expr;
-
 			return `(set ${expr.variableName} ${this.objectToString_ApostrophesToQuoteKeywords(
 				expr.expression
 			)})`;
 		} else if (isBeginUsage<ISExpression>(expr)) {
-			// var bu = (BeginUsage<ISExpression>)expr;
-
 			return `(begin ${this.objectToString_ApostrophesToQuoteKeywords(
 				expr.firstExpression
 			)} ${expr.expressionList
 				.map((e) => this.objectToString_ApostrophesToQuoteKeywords(e))
 				.join(' ')})`;
 		} else if (isCondUsage<ISExpression>(expr)) {
-			// var cu = (CondUsage<ISExpression>)expr;
 			const exprPairListString = expr.exprPairList
 				.map(
 					([expr1, expr2]: [IExpression<ISExpression>, IExpression<ISExpression>]) =>
@@ -138,7 +131,6 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 
 			return `(cond ${exprPairListString})`;
 		} else if (isLetUsage<ISExpression>(expr)) {
-			// var lu = (LetUsage<ISExpression>)expr;
 			const bindingsString = expr.bindings
 				.map(
 					([v, e]: [IVariable<ISExpression>, IExpression<ISExpression>]) =>
@@ -150,8 +142,6 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 				expr.expression
 			)})`;
 		} else if (isLetStarUsage<ISExpression>(expr)) {
-			// var lsu = (LetStarUsage<ISExpression>)expr;
-
 			const bindingsString = expr.bindings
 				.map(
 					([v, e]: [IVariable<ISExpression>, IExpression<ISExpression>]) =>
@@ -162,11 +152,7 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 			return `(let* (${bindingsString}) ${this.objectToString_ApostrophesToQuoteKeywords(
 				expr.expression
 			)})`;
-		}
-		// else if (expr is OperatorUsage<ISExpression> && !(expr is Scheme.PrimOp)) {
-		else if (isOperatorUsage<ISExpression>(expr) /* && !(expr is Scheme.PrimOp) */) {
-			// var ou = (OperatorUsage<ISExpression>)expr;
-
+		} else if (isOperatorUsage<ISExpression>(expr) /* && !(expr is Scheme.PrimOp) */) {
 			if (expr.expressionList.length === 0) {
 				return `(${expr.operatorName})`;
 			}
@@ -177,8 +163,6 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 
 			return `(${expr.operatorName} ${exprListString})`;
 		} else if (isQuotedConstantWithApostrophe(expr)) {
-			// var qc = (QuotedConstantWithApostrophe)expr;
-
 			return `(quote ${expr.sexpression})`;
 		}
 		// 	/*
@@ -188,19 +172,14 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 		// }
 		// 	 */
 		else if (isMacroDefinition(expr)) {
-			// var md = (MacroDefinition)expr;
-
 			return `(define-macro ${expr.macroName} ${
 				expr.argList
 			} ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
 		} else if (isLambdaExpression(expr)) {
-			// var le = (Scheme.LambdaExpression)expr;
-
 			return `(lambda ${expr.argList} ${this.objectToString_ApostrophesToQuoteKeywords(
 				expr.body
 			)})`;
 		} else if (isEvaluableExpression(expr)) {
-			// var ee = (Scheme.EvaluableExpression)expr;
 			const feAsString = this.objectToString_ApostrophesToQuoteKeywords(expr.firstExpression);
 
 			if (expr.expressionList.length == 0) {
@@ -211,8 +190,6 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 				.map((x) => this.objectToString_ApostrophesToQuoteKeywords(x))
 				.join(' ')})`;
 		} else if (isLetRecUsage<ISExpression>(expr)) {
-			// var lru = (Scheme.LetRecUsage)expr;
-			// const bindings = expr.bindings.map(b => `(${b} ${})`).join(' ');
 			const fnBindingAsString = ([v, expr2]: [
 				IVariable<ISExpression>,
 				IExpression<ISExpression>
@@ -223,8 +200,6 @@ export class MacroDefinition implements IExpression<ISExpression>, IMacroDefinit
 				expr.expression
 			)})`;
 		} else if (isCallCCUsage(expr)) {
-			// var cccu = (Scheme.CallCCUsage)expr;
-
 			return `(call/cc ${this.objectToString_ApostrophesToQuoteKeywords(expr.body)})`;
 		} else {
 			return `${expr}`;
