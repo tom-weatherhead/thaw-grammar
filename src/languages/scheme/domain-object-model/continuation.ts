@@ -50,4 +50,10 @@ export class Continuation extends SExpressionBase implements ICallableSExpressio
 			args[0].evaluate(globalInfo, localEnvironment)
 		);
 	}
+
+	public override isEqualTo(other: unknown): boolean {
+		other;
+
+		return false; // Or isContinuation(other) && other.ccGuid === this.ccGuid;
+	}
 }

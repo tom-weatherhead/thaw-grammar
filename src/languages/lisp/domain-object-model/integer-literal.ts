@@ -53,13 +53,6 @@ export class IntegerLiteral extends SExpressionBase implements INumber {
 		return `${this.value}`;
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	// 	IntegerLiteral otherIntLit = obj as IntegerLiteral;
-
-	// 	return otherIntLit != null && Value == otherIntLit.Value;
-	// }
-
 	public toInteger(): number {
 		return this.value;
 	}
@@ -74,5 +67,9 @@ export class IntegerLiteral extends SExpressionBase implements INumber {
 
 	public convertToGraph(): IExpression<ISExpression> {
 		return this;
+	}
+
+	public override isEqualTo(other: unknown): boolean {
+		return isIntegerLiteral(other) && other.value === this.value;
 	}
 }

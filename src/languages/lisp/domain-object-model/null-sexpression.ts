@@ -17,13 +17,11 @@ export class NullSExpression extends SExpressionBase {
 		return '()';
 	}
 
-	// public override bool Equals(object obj)
-	// {
-
-	// 	return obj is NullSExpression;
-	// }
-
 	public override isNull(): boolean {
 		return true;
+	}
+
+	public override isEqualTo(other: unknown): boolean {
+		return isNullSExpression(other);
 	}
 }

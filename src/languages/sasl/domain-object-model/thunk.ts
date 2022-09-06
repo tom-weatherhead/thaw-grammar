@@ -110,4 +110,10 @@ export class Thunk extends SExpressionBase {
 
 		return this.dethunk(globalInfo);
 	}
+
+	public override isEqualTo(other: unknown): boolean {
+		other;
+
+		return false; // Or isThunk(other) && ...;
+	}
 }

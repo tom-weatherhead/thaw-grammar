@@ -12,4 +12,6 @@ export interface ISExpression {
 	isString(): boolean;
 
 	toString(): string;
+
+	isEqualTo(other: unknown): boolean;
 }

@@ -4,7 +4,16 @@ import { ArgumentException } from 'thaw-interpreter-core';
 
 import { SExpressionBase } from './sexpression-base';
 
+const typenameLISPSymbol = 'LISPSymbol';
+
+export function isLISPSymbol(obj: unknown): obj is LISPSymbol {
+	const sym = obj as LISPSymbol;
+
+	return typeof sym !== 'undefined' && sym.typename === typenameLISPSymbol;
+}
+
 export class LISPSymbol extends SExpressionBase {
+	public readonly typename: string = typenameLISPSymbol;
 	public readonly value: string;
 
 	constructor(value: string) {
@@ -21,14 +30,11 @@ export class LISPSymbol extends SExpressionBase {
 		return this.value;
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	// 	LISPSymbol otherSymbol = obj as LISPSymbol;
-
-	// 	return otherSymbol != null && Value == otherSymbol.Value;
-	// }
-
 	public override isSymbol(): boolean {
 		return true;
+	}
+
+	public override isEqualTo(other: unknown): boolean {
+		return isLISPSymbol(other) && other.value === this.value;
 	}
 }

@@ -36,15 +36,11 @@ export class LISPString extends SExpressionBase {
 		// return this.value;
 	}
 
-	// public override bool Equals(object obj)
-	// {
-
-	// 	LISPString otherString = obj as LISPString;
-
-	// 	return otherString != null && Value == otherString.Value;
-	// }
-
 	public override isString(): boolean {
 		return true;
+	}
+
+	public override isEqualTo(other: unknown): boolean {
+		return isLISPString(other) && other.value === this.value;
 	}
 }

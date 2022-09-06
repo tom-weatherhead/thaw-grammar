@@ -16,6 +16,10 @@ export abstract class SExpressionBase
 		localEnvironment?: IEnvironmentFrame<ISExpression>,
 		options?: unknown
 	): ISExpression {
+		globalInfo;
+		localEnvironment;
+		options;
+
 		return this;
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */

@@ -37,4 +37,10 @@ export abstract class SExpressionBareBase implements ISExpression {
 	}
 
 	public abstract toString(): string;
+
+	public isEqualTo(other: unknown): boolean {
+		other;
+		throw new Error('Call to unimplemented isEqualTo()');
+		// return false;
+	}
 }

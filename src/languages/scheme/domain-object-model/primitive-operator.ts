@@ -127,7 +127,17 @@ export class PrimOp extends SExpressionBase implements ICallableSExpression {
 		localEnvironment?: IEnvironmentFrame<ISExpression>,
 		options?: unknown
 	): ISExpression {
+		globalInfo;
+		localEnvironment;
+		options;
+
 		return this;
 	}
 	/* eslint-enable @typescript-eslint/no-unused-vars */
+
+	public override isEqualTo(other: unknown): boolean {
+		other;
+
+		return false; // Or isPrimOp(other) && other.name.value === this.name.value;
+	}
 }

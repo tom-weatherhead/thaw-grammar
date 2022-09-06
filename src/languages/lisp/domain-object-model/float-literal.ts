@@ -7,8 +7,20 @@ import { INumber } from './inumber';
 import { ISExpression } from './isexpression';
 import { SExpressionBase } from './sexpression-base';
 
+const typenameFloatLiteral = 'FloatLiteral';
+
+export function isFloatLiteral(obj: unknown): obj is FloatLiteral {
+	const otherFloatLiteral = obj as FloatLiteral;
+
+	return (
+		typeof otherFloatLiteral !== 'undefined' &&
+		otherFloatLiteral.typename === typenameFloatLiteral
+	);
+}
+
 export class FloatLiteral extends SExpressionBase implements INumber {
 	// , IConvertibleToGraph
+	public readonly typename: string = typenameFloatLiteral;
 	public readonly value: number;
 
 	constructor(value: unknown) {
@@ -63,13 +75,6 @@ export class FloatLiteral extends SExpressionBase implements INumber {
 		return result;
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	// 	FloatLiteral otherFltLit = obj as FloatLiteral;
-
-	// 	return otherFltLit != null && Value == otherFltLit.Value;
-	// }
-
 	public toInteger(): number {
 		return Math.floor(this.value);
 	}
@@ -84,5 +89,9 @@ export class FloatLiteral extends SExpressionBase implements INumber {
 
 	public convertToGraph(): IExpression<ISExpression> {
 		return this;
+	}
+
+	public override isEqualTo(other: unknown): boolean {
+		return isFloatLiteral(other) && other.value === this.value;
 	}
 }

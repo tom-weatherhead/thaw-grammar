@@ -44,13 +44,6 @@ export class SExpressionList extends SExpressionBase {
 		return '(' + this.toStringWithoutBrackets() + ')';
 	}
 
-	// public override bool Equals(object obj)
-	// {
-	// 	var otherSExprList = obj as SExpressionList;
-
-	// 	return otherSExprList != null && head.Equals(otherSExprList.head) && tail.Equals(otherSExprList.tail);
-	// }
-
 	public override isList(): boolean {
 		return true;
 	}
@@ -70,5 +63,13 @@ export class SExpressionList extends SExpressionBase {
 			// tail is a symbol, an integer literal, a string, a closure, etc.
 			return `${this.head} . ${this.tail.toString()}`;
 		}
+	}
+
+	public override isEqualTo(other: unknown): boolean {
+		return (
+			isSExpressionList(other) &&
+			this.head.isEqualTo(other.head) &&
+			this.tail.isEqualTo(other.tail)
+		);
 	}
 }
