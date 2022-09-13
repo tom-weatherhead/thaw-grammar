@@ -133,7 +133,7 @@ export class SASLPrimOp extends PrimOp implements IConvertibleToGraph {
 
 		// ThAW 2012/12/07 : Do not create thunks out of arguments that are already S-expressions (i.e. values) : See page 202, exercise 6.
 		const argumentsAsSExpressions = args.map((expr) =>
-			isISExpression(expr) ? (expr as ISExpression) : new Thunk(expr, localEnvironment)
+			isISExpression(expr) ? expr : new Thunk(expr, localEnvironment)
 		);
 
 		switch (this.name.value) {
@@ -154,7 +154,7 @@ export class SASLPrimOp extends PrimOp implements IConvertibleToGraph {
 		}
 
 		const evaluatedArguments = argumentsAsSExpressions.map((sexpr) =>
-			isThunk(sexpr) ? (sexpr as Thunk).dethunk(globalInfo) : sexpr
+			isThunk(sexpr) ? sexpr.dethunk(globalInfo) : sexpr
 		);
 		let list: SExpressionList;
 

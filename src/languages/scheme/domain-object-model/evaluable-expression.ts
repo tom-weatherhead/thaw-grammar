@@ -36,6 +36,8 @@ export class EvaluableExpression implements IExpression<ISExpression> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): ISExpression {
+		options;
+
 		const env = ifDefinedThenElse(localEnvironment, globalInfo.globalEnvironment);
 		// let macroDef: IMacroDefinition | undefined;
 

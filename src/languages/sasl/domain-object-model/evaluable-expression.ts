@@ -8,7 +8,7 @@ import { EvaluableExpression } from '../../scheme/domain-object-model/evaluable-
 
 import { GraphReductionNode } from '../graph-reduction';
 
-import { SASLGlobalInfo } from './global-info';
+// import { SASLGlobalInfo } from './global-info';
 import { IConvertibleToGraph, isIConvertibleToGraph } from './iconvertible-to-graph';
 
 const typenameSASLEvaluableExpression = 'SASLEvaluableExpression';
@@ -26,12 +26,12 @@ export function isSASLEvaluableExpression(obj: unknown): obj is SASLEvaluableExp
 export class SASLEvaluableExpression extends EvaluableExpression implements IConvertibleToGraph {
 	public override readonly typename = typenameSASLEvaluableExpression;
 
-	protected deThunkSExpression(
-		sexpression: ISExpression,
-		globalInfo: SASLGlobalInfo
-	): ISExpression {
-		return globalInfo.dethunk(sexpression);
-	}
+	// protected deThunkSExpression(
+	// 	sexpression: ISExpression,
+	// 	globalInfo: SASLGlobalInfo
+	// ): ISExpression {
+	// 	return globalInfo.dethunk(sexpression);
+	// }
 
 	public convertToGraph(): IExpression<ISExpression> {
 		if (this.expressionList.length !== 1) {

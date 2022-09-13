@@ -83,9 +83,7 @@ export class Thunk extends SExpressionBase {
 		let sexpr: ISExpression = this;
 
 		while (isThunk(sexpr)) {
-			const thunk = sexpr as Thunk;
-
-			sexpr = thunk.body.evaluate(globalInfo, this.thunkEnvironment);
+			sexpr = sexpr.body.evaluate(globalInfo, this.thunkEnvironment);
 		}
 
 		this.dethunkedValue = sexpr;
@@ -100,6 +98,9 @@ export class Thunk extends SExpressionBase {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		options?: unknown
 	): ISExpression {
+		localEnvironment;
+		options;
+
 		// const result = this.body.evaluate(this.thunkEnvironment, globalInfo);
 		//
 		// return SASLGlobalInfo.deThunk(result, globalInfo);
