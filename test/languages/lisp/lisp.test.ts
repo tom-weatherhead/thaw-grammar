@@ -570,33 +570,31 @@ test('LL(1) LISP list test', () => {
 	]);
 });
 
-// [Test]
-// public void SieveOfEratosthenesTest()   // See page 31
-// {
-// 	Evaluate("(define divides (m n) (= (mod n m) 0))");
-// 	Evaluate("(define interval-list (m n) (if (> m n) '() (cons m (interval-list (+1 m) n))))");
-//
-// 	Assert.AreEqual("(3 4 5 6 7)", Evaluate("(interval-list 3 7)"));
-//
-// 	Evaluate(@"
-// (define remove-multiples (n l)
-// (if (null? l) '()
-// (if (divides n (car l))
-// 	(remove-multiples n (cdr l))
-// 	(cons (car l) (remove-multiples n (cdr l))))))");
-//
-// 	Assert.AreEqual("(3 5 7)", Evaluate("(remove-multiples 2 '(2 3 4 5 6 7))"));
-//
-// 	Evaluate(@"
-// (define sieve (l)
-// (if (null? l) '()
-// (cons (car l)
-// 	(sieve (remove-multiples (car l) (cdr l))))))");
-// 	Evaluate("(define primes<= (n) (sieve (interval-list 2 n)))");
-//
-// 	Assert.AreEqual("(2 3 5 7)", Evaluate("(primes<= 10)"));
-// 	Assert.AreEqual("(2 3 5 7 11 13 17 19 23 29)", Evaluate("(primes<= 30)"));
-// }
+test('LL(1) LISP Sieve of Eratosthenes test', () => {
+	// See page 31
+	lispTest([
+		["(define divides (m n) (= (mod n m) 0))", "T"],
+		["(define interval-list (m n) (if (> m n) '() (cons m (interval-list (+1 m) n))))", "T"],
+		["(interval-list 3 7)", "(3 4 5 6 7)"],
+		[[
+			"(define remove-multiples (n l)",
+			"(if (null? l) '()",
+			"(if (divides n (car l))",
+			"	(remove-multiples n (cdr l))",
+			"	(cons (car l) (remove-multiples n (cdr l))))))"
+		].join('\n'), "T"],
+		["(remove-multiples 2 '(2 3 4 5 6 7))", "(3 5 7)"],
+		[[
+			"(define sieve (l)",
+			"(if (null? l) '()",
+			"(cons (car l)",
+			"(sieve (remove-multiples (car l) (cdr l))))))"
+		].join('\n'), "T"],
+		["(define primes<= (n) (sieve (interval-list 2 n)))", "T"],
+		["(primes<= 10)", "(2 3 5 7)"],
+		["(primes<= 30)", "(2 3 5 7 11 13 17 19 23 29)"]
+	]);
+});
 
 // [Test]
 // public void PropertyListTest()   // See page 33
