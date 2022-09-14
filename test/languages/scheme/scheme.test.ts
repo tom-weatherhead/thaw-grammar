@@ -460,7 +460,7 @@ test('LL(1) Scheme Rplaca and Rplacd test', () => {
 });
 
 test('Scheme macro test', () => {
-	// 2From pages 56-57, and Exercise 12, from pages 62-63 (in the LISP chapter)
+	// From pages 56-57, and Exercise 12, from pages 62-63 (in the LISP chapter)
 
 	schemeTest([
 		// ["(define and (x y) (if x y x))", 'T'],
@@ -511,34 +511,39 @@ test('Scheme Sets test', () => {
 	);
 });
 
-// [Test]
-// public void LetMacroTest()  // Part of exercise 15 on page 152.
-// {
-//     Evaluate("(set list-of-cars (lambda (l) (mapcar car l)))");
-//     Evaluate("(set list-of-cadrs (lambda (l) (mapcar cadr l)))");
-//     Evaluate(@"
-// (define-macro letm (declarations body)
-// (cons
-// (list 'lambda (list-of-cars declarations) body)
-// (list-of-cadrs declarations)))");
-//     Assert.AreEqual("(12 5)", Evaluate("(letm ((m (* 3 4)) (n (+ 2 3))) (list m n))"));
-// }
+test('Scheme Let Macro test', () => {
+	// Part of exercise 15 on page 152.
+	schemeTest([
+		['(set list-of-cars (lambda (l) (mapcar car l)))', '<closure>'],
+		['(set list-of-cadrs (lambda (l) (mapcar cadr l)))', '<closure>'],
+		[
+			"(define-macro letm (declarations body) (cons (list 'lambda (list-of-cars declarations) body) (list-of-cadrs declarations)))",
+			'T'
+		],
+		['(letm ((m (* 3 4)) (n (+ 2 3))) (list m n))', '(12 5)']
+	]);
+});
 
-// [Test]
-// public void LetStarMacroTest()  // Part of exercise 15 on page 152.
-// {
-//     Evaluate(@"
-// (set build-expr
-// (lambda (declarations body)
-// (if (null? declarations) body
-//     (list
-//         (list 'lambda
-//             (list (car (car declarations)))
-//             (build-expr (cdr declarations) body))
-//         (cadr (car declarations))))))");
-//     Evaluate("(define-macro let*m (declarations body) (build-expr declarations body))");
-//     Assert.AreEqual("25", Evaluate("(let*m ((x (+ 2 3)) (y (* x x))) y)"));
-// }
+test('Scheme Let* Macro test', () => {
+	// Part of exercise 15 on page 152.
+	schemeTest([
+		[
+			[
+				'(set build-expr',
+				'(lambda (declarations body)',
+				'(if (null? declarations) body',
+				'    (list',
+				"        (list 'lambda",
+				'            (list (car (car declarations)))',
+				'            (build-expr (cdr declarations) body))',
+				'        (cadr (car declarations))))))'
+			].join('\n'),
+			'<closure>'
+		],
+		['(define-macro let*m (declarations body) (build-expr declarations body))', 'T'],
+		['(let*m ((x (+ 2 3)) (y (* x x))) y)', '25']
+	]);
+});
 
 // [Test]
 // public void LetRecMacroTest()  // Part of exercise 15 on page 152.
@@ -576,6 +581,35 @@ test('Scheme Sets test', () => {
 //         (countones (cdr l)))))))
 // (countones '(1 2 3 1 0 1 1 5)))"));
 // }
+// ****
+// test('Scheme Letrec Macro test', () => {
+// 	// Part of exercise 15 on page 152.
+// 	schemeTest(
+// 		[
+// 			["(set build-let-declaration (lambda (declaration) (list (car declaration) 0)))", '<closure>'],
+// 			["(set build-set-statement (lambda (declaration) (cons 'set declaration)))", '<closure>'],
+// 			[[
+// 				"(define-macro letrecm (declarations body)",
+// 				"(list 'let (mapcar build-let-declaration declarations)",
+// 				"(cons 'begin",
+// 				"    (append",
+// 				"        (mapcar build-set-statement declarations)",
+// 				"        (list body)))))"
+// 			].join('\n'), 'T'],
+// 			["(set nums '(1 2 3 1 0 1 1 5))", '(1 2 3 1 0 1 1 5)'],
+// 			[[
+// 				"(letrecm",
+// 				"((countones (lambda (l)",
+// 				"(if (null? l) 0",
+// 				"    (if (= (car l) 1) (+ 1 (countones (cdr l)))",
+// 				"        (countones (cdr l)))))))",
+// 				// "(countones (quote (1 2 3 1 0 1 1 5))))"
+// 				// "(countones '(1 2 3 1 0 1 1 5)))"
+// 				"(countones nums))"
+// 			].join('\n'), '4']
+// 		]
+// 	);
+// });
 
 // [Test]
 // public void MacroApostrophesToQuoteKeywordsTest()
@@ -588,75 +622,83 @@ test('Scheme Sets test', () => {
 //     Assert.AreEqual("(call/cc (lambda (foo) (foo (quote bar))))", MacroDefinition.ObjectToString_ApostrophesToQuoteKeywords(GetParseResult("(call/cc (lambda (foo) (foo 'bar)))")));
 // }
 
-// [Test]
-// public void ComposeListTest() // 2013/11/30
-// {
-//     Evaluate("(set compose-list (combine id compose id))");
-//     Evaluate("(set cadaddr (compose-list (list cdr cdr car cdr car)))");
-//
-//     Assert.AreEqual("10", Evaluate("(cadaddr '((1 2 3 4) (5 6 7 8) (9 10 11 12) (13 14 15 16)))"));
-//
-//     // 2013/12/02
-//     Evaluate("(set compose-list-reverse (combine id (reverse2args compose) id))");
-//     Evaluate("(set cadaddr (compose-list-reverse (list car cdr car cdr cdr)))");    // The functions are applied from right to left.
-//
-//     Assert.AreEqual("10", Evaluate("(cadaddr '((1 2 3 4) (5 6 7 8) (9 10 11 12) (13 14 15 16)))"));
-//
-//     Evaluate("(set sumplus3 (compose2args + (compose-list (list +1 +1 +1))))");
-//
-//     Assert.AreEqual("18", Evaluate("(sumplus3 7 8)"));
-// }
+test('Scheme Compose List test', () => {
+	// 2013/11/30
+	schemeTest([
+		['(set compose-list (combine id compose id))', '<closure>'],
+		['(set cadaddr (compose-list (list cdr cdr car cdr car)))', '<closure>'],
+		["(cadaddr '((1 2 3 4) (5 6 7 8) (9 10 11 12) (13 14 15 16)))", '10'],
 
-// [Test]
-// public void GeneralFindTest() // 2013/12/03
-// {
-//     Evaluate(@"
-// (set general-find (lambda (pred result zero)
-// (letrec
-// ((loop
-//     (lambda (l)
-//         (cond
-//             ((null? l) zero)
-//             ((pred (car l)) (result (car l)))
-//             ('T (loop (cdr l)))
-//         )
-//     )
-// ))
-// loop
-// )
-// ))");
-//     Evaluate(@"
-// (set original-find (lambda (pred lis)
-// (
-// (general-find
-//     pred
-//     (lambda (x) 'T)
-//     '()
-// )
-// lis
-// )
-// ))");
-//     Evaluate("(set original-contains (lambda (x l) (original-find ((curry =) x) l)))");
-//
-//     Assert.AreEqual("T", Evaluate("(original-contains 5 '(2 3 5 7))"));
-//     Assert.AreEqual("()", Evaluate("(original-contains 4 '(2 3 5 7))"));
-//
-//     Evaluate(@"
-// (set alist-alt (lambda (x alist)
-// (
-// (general-find
-//     (compose car ((curry =) x))
-//     cadr
-//     '()
-// )
-// alist
-// )
-// ))");
-//     Evaluate("(set sample-alist '((2 11) (3 13) (5 19) (7 19)))");
-//
-//     Assert.AreEqual("13", Evaluate("(alist-alt 3 sample-alist)"));
-//     Assert.AreEqual("()", Evaluate("(alist-alt 4 sample-alist)"));
-// }
+		// 2013/12/02
+		['(set compose-list-reverse (combine id (reverse2args compose) id))', '<closure>'],
+		['(set cadaddr (compose-list-reverse (list car cdr car cdr cdr)))', '<closure>'], // The functions are applied from right to left.
+		["(cadaddr '((1 2 3 4) (5 6 7 8) (9 10 11 12) (13 14 15 16)))", '10'],
+
+		['(set sumplus3 (compose2args + (compose-list (list +1 +1 +1))))', '<closure>'],
+		['(sumplus3 7 8)', '18']
+	]);
+});
+
+test('Scheme General Find test', () => {
+	// 2013/12/03
+	schemeTest([
+		[
+			[
+				'(set general-find (lambda (pred result zero)',
+				'(letrec',
+				'((loop',
+				'	(lambda (l)',
+				'		(cond',
+				'			((null? l) zero)',
+				'			((pred (car l)) (result (car l)))',
+				"			('T (loop (cdr l)))",
+				'		)',
+				'	)',
+				'))',
+				'loop',
+				')',
+				'))'
+			].join('\n'),
+			'<closure>'
+		],
+		[
+			[
+				'(set original-find (lambda (pred lis)',
+				'(',
+				'(general-find',
+				'	pred',
+				"	(lambda (x) 'T)",
+				"	'()",
+				')',
+				'lis',
+				')',
+				'))'
+			].join('\n'),
+			'<closure>'
+		],
+		['(set original-contains (lambda (x l) (original-find ((curry =) x) l)))', '<closure>'],
+		["(original-contains 5 '(2 3 5 7))", 'T'],
+		["(original-contains 4 '(2 3 5 7))", '()'],
+		[
+			[
+				'(set alist-alt (lambda (x alist)',
+				'(',
+				'(general-find',
+				'	(compose car ((curry =) x))',
+				'	cadr',
+				"	'()",
+				')',
+				'alist',
+				')',
+				'))'
+			].join('\n'),
+			'<closure>'
+		],
+		["(set sample-alist '((2 11) (3 13) (5 19) (7 19)))", '((2 11) (3 13) (5 19) (7 19))'],
+		['(alist-alt 3 sample-alist)', '13'],
+		['(alist-alt 4 sample-alist)', '()']
+	]);
+});
 
 // [Test]
 // public void SyntaxExceptionTest() // 2013/12/12
